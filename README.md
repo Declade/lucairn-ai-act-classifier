@@ -25,7 +25,7 @@ Zero config. Zero network. No API key required for the deterministic mode.
 Optional LLM-augmented feature extraction (uses your own API key, never sent anywhere except the chosen provider):
 
 ```bash
-ANTHROPIC_API_KEY=sk-ant-... npx @lucairn/ai-act-classifier --llm anthropic "..."
+ANTHROPIC_API_KEY="<your-anthropic-key>" npx @lucairn/ai-act-classifier --llm anthropic "..."
 ```
 
 ## Architecture (one paragraph)

@@ -25,7 +25,7 @@ Keine Konfiguration. Keine Netzwerkverbindung. Kein API-Key erforderlich für de
 Optionale LLM-gestützte Feature-Extraktion (verwendet Ihren eigenen API-Key; wird ausschließlich an den gewählten Anbieter gesendet):
 
 ```bash
-ANTHROPIC_API_KEY=sk-ant-... npx @lucairn/ai-act-classifier --llm anthropic "..."
+ANTHROPIC_API_KEY="<ihr-anthropic-key>" npx @lucairn/ai-act-classifier --llm anthropic "..."
 ```
 
 ## Architektur (in einem Absatz)
