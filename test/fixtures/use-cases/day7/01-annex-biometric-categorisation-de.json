@@ -1,0 +1,24 @@
+{
+  "id": "fixture-day7-01-annex-biometric-categorisation-de",
+  "lang": "de",
+  "input": "Unser KI-System nutzt biometrische Kategorisierung an Gesichtsbildern, um Personen in Altersgruppen für die Marketing-Analyse einzuordnen.",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": true,
+    "annex_iii_domains": [1],
+    "annex_iii_sub_letters": { "1": ["b"] },
+    "suppressed_by_article_5": false,
+    "article_10_applicable": true,
+    "article_12_applicable": true,
+    "article_13_applicable": true,
+    "article_14_applicable": true,
+    "article_15_applicable": true,
+    "article_50_paragraphs": ["50(3)"],
+    "three_category_applicable": [1, 2, 3],
+    "annex_iv_required": true,
+    "bucket": "annex_iii",
+    "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
+    "notes": "Anhang III Nr. 1(b) — biometrische Kategorisierung nach nicht sensiblen Merkmalen (hier: Altersgruppen). Da das System nicht auf sensible Attribute gemäß Art. 5 Abs. 1 Buchst. g (politische Meinung, sexuelle Orientierung, ethnische Herkunft etc.) zielt, greift das Verbot nicht — Hochrisiko-Einstufung gemäß Anhang III bleibt bestehen. Lexikon-Treffer: 'biometrische kategorisierung'. Art. 50 Abs. 3 (Transparenz für Betreiber von Systemen biometrischer Kategorisierung) wird über den Annex-III-Fallback in classifyArticle50 ausgelöst. Cite: EUR-Lex Regulation (EU) 2024/1689, Anhang III Nr. 1(b)."
+  }
+}

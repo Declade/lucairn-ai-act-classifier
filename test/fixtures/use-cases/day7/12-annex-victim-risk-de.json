@@ -1,0 +1,23 @@
+{
+  "id": "fixture-day7-12-annex-victim-risk-de",
+  "lang": "de",
+  "input": "Eine Polizeibehörde nutzt unser KI-System für die Einschätzung des Rückfallrisikos verurteilter Straftäter im Rahmen der Bewährungsentscheidung.",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": true,
+    "annex_iii_domains": [6],
+    "annex_iii_sub_letters": { "6": ["a", "d"] },
+    "suppressed_by_article_5": false,
+    "article_10_applicable": true,
+    "article_12_applicable": true,
+    "article_13_applicable": true,
+    "article_14_applicable": true,
+    "article_15_applicable": true,
+    "three_category_applicable": [1, 2, 3],
+    "annex_iv_required": true,
+    "bucket": "annex_iii",
+    "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
+    "notes": "Anhang III Nr. 6(a) — Bewertung des Risikos einer Person, Opfer einer Straftat zu werden, und Anhang III Nr. 6(d) — Bewertung des Rückfallrisikos. Da das System NICHT ausschließlich auf Profiling-Merkmalen basiert (sondern auf Akteninhalt und früheren Taten), greift Art. 5 Abs. 1 Buchst. d nicht. Lexikon-Treffer: 'rückfallrisiko'. Cite: EUR-Lex Regulation (EU) 2024/1689, Anhang III Nr. 6."
+  }
+}
