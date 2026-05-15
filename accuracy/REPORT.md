@@ -1,0 +1,96 @@
+# Accuracy report — @lucairn/ai-act-classifier
+
+- **Rules version:** `v0.1.0`
+- **Rules hash:** `3b3e3d37` (full: `3b3e3d370d5d9d2ed351fc0b4aba42fa0f324b826c63b73c3af9343e18fb9bf1`)
+- **Last run:** 2026-05-16T00:00:00Z
+- **Fixture corpus:** 50 cases
+
+## Headline numbers
+
+| Metric | Score |
+|---|---|
+| **Overall accuracy** (granular per-field pass rate) | **100.0%** |
+| **Article 5 prohibition detection** (safety-critical) | **100.0%** |
+| **Binary high-risk classification** (Annex III + Article 6) | **100.0%** |
+
+## Per-bucket accuracy (pass-all-asserted-fields)
+
+| Bucket | Count | Passed | Accuracy |
+|---|---|---|---|
+| annex_iii | 17 | 17 | 100.0% |
+| article_5 | 7 | 7 | 100.0% |
+| article_50 | 6 | 6 | 100.0% |
+| negative | 9 | 9 | 100.0% |
+| legacy | 11 | 11 | 100.0% |
+
+## Targets vs CI floor
+
+| | v1.0 release target | CI floor (Day 7) | Current |
+|---|---|---|---|
+| Overall | ≥85% | ≥80% | **100.0%** |
+| Article 5 | 100% | 100% | **100.0%** |
+| Binary high-risk | ≥90% | (informational) | **100.0%** |
+
+## Per-fixture results
+
+| Fixture | Lang | Bucket | Status | Failed fields |
+|---|---|---|---|---|
+| `fixture-day3-01-biometrics-prohibited-en` | en | legacy | PASS | — |
+| `fixture-day3-02-critical-infrastructure-en` | en | legacy | PASS | — |
+| `fixture-day3-03-education-de` | de | legacy | PASS | — |
+| `fixture-day3-04-employment-en` | en | legacy | PASS | — |
+| `fixture-day3-05-essential-services-life-insurance-de` | de | legacy | PASS | — |
+| `fixture-day3-06-law-enforcement-broad-en` | en | legacy | PASS | — |
+| `fixture-day3-07-migration-border-de` | de | legacy | PASS | — |
+| `fixture-day3-08-justice-democracy-en` | en | legacy | PASS | — |
+| `fixture-day4-01-low-risk-en` | en | legacy | PASS | — |
+| `fixture-day5-01-art50-chatbot-en` | en | legacy | PASS | — |
+| `fixture-day5-02-art50-deepfake-de` | de | legacy | PASS | — |
+| `fixture-day7-01-annex-biometric-categorisation-de` | de | annex_iii | PASS | — |
+| `fixture-day7-02-annex-emotion-recognition-en` | en | annex_iii | PASS | — |
+| `fixture-day7-03-annex-remote-biometric-id-de` | de | annex_iii | PASS | — |
+| `fixture-day7-04-annex-water-supply-de` | de | annex_iii | PASS | — |
+| `fixture-day7-05-annex-electricity-grid-de` | de | annex_iii | PASS | — |
+| `fixture-day7-06-annex-admission-en` | en | annex_iii | PASS | — |
+| `fixture-day7-07-annex-grading-en` | en | annex_iii | PASS | — |
+| `fixture-day7-08-annex-performance-eval-de` | de | annex_iii | PASS | — |
+| `fixture-day7-09-annex-task-allocation-de` | de | annex_iii | PASS | — |
+| `fixture-day7-10-annex-credit-score-en` | en | annex_iii | PASS | — |
+| `fixture-day7-11-annex-health-emergency-triage-de` | de | annex_iii | PASS | — |
+| `fixture-day7-12-annex-victim-risk-de` | de | annex_iii | PASS | — |
+| `fixture-day7-13-annex-polygraph-en` | en | annex_iii | PASS | — |
+| `fixture-day7-14-annex-asylum-application-en` | en | annex_iii | PASS | — |
+| `fixture-day7-15-annex-visa-decision-de` | de | annex_iii | PASS | — |
+| `fixture-day7-16-annex-judicial-research-de` | de | annex_iii | PASS | — |
+| `fixture-day7-17-annex-election-influence-en` | en | annex_iii | PASS | — |
+| `fixture-day7-18-art5-subliminal-de` | de | article_5 | PASS | — |
+| `fixture-day7-19-art5-vulnerability-de` | de | article_5 | PASS | — |
+| `fixture-day7-20-art5-social-scoring-en` | en | article_5 | PASS | — |
+| `fixture-day7-21-art5-predictive-policing-de` | de | article_5 | PASS | — |
+| `fixture-day7-22-art5-face-scraping-en` | en | article_5 | PASS | — |
+| `fixture-day7-23-art5-emotion-workplace-de` | de | article_5 | PASS | — |
+| `fixture-day7-24-art5-realtime-rbi-de` | de | article_5 | PASS | — |
+| `fixture-day7-25-art50-customer-service-bot-de` | de | article_50 | PASS | — |
+| `fixture-day7-26-art50-synthetic-marketing-image-en` | en | article_50 | PASS | — |
+| `fixture-day7-27-art50-generated-music-track-de` | de | article_50 | PASS | — |
+| `fixture-day7-28-art50-emotion-marketing-de` | de | article_50 | PASS | — |
+| `fixture-day7-29-art50-political-deepfake-en` | en | article_50 | PASS | — |
+| `fixture-day7-30-art50-news-summarization-de` | de | article_50 | PASS | — |
+| `fixture-day7-31-neg-image-denoising-de` | de | negative | PASS | — |
+| `fixture-day7-32-neg-inventory-optim-en` | en | negative | PASS | — |
+| `fixture-day7-33-neg-weather-forecast-de` | de | negative | PASS | — |
+| `fixture-day7-34-neg-translation-de-en` | en | negative | PASS | — |
+| `fixture-day7-35-neg-code-linter-en` | en | negative | PASS | — |
+| `fixture-day7-36-neg-recipe-recommend-de` | de | negative | PASS | — |
+| `fixture-day7-37-neg-ad-optim-en` | en | negative | PASS | — |
+| `fixture-day7-38-neg-factory-qc-de` | de | negative | PASS | — |
+| `fixture-day7-39-neg-search-ranking-de` | de | negative | PASS | — |
+## Methodology
+
+See [METHODOLOGY.md](./METHODOLOGY.md) for the coverage matrix, source allowlist, formulas, and "absent field = skip" semantics.
+
+## Citation
+
+> *Lucairn (2026), AI Act Classifier — accuracy report v0.1, https://lucairn.eu/tools/ai-act-classifier*
+
+> EUR-Lex Regulation (EU) 2024/1689 (full text): https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689

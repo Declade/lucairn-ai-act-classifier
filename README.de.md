@@ -32,6 +32,22 @@ ANTHROPIC_API_KEY="<ihr-anthropic-key>" npx @lucairn/ai-act-classifier --llm ant
 
 Regelwerk-zuerst-Hybrid. Eine deterministische Regel-Engine in TypeScript wertet Art. 5, 6 + Anhang III, 10, 13, 14, 15, 50 gegen aus Ihrer Eingabe extrahierte Merkmale aus. Die Standard-Extraktion ist ein Stichwort- und Phrasen-Mustererkenner in DE+EN — funktioniert offline, ohne API-Key. Der optionale `--llm`-Modus nutzt Ihren eigenen API-Key für genauere Feature-Extraktion; die Regel-Engine wählt die Artikel weiterhin deterministisch aus. Jede Ausgabe enthält die Regelsatz-Version (SHA-fixiert), sodass dieselbe Eingabe immer dieselbe Klassifizierung erzeugt.
 
+## Genauigkeit (Accuracy)
+
+Der Klassifizierer wird gegen einen 50-Fall-zweisprachigen Fixture-Korpus (CC-BY-4.0) gebenchmarkt: 24 Anhang III Hochrisiko + 8 Art. 5 verboten + 8 Art. 50 Transparenz + 10 Negativfälle; 21 EN + 29 DE. Aktuelle Zahlen auf dem v0.1.0-Regelsatz:
+
+- **Gesamt:** 100,0% (granulare Feld-Trefferquote)
+- **Art. 5 Verbots-Erkennung** (sicherheitskritisch): 100,0%
+- **Binäre Hochrisiko-Klassifikation:** 100,0%
+
+CI-Untergrenze (festgelegt): ≥80% Gesamt + 100% Art. 5. v1.0-Release-Ziel: ≥85% Gesamt + 100% Art. 5 + ≥90% binäre Hochrisiko-Klassifikation.
+
+Die 100%-Schlagzeile spiegelt die interne Konsistenz zwischen kuratiertem Fixture-Korpus und kuratiertem Lexikon wider — nicht die Genauigkeit auf beliebigen realen Eingaben. Siehe [accuracy/METHODOLOGY.md](./accuracy/METHODOLOGY.md) §"Honest limitations" und [accuracy/KNOWN-MISCLASSIFICATIONS.md](./accuracy/KNOWN-MISCLASSIFICATIONS.md) für den v0.2-Polish-Backlog.
+
+Berichte: [accuracy/REPORT.md](./accuracy/REPORT.md).
+
+Fehlklassifikation gefunden? Öffnen Sie ein GitHub-Issue mit der Anwendungsfall-Beschreibung, Ihrer erwarteten Klassifikation, Ihrer Begründung (mit Zitat des entsprechenden EUR-Lex-Absatzes aus Verordnung (EU) 2024/1689) und der aktuellen Klassifizierer-Ausgabe.
+
 ## Lizenz
 
 Quellcode: MIT (siehe [LICENSE](./LICENSE)).
