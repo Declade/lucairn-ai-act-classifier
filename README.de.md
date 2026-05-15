@@ -89,6 +89,8 @@ Berichte: [accuracy/REPORT.md](./accuracy/REPORT.md) (deterministisch, CI-überw
 
 Die Ergebnisse des LLM-Modus werden auf der Festplatte unter `~/.cache/lucairn-ai-act-classifier/llm/` zwischengespeichert (respektiert `XDG_CACHE_HOME`). Der Cache-Schlüssel ist `sha256(provider + model + lexikon-version + lang + normalisierte-eingabe)`, sodass dieselbe Eingabe auf derselben Lexikon-Version ein byte-stabiles Ergebnis liefert, ohne die API zu belasten.
 
+> 🔒 **Cache-Dateiinhalt:** Jeder Cache-Eintrag speichert das vollständige `ExtractedFeatures`-Objekt einschließlich des ursprünglichen Eingabetexts (damit die Regel-Engine bei einem Cache-Hit ihre Zitationskette neu rendern kann). Der Cache liegt im benutzerprivaten Verzeichnis `~/.cache/` und wird nirgendwohin übertragen. Für sensible Anwendungsfall-Beschreibungen entweder mit `--no-cache` (einmalig) ausführen oder `~/.cache/lucairn-ai-act-classifier/` in die Sitzungs-Aufräumroutine aufnehmen (wiederkehrend).
+
 - **Cache-Hit:** typischerweise <100 ms (kein Netzwerk) gegenüber ~1–5 s für einen frischen API-Aufruf — über 10-facher Speedup bei jeder Wiederholung.
 - **Cache-Miss:** der Provider wird aufgerufen, das Ergebnis in den Cache geschrieben, und die zwischengespeicherten Merkmale bedienen jeden weiteren Aufruf, bis sich die Lexikon-Version ändert.
 - **Umgehung:** mit `--no-cache` einen frischen API-Aufruf erzwingen (für diesen Aufruf wird der Cache weder gelesen noch geschrieben).
