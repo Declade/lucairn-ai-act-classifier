@@ -1,0 +1,22 @@
+{
+  "id": "fixture-day7-35-neg-code-linter-en",
+  "lang": "en",
+  "input": "An AI-powered code linter and static analysis tool flags syntax issues, anti-patterns, and likely bugs in source-code repositories for developer review.",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": false,
+    "annex_iii_domains": [],
+    "suppressed_by_article_5": false,
+    "article_10_applicable": false,
+    "article_12_applicable": false,
+    "article_13_applicable": false,
+    "article_14_applicable": false,
+    "article_15_applicable": false,
+    "three_category_applicable": [],
+    "annex_iv_required": false,
+    "bucket": "negative",
+    "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "notes": "Developer-tooling AI that lints source code does NOT touch any Annex III paragraph (no biometrics, no critical-infrastructure safety-component role even when used inside a CI pipeline for an infrastructure operator — the linter advises a human developer; it does not control the infrastructure). No Article 5 prohibition, no Article 50 transparency obligation. Mundane B2B developer-tooling. Cite: EUR-Lex Regulation (EU) 2024/1689, Article 6(3)."
+  }
+}

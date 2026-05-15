@@ -1,0 +1,22 @@
+{
+  "id": "fixture-day7-32-neg-inventory-optim-en",
+  "lang": "en",
+  "input": "We run a machine-learning model that optimizes supply-chain inventory levels for a wholesale distributor by forecasting weekly product demand from historical sales data.",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": false,
+    "annex_iii_domains": [],
+    "suppressed_by_article_5": false,
+    "article_10_applicable": false,
+    "article_12_applicable": false,
+    "article_13_applicable": false,
+    "article_14_applicable": false,
+    "article_15_applicable": false,
+    "three_category_applicable": [],
+    "annex_iv_required": false,
+    "bucket": "negative",
+    "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "notes": "Supply-chain inventory optimization on historical product-sales data does NOT touch any Annex III paragraph — no biometrics, no critical infrastructure (a warehouse is not a 'safety component in critical infrastructure'), no education, no employment-decision impact on natural persons, no essential-services impact on natural persons, no law-enforcement / migration / justice / democracy use. Article 5 prohibitions do not fire. Article 50 paragraphs do not fire (no chatbot / synthetic content / emotion-categorisation / deep fake / public-interest text). Mundane B2B operational AI use. Cite: EUR-Lex Regulation (EU) 2024/1689, Article 6(3) limitations."
+  }
+}

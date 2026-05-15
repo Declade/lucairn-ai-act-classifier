@@ -1,0 +1,22 @@
+{
+  "id": "fixture-day7-36-neg-recipe-recommend-de",
+  "lang": "de",
+  "input": "Unsere App schlägt Rezepte vor, basierend auf Geschmackspräferenzen, Vorräten im Kühlschrank und der Jahreszeit. Die Empfehlungen sind unverbindlich und werden vom Nutzer manuell ausgewählt.",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": false,
+    "annex_iii_domains": [],
+    "suppressed_by_article_5": false,
+    "article_10_applicable": false,
+    "article_12_applicable": false,
+    "article_13_applicable": false,
+    "article_14_applicable": false,
+    "article_15_applicable": false,
+    "three_category_applicable": [],
+    "annex_iv_required": false,
+    "bucket": "negative",
+    "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
+    "notes": "Rezeptvorschlag-App ist eine mundane Konsumenten-KI ohne Anhang-III-Bezug. Keine biometrische Identifizierung, keine Hochrisiko-Entscheidung im Sinne von Anhang III. Art. 5 greift nicht. Art. 50 greift nicht (kein direkter Chatbot-Charakter erkennbar — die App präsentiert ein Empfehlungsmenü, nicht eine konversationelle Schnittstelle). Cite: EUR-Lex Regulation (EU) 2024/1689, Art. 6 Abs. 3."
+  }
+}
