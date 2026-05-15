@@ -72,9 +72,10 @@ describe('runAccuracy({ llm: "anthropic" }) — offline (mocked SDK)', () => {
     const report = await runAccuracy({
       llm: 'anthropic',
       lastRunAtOverride: '2026-05-15T00:00:00Z',
+      cache: { disabled: true },
     });
     expect(report.fixture_count).toBe(50);
-    // 50 fixtures → 50 LLM calls.
+    // 50 fixtures → 50 LLM calls (cache disabled so every call hits the mock).
     expect(mockCallCount).toBe(50);
   });
 
@@ -82,6 +83,7 @@ describe('runAccuracy({ llm: "anthropic" }) — offline (mocked SDK)', () => {
     const report = await runAccuracy({
       llm: 'anthropic',
       lastRunAtOverride: '2026-05-15T00:00:00Z',
+      cache: { disabled: true },
     });
     expect(typeof report.overall_accuracy).toBe('number');
     expect(typeof report.article_5_accuracy).toBe('number');
@@ -98,6 +100,7 @@ describe('runAccuracy({ llm: "anthropic" }) — offline (mocked SDK)', () => {
       llm: 'anthropic',
       llmConcurrency: 1,
       lastRunAtOverride: '2026-05-15T00:00:00Z',
+      cache: { disabled: true },
     });
     expect(report.fixture_count).toBe(50);
     expect(mockCallCount).toBe(50);
@@ -107,10 +110,12 @@ describe('runAccuracy({ llm: "anthropic" }) — offline (mocked SDK)', () => {
     const r1 = await runAccuracy({
       llm: 'anthropic',
       lastRunAtOverride: '2026-05-15T00:00:00Z',
+      cache: { disabled: true },
     });
     const r2 = await runAccuracy({
       llm: 'anthropic',
       lastRunAtOverride: '2026-05-15T00:00:00Z',
+      cache: { disabled: true },
     });
     expect(r1.fixture_count).toBe(r2.fixture_count);
     expect(r1.bucket_accuracy.negative.count).toBe(r2.bucket_accuracy.negative.count);
@@ -120,6 +125,7 @@ describe('runAccuracy({ llm: "anthropic" }) — offline (mocked SDK)', () => {
     const report = await runAccuracy({
       llm: 'anthropic',
       lastRunAtOverride: '2026-05-15T00:00:00Z',
+      cache: { disabled: true },
     });
     // Negative fixtures' expected.article_5_prohibited === false; the all-empty
     // LLM response correctly produces prohibited === false. Same for high_risk.

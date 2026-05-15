@@ -236,6 +236,12 @@ describe('CLI integration — --llm flag (Day 10: anthropic + openai + groq)', (
     expect(r.stdout).toContain('openai');
     expect(r.stdout).toContain('groq');
   });
+
+  itDist('--help mentions --no-cache flag', () => {
+    const r = runCli(['--help']);
+    expect(r.status).toBe(0);
+    expect(r.stdout).toContain('--no-cache');
+  });
 });
 
 describe('CLI integration — disclaimer present', () => {
