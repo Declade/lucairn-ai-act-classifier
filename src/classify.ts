@@ -58,9 +58,8 @@ export interface ClassifyOptions {
   lang?: 'en' | 'de';
   /**
    * When set, replaces the deterministic keyword extractor with an LLM-based
-   * feature extractor. Day 9 lights up `anthropic` only; `openai` + `groq`
-   * land in Day 10 and currently throw `LLM_PROVIDER_NOT_IMPLEMENTED`.
-   * The downstream rules engine is unchanged — the LLM only extracts features.
+   * feature extractor. Day 10 supports `anthropic` + `openai` + `groq`. The
+   * downstream rules engine is unchanged — the LLM only extracts features.
    */
   llm?: LLMProvider;
   /** When false, the three-category overlay is omitted (returns null). Default: true. */

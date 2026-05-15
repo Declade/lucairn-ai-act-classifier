@@ -36,6 +36,7 @@ import { fileURLToPath } from 'node:url';
 
 import { classify } from '../src/classify.js';
 import type { ClassifyResult } from '../src/classify.js';
+import type { LLMProvider } from '../src/extract/llm.js';
 import { projectArticle50Paragraphs } from '../src/util/article-50-paragraphs.js';
 import type { Article50Paragraph } from '../src/util/article-50-paragraphs.js';
 import { RULES_VERSION, RULES_HASH, RULES_HASH_FULL_HEX } from '../src/util/rules-hash.js';
@@ -387,11 +388,12 @@ export interface RunAccuracyOptions {
   lastRunAtOverride?: string;
   /**
    * When set, replaces the deterministic keyword extractor with an LLM-based
-   * extractor for every fixture invocation. Day 9 supports `anthropic` only;
-   * the LLM mode requires the upstream API key in env (e.g. `ANTHROPIC_API_KEY`).
-   * LLM-mode results are reported separately at `accuracy/REPORT.llm-anthropic.md`.
+   * extractor for every fixture invocation. This commit lights up `anthropic`
+   * + `openai`; `groq` follows in the next commit. Each provider requires its
+   * respective API key in env (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`). LLM-mode
+   * results are reported at `accuracy/REPORT.llm-<provider>.md`.
    */
-  llm?: 'anthropic';
+  llm?: LLMProvider;
   /**
    * Concurrency cap for LLM-mode calls. Default 5 (matches Anthropic's free-tier
    * RPM budget; safe for paid tier too). Ignored in deterministic mode.
@@ -523,24 +525,32 @@ function pct(x: number): string {
 }
 
 export interface RenderMarkdownOptions {
-  /** Day-9: when 'anthropic', the report title + disclaimer text reflect LLM mode. */
-  llm?: 'anthropic';
+  /** When set, the report title + disclaimer text reflect the LLM mode. */
+  llm?: LLMProvider;
 }
+
+const PROVIDER_LABELS: Record<LLMProvider, { display: string; model: string; costPerRun: string }> = {
+  anthropic: { display: 'Anthropic', model: 'Claude Haiku 4.5', costPerRun: '\$0.13' },
+  openai: { display: 'OpenAI', model: 'GPT-4o-mini', costPerRun: '\$0.025' },
+  // groq lights up in the next commit alongside the groq.ts provider.
+  groq: { display: 'Groq', model: 'Llama 3.3 70B', costPerRun: '\$0.005' },
+};
 
 export function renderMarkdown(
   report: AccuracyReport,
   opts: RenderMarkdownOptions = {},
 ): string {
   const lines: string[] = [];
+  const providerInfo = opts.llm !== undefined ? PROVIDER_LABELS[opts.llm] : null;
   const title =
-    opts.llm === 'anthropic'
-      ? '# Accuracy report — @lucairn/ai-act-classifier (LLM Anthropic mode)'
+    providerInfo !== null
+      ? `# Accuracy report — @lucairn/ai-act-classifier (LLM ${providerInfo.display} mode)`
       : '# Accuracy report — @lucairn/ai-act-classifier';
   lines.push(title);
   lines.push('');
-  if (opts.llm === 'anthropic') {
+  if (providerInfo !== null && opts.llm !== undefined) {
     lines.push(
-      '> **LLM mode (opt-in).** This report reflects the Day-9 `--llm anthropic` extractor (Claude Haiku 4.5 via the Anthropic API). The rules engine that selects articles is unchanged — only feature extraction is replaced. LLM-mode results are NOT a CI-blocking metric. Cost: ~\$0.13 per run on the 50-case corpus.',
+      `> **LLM mode (opt-in).** This report reflects the \`--llm ${opts.llm}\` extractor (${providerInfo.model}). The rules engine that selects articles is unchanged — only feature extraction is replaced. LLM-mode results are NOT a CI-blocking metric. Approximate cost: ~${providerInfo.costPerRun} per run on the 50-case corpus.`,
     );
     lines.push('');
   }
@@ -634,7 +644,7 @@ export function renderMarkdown(
 interface ParsedArgv {
   verbose: boolean;
   format: 'json' | 'markdown' | 'both';
-  llm?: 'anthropic';
+  llm?: LLMProvider;
 }
 
 function parseArgv(argv: ReadonlyArray<string>): ParsedArgv {
@@ -657,16 +667,16 @@ function parseArgv(argv: ReadonlyArray<string>): ParsedArgv {
     }
     if (arg === '--llm') {
       const next = argv[i + 1];
-      if (next === 'anthropic') {
+      if (next === 'anthropic' || next === 'openai') {
         out.llm = next;
-      } else if (next === 'openai' || next === 'groq') {
+      } else if (next === 'groq') {
         process.stderr.write(
-          `accuracy: --llm ${next} not implemented in Day 9 (lands in Day 10). Use --llm anthropic, or omit --llm.\n`,
+          'accuracy: --llm groq lands in the next commit. Use --llm anthropic or --llm openai for now.\n',
         );
         process.exit(2);
       } else {
         process.stderr.write(
-          `accuracy: --llm <provider> currently supports 'anthropic' only. Got: ${next}\n`,
+          `accuracy: --llm <provider> must be one of: anthropic | openai. Got: ${next ?? '<missing>'}\n`,
         );
         process.exit(2);
       }
@@ -674,7 +684,7 @@ function parseArgv(argv: ReadonlyArray<string>): ParsedArgv {
       continue;
     }
     if (arg !== undefined && arg.length > 0) {
-      process.stderr.write(`accuracy: unknown argument "${arg}". Usage: --verbose | --format json|markdown|both | --llm anthropic\n`);
+      process.stderr.write(`accuracy: unknown argument "${arg}". Usage: --verbose | --format json|markdown|both | --llm anthropic|openai\n`);
       process.exit(2);
     }
   }
@@ -707,32 +717,41 @@ function meetsCIFloor(report: AccuracyReport): boolean {
 /**
  * Output-file name for a given run mode.
  *   - Deterministic: `REPORT.md` + `REPORT.json` (CI-gated).
- *   - LLM Anthropic: `REPORT.llm-anthropic.md` + `REPORT.llm-anthropic.json`
- *     (NOT CI-gated; opt-in observation, regenerable by Marc on demand).
+ *   - LLM mode:     `REPORT.llm-<provider>.md` + `REPORT.llm-<provider>.json`
+ *     (NOT CI-gated; opt-in observation, regenerable on demand).
  */
-function reportBasenameFor(llm: 'anthropic' | undefined): string {
-  if (llm === 'anthropic') return 'REPORT.llm-anthropic';
+function reportBasenameFor(llm: LLMProvider | undefined): string {
+  if (llm !== undefined) return `REPORT.llm-${llm}`;
   return 'REPORT';
 }
 
-/** "LLM mode skipped" placeholder shipped when ANTHROPIC_API_KEY is absent. */
-function renderLlmSkippedReport(): string {
-  return `# Accuracy report — @lucairn/ai-act-classifier (LLM Anthropic mode)
+const PROVIDER_ENV_NAME: Record<LLMProvider, string> = {
+  anthropic: 'ANTHROPIC_API_KEY',
+  openai: 'OPENAI_API_KEY',
+  // groq lights up in the next commit alongside the groq.ts provider.
+  groq: 'GROQ_API_KEY',
+};
 
-LLM mode skipped — ANTHROPIC_API_KEY env var not set.
+/** "LLM mode skipped" placeholder shipped when the provider's API key env var is absent. */
+function renderLlmSkippedReport(provider: LLMProvider): string {
+  const envName = PROVIDER_ENV_NAME[provider];
+  const providerInfo = PROVIDER_LABELS[provider];
+  return `# Accuracy report — @lucairn/ai-act-classifier (LLM ${providerInfo.display} mode)
+
+LLM mode skipped — ${envName} env var not set.
 
 To regenerate this report:
 
 \`\`\`bash
-ANTHROPIC_API_KEY="<your-anthropic-key>" pnpm accuracy:llm-anthropic
+${envName}="<your-key>" pnpm accuracy:llm-${provider}
 \`\`\`
 
-The LLM-mode harness costs approximately \$0.13 per run on Claude Haiku 4.5
+The LLM-mode harness costs approximately ${providerInfo.costPerRun} per run on ${providerInfo.model}
 across the 50-case bilingual fixture corpus. LLM-mode accuracy is an opt-in
 observation — it is NOT a CI-blocking metric. The deterministic-mode CI floor
 (overall ≥80%, Art 5 100%) remains the only enforced gate.
 
-See [README.md §--llm anthropic mode (opt-in)](../README.md) for setup.
+See [README.md §--llm mode (opt-in)](../README.md) for setup.
 `;
 }
 
@@ -745,16 +764,17 @@ async function runCli(argv: ReadonlyArray<string> = process.argv.slice(2)): Prom
   }
 
   // ----- LLM-mode "skipped" short-circuit: emit placeholder + exit 0. ------
-  // Treat absence of ANTHROPIC_API_KEY as a documented no-op (NOT a failure)
-  // so CI environments and casual `pnpm accuracy:llm-anthropic` invocations
-  // without a key do not error out.
-  if (parsed.llm === 'anthropic') {
-    const apiKey = process.env['ANTHROPIC_API_KEY'];
+  // Treat absence of the provider's API key env var as a documented no-op
+  // (NOT a failure) so CI environments and casual invocations without a key
+  // do not error out.
+  if (parsed.llm !== undefined) {
+    const envName = PROVIDER_ENV_NAME[parsed.llm];
+    const apiKey = process.env[envName];
     if (typeof apiKey !== 'string' || apiKey.length === 0) {
-      const mdPath = join(accuracyDir, 'REPORT.llm-anthropic.md');
-      writeFileSync(mdPath, renderLlmSkippedReport(), 'utf8');
+      const mdPath = join(accuracyDir, `REPORT.llm-${parsed.llm}.md`);
+      writeFileSync(mdPath, renderLlmSkippedReport(parsed.llm), 'utf8');
       process.stdout.write(
-        'accuracy: LLM mode skipped — ANTHROPIC_API_KEY env var not set. Emitted placeholder report.\n',
+        `accuracy: LLM mode skipped — ${envName} env var not set. Emitted placeholder report.\n`,
       );
       process.exit(0);
     }
@@ -787,7 +807,7 @@ async function runCli(argv: ReadonlyArray<string> = process.argv.slice(2)): Prom
   }
 
   // ----- Stdout summary. ---------------------------------------------------
-  const modeLabel = parsed.llm === 'anthropic' ? ' [llm-anthropic]' : '';
+  const modeLabel = parsed.llm !== undefined ? ` [llm-${parsed.llm}]` : '';
   process.stdout.write(
     `accuracy${modeLabel}: ${report.fixture_count} fixtures — overall ${pct(report.overall_accuracy)}, Art 5 ${pct(report.article_5_accuracy)}, binary high-risk ${pct(report.binary_high_risk_accuracy)}\n`,
   );

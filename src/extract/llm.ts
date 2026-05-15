@@ -1,7 +1,10 @@
-// LLM-based feature extractor scaffold (Day 9).
+// LLM-based feature extractor scaffold (Day 9 + Day 10).
 //
-// Lights up the `--llm <provider>` CLI flag for `anthropic` only in Day 9.
-// Day 10 will add `openai` + `groq` + cache layer.
+// Lights up the `--llm <provider>` CLI flag for `anthropic` (Day 9) + `openai`
+// + `groq` (Day 10). Day 10 also adds an opt-out filesystem cache layer
+// (lands in a follow-up commit; this commit only adds the multi-provider
+// dispatch + the `apiKey` / `baseURL` LLMExtractOptions extension load-bearing
+// for the Groq provider).
 //
 // Architectural lock — `the LLM only extracts features`:
 //   The LLM produces an ExtractedFeatures-shaped object (same shape as
@@ -11,12 +14,12 @@
 //   rules engine retains the deterministic citation-bearing decision path.
 //
 // Dynamic-import discipline:
-//   - Provider SDKs (e.g. @anthropic-ai/sdk) are loaded via
+//   - Provider SDKs (e.g. @anthropic-ai/sdk, openai) are loaded via
 //     `await import('./providers/<name>.js')` at call-time, NOT at module-init.
 //   - Provider modules themselves dynamic-import the upstream SDK so deterministic
-//     mode stays zero-dep on provider SDKs (the @anthropic-ai/sdk is declared in
-//     `optionalDependencies` — the default install does not pull it).
-//   - If the SDK is absent + the user invokes `--llm anthropic`, we throw a
+//     mode stays zero-dep on provider SDKs (both SDKs are declared in
+//     `optionalDependencies` — the default install does not pull them).
+//   - If the SDK is absent + the user invokes `--llm <provider>`, we throw a
 //     well-typed error with exit-code-3 stderr guidance.
 //
 // Lexicon-phrase validation:
@@ -33,11 +36,11 @@ import type { ExtractedFeatures } from './keyword.js';
 // Types
 // ---------------------------------------------------------------------------
 
-/** Supported LLM provider IDs. Day 9 ships `anthropic` only. */
+/** Supported LLM provider IDs. Day 10 supports all three. */
 export type LLMProvider = 'anthropic' | 'openai' | 'groq';
 
 export interface LLMExtractOptions {
-  /** Which provider to dispatch to. Day 9 only routes `anthropic`. */
+  /** Which provider to dispatch to. Day 10 supports `anthropic` + `openai` + `groq`. */
   provider: LLMProvider;
   /** Override automatic language detection (mirrors keyword.ts semantics). */
   lang?: 'en' | 'de';
@@ -48,6 +51,18 @@ export interface LLMExtractOptions {
    * Used by tests to short-circuit hangs.
    */
   signal?: AbortSignal;
+  /**
+   * Override the SDK `baseURL`. Day 10 load-bearing: the Groq provider passes
+   * `https://api.groq.com/openai/v1` here so the OpenAI SDK reaches Groq's
+   * upstream. Default undefined → SDK's own default endpoint.
+   */
+  baseURL?: string;
+  /**
+   * API key override. When set, takes precedence over `process.env.<PROVIDER>_API_KEY`.
+   * The Groq provider passes its own `GROQ_API_KEY` here so the OpenAI SDK
+   * never reads `OPENAI_API_KEY` from env on the Groq reuse path.
+   */
+  apiKey?: string;
 }
 
 /**
@@ -80,13 +95,12 @@ const PROVIDER_DISPATCH: Record<LLMProvider, () => Promise<ProviderExtractFn>> =
     return mod.extractWithAnthropic;
   },
   openai: async () => {
-    throw new Error(
-      'LLM_PROVIDER_NOT_IMPLEMENTED: openai provider lands in Day 10. Use --llm anthropic for now.',
-    );
+    const mod = await import('./providers/openai.js');
+    return mod.extractWithOpenAI;
   },
   groq: async () => {
     throw new Error(
-      'LLM_PROVIDER_NOT_IMPLEMENTED: groq provider lands in Day 10. Use --llm anthropic for now.',
+      'LLM_PROVIDER_NOT_IMPLEMENTED: groq provider lands in the next commit. Use --llm anthropic or --llm openai for now.',
     );
   },
 };
@@ -110,8 +124,7 @@ const PROVIDER_DISPATCH: Record<LLMProvider, () => Promise<ProviderExtractFn>> =
  *
  * @throws TypeError if text is not a non-empty string after trim.
  * @throws Error if provider is unknown OR if the provider dispatch throws
- *   (e.g. LLM_NO_API_KEY, LLM_SDK_NOT_INSTALLED, LLM_PARSE_ERROR,
- *    LLM_PROVIDER_NOT_IMPLEMENTED).
+ *   (e.g. LLM_NO_API_KEY, LLM_SDK_NOT_INSTALLED, LLM_PARSE_ERROR).
  */
 export async function extractFeaturesLLM(
   text: string,
@@ -130,7 +143,7 @@ export async function extractFeaturesLLM(
   const importer = PROVIDER_DISPATCH[opts.provider as LLMProvider];
   if (importer === undefined) {
     throw new Error(
-      `LLM_UNKNOWN_PROVIDER: unknown LLM provider "${opts.provider}". Supported: anthropic.`,
+      `LLM_UNKNOWN_PROVIDER: unknown LLM provider "${opts.provider}". Supported: anthropic, openai, groq.`,
     );
   }
   const extractFn = await importer();
