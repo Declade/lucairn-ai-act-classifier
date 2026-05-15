@@ -438,9 +438,125 @@ function narrowSubLetters(
     return [...hits].sort();
   }
 
-  // For domains 2, 3, 7, 8 we do not yet have enough disambiguating signal
-  // in the lexicon; leave sub_letters empty. The 50-case fixture set in Day 7
-  // will surface concrete sub-letter mappings to add here in v0.2.
+  if (domain.annex_iii_number === 2) {
+    // Annex III ¶2 has a SINGLE sub-letter (a) covering safety components in
+    // critical digital infrastructure, road traffic, water/gas/heat/electricity
+    // supply. Any lexicon hit in 2_critical_infrastructure narrows to (a).
+    return ['a'];
+  }
+
+  if (domain.annex_iii_number === 3) {
+    // ¶3(a) admission/assignment; ¶3(b) outcome evaluation; ¶3(c) education-level
+    // determination; ¶3(d) prohibited-behaviour monitoring during tests.
+    const hits = new Set<string>();
+    if (
+      matchedLower.some((p) =>
+        ['admission', 'student admission', 'schüleraufnahme', 'studienzulassung'].includes(p),
+      )
+    ) {
+      hits.add('a');
+    }
+    if (
+      matchedLower.some((p) =>
+        ['outcome evaluation', 'automated grading', 'exam scoring', 'learning outcome assessment', 'learning assessment', 'lernbewertung', 'automatisierte benotung', 'prüfungsbewertung'].includes(p),
+      )
+    ) {
+      hits.add('b');
+    }
+    if (
+      matchedLower.some((p) =>
+        ['education level determination', 'bildungsniveau bestimmen', 'bildungszuweisung'].includes(p),
+      )
+    ) {
+      hits.add('c');
+    }
+    if (
+      matchedLower.some((p) =>
+        ['exam monitoring', 'proctoring', 'cheating detection', 'prüfungsüberwachung', 'betrugserkennung prüfung'].includes(p),
+      )
+    ) {
+      hits.add('d');
+    }
+    return [...hits].sort();
+  }
+
+  if (domain.annex_iii_number === 7) {
+    // ¶7(a) polygraphs at borders; ¶7(b) security/migration/health risk
+    // assessment of arrivals; ¶7(c) examination of asylum/visa/residence
+    // applications (including evidence-reliability); ¶7(d) detection/identification
+    // at borders.
+    //
+    // Polygraph disambiguation: lexicon entry for "polygraph"/"lügendetektor"
+    // lives in 6_law_enforcement (¶6(b)). For domain 7 we narrow to (a) when
+    // the input ALSO contains a migration/border substring; otherwise we
+    // leave it to ¶6 narrowing.
+    const hits = new Set<string>();
+    const isBorderContext = inputContainsAny(rawInput, [
+      'border control',
+      'border surveillance',
+      'migration',
+      'asylum',
+      'visa',
+      'residence permit',
+      'grenzkontrolle',
+      'grenzüberwachung',
+      'asyl',
+      'visum',
+      'aufenthaltstitel',
+    ]);
+    if (
+      isBorderContext &&
+      inputContainsAny(rawInput, ['polygraph', 'lügendetektor', 'lie detector'])
+    ) {
+      hits.add('a');
+    }
+    if (
+      matchedLower.some((p) =>
+        ['migration risk', 'irregular migration risk', 'migrationsrisiko', 'sicherheitsrisiko grenze'].includes(p),
+      )
+    ) {
+      hits.add('b');
+    }
+    if (
+      matchedLower.some((p) =>
+        ['asylum application', 'visa application', 'residence permit', 'residence permit application', 'asylantrag', 'visumantrag', 'aufenthaltstitel'].includes(p),
+      )
+    ) {
+      hits.add('c');
+    }
+    if (
+      matchedLower.some((p) =>
+        ['border control', 'border surveillance', 'grenzkontrolle', 'grenzüberwachung'].includes(p),
+      )
+    ) {
+      hits.add('d');
+    }
+    return [...hits].sort();
+  }
+
+  if (domain.annex_iii_number === 8) {
+    // ¶8(a) judicial fact-finding/legal-interpretation/subsumption assistance
+    // for a judicial authority or in ADR; ¶8(b) election/referendum/voter
+    // behaviour influencing.
+    const hits = new Set<string>();
+    if (
+      matchedLower.some((p) =>
+        ['judicial decision', 'judicial assistance', 'judicial research', 'legal interpretation', 'fact research', 'gerichtliche entscheidung', 'richterliche unterstützung', 'rechtsauslegung'].includes(p),
+      )
+    ) {
+      hits.add('a');
+    }
+    if (
+      matchedLower.some((p) =>
+        ['election influence', 'election influencing', 'voter targeting', 'wahlbeeinflussung', 'wählerzielgruppe'].includes(p),
+      )
+    ) {
+      hits.add('b');
+    }
+    return [...hits].sort();
+  }
+
+  // No remaining domains. Future paragraphs (if Annex III is amended) would land here.
   return [];
 }
 
