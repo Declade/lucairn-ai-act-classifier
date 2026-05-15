@@ -1,0 +1,13 @@
+{
+  "id": "fixture-day3-03-education-de",
+  "lang": "de",
+  "input": "Wir bauen ein automatisierte Benotung Werkzeug für die Prüfungsbewertung in Hochschulen, einschließlich Schüleraufnahme und Prüfungsüberwachung.",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": true,
+    "annex_iii_domains": [3],
+    "suppressed_by_article_5": false,
+    "notes": "Anhang III.3 — Bildung. Lexikon-Treffer auf 'automatisierte benotung', 'prüfungsbewertung', 'schüleraufnahme', 'prüfungsüberwachung'. EUR-Lex Anhang III Absatz 3."
+  }
+}

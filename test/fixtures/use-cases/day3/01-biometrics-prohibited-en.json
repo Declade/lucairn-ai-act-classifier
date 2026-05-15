@@ -1,0 +1,13 @@
+{
+  "id": "fixture-day3-01-biometrics-prohibited-en",
+  "lang": "en",
+  "input": "We deploy a real-time facial recognition system in public spaces for general law-enforcement surveillance.",
+  "expected": {
+    "article_5_prohibited": true,
+    "article_5_letters": ["h"],
+    "annex_iii_high_risk": false,
+    "annex_iii_domains": [1],
+    "suppressed_by_article_5": true,
+    "notes": "Real-time remote biometric identification in publicly accessible spaces for law-enforcement triggers Art 5(1)(h) absolute prohibition. The system also matches Annex III.1 biometric ID phrasing, but prohibition supersedes high-risk classification (high_risk computed false; domain hit retained for transparency). EUR-Lex Art 5(1)(h)."
+  }
+}

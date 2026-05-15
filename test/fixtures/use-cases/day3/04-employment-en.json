@@ -1,0 +1,14 @@
+{
+  "id": "fixture-day3-04-employment-en",
+  "lang": "en",
+  "input": "Our AI tool performs CV screening and applicant tracking, ranks candidates, and supports the hiring decision for our enterprise customers.",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": true,
+    "annex_iii_domains": [4],
+    "annex_iii_sub_letters": { "4": ["a"] },
+    "suppressed_by_article_5": false,
+    "notes": "Annex III.4(a) — recruitment and selection of natural persons (analyse and filter job applications, evaluate candidates). Lexicon hits on 'cv screening', 'applicant tracking', 'candidate ranking', 'hiring decision'. EUR-Lex Annex III paragraph 4(a)."
+  }
+}

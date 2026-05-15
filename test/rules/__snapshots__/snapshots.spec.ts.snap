@@ -1,0 +1,264 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-01-biometrics-prohibited-en — pipeline output matches snapshot 1`] = `
+{
+  "annexIII": {
+    "domains": [
+      {
+        "annex_iii_number": 1,
+        "key": "biometrics",
+        "matched_phrases": [
+          "facial recognition",
+        ],
+        "source": "EUR-Lex Regulation (EU) 2024/1689 — Annex III paragraph 1",
+        "sub_letters": [
+          "a",
+        ],
+      },
+    ],
+    "high_risk": false,
+    "reasoning_count": 2,
+    "suppressed_by_article_5": true,
+  },
+  "article5": {
+    "hits": [
+      {
+        "category_key": "h_realtime_remote_biometric_le",
+        "letter": "h",
+        "matched_phrases": [
+          "real-time facial recognition",
+        ],
+        "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+      },
+    ],
+    "prohibited": true,
+    "reasoning_count": 1,
+  },
+  "id": "fixture-day3-01-biometrics-prohibited-en",
+  "input": "We deploy a real-time facial recognition system in public spaces for general law-enforcement surveillance.",
+  "lang": "en",
+}
+`;
+
+exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-02-critical-infrastructure-en — pipeline output matches snapshot 1`] = `
+{
+  "annexIII": {
+    "domains": [
+      {
+        "annex_iii_number": 2,
+        "key": "critical_infrastructure",
+        "matched_phrases": [
+          "critical infrastructure",
+          "power grid",
+          "safety component",
+        ],
+        "source": "EUR-Lex Regulation (EU) 2024/1689 — Annex III paragraph 2",
+        "sub_letters": [],
+      },
+    ],
+    "high_risk": true,
+    "reasoning_count": 1,
+    "suppressed_by_article_5": false,
+  },
+  "article5": {
+    "hits": [],
+    "prohibited": false,
+    "reasoning_count": 1,
+  },
+  "id": "fixture-day3-02-critical-infrastructure-en",
+  "input": "AI safety component for managing the power grid load-balancing in critical infrastructure operations.",
+  "lang": "en",
+}
+`;
+
+exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-03-education-de — pipeline output matches snapshot 1`] = `
+{
+  "annexIII": {
+    "domains": [
+      {
+        "annex_iii_number": 3,
+        "key": "education",
+        "matched_phrases": [
+          "schüleraufnahme",
+          "prüfungsbewertung",
+          "automatisierte benotung",
+          "prüfungsüberwachung",
+        ],
+        "source": "EUR-Lex Regulation (EU) 2024/1689 — Annex III paragraph 3",
+        "sub_letters": [],
+      },
+    ],
+    "high_risk": true,
+    "reasoning_count": 1,
+    "suppressed_by_article_5": false,
+  },
+  "article5": {
+    "hits": [],
+    "prohibited": false,
+    "reasoning_count": 1,
+  },
+  "id": "fixture-day3-03-education-de",
+  "input": "Wir bauen ein automatisierte Benotung Werkzeug für die Prüfungsbewertung in Hochschulen, einschließlich Schüleraufnahme und Prüfungsüberwachung.",
+  "lang": "de",
+}
+`;
+
+exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-04-employment-en — pipeline output matches snapshot 1`] = `
+{
+  "annexIII": {
+    "domains": [
+      {
+        "annex_iii_number": 4,
+        "key": "employment",
+        "matched_phrases": [
+          "cv screening",
+          "applicant tracking",
+          "hiring decision",
+        ],
+        "source": "EUR-Lex Regulation (EU) 2024/1689 — Annex III paragraph 4",
+        "sub_letters": [
+          "a",
+        ],
+      },
+    ],
+    "high_risk": true,
+    "reasoning_count": 1,
+    "suppressed_by_article_5": false,
+  },
+  "article5": {
+    "hits": [],
+    "prohibited": false,
+    "reasoning_count": 1,
+  },
+  "id": "fixture-day3-04-employment-en",
+  "input": "Our AI tool performs CV screening and applicant tracking, ranks candidates, and supports the hiring decision for our enterprise customers.",
+  "lang": "en",
+}
+`;
+
+exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-05-essential-services-life-insurance-de — pipeline output matches snapshot 1`] = `
+{
+  "annexIII": {
+    "domains": [
+      {
+        "annex_iii_number": 5,
+        "key": "essential_services",
+        "matched_phrases": [
+          "bonitätsprüfung",
+          "versicherungstarifierung",
+        ],
+        "source": "EUR-Lex Regulation (EU) 2024/1689 — Annex III paragraph 5",
+        "sub_letters": [
+          "c",
+        ],
+      },
+    ],
+    "high_risk": true,
+    "reasoning_count": 1,
+    "suppressed_by_article_5": false,
+  },
+  "article5": {
+    "hits": [],
+    "prohibited": false,
+    "reasoning_count": 1,
+  },
+  "id": "fixture-day3-05-essential-services-life-insurance-de",
+  "input": "KI-gestützte Versicherungstarifierung für unsere Lebensversicherung und private Krankenversicherung Produkte. Bonitätsprüfung wird ebenfalls durchgeführt.",
+  "lang": "de",
+}
+`;
+
+exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-06-law-enforcement-broad-en — pipeline output matches snapshot 1`] = `
+{
+  "annexIII": {
+    "domains": [
+      {
+        "annex_iii_number": 6,
+        "key": "law_enforcement",
+        "matched_phrases": [
+          "predictive policing",
+          "crime profiling",
+        ],
+        "source": "EUR-Lex Regulation (EU) 2024/1689 — Annex III paragraph 6",
+        "sub_letters": [
+          "d",
+        ],
+      },
+    ],
+    "high_risk": true,
+    "reasoning_count": 1,
+    "suppressed_by_article_5": false,
+  },
+  "article5": {
+    "hits": [],
+    "prohibited": false,
+    "reasoning_count": 1,
+  },
+  "id": "fixture-day3-06-law-enforcement-broad-en",
+  "input": "Our system supports law enforcement with predictive policing risk analytics that combine crime profiling with broad demographic and economic indicators across regions.",
+  "lang": "en",
+}
+`;
+
+exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-07-migration-border-de — pipeline output matches snapshot 1`] = `
+{
+  "annexIII": {
+    "domains": [
+      {
+        "annex_iii_number": 7,
+        "key": "migration_border",
+        "matched_phrases": [
+          "visumantrag",
+          "asylantrag",
+          "grenzkontrolle",
+          "migrationsrisiko",
+        ],
+        "source": "EUR-Lex Regulation (EU) 2024/1689 — Annex III paragraph 7",
+        "sub_letters": [],
+      },
+    ],
+    "high_risk": true,
+    "reasoning_count": 1,
+    "suppressed_by_article_5": false,
+  },
+  "article5": {
+    "hits": [],
+    "prohibited": false,
+    "reasoning_count": 1,
+  },
+  "id": "fixture-day3-07-migration-border-de",
+  "input": "Wir entwickeln ein KI-System zur Prüfung von Asylantrag und Visumantrag Anträgen, einschließlich Migrationsrisiko Bewertung an der Grenzkontrolle.",
+  "lang": "de",
+}
+`;
+
+exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-08-justice-democracy-en — pipeline output matches snapshot 1`] = `
+{
+  "annexIII": {
+    "domains": [
+      {
+        "annex_iii_number": 8,
+        "key": "justice_democracy",
+        "matched_phrases": [
+          "judicial decision",
+          "judicial assistance",
+          "legal interpretation",
+        ],
+        "source": "EUR-Lex Regulation (EU) 2024/1689 — Annex III paragraph 8",
+        "sub_letters": [],
+      },
+    ],
+    "high_risk": true,
+    "reasoning_count": 1,
+    "suppressed_by_article_5": false,
+  },
+  "article5": {
+    "hits": [],
+    "prohibited": false,
+    "reasoning_count": 1,
+  },
+  "id": "fixture-day3-08-justice-democracy-en",
+  "input": "An AI tool offering judicial assistance for legal interpretation tasks: it helps a judicial decision support workflow by retrieving and applying relevant case law.",
+  "lang": "en",
+}
+`;

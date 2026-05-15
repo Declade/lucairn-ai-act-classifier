@@ -1,0 +1,13 @@
+{
+  "id": "fixture-day3-07-migration-border-de",
+  "lang": "de",
+  "input": "Wir entwickeln ein KI-System zur Prüfung von Asylantrag und Visumantrag Anträgen, einschließlich Migrationsrisiko Bewertung an der Grenzkontrolle.",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": true,
+    "annex_iii_domains": [7],
+    "suppressed_by_article_5": false,
+    "notes": "Anhang III.7 — Migration, Asyl und Grenzkontrolle. Lexikon-Treffer auf 'asylantrag', 'visumantrag', 'migrationsrisiko', 'grenzkontrolle'. EUR-Lex Anhang III Absatz 7."
+  }
+}

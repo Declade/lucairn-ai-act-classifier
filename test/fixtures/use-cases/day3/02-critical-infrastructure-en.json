@@ -1,0 +1,13 @@
+{
+  "id": "fixture-day3-02-critical-infrastructure-en",
+  "lang": "en",
+  "input": "AI safety component for managing the power grid load-balancing in critical infrastructure operations.",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": true,
+    "annex_iii_domains": [2],
+    "suppressed_by_article_5": false,
+    "notes": "Annex III.2 — safety components in the management of critical infrastructure (electricity supply). Lexicon hits on 'safety component', 'critical infrastructure', 'power grid'. EUR-Lex Annex III paragraph 2."
+  }
+}

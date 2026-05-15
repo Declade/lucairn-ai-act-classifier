@@ -1,0 +1,13 @@
+{
+  "id": "fixture-day3-08-justice-democracy-en",
+  "lang": "en",
+  "input": "An AI tool offering judicial assistance for legal interpretation tasks: it helps a judicial decision support workflow by retrieving and applying relevant case law.",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": true,
+    "annex_iii_domains": [8],
+    "suppressed_by_article_5": false,
+    "notes": "Annex III.8(a) — administration of justice (researching and interpreting facts and law, applying the law to a concrete set of facts). Lexicon hits on 'judicial assistance', 'legal interpretation', 'judicial decision'. EUR-Lex Annex III paragraph 8(a)."
+  }
+}
