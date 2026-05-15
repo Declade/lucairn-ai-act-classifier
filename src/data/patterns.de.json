@@ -40,7 +40,9 @@
         { "phrase": "automatisierte benotung" },
         { "phrase": "lernbewertung" },
         { "phrase": "prüfungsüberwachung" },
-        { "phrase": "betrugserkennung prüfung" }
+        { "phrase": "betrugserkennung prüfung" },
+        { "phrase": "bildungsniveau bestimmen" },
+        { "phrase": "bildungszuweisung" }
       ]
     },
     "4_employment": {
@@ -91,7 +93,8 @@
         { "phrase": "grenzkontrolle" },
         { "phrase": "aufenthaltstitel" },
         { "phrase": "migrationsrisiko" },
-        { "phrase": "grenzüberwachung" }
+        { "phrase": "grenzüberwachung" },
+        { "phrase": "sicherheitsrisiko grenze" }
       ]
     },
     "8_justice_democracy": {

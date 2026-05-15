@@ -270,3 +270,126 @@ describe('classifyAnnexIII() — output shape and metadata', () => {
     }
   });
 });
+
+describe('classifyAnnexIII() — Annex III.2 sub-letter narrowing (single sub-letter)', () => {
+  it('Annex III.2 water supply → narrows to ["a"]', () => {
+    const result = classify(
+      'Unser KI-System überwacht die Wasserversorgung einer Großstadt als Sicherheitskomponente.',
+    );
+    const dom = result.annexIII.domains.find((d) => d.annex_iii_number === 2);
+    expect(dom).toBeDefined();
+    expect(dom!.sub_letters).toEqual(['a']);
+  });
+
+  it('Annex III.2 electricity grid → narrows to ["a"]', () => {
+    const result = classify(
+      'Wir betreiben eine KI-gestützte Sicherheitskomponente für die Stromnetz-Steuerung.',
+    );
+    const dom = result.annexIII.domains.find((d) => d.annex_iii_number === 2);
+    expect(dom).toBeDefined();
+    expect(dom!.sub_letters).toEqual(['a']);
+  });
+});
+
+describe('classifyAnnexIII() — Annex III.3 sub-letter narrowing', () => {
+  it('Annex III.3 admission → narrows to ["a"]', () => {
+    const result = classify(
+      'Our AI tool supports student admission decisions at a private university.',
+    );
+    const dom = result.annexIII.domains.find((d) => d.annex_iii_number === 3);
+    expect(dom).toBeDefined();
+    expect(dom!.sub_letters).toEqual(['a']);
+  });
+
+  it('Annex III.3 grading → narrows to ["b"]', () => {
+    const result = classify(
+      'An AI tool performs automated grading of essay submissions for end-of-semester exam scoring.',
+    );
+    const dom = result.annexIII.domains.find((d) => d.annex_iii_number === 3);
+    expect(dom).toBeDefined();
+    expect(dom!.sub_letters).toEqual(['b']);
+  });
+
+  it('Annex III.3 multi-hit (admission + exam monitoring) → narrows to ["a", "d"]', () => {
+    const result = classify(
+      'Our AI handles student admission decisions and runs proctoring during the entrance exam.',
+    );
+    const dom = result.annexIII.domains.find((d) => d.annex_iii_number === 3);
+    expect(dom).toBeDefined();
+    expect(dom!.sub_letters).toEqual(['a', 'd']);
+  });
+
+  it('Annex III.3 (DE) bildungsniveau bestimmen → narrows to ["c"]', () => {
+    const result = classify(
+      'Unser KI-System hilft Schulen, das Bildungsniveau bestimmen zu können.',
+      'de',
+    );
+    const dom = result.annexIII.domains.find((d) => d.annex_iii_number === 3);
+    expect(dom).toBeDefined();
+    expect(dom!.sub_letters).toEqual(['c']);
+  });
+});
+
+describe('classifyAnnexIII() — Annex III.7 sub-letter narrowing', () => {
+  it('Annex III.7 asylum application → narrows to ["c"]', () => {
+    const result = classify(
+      'We deploy an AI system that assists asylum officers in evaluating each asylum application.',
+    );
+    const dom = result.annexIII.domains.find((d) => d.annex_iii_number === 7);
+    expect(dom).toBeDefined();
+    expect(dom!.sub_letters).toContain('c');
+  });
+
+  it('Annex III.7 visa application (DE) → narrows to ["c"]', () => {
+    const result = classify(
+      'Eine Bundesbehörde nutzt unser KI-System zur Vorprüfung jedes Visumantrag und zur Risikoeinstufung beim Aufenthaltstitel.',
+      'de',
+    );
+    const dom = result.annexIII.domains.find((d) => d.annex_iii_number === 7);
+    expect(dom).toBeDefined();
+    expect(dom!.sub_letters).toContain('c');
+  });
+
+  it('Annex III.7 polygraph WITH border context → narrows to ["a"] on domain 7', () => {
+    const result = classify(
+      'Border control authority uses a polygraph-based AI tool at the asylum checkpoint.',
+    );
+    const dom = result.annexIII.domains.find((d) => d.annex_iii_number === 7);
+    expect(dom).toBeDefined();
+    expect(dom!.sub_letters).toContain('a');
+  });
+
+  it('Annex III.7 polygraph WITHOUT border context → does NOT add "a" to ¶7, stays in ¶6 (b)', () => {
+    // No border/migration/asylum substring → polygraph stays at ¶6(b), no ¶7
+    // domain fires.
+    const result = classify(
+      'A police interrogation polygraph tool used in domestic crime investigation.',
+    );
+    const dom7 = result.annexIII.domains.find((d) => d.annex_iii_number === 7);
+    expect(dom7).toBeUndefined();
+    const dom6 = result.annexIII.domains.find((d) => d.annex_iii_number === 6);
+    expect(dom6).toBeDefined();
+    expect(dom6!.sub_letters).toContain('b');
+  });
+});
+
+describe('classifyAnnexIII() — Annex III.8 sub-letter narrowing', () => {
+  it('Annex III.8 election influence → narrows to ["b"]', () => {
+    const result = classify(
+      'Our AI platform performs voter targeting and is marketed for election influencing campaigns.',
+    );
+    const dom = result.annexIII.domains.find((d) => d.annex_iii_number === 8);
+    expect(dom).toBeDefined();
+    expect(dom!.sub_letters).toEqual(['b']);
+  });
+
+  it('Annex III.8 judicial research (DE) → narrows to ["a"]', () => {
+    const result = classify(
+      'Wir bauen ein KI-System, das Richter bei der richterlichen Unterstützung in der Rechtsauslegung unterstützt.',
+      'de',
+    );
+    const dom = result.annexIII.domains.find((d) => d.annex_iii_number === 8);
+    expect(dom).toBeDefined();
+    expect(dom!.sub_letters).toEqual(['a']);
+  });
+});

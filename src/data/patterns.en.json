@@ -40,7 +40,8 @@
         { "phrase": "automated grading" },
         { "phrase": "learning assessment" },
         { "phrase": "proctoring" },
-        { "phrase": "cheating detection" }
+        { "phrase": "cheating detection" },
+        { "phrase": "education level determination" }
       ]
     },
     "4_employment": {
@@ -90,7 +91,9 @@
         { "phrase": "border control" },
         { "phrase": "residence permit" },
         { "phrase": "migration risk" },
-        { "phrase": "border surveillance" }
+        { "phrase": "border surveillance" },
+        { "phrase": "irregular migration risk" },
+        { "phrase": "residence permit application" }
       ]
     },
     "8_justice_democracy": {
@@ -101,7 +104,10 @@
         { "phrase": "judicial assistance" },
         { "phrase": "legal interpretation" },
         { "phrase": "election influencing" },
-        { "phrase": "voter targeting" }
+        { "phrase": "voter targeting" },
+        { "phrase": "judicial research" },
+        { "phrase": "fact research" },
+        { "phrase": "election influence" }
       ]
     }
   },
