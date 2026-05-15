@@ -214,3 +214,35 @@ describe('classifyArticle5() — output shape and metadata', () => {
     expect(cHit?.matched_phrases).toContain('social scoring');
   });
 });
+
+describe('classifyArticle5() — Day-8 G-4(a) paraphrase variants for letter (d)', () => {
+  it('EN — "solely based on profiling" triggers (d)', () => {
+    const result = classify(
+      'Our criminal risk profiling product produces a score solely based on profiling of the suspect.',
+    );
+    expect(result.hits.map((h) => h.letter)).toContain('d');
+  });
+
+  it('EN — "profiling only" triggers (d)', () => {
+    const result = classify(
+      'A predictive policing profiling tool whose risk score is based on profiling only.',
+    );
+    expect(result.hits.map((h) => h.letter)).toContain('d');
+  });
+
+  it('DE — "nur auf Profiling" triggers (d)', () => {
+    const result = classify(
+      'Eine Polizeibehörde nutzt vorhersagende Polizeiarbeit Profiling, die nur auf Profiling der natürlichen Person basiert.',
+      'de',
+    );
+    expect(result.hits.map((h) => h.letter)).toContain('d');
+  });
+
+  it('DE — "allein auf Grundlage von Profiling" triggers (d)', () => {
+    const result = classify(
+      'Ein Werkzeug für Kriminalrisiko-Profiling, das allein auf Grundlage von Profiling der natürlichen Person eine Risikobewertung erzeugt.',
+      'de',
+    );
+    expect(result.hits.map((h) => h.letter)).toContain('d');
+  });
+});
