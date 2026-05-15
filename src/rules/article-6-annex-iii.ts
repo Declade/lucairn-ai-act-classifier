@@ -481,7 +481,15 @@ function narrowSubLetters(
     }
     if (
       matchedLower.some((p) =>
-        ['education level determination', 'bildungsniveau bestimmen', 'bildungszuweisung'].includes(p),
+        [
+          'education level determination',
+          'bildungsniveau bestimmen',
+          'bildungszuweisung',
+          // Day-9 carry-forward (regulator-validator WARN A): EUR-Lex DE verbatim
+          // paraphrases — "Bewertung des angemessenen Bildungsniveaus".
+          'bewertung des bildungsniveaus',
+          'bewertung angemessenes bildungsniveau',
+        ].includes(p),
       )
     ) {
       hits.add('c');
@@ -502,10 +510,12 @@ function narrowSubLetters(
     // applications (including evidence-reliability); ¶7(d) detection/identification
     // at borders.
     //
-    // Polygraph disambiguation: lexicon entry for "polygraph"/"lügendetektor"
-    // lives in 6_law_enforcement (¶6(b)). For domain 7 we narrow to (a) when
-    // the input ALSO contains a migration/border substring; otherwise we
-    // leave it to ¶6 narrowing.
+    // Polygraph disambiguation: lexicon entries for "polygraph" / "polygraphs"
+    // / "lügendetektor" / "lügendetektoren" / "lie detector" live in
+    // 6_law_enforcement (¶6(b)). For domain 7 we narrow to (a) when the input
+    // ALSO contains a migration/border substring; otherwise we leave it to ¶6
+    // narrowing. EN+DE plural forms added in Day-8 G-3 are matched through the
+    // same substring path below.
     const hits = new Set<string>();
     const isBorderContext = inputContainsAny(rawInput, [
       'border control',
@@ -528,7 +538,16 @@ function narrowSubLetters(
     }
     if (
       matchedLower.some((p) =>
-        ['migration risk', 'irregular migration risk', 'migrationsrisiko', 'sicherheitsrisiko grenze'].includes(p),
+        [
+          'migration risk',
+          'irregular migration risk',
+          'migrationsrisiko',
+          'sicherheitsrisiko grenze',
+          // Day-9 carry-forward (regulator-validator WARN B): EUR-Lex DE verbatim
+          // paraphrases — "Risiko der irregulären Einwanderung".
+          'risiko der irregulären einwanderung',
+          'irreguläre einwanderung',
+        ].includes(p),
       )
     ) {
       hits.add('b');
