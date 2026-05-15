@@ -214,6 +214,18 @@
         { "phrase": "deep fake" },
         { "phrase": "gesichtstausch" }
       ]
+    },
+    "5_public_interest_text": {
+      "description": "Art. 50 Abs. 4 zweiter Unterabsatz — Betreiber von KI-Systemen, die Texte zur Information der Öffentlichkeit über Angelegenheiten von öffentlichem Interesse erzeugen, müssen die künstliche Erzeugung/Manipulation offenlegen.",
+      "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "ki-generierte nachrichten" },
+        { "phrase": "automatisierter journalismus" },
+        { "phrase": "nachrichtengenerierung" },
+        { "phrase": "redaktions-ki" },
+        { "phrase": "berichterstattung öffentliches interesse" },
+        { "phrase": "ki-generierter artikel" }
+      ]
     }
   },
   "scope_qualifiers": {
