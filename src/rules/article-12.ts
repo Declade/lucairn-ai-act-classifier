@@ -75,10 +75,13 @@ const EUR_LEX_SOURCE =
 const SUMMARY_EN =
   'High-risk AI systems shall technically allow for the automatic recording of events (logs) over the lifetime of the system. (Art 12(1))';
 
-// EUR-Lex DE — Tier-3 mirror (artificialintelligenceact.eu/de/article/12/).
-// Tier-1 EUR-Lex HTML shell returns empty on programmatic fetch as of
-// 2026-05-15; Tier-2 EU AI Office Service Desk DE returned an abridged
-// variant; Tier-3 mirror is cross-validated against EUR-Lex PDF.
+// EUR-Lex DE — verbatim from Tier-1 EUR-Lex DE PDF page 59 (also cross-confirmed
+// against Tier-2 EU AI Office Service Desk DE). Tier-1 EUR-Lex HTML shell
+// returns empty on programmatic fetch, but the PDF fetch succeeds and matches
+// this wording byte-for-byte (including the German low-quotation-mark form
+// „Protokollierung"). The Tier-3 mirror artificialintelligenceact.eu/de/article/12/
+// uses different wording ("AI-Systeme mit hohem Risiko" / "Lebensdauer") and is
+// NOT the source of this text.
 const SUMMARY_DE =
   'Die Technik der Hochrisiko-KI-Systeme muss die automatische Aufzeichnung von Ereignissen (im Folgenden „Protokollierung“) während des Lebenszyklus des Systems ermöglichen. (Art. 12 Abs. 1)';
 
