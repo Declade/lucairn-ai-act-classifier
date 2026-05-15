@@ -25,7 +25,7 @@
 
 import { extractFeatures } from './extract/keyword.js';
 import { extractFeaturesLLM } from './extract/llm.js';
-import type { LLMProvider } from './extract/llm.js';
+import type { LLMProvider, CacheOptions } from './extract/llm.js';
 import type { ExtractedFeatures } from './extract/keyword.js';
 import { classifyArticle5 } from './rules/article-5.js';
 import { classifyAnnexIII } from './rules/article-6-annex-iii.js';
@@ -62,6 +62,13 @@ export interface ClassifyOptions {
    * downstream rules engine is unchanged — the LLM only extracts features.
    */
   llm?: LLMProvider;
+  /**
+   * Cache options for LLM-mode (Day 10). When unset, the cache is enabled
+   * with defaults (`~/.cache/lucairn-ai-act-classifier/llm/`). Set
+   * `{ disabled: true }` to bypass cache READ + WRITE on this call.
+   * Ignored in deterministic mode (which is already fast + reproducible).
+   */
+  cache?: CacheOptions;
   /** When false, the three-category overlay is omitted (returns null). Default: true. */
   threeCategory?: boolean;
   /** Display-pass-through; mismatched value vs current rules version throws Error (CLI maps to exit 2). Default: undefined. */
@@ -181,6 +188,7 @@ export async function classify(text: string, opts: ClassifyOptions = {}): Promis
       ? await extractFeaturesLLM(text, {
           provider: opts.llm,
           ...(opts.lang !== undefined ? { lang: opts.lang } : {}),
+          ...(opts.cache !== undefined ? { cache: opts.cache } : {}),
         })
       : extractFeatures(text, opts.lang !== undefined ? { lang: opts.lang } : {});
 

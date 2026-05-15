@@ -116,6 +116,7 @@ interface RawOptions {
   rulesVersion?: string;
   annex?: string;
   llm?: string;
+  cache?: boolean;
 }
 
 function resolveFormat(rawOpts: RawOptions): 'cli' | 'json' | 'markdown' {
@@ -211,6 +212,10 @@ async function main(): Promise<void> {
       '--llm <provider>',
       "Opt-in LLM feature extraction. Supported: anthropic, openai, groq. Requires the upstream API key in env (ANTHROPIC_API_KEY / OPENAI_API_KEY / GROQ_API_KEY).",
     )
+    .option(
+      '--no-cache',
+      'Disable the LLM-mode filesystem cache (forces a fresh API call on every run; results are NOT written to ~/.cache/lucairn-ai-act-classifier).',
+    )
     .addHelpText(
       'after',
       `
@@ -222,6 +227,7 @@ Examples:
   ANTHROPIC_API_KEY="<your-key>" ai-act-classify --llm anthropic "..."
   OPENAI_API_KEY="<your-key>" ai-act-classify --llm openai "..."
   GROQ_API_KEY="<your-key>" ai-act-classify --llm groq "..."
+  ai-act-classify --llm anthropic --no-cache "..."  # force fresh API call
 
 Exit codes:
   0  classification ok
@@ -319,6 +325,8 @@ Exit codes:
   if (rawOpts.threeCategory === false) classifyOpts.threeCategory = false;
   if (rawOpts.rulesVersion !== undefined) classifyOpts.rulesVersion = rawOpts.rulesVersion;
   if (llmProvider !== undefined) classifyOpts.llm = llmProvider;
+  // commander's --no-cache sets `cache: false`; passthrough as `{disabled: true}`.
+  if (rawOpts.cache === false) classifyOpts.cache = { disabled: true };
 
   let result;
   try {

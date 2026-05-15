@@ -1,8 +1,9 @@
 // LLM-based feature extractor scaffold (Day 9 + Day 10).
 //
 // Lights up the `--llm <provider>` CLI flag for `anthropic` (Day 9) + `openai`
-// + `groq` (Day 10). Day 10 also adds an opt-out filesystem cache layer
-// (lands in a follow-up commit).
+// + `groq` (Day 10). Day 10 also wires the opt-out filesystem cache layer
+// (`~/.cache/lucairn-ai-act-classifier/llm/`) so repeated calls on the same
+// input + provider + model + lexiconVersion + lang are free.
 //
 // Architectural lock — `the LLM only extracts features`:
 //   The LLM produces an ExtractedFeatures-shaped object (same shape as
@@ -27,8 +28,22 @@
 //   - This is the architectural guard against LLM hallucinations bypassing the
 //     citation moat (the rules engine's `narrowSubLetters()` reads
 //     `matched_phrases` and matches against EXACT lexicon strings).
+//
+// Cache layer (Day 10):
+//   - When `opts.cache?.disabled !== true` the cache key is computed
+//     (provider + model + lexiconVersion + lang + inputNormalized) and a
+//     filesystem lookup at `~/.cache/lucairn-ai-act-classifier/llm/` is
+//     attempted BEFORE the provider call. Hit → return cached features
+//     (no API spend, no network).
+//   - On a cache miss, the provider is called, the result is written to the
+//     cache, then returned.
+//   - Failed provider calls are NOT cached. Successful calls always are
+//     (unless `opts.cache.disabled === true`).
+//   - The cache directory is filesystem-state; CI runs are ephemeral so the
+//     cache layer does NOT participate in CI gating.
 
 import type { ExtractedFeatures } from './keyword.js';
+import { cacheKey, cacheRead, cacheWrite } from './cache.js';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -61,6 +76,21 @@ export interface LLMExtractOptions {
    * never reads `OPENAI_API_KEY` from env on the Groq reuse path.
    */
   apiKey?: string;
+  /**
+   * Cache configuration. When unset, the cache is enabled with defaults.
+   * Set `{ disabled: true }` to bypass both the cache READ and WRITE.
+   */
+  cache?: CacheOptions;
+}
+
+export interface CacheOptions {
+  /** Disable cache READ + WRITE. Default: false (cache enabled). */
+  disabled?: boolean;
+  /**
+   * Override `~/.cache/lucairn-ai-act-classifier`. Used by tests to point at
+   * a temp dir; respects `XDG_CACHE_HOME` otherwise.
+   */
+  cacheDir?: string;
 }
 
 /**
@@ -143,6 +173,88 @@ export async function extractFeaturesLLM(
       `LLM_UNKNOWN_PROVIDER: unknown LLM provider "${opts.provider}". Supported: anthropic, openai, groq.`,
     );
   }
+
+  // ----- Cache lookup (Day 10) ------------------------------------------------
+  // The cache key is computed from the provider + model + lexicon version +
+  // language + normalized input. We compute it BEFORE dispatching to the
+  // provider so that a hit short-circuits the network call entirely.
+  //
+  // Model defaults per provider live inside the provider modules; for cache-
+  // key stability across cache-miss → cache-hit pairs we must resolve the
+  // default here too. The mapping is centralised in `getDefaultModel()`.
+  const cacheDisabled = opts.cache?.disabled === true;
+  // The lexicon version comes from the loaded lexicon; the provider modules
+  // load their own copy via `_shared.ts`. To avoid importing the lexicon
+  // twice we read the active version through the same shared module here.
+  const { LEXICONS_CACHE } = await import('./providers/_shared.js');
+  const { detectLang } = await import('./lang.js');
+  const detection = detectLang(text);
+  const lang: 'en' | 'de' = opts.lang ?? detection.lang;
+  const lexiconVersion = LEXICONS_CACHE[lang].version;
+  const model = opts.model ?? getDefaultModel(opts.provider as LLMProvider);
+  const inputNormalized = normalizeInputForCacheKey(text);
+  const key = cacheKey({
+    provider: opts.provider as LLMProvider,
+    model,
+    lexiconVersion,
+    lang,
+    inputNormalized,
+  });
+
+  if (!cacheDisabled) {
+    const cacheReadOpts: Parameters<typeof cacheRead>[1] =
+      opts.cache?.cacheDir !== undefined ? { cacheDir: opts.cache.cacheDir } : {};
+    const cached = await cacheRead(key, cacheReadOpts);
+    if (cached !== null) return cached;
+  }
+
   const extractFn = await importer();
-  return extractFn(text, opts);
+  const result = await extractFn(text, opts);
+
+  if (!cacheDisabled) {
+    // Fire-and-forget; do not let cache-write failures bring down classification.
+    const cacheWriteOpts: Parameters<typeof cacheWrite>[2] =
+      opts.cache?.cacheDir !== undefined ? { cacheDir: opts.cache.cacheDir } : {};
+    try {
+      await cacheWrite(key, result, cacheWriteOpts);
+    } catch {
+      // Swallow — cache write is best-effort. The next run will see a miss
+      // and retry. Surface only via AI_ACT_CLASSIFY_DEBUG if needed.
+    }
+  }
+
+  return result;
+}
+
+/**
+ * Default model per provider — must mirror the per-provider `DEFAULT_MODEL`
+ * constants in `providers/<name>.ts`. Centralised here so the cache key is
+ * stable across cache-miss + cache-hit cycles when the caller does NOT
+ * supply `opts.model`.
+ *
+ * @internal — exported for cache spec but not for general consumption.
+ */
+export function getDefaultModel(provider: LLMProvider): string {
+  switch (provider) {
+    case 'anthropic':
+      return 'claude-haiku-4-5-20251001';
+    case 'openai':
+      return 'gpt-4o-mini';
+    case 'groq':
+      return 'llama-3.3-70b-versatile';
+    default:
+      return 'unknown';
+  }
+}
+
+/**
+ * Normalize input for cache-key stability. Trims leading/trailing whitespace,
+ * collapses interior whitespace runs to a single space. Does NOT lowercase —
+ * the lexicon contains case-sensitive German nouns (e.g. `Profiling`) and
+ * lowercasing would break the case-insensitivity contract elsewhere.
+ *
+ * @internal — exported for cache spec.
+ */
+export function normalizeInputForCacheKey(text: string): string {
+  return text.trim().replace(/\s+/g, ' ');
 }

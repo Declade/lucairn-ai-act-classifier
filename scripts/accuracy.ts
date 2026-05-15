@@ -36,7 +36,7 @@ import { fileURLToPath } from 'node:url';
 
 import { classify } from '../src/classify.js';
 import type { ClassifyResult } from '../src/classify.js';
-import type { LLMProvider } from '../src/extract/llm.js';
+import type { LLMProvider, CacheOptions } from '../src/extract/llm.js';
 import { projectArticle50Paragraphs } from '../src/util/article-50-paragraphs.js';
 import type { Article50Paragraph } from '../src/util/article-50-paragraphs.js';
 import { RULES_VERSION, RULES_HASH, RULES_HASH_FULL_HEX } from '../src/util/rules-hash.js';
@@ -399,6 +399,12 @@ export interface RunAccuracyOptions {
    * RPM budget; safe for paid tier too). Ignored in deterministic mode.
    */
   llmConcurrency?: number;
+  /**
+   * Cache options for LLM-mode (Day 10). When unset, the cache is enabled
+   * with defaults. Set `{ disabled: true }` to bypass the cache. Tests pass
+   * `{ disabled: true }` so mocked-SDK call counts stay accurate.
+   */
+  cache?: CacheOptions;
 }
 
 /**
@@ -441,7 +447,9 @@ export async function runAccuracy(opts: RunAccuracyOptions = {}): Promise<Accura
   } else {
     // LLM mode: bounded concurrency, preserves input order.
     fixtureChecks = await runWithConcurrency(fixtures, concurrency, async (f) => {
-      const result = await classify(f.input, { lang: f.lang, llm });
+      const classifyOpts: Parameters<typeof classify>[1] = { lang: f.lang, llm };
+      if (opts.cache !== undefined) classifyOpts.cache = opts.cache;
+      const result = await classify(f.input, classifyOpts);
       return checkFixture(f, result);
     });
   }

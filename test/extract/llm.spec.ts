@@ -125,7 +125,7 @@ describe('extractFeaturesLLM — anthropic dispatch routing', () => {
   it('routes to the anthropic provider and returns ExtractedFeatures shape', async () => {
     const result = await extractFeaturesLLM(
       'We use AI for CV screening and applicant tracking for the hiring decision.',
-      { provider: 'anthropic' },
+      { provider: 'anthropic', cache: { disabled: true } },
     );
     expect(result).toBeDefined();
     expect(result.input).toContain('CV screening');
@@ -138,7 +138,7 @@ describe('extractFeaturesLLM — anthropic dispatch routing', () => {
   it('propagates opts.lang override', async () => {
     const result = await extractFeaturesLLM(
       'Wir setzen ein KI-System zur Bewerberauswahl ein.',
-      { provider: 'anthropic', lang: 'de' },
+      { provider: 'anthropic', lang: 'de', cache: { disabled: true } },
     );
     expect(result.lang).toBe('de');
   });
@@ -151,7 +151,7 @@ describe('extractFeaturesLLM — anthropic dispatch routing', () => {
     // (separate spec in providers/anthropic.spec.ts verifies actual abort behavior).
     const result = await extractFeaturesLLM(
       'We use AI for CV screening.',
-      { provider: 'anthropic', signal: controller.signal },
+      { provider: 'anthropic', signal: controller.signal, cache: { disabled: true } },
     );
     expect(result).toBeDefined();
   });
