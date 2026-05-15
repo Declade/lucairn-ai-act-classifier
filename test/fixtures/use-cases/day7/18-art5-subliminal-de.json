@@ -4,7 +4,9 @@
   "input": "Unser KI-System nutzt eine unterschwellige Technik in der Werbeplatzierung, um Kaufentscheidungen ohne Wissen der Nutzer zu beeinflussen.",
   "expected": {
     "article_5_prohibited": true,
-    "article_5_letters": ["a"],
+    "article_5_letters": [
+      "a"
+    ],
     "annex_iii_high_risk": false,
     "annex_iii_domains": [],
     "suppressed_by_article_5": true,
@@ -15,8 +17,8 @@
     "article_15_applicable": false,
     "three_category_applicable": [],
     "annex_iv_required": false,
-    "bucket": "article_5",
-    "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
     "notes": "Art. 5 Abs. 1 Buchst. a — unterschwellige Beeinflussung außerhalb des Bewusstseins einer Person, manipulative oder täuschende Techniken mit dem Ziel oder Effekt einer wesentlichen Verhaltensänderung. Lexikon-Treffer: 'unterschwellige technik'. Cite: EUR-Lex Regulation (EU) 2024/1689, Art. 5 Abs. 1 Buchst. a."
-  }
+  },
+  "bucket": "article_5",
+  "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689"
 }

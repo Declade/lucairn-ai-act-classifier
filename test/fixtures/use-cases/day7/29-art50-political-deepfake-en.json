@@ -13,11 +13,13 @@
     "article_13_applicable": false,
     "article_14_applicable": false,
     "article_15_applicable": false,
-    "article_50_paragraphs": ["50(4)_sub1"],
+    "article_50_paragraphs": [
+      "50(4)_sub1"
+    ],
     "three_category_applicable": [],
     "annex_iv_required": false,
-    "bucket": "article_50",
-    "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
     "notes": "Article 50(4) first sub-paragraph — deployers of AI systems that generate or manipulate image, audio or video content constituting a deep fake must disclose artificial generation. Lexicon hits: 'deepfake', 'deep fake', 'face swap'. The political-commentary framing does NOT escape the disclosure obligation (the carve-out is narrowed to evidently artistic/satirical works, NOT all political commentary). Cite: EUR-Lex Regulation (EU) 2024/1689, Article 50(4) first sub-paragraph."
-  }
+  },
+  "bucket": "article_50",
+  "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689"
 }

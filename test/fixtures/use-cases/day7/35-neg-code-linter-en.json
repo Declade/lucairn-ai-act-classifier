@@ -15,8 +15,8 @@
     "article_15_applicable": false,
     "three_category_applicable": [],
     "annex_iv_required": false,
-    "bucket": "negative",
-    "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
     "notes": "Developer-tooling AI that lints source code does NOT touch any Annex III paragraph (no biometrics, no critical-infrastructure safety-component role even when used inside a CI pipeline for an infrastructure operator — the linter advises a human developer; it does not control the infrastructure). No Article 5 prohibition, no Article 50 transparency obligation. Mundane B2B developer-tooling. Cite: EUR-Lex Regulation (EU) 2024/1689, Article 6(3)."
-  }
+  },
+  "bucket": "negative",
+  "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689"
 }

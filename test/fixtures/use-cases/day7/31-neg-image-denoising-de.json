@@ -15,8 +15,8 @@
     "article_15_applicable": false,
     "three_category_applicable": [],
     "annex_iv_required": false,
-    "bucket": "negative",
-    "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
     "notes": "Rauschunterdrückung in Fotos ist ein triviales Bildverarbeitungs-Verfahren ohne Bezug zu Anhang III (keine biometrische Fernidentifizierung, kein Profiling, keine Hochrisiko-Anwendung). Art. 5 greift nicht. Art. 50 Abs. 2 (synthetische Inhalte) gilt nur für Systeme, die Inhalte ERZEUGEN oder MANIPULIEREN mit wesentlicher Veränderung — die assistive Standardbearbeitungs-Funktion ist in Art. 50 Abs. 2 letzter Satz ausdrücklich ausgenommen. Mundanes System; Art. 6 Abs. 3 Carve-out gilt automatisch (kein Anhang III-Treffer). Cite: EUR-Lex Regulation (EU) 2024/1689, Art. 50 Abs. 2 (Carve-out für assistive Standardbearbeitung)."
-  }
+  },
+  "bucket": "negative",
+  "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689"
 }

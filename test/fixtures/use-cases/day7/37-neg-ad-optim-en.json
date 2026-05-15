@@ -15,8 +15,8 @@
     "article_15_applicable": false,
     "three_category_applicable": [],
     "annex_iv_required": false,
-    "bucket": "negative",
-    "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
     "notes": "Ad-creative A/B testing on click-through-rate signals does NOT meet Article 5(1)(a) subliminal threshold — the system selects between pre-vetted creative variants on aggregate behavioural signals, not subliminal manipulation outside the awareness of a natural person aiming at material distortion of their behaviour. No Annex III domain triggers (advertising optimization is not employment / essential-services / law-enforcement). No Article 50 transparency obligation (no chatbot / synthetic content generation / deepfake). Mundane marketing-ops AI. Cite: EUR-Lex Regulation (EU) 2024/1689, Article 5(1)(a) chapeau + Article 6(3)."
-  }
+  },
+  "bucket": "negative",
+  "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689"
 }

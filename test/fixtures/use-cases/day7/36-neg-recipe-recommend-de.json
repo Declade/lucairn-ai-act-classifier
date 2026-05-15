@@ -15,8 +15,8 @@
     "article_15_applicable": false,
     "three_category_applicable": [],
     "annex_iv_required": false,
-    "bucket": "negative",
-    "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
     "notes": "Rezeptvorschlag-App ist eine mundane Konsumenten-KI ohne Anhang-III-Bezug. Keine biometrische Identifizierung, keine Hochrisiko-Entscheidung im Sinne von Anhang III. Art. 5 greift nicht. Art. 50 greift nicht (kein direkter Chatbot-Charakter erkennbar — die App präsentiert ein Empfehlungsmenü, nicht eine konversationelle Schnittstelle). Cite: EUR-Lex Regulation (EU) 2024/1689, Art. 6 Abs. 3."
-  }
+  },
+  "bucket": "negative",
+  "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689"
 }

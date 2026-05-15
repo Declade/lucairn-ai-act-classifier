@@ -1,12 +1,16 @@
 {
   "id": "fixture-day7-23-art5-emotion-workplace-de",
   "lang": "de",
-  "input": "Wir bieten Arbeitgebern ein KI-System zur Emotionserkennung am Arbeitsplatz an, das die Stimmungserkennung der Mitarbeiter im Kundenservice-Call-Center auswertet.",
+  "input": "Wir bieten Arbeitgebern ein KI-System für emotionserkennung arbeitsplatz an, das die stimmungserkennung mitarbeiter im Kundenservice-Call-Center auswertet.",
   "expected": {
     "article_5_prohibited": true,
-    "article_5_letters": ["f"],
+    "article_5_letters": [
+      "f"
+    ],
     "annex_iii_high_risk": false,
-    "annex_iii_domains": [1, 4],
+    "annex_iii_domains": [
+      1
+    ],
     "suppressed_by_article_5": true,
     "article_10_applicable": false,
     "article_12_applicable": false,
@@ -15,8 +19,8 @@
     "article_15_applicable": false,
     "three_category_applicable": [],
     "annex_iv_required": false,
-    "bucket": "article_5",
-    "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
-    "notes": "Art. 5 Abs. 1 Buchst. f — Ableitung von Emotionen einer natürlichen Person am Arbeitsplatz oder in Bildungseinrichtungen (außer aus medizinischen oder Sicherheitsgründen). Lexikon-Treffer: 'emotionserkennung arbeitsplatz', 'stimmungserkennung mitarbeiter'. Wegen der Erwähnung von 'arbeitsplatz' und 'mitarbeiter' werden auch Anhang III.1 (Emotionserkennung) und Anhang III.4 (Mitarbeiterüberwachung) lexikalisch berührt, aber Art. 5 Abs. 1 Buchst. f setzt sich durch — high_risk = false. Cite: EUR-Lex Regulation (EU) 2024/1689, Art. 5 Abs. 1 Buchst. f."
-  }
+    "notes": "Art. 5 Abs. 1 Buchst. f — Ableitung von Emotionen einer natürlichen Person am Arbeitsplatz oder in Bildungseinrichtungen (außer aus medizinischen oder Sicherheitsgründen). Lexikon-Treffer: 'emotionserkennung arbeitsplatz', 'stimmungserkennung mitarbeiter'. Das Lexikon-Phrasen-Set löst Anhang III Nr. 1 (Emotionserkennung) lexikalisch aus; das Anhang-III-Domain wird trotz Art-5-Suppression im Result erhalten (transparenter Hinweis). Anhang III Nr. 4 würde 'mitarbeiterüberwachung' als ganze Phrase erfordern, was im Input nicht vorkommt. Cite: EUR-Lex Regulation (EU) 2024/1689, Art. 5 Abs. 1 Buchst. f."
+  },
+  "bucket": "article_5",
+  "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689"
 }

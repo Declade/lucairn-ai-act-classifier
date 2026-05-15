@@ -6,18 +6,28 @@
     "article_5_prohibited": false,
     "article_5_letters": [],
     "annex_iii_high_risk": true,
-    "annex_iii_domains": [1],
-    "annex_iii_sub_letters": { "1": ["a"] },
+    "annex_iii_domains": [
+      1
+    ],
+    "annex_iii_sub_letters": {
+      "1": [
+        "a"
+      ]
+    },
     "suppressed_by_article_5": false,
     "article_10_applicable": true,
     "article_12_applicable": true,
     "article_13_applicable": true,
     "article_14_applicable": true,
     "article_15_applicable": true,
-    "three_category_applicable": [1, 2, 3],
+    "three_category_applicable": [
+      1,
+      2,
+      3
+    ],
     "annex_iv_required": true,
-    "bucket": "annex_iii",
-    "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
     "notes": "Anhang III Nr. 1(a) — biometrische Fernidentifizierung. Die Nutzung erfolgt im Nachhinein (NICHT in Echtzeit), daher greift das Verbot in Art. 5 Abs. 1 Buchst. h nicht (das Verbot zielt ausschließlich auf Echtzeit-Fernidentifizierung in öffentlich zugänglichen Räumen für Strafverfolgungszwecke). Lexikon-Treffer: 'biometrische fernidentifizierung'. Cite: EUR-Lex Regulation (EU) 2024/1689, Anhang III Nr. 1(a)."
-  }
+  },
+  "bucket": "annex_iii",
+  "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689"
 }

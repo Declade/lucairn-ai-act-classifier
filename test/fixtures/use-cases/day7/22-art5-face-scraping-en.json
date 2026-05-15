@@ -4,9 +4,11 @@
   "input": "Our company performs untargeted facial scraping of images from publicly available websites and CCTV feeds to build a face recognition database for sale to private investigators.",
   "expected": {
     "article_5_prohibited": true,
-    "article_5_letters": ["e"],
+    "article_5_letters": [
+      "e"
+    ],
     "annex_iii_high_risk": false,
-    "annex_iii_domains": [1],
+    "annex_iii_domains": [],
     "suppressed_by_article_5": true,
     "article_10_applicable": false,
     "article_12_applicable": false,
@@ -15,8 +17,8 @@
     "article_15_applicable": false,
     "three_category_applicable": [],
     "annex_iv_required": false,
-    "bucket": "article_5",
-    "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
-    "notes": "Article 5(1)(e) — placing on the market, putting into service for that specific purpose, or use of AI systems that create or expand facial recognition databases through the untargeted scraping of facial images from the internet or CCTV footage. Lexicon hit: 'untargeted facial scraping', 'facial scraping'. The biometric phrasing also lexically matches Annex III.1, but Article 5 prohibition supersedes. Cite: EUR-Lex Regulation (EU) 2024/1689, Article 5(1)(e)."
-  }
+    "notes": "Article 5(1)(e) — placing on the market, putting into service for that specific purpose, or use of AI systems that create or expand facial recognition databases through the untargeted scraping of facial images from the internet or CCTV footage. Lexicon hit: 'untargeted facial scraping', 'facial scraping'. The input mentions 'face recognition database' for downstream context but does not use the exact Annex III.1 lexicon phrase 'facial recognition' (different word order), so the Annex III domain hit does NOT fire — clean Article-5-only fixture. Cite: EUR-Lex Regulation (EU) 2024/1689, Article 5(1)(e)."
+  },
+  "bucket": "article_5",
+  "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689"
 }
