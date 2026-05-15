@@ -1,0 +1,23 @@
+{
+  "id": "fixture-day7-27-art50-generated-music-track-de",
+  "lang": "de",
+  "input": "Unsere generative KI erzeugt synthetische Inhalte in Form von Musikstücken; die KI-generierten Inhalte werden über Streaming-Dienste vertrieben.",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": false,
+    "annex_iii_domains": [],
+    "suppressed_by_article_5": false,
+    "article_10_applicable": false,
+    "article_12_applicable": false,
+    "article_13_applicable": false,
+    "article_14_applicable": false,
+    "article_15_applicable": false,
+    "article_50_paragraphs": ["50(2)"],
+    "three_category_applicable": [],
+    "annex_iv_required": false,
+    "bucket": "article_50",
+    "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
+    "notes": "Art. 50 Abs. 2 — Anbieter generativer KI-Systeme müssen Ausgaben (Audio, Bild, Video oder Text) in maschinenlesbarer Form als künstlich erzeugt kennzeichnen. Lexikon-Treffer: 'synthetische inhalte', 'ki-generierte inhalte', 'generative ki'. Cite: EUR-Lex Regulation (EU) 2024/1689, Art. 50 Abs. 2."
+  }
+}
