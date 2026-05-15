@@ -136,10 +136,10 @@ function resolveLang(rawOpts: RawOptions, errLocale: 'en' | 'de'): 'en' | 'de' |
 }
 
 /**
- * Resolve and validate the `--llm <provider>` flag. This commit lights up
- * `anthropic` + `openai`; `groq` ships in the next commit. Each provider's
- * API-key env var is checked upfront — exit 3 with a setup pointer when
- * missing. Unknown providers exit 3 with the supported list.
+ * Resolve and validate the `--llm <provider>` flag. Day 10 supports
+ * `anthropic`, `openai`, and `groq`. Each provider's API-key env var is
+ * checked upfront — exit 3 with a setup pointer when missing. Unknown
+ * providers exit 3 with the supported list.
  */
 function resolveLlm(rawOpts: RawOptions): LLMProvider | undefined {
   if (rawOpts.llm === undefined) return undefined;
@@ -169,13 +169,19 @@ function resolveLlm(rawOpts: RawOptions): LLMProvider | undefined {
     return 'openai';
   }
   if (provider === 'groq') {
-    err(
-      'Error: --llm groq lands in the next commit. Use --llm anthropic or --llm openai for now.',
-    );
-    exit(3);
+    if (
+      typeof process.env['GROQ_API_KEY'] !== 'string' ||
+      process.env['GROQ_API_KEY'].length === 0
+    ) {
+      err(
+        'Error: --llm groq requires the GROQ_API_KEY env var. See README §--llm mode (opt-in).',
+      );
+      exit(3);
+    }
+    return 'groq';
   }
   err(
-    `Error: unknown --llm provider "${rawOpts.llm}". Supported: anthropic, openai.`,
+    `Error: unknown --llm provider "${rawOpts.llm}". Supported: anthropic, openai, groq.`,
   );
   exit(3);
 }
@@ -203,7 +209,7 @@ async function main(): Promise<void> {
     .option('--annex <ref>', "Print static Annex IV technical-documentation reference and exit (use 'iv')")
     .option(
       '--llm <provider>',
-      "Opt-in LLM feature extraction. Supported: anthropic, openai. (groq ships in the next commit.) Requires the upstream API key in env (ANTHROPIC_API_KEY / OPENAI_API_KEY).",
+      "Opt-in LLM feature extraction. Supported: anthropic, openai, groq. Requires the upstream API key in env (ANTHROPIC_API_KEY / OPENAI_API_KEY / GROQ_API_KEY).",
     )
     .addHelpText(
       'after',
@@ -215,6 +221,7 @@ Examples:
   ai-act-classify --annex iv
   ANTHROPIC_API_KEY="<your-key>" ai-act-classify --llm anthropic "..."
   OPENAI_API_KEY="<your-key>" ai-act-classify --llm openai "..."
+  GROQ_API_KEY="<your-key>" ai-act-classify --llm groq "..."
 
 Exit codes:
   0  classification ok

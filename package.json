@@ -54,6 +54,7 @@
     "accuracy": "node --import tsx scripts/accuracy.ts",
     "accuracy:llm-anthropic": "node --import tsx scripts/accuracy.ts --llm anthropic",
     "accuracy:llm-openai": "node --import tsx scripts/accuracy.ts --llm openai",
+    "accuracy:llm-groq": "node --import tsx scripts/accuracy.ts --llm groq",
     "accuracy:check": "vitest run test/accuracy"
   },
   "dependencies": {

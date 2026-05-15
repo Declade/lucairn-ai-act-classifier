@@ -388,9 +388,9 @@ export interface RunAccuracyOptions {
   lastRunAtOverride?: string;
   /**
    * When set, replaces the deterministic keyword extractor with an LLM-based
-   * extractor for every fixture invocation. This commit lights up `anthropic`
-   * + `openai`; `groq` follows in the next commit. Each provider requires its
-   * respective API key in env (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`). LLM-mode
+   * extractor for every fixture invocation. Day 10 supports `anthropic`,
+   * `openai`, and `groq`; each provider requires its respective API key in
+   * env (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `GROQ_API_KEY`). LLM-mode
    * results are reported at `accuracy/REPORT.llm-<provider>.md`.
    */
   llm?: LLMProvider;
@@ -667,16 +667,11 @@ function parseArgv(argv: ReadonlyArray<string>): ParsedArgv {
     }
     if (arg === '--llm') {
       const next = argv[i + 1];
-      if (next === 'anthropic' || next === 'openai') {
+      if (next === 'anthropic' || next === 'openai' || next === 'groq') {
         out.llm = next;
-      } else if (next === 'groq') {
-        process.stderr.write(
-          'accuracy: --llm groq lands in the next commit. Use --llm anthropic or --llm openai for now.\n',
-        );
-        process.exit(2);
       } else {
         process.stderr.write(
-          `accuracy: --llm <provider> must be one of: anthropic | openai. Got: ${next ?? '<missing>'}\n`,
+          `accuracy: --llm <provider> must be one of: anthropic | openai | groq. Got: ${next ?? '<missing>'}\n`,
         );
         process.exit(2);
       }
@@ -684,7 +679,7 @@ function parseArgv(argv: ReadonlyArray<string>): ParsedArgv {
       continue;
     }
     if (arg !== undefined && arg.length > 0) {
-      process.stderr.write(`accuracy: unknown argument "${arg}". Usage: --verbose | --format json|markdown|both | --llm anthropic|openai\n`);
+      process.stderr.write(`accuracy: unknown argument "${arg}". Usage: --verbose | --format json|markdown|both | --llm anthropic|openai|groq\n`);
       process.exit(2);
     }
   }

@@ -2,9 +2,7 @@
 //
 // Lights up the `--llm <provider>` CLI flag for `anthropic` (Day 9) + `openai`
 // + `groq` (Day 10). Day 10 also adds an opt-out filesystem cache layer
-// (lands in a follow-up commit; this commit only adds the multi-provider
-// dispatch + the `apiKey` / `baseURL` LLMExtractOptions extension load-bearing
-// for the Groq provider).
+// (lands in a follow-up commit).
 //
 // Architectural lock — `the LLM only extracts features`:
 //   The LLM produces an ExtractedFeatures-shaped object (same shape as
@@ -99,9 +97,8 @@ const PROVIDER_DISPATCH: Record<LLMProvider, () => Promise<ProviderExtractFn>> =
     return mod.extractWithOpenAI;
   },
   groq: async () => {
-    throw new Error(
-      'LLM_PROVIDER_NOT_IMPLEMENTED: groq provider lands in the next commit. Use --llm anthropic or --llm openai for now.',
-    );
+    const mod = await import('./providers/groq.js');
+    return mod.extractWithGroq;
   },
 };
 

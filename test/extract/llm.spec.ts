@@ -106,10 +106,18 @@ describe('extractFeaturesLLM — Day-10 multi-provider dispatch', () => {
     }
   });
 
-  it('groq provider throws LLM_PROVIDER_NOT_IMPLEMENTED (lands in next commit)', async () => {
-    await expect(
-      extractFeaturesLLM('We use AI for CV screening.', { provider: 'groq' }),
-    ).rejects.toThrow(/LLM_PROVIDER_NOT_IMPLEMENTED/);
+  it('groq provider rejects with LLM_NO_API_KEY when GROQ_API_KEY is absent', async () => {
+    const prev = process.env['GROQ_API_KEY'];
+    delete process.env['GROQ_API_KEY'];
+    try {
+      await expect(
+        extractFeaturesLLM('We use AI for CV screening.', {
+          provider: 'groq',
+        }),
+      ).rejects.toThrow(/LLM_NO_API_KEY.*GROQ_API_KEY/);
+    } finally {
+      if (prev !== undefined) process.env['GROQ_API_KEY'] = prev;
+    }
   });
 });
 
