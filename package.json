@@ -42,10 +42,12 @@
     "access": "public"
   },
   "scripts": {
+    "prepack": "tsc && chmod +x dist/cli.js",
     "build": "tsc",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "typecheck:test": "tsc -p tsconfig.test.json --noEmit"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
@@ -54,6 +56,10 @@
   },
   "engines": {
     "node": ">=18.17"
+  },
+  "packageManager": "pnpm@10.30.3",
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild"]
   },
   "private": false
 }

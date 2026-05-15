@@ -30,7 +30,7 @@ export interface ClassifyResult {
   highRisk: boolean;
   annexIVRequired: boolean;
   confidence: number;
-  mode: 'deterministic' | 'llm-anthropic' | 'llm-openai' | 'llm-groq';
+  mode: 'deterministic' | `llm-${string}`;
   rulesVersion: string;
   rulesHash: string;
   citations: string[];
