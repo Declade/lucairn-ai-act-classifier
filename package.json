@@ -43,8 +43,8 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "pnpm run clean && tsc && cp -R src/data dist/data && mkdir -p dist/i18n && cp src/i18n/en.json src/i18n/de.json dist/i18n/",
-    "prepack": "pnpm run build && chmod +x dist/cli.js",
+    "build": "pnpm run clean && tsc && cp -R src/data dist/data && mkdir -p dist/i18n && cp src/i18n/*.json dist/i18n/ && chmod +x dist/cli.js",
+    "prepack": "pnpm run build",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",

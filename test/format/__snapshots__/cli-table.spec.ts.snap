@@ -62,7 +62,7 @@ exports[`formatCliTable() — high-risk fixture (DE) > matches snapshot when use
 "  EU-KI-VO-Zuordnung
   Artikel 5  (verboten): nicht ausgelöst
   Artikel 6  + Anhang III:      HOCHRISIKO
-    └─ Annex III.4(a) — Beschäftigung, Personalmanagement und Zugang zur Selbstständigkeit
+    └─ Anhang III.4(a) — Beschäftigung, Personalmanagement und Zugang zur Selbstständigkeit
   Artikel 10 (Daten-Governance): anwendbar
   Artikel 12 (Protokollierung/Aufzeichnungen): anwendbar
   Artikel 13 (Betreiber-Transparenz): anwendbar

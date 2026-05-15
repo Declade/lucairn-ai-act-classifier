@@ -131,6 +131,53 @@ describe('CLI integration — error + exit-code paths', () => {
     expect(r.status).toBe(2);
     expect(r.stderr.length).toBeGreaterThan(0);
   });
+
+  // H1 fix-up — --annex iv must respect --rules-version
+  itDist('--annex iv --rules-version v99.99.99 → exit 2 (H1 fix-up)', () => {
+    const r = runCli(['--annex', 'iv', '--rules-version', 'v99.99.99']);
+    expect(r.status).toBe(2);
+    expect(r.stderr).toContain('rules-version');
+  });
+
+  // L1 fix-up — commander unknown-flag must exit 2 (not 1)
+  itDist('--foo bar (unknown flag) → exit 2 (L1 fix-up)', () => {
+    const r = runCli(['--foo', 'bar']);
+    expect(r.status).toBe(2);
+    expect(r.stderr.length).toBeGreaterThan(0);
+  });
+});
+
+// M4 fix-up — --annex iv honors --format / --json
+describe('CLI integration — --annex iv format dispatch (M4 fix-up)', () => {
+  itDist('--annex iv --format json → exit 0, stdout is parseable JSON', () => {
+    const r = runCli(['--annex', 'iv', '--format', 'json']);
+    expect(r.status).toBe(0);
+    expect(() => JSON.parse(r.stdout)).not.toThrow();
+    const parsed = JSON.parse(r.stdout) as {
+      items: ReadonlyArray<{ number: string; title: string }>;
+    };
+    expect(parsed.items.length).toBe(9);
+  });
+
+  itDist('--annex iv --json → exit 0, stdout is parseable JSON (shortcut form)', () => {
+    const r = runCli(['--annex', 'iv', '--json']);
+    expect(r.status).toBe(0);
+    expect(() => JSON.parse(r.stdout)).not.toThrow();
+  });
+
+  itDist('--annex iv --format markdown → exit 0, stdout starts with H2 heading', () => {
+    const r = runCli(['--annex', 'iv', '--format', 'markdown']);
+    expect(r.status).toBe(0);
+    expect(r.stdout.trimStart().startsWith('## Annex IV')).toBe(true);
+    expect(r.stdout).toContain('Informational tool');
+  });
+
+  itDist('--annex iv --format markdown --lang de → DE H2 + Tier-1 verbatim items', () => {
+    const r = runCli(['--annex', 'iv', '--format', 'markdown', '--lang', 'de']);
+    expect(r.status).toBe(0);
+    expect(r.stdout.trimStart().startsWith('## Anhang IV')).toBe(true);
+    expect(r.stdout).toContain('Darlegungen zur Eignung der Leistungskennzahlen');
+  });
 });
 
 describe('CLI integration — disclaimer present', () => {

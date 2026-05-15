@@ -43,14 +43,16 @@ function annexIIINotes(annex: ClassifyResult['annex_iii'], locale: 'en' | 'de'):
   if (!annex.high_risk || annex.suppressed_by_article_5) return '';
   const sortedDomains = [...annex.domains].sort((a, b) => a.annex_iii_number - b.annex_iii_number);
   const parts: string[] = [];
+  // M1 fix-up — the "Annex III" prefix is locale-aware ("Anhang III" in DE).
+  const prefix = getLocale(locale).labels.annex_iii_prefix;
   for (const d of sortedDomains) {
     const title = locale === 'de' ? d.title_de : d.title_en;
     if (d.sub_letters.length === 0) {
-      parts.push(`Annex III.${d.annex_iii_number} — ${title}`);
+      parts.push(`${prefix}.${d.annex_iii_number} — ${title}`);
     } else {
       const sortedSubs = [...d.sub_letters].sort();
       for (const letter of sortedSubs) {
-        parts.push(`Annex III.${d.annex_iii_number}(${letter}) — ${title}`);
+        parts.push(`${prefix}.${d.annex_iii_number}(${letter}) — ${title}`);
       }
     }
   }
@@ -231,5 +233,38 @@ export function formatMarkdown(result: ClassifyResult, opts: MarkdownFormatOptio
   lines.push('');
   lines.push(`> ${labels.disclaimer_footer}`);
 
+  return lines.join('\n');
+}
+
+/**
+ * Render the static Annex IV technical-documentation reference as
+ * GitHub-flavoured markdown.
+ *
+ * Pure function. Locale-keyed. Source-of-truth: `src/i18n/{en,de}.json` field
+ * `annex_iv_reference[]`. Output: H2 title heading, numbered list of the 9
+ * top-level requirements, source line, mandatory disclaimer footer.
+ *
+ * M4 fix-up — `--annex iv` now honours `--format markdown` (was previously
+ * CLI-table-only). See cli.ts:runAnnexIV().
+ */
+export function formatAnnexIVReferenceMarkdown(opts: { locale: 'en' | 'de' }): string {
+  if (opts.locale !== 'en' && opts.locale !== 'de') {
+    throw new TypeError(
+      `formatAnnexIVReferenceMarkdown(): opts.locale must be 'en' or 'de'. Got: ${String(opts.locale)}`,
+    );
+  }
+  const locale = getLocale(opts.locale);
+  const lines: string[] = [];
+  lines.push(`## ${locale.labels.annex_iv_reference_title}`);
+  lines.push('');
+  for (const item of locale.annex_iv_reference) {
+    lines.push(`${item.number} ${item.title}`);
+  }
+  lines.push('');
+  lines.push(`_${locale.labels.annex_iv_reference_source}_`);
+  lines.push('');
+  lines.push('---');
+  lines.push('');
+  lines.push(`> ${locale.labels.disclaimer_footer}`);
   return lines.join('\n');
 }

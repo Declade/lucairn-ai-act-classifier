@@ -18,11 +18,11 @@
 // via the package.json `bin.ai-act-classify` shim and the `#!/usr/bin/env node`
 // shebang above.
 
-import { Command, Option } from 'commander';
+import { Command, CommanderError, Option } from 'commander';
 import { classify, type ClassifyOptions } from './classify.js';
 import { formatCliTable, formatAnnexIVReference } from './format/cli-table.js';
-import { formatJson } from './format/json.js';
-import { formatMarkdown } from './format/markdown.js';
+import { formatJson, formatAnnexIVReferenceJson } from './format/json.js';
+import { formatMarkdown, formatAnnexIVReferenceMarkdown } from './format/markdown.js';
 import { RULES_VERSION } from './util/rules-hash.js';
 import { getLocale } from './i18n/load.js';
 
@@ -75,14 +75,29 @@ function autoDetectLocaleFromEnv(): 'en' | 'de' {
 // Annex IV path
 // ---------------------------------------------------------------------------
 
-function runAnnexIV(value: string, langOverride: 'en' | 'de' | undefined): void {
+function runAnnexIV(
+  value: string,
+  langOverride: 'en' | 'de' | undefined,
+  format: 'cli' | 'json' | 'markdown',
+): void {
   if (value.toLowerCase() !== 'iv') {
     const locale = getLocale(langOverride ?? autoDetectLocaleFromEnv());
     err(`${locale.labels.error_annex_invalid}${value}`);
     exit(2);
   }
   const locale = langOverride ?? autoDetectLocaleFromEnv();
-  out(formatAnnexIVReference({ locale }));
+  switch (format) {
+    case 'json':
+      out(formatAnnexIVReferenceJson({ locale }));
+      break;
+    case 'markdown':
+      out(formatAnnexIVReferenceMarkdown({ locale }));
+      break;
+    case 'cli':
+    default:
+      out(formatAnnexIVReference({ locale }));
+      break;
+  }
   exit(0);
 }
 
@@ -154,20 +169,40 @@ Exit codes:
   3  LLM error (reserved; not produced by Day-6 code)
 `,
     )
-    .allowUnknownOption(false);
+    .allowUnknownOption(false)
+    // L1 fix-up: commander's default exit code for unknown options is 1; the
+    // build-plan canonical exit-code scheme reserves 1 for "Article 5
+    // prohibited" and uses 2 for all parse errors. exitOverride() lets us
+    // intercept commander's CommanderError and remap.
+    .exitOverride();
 
-  program.parse(process.argv);
+  const errLocale = autoDetectLocaleFromEnv();
+  try {
+    program.parse(process.argv);
+  } catch (e: unknown) {
+    if (e instanceof CommanderError) {
+      // Commander prints its own message to stderr before throwing; on help/
+      // version we want exit 0; on parse errors exit 2 per the build-plan
+      // canonical exit-code scheme.
+      if (e.code === 'commander.help' || e.code === 'commander.helpDisplayed' || e.code === 'commander.version') {
+        exit(0);
+      }
+      exit(2);
+    }
+    if (e instanceof Error) {
+      err(`Error: ${e.message}`);
+      exit(2);
+    }
+    err(`Error: ${String(e)}`);
+    exit(2);
+  }
   const rawOpts = program.opts<RawOptions>();
   const positional = program.args;
-  const errLocale = autoDetectLocaleFromEnv();
 
-  // ----- --annex iv path (no classification needed). -----------------------
-  if (rawOpts.annex !== undefined) {
-    const langOverride = resolveLang(rawOpts, errLocale);
-    runAnnexIV(rawOpts.annex, langOverride);
-  }
-
-  // ----- Rules-version pre-check (before reading stdin). -------------------
+  // ----- Rules-version pre-check (BEFORE --annex iv path + before reading
+  //       stdin). H1 fix-up — `--annex iv` must also respect --rules-version
+  //       so a stale CI pipeline pinning v0.0.0 doesn't bypass the version
+  //       gate by routing through the Annex IV reference table.
   if (rawOpts.rulesVersion !== undefined && rawOpts.rulesVersion !== RULES_VERSION) {
     const locale = getLocale(errLocale);
     const msg = locale.labels.error_rules_version_mismatch
@@ -175,6 +210,13 @@ Exit codes:
       .replace(/\{current\}/g, RULES_VERSION);
     err(msg);
     exit(2);
+  }
+
+  // ----- --annex iv path (no classification needed). -----------------------
+  if (rawOpts.annex !== undefined) {
+    const langOverride = resolveLang(rawOpts, errLocale);
+    const format = resolveFormat(rawOpts);
+    runAnnexIV(rawOpts.annex, langOverride, format);
   }
 
   // ----- Locale resolution for in-band errors. -----------------------------
