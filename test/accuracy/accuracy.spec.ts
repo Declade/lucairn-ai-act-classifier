@@ -34,17 +34,15 @@ describe('accuracy harness — CI floor + structural invariants', () => {
 
   it('per-bucket counts match locked corpus matrix', () => {
     const report = runAccuracy({ lastRunAtOverride: '2026-05-15T00:00:00Z' });
-    // Day-7 NEW fixtures only — the 11 legacy day3/4/5 fixtures don't carry a
-    // bucket field and so report.bucket_accuracy.legacy carries them.
+    // Day-8 M-3 backfill: day5/01 + day5/02 now carry bucket=article_50, so
+    // they shifted from 'legacy' (-2) into 'article_50' (+2). Legacy now
+    // carries 9 fixtures (8 day3 + 1 day4) and article_50 carries 8 (6 day7
+    // + 2 day5). annex_iii / article_5 / negative buckets unchanged.
     expect(report.bucket_accuracy.annex_iii.count).toBe(17);
     expect(report.bucket_accuracy.article_5.count).toBe(7);
-    expect(report.bucket_accuracy.article_50.count).toBe(6);
+    expect(report.bucket_accuracy.article_50.count).toBe(8);
     expect(report.bucket_accuracy.negative.count).toBe(9);
-    // 11 existing day3/4/5 fixtures load as 'legacy' (8 Annex-III highs + 1
-    // Art-5 prohibition + 1 Art-50 chatbot + 1 Art-50 deepfake + 1 low-risk neg).
-    // Wait: day3 has 8 fixtures (one Art-5 prohibited + 7 Annex III) + day4 has 1
-    // + day5 has 2 = 11 legacy fixtures.
-    expect(report.bucket_accuracy.legacy.count).toBe(11);
+    expect(report.bucket_accuracy.legacy.count).toBe(9);
   });
 
   it('misclassifications list aligns with fixture pass/fail', () => {

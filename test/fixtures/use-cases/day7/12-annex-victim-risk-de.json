@@ -1,7 +1,7 @@
 {
   "id": "fixture-day7-12-annex-victim-risk-de",
   "lang": "de",
-  "input": "Eine Polizeibehörde nutzt unser KI-System zur Einschätzung von Rückfallrisiko bei verurteilten Straftätern im Rahmen der Bewährungsentscheidung.",
+  "input": "Eine Polizeibehörde nutzt unser KI-System zur Einschätzung von Rückfallrisiko bei verurteilten Straftätern sowie zur Risikobewertung Opfer einer Straftat im selben Stadtteil, im Rahmen der Bewährungsentscheidung.",
   "expected": {
     "article_5_prohibited": false,
     "article_5_letters": [],
@@ -11,6 +11,7 @@
     ],
     "annex_iii_sub_letters": {
       "6": [
+        "a",
         "d"
       ]
     },
@@ -26,7 +27,7 @@
       3
     ],
     "annex_iv_required": true,
-    "notes": "Anhang III Nr. 6(d) — Bewertung des Rückfallrisikos verurteilter Personen. Da das System NICHT ausschließlich auf Profiling-Merkmalen basiert (sondern auf Akteninhalt und früheren Taten), greift Art. 5 Abs. 1 Buchst. d nicht. Lexikon-Treffer: 'rückfallrisiko'. Anhang III Nr. 6(a) (Opfer-Risiko) wird im Lexikon der DE-Seite nicht durch eine separate Phrase abgedeckt — die Lexikon-Lücke ist im v0.2 polish-Backlog. Cite: EUR-Lex Regulation (EU) 2024/1689, Anhang III Nr. 6(d)."
+    "notes": "Anhang III Nr. 6(a) + 6(d) — Day-8 Path A: Fixture-Input erweitert um Risikobewertung Opfer einer Straftat (¶6(a)) zusätzlich zum Rückfallrisiko (¶6(d)). Da das System NICHT ausschließlich auf Profiling-Merkmalen basiert (sondern auf Akteninhalt und früheren Taten), greift Art. 5 Abs. 1 Buchst. d nicht. Lexikon-Treffer: 'rückfallrisiko' + 'risikobewertung opfer' (Day-8 G-2 lexicon addition). Day-8 G-2 schließt damit die ¶6(a) Lücke, die in der vorherigen Version dokumentiert war. Cite: EUR-Lex Regulation (EU) 2024/1689, Anhang III Nr. 6(a)+(d)."
   },
   "bucket": "annex_iii",
   "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689"
