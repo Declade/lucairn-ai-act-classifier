@@ -53,7 +53,7 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-01-bio
   "detected_lang": "en",
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "3b3e3d37",
+  "rules_hash": "4a8a49ba",
   "rules_version": "v0.1.0",
   "three_category": {
     "applicable_categories": [],
@@ -70,7 +70,9 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-02-cri
     "domains": [
       {
         "annex_iii_number": 2,
-        "sub_letters": [],
+        "sub_letters": [
+          "a",
+        ],
       },
     ],
     "high_risk": true,
@@ -110,7 +112,7 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-02-cri
   "detected_lang": "en",
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "3b3e3d37",
+  "rules_hash": "4a8a49ba",
   "rules_version": "v0.1.0",
   "three_category": {
     "applicable_categories": [
@@ -131,7 +133,11 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-03-edu
     "domains": [
       {
         "annex_iii_number": 3,
-        "sub_letters": [],
+        "sub_letters": [
+          "a",
+          "b",
+          "d",
+        ],
       },
     ],
     "high_risk": true,
@@ -171,7 +177,7 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-03-edu
   "detected_lang": "de",
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "3b3e3d37",
+  "rules_hash": "4a8a49ba",
   "rules_version": "v0.1.0",
   "three_category": {
     "applicable_categories": [
@@ -234,7 +240,7 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-04-emp
   "detected_lang": "en",
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "3b3e3d37",
+  "rules_hash": "4a8a49ba",
   "rules_version": "v0.1.0",
   "three_category": {
     "applicable_categories": [
@@ -298,7 +304,7 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-05-ess
   "detected_lang": "de",
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "3b3e3d37",
+  "rules_hash": "4a8a49ba",
   "rules_version": "v0.1.0",
   "three_category": {
     "applicable_categories": [
@@ -361,7 +367,7 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-06-law
   "detected_lang": "en",
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "3b3e3d37",
+  "rules_hash": "4a8a49ba",
   "rules_version": "v0.1.0",
   "three_category": {
     "applicable_categories": [
@@ -382,7 +388,11 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-07-mig
     "domains": [
       {
         "annex_iii_number": 7,
-        "sub_letters": [],
+        "sub_letters": [
+          "b",
+          "c",
+          "d",
+        ],
       },
     ],
     "high_risk": true,
@@ -422,7 +432,7 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-07-mig
   "detected_lang": "de",
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "3b3e3d37",
+  "rules_hash": "4a8a49ba",
   "rules_version": "v0.1.0",
   "three_category": {
     "applicable_categories": [
@@ -443,7 +453,9 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-08-jus
     "domains": [
       {
         "annex_iii_number": 8,
-        "sub_letters": [],
+        "sub_letters": [
+          "a",
+        ],
       },
     ],
     "high_risk": true,
@@ -483,7 +495,7 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-08-jus
   "detected_lang": "en",
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "3b3e3d37",
+  "rules_hash": "4a8a49ba",
   "rules_version": "v0.1.0",
   "three_category": {
     "applicable_categories": [
@@ -539,7 +551,7 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day4-01-low
   "detected_lang": "en",
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "3b3e3d37",
+  "rules_hash": "4a8a49ba",
   "rules_version": "v0.1.0",
   "three_category": {
     "applicable_categories": [],
@@ -591,7 +603,7 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day5-01-art
   "detected_lang": "en",
   "lang_confident": false,
   "mode": "deterministic",
-  "rules_hash": "3b3e3d37",
+  "rules_hash": "4a8a49ba",
   "rules_version": "v0.1.0",
   "three_category": {
     "applicable_categories": [],
@@ -643,7 +655,7 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day5-02-art
   "detected_lang": "de",
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "3b3e3d37",
+  "rules_hash": "4a8a49ba",
   "rules_version": "v0.1.0",
   "three_category": {
     "applicable_categories": [],
