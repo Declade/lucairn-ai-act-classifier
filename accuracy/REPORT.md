@@ -2,8 +2,10 @@
 
 - **Rules version:** `v0.1.0`
 - **Rules hash:** `3b3e3d37` (full: `3b3e3d370d5d9d2ed351fc0b4aba42fa0f324b826c63b73c3af9343e18fb9bf1`)
-- **Last run:** 2026-05-16T00:00:00Z
+- **Last run:** 2026-05-15T12:00:00Z
 - **Fixture corpus:** 50 cases
+
+> **What this report measures:** internal consistency between the curated 50-case fixture corpus and the v0.1.0 lexicon. The headline numbers below are **not** a measure of arbitrary real-world accuracy — the corpus was shaped during the Day-7 build to match the lexicon's canonical phrases. Per-fixture accuracy uses set-equality on Day-7 fixtures and subset-containment on the 11 legacy day3/4/5 fixtures pending Day-8 backfill. See [METHODOLOGY.md §"Honest limitations"](./METHODOLOGY.md#honest-limitations) for the Day-8 polish backlog. The CI floor is 80% overall + 100% Article 5; current numbers exceed both.
 
 ## Headline numbers
 
@@ -69,7 +71,7 @@
 | `fixture-day7-21-art5-predictive-policing-de` | de | article_5 | PASS | — |
 | `fixture-day7-22-art5-face-scraping-en` | en | article_5 | PASS | — |
 | `fixture-day7-23-art5-emotion-workplace-de` | de | article_5 | PASS | — |
-| `fixture-day7-24-art5-realtime-rbi-de` | de | article_5 | PASS | — |
+| `fixture-day7-24-art5-biometric-categorisation-sensitive-de` | de | article_5 | PASS | — |
 | `fixture-day7-25-art50-customer-service-bot-de` | de | article_50 | PASS | — |
 | `fixture-day7-26-art50-synthetic-marketing-image-en` | en | article_50 | PASS | — |
 | `fixture-day7-27-art50-generated-music-track-de` | de | article_50 | PASS | — |
