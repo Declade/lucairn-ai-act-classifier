@@ -21,7 +21,7 @@
       3
     ],
     "annex_iv_required": true,
-    "notes": "Annex III paragraph 7(b) — examining applications for asylum, visa or residence permits, plus paragraph 7(c) — assessing reliability of evidence in the context of asylum / migration. Lexicon hit: 'asylum application'. Cite: EUR-Lex Regulation (EU) 2024/1689, Annex III paragraph 7(b) and (c)."
+    "notes": "Annex III paragraph 7(c) — AI systems intended to assist competent public authorities for the examination of applications for asylum, visa or residence permits and for associated complaints with regard to the eligibility of the natural persons applying for a status, including related assessments of the reliability of evidence. (7(c) covers BOTH the application examination AND the associated evidence-reliability assessment — they are NOT separate sub-letters.) Lexicon hit: 'asylum application'. Sub-letter narrowing for Annex III paragraph 7 is not yet implemented in narrowSubLetters() — see KNOWN-MISCLASSIFICATIONS G-1; expected.annex_iii_sub_letters intentionally omitted. Cite: EUR-Lex Regulation (EU) 2024/1689, Annex III paragraph 7(c)."
   },
   "bucket": "annex_iii",
   "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689"
