@@ -33,5 +33,4 @@ export type {
   ThreeCategoryResult,
   ThreeCategoryAggregate,
   ThreeCategoryItem,
-  ThreeCategoryInputs,
 } from './three-category.js';
