@@ -3,39 +3,39 @@ import { classify } from '../../src/classify.js';
 import { formatJson } from '../../src/format/json.js';
 
 describe('formatJson() — input validation', () => {
-  it('throws TypeError on null result', () => {
+  it('throws TypeError on null result', async () => {
     // @ts-expect-error
     expect(() => formatJson(null)).toThrow(TypeError);
   });
 
-  it('throws TypeError on non-object result', () => {
+  it('throws TypeError on non-object result', async () => {
     // @ts-expect-error
     expect(() => formatJson('string')).toThrow(TypeError);
   });
 });
 
 describe('formatJson() — output shape', () => {
-  it('snapshot — high-risk fixture (pretty=true, includeFeatures=false)', () => {
-    const r = classify('We use AI for CV screening and applicant tracking.', { lang: 'en' });
+  it('snapshot — high-risk fixture (pretty=true, includeFeatures=false)', async () => {
+    const r = await classify('We use AI for CV screening and applicant tracking.', { lang: 'en' });
     const out = formatJson(r);
     expect(out).toMatchSnapshot();
   });
 
-  it('pretty=false → single-line output', () => {
-    const r = classify('We use AI for CV screening.');
+  it('pretty=false → single-line output', async () => {
+    const r = await classify('We use AI for CV screening.');
     const out = formatJson(r, { pretty: false });
     expect(out).not.toContain('\n');
   });
 
-  it('pretty=true (default) → multi-line indented output', () => {
-    const r = classify('We use AI for CV screening.');
+  it('pretty=true (default) → multi-line indented output', async () => {
+    const r = await classify('We use AI for CV screening.');
     const out = formatJson(r);
     expect(out).toContain('\n');
     expect(out.split('\n').length).toBeGreaterThan(20);
   });
 
-  it('JSON.parse succeeds (round-trip cleanly)', () => {
-    const r = classify('We use AI for CV screening.');
+  it('JSON.parse succeeds (round-trip cleanly)', async () => {
+    const r = await classify('We use AI for CV screening.');
     const pretty = formatJson(r, { pretty: true });
     const compact = formatJson(r, { pretty: false });
     expect(() => JSON.parse(pretty)).not.toThrow();
@@ -44,28 +44,28 @@ describe('formatJson() — output shape', () => {
     expect(JSON.parse(pretty)).toEqual(JSON.parse(compact));
   });
 
-  it('omits "features" by default (includeFeatures=false)', () => {
-    const r = classify('We use AI for CV screening.');
+  it('omits "features" by default (includeFeatures=false)', async () => {
+    const r = await classify('We use AI for CV screening.');
     const parsed = JSON.parse(formatJson(r)) as Record<string, unknown>;
     expect('features' in parsed).toBe(false);
   });
 
-  it('includes "features" when includeFeatures: true', () => {
-    const r = classify('We use AI for CV screening.');
+  it('includes "features" when includeFeatures: true', async () => {
+    const r = await classify('We use AI for CV screening.');
     const parsed = JSON.parse(formatJson(r, { includeFeatures: true })) as Record<string, unknown>;
     expect('features' in parsed).toBe(true);
     expect(typeof parsed['features']).toBe('object');
   });
 
-  it('key order is stable across two runs on the same input', () => {
-    const r = classify('We use AI for CV screening.');
+  it('key order is stable across two runs on the same input', async () => {
+    const r = await classify('We use AI for CV screening.');
     const a = formatJson(r);
     const b = formatJson(r);
     expect(a).toBe(b); // byte-exact stability
   });
 
-  it('top-level key order matches the locked KEY_ORDER constant', () => {
-    const r = classify('We use AI for CV screening.', { includeFeatures: false } as never);
+  it('top-level key order matches the locked KEY_ORDER constant', async () => {
+    const r = await classify('We use AI for CV screening.', { includeFeatures: false } as never);
     // Parse and re-stringify with JSON.stringify(parsed, null, 2) — if our
     // top-level order matches insertion order, re-stringification produces
     // the same bytes.

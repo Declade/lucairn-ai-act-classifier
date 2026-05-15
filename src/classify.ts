@@ -1,29 +1,31 @@
-// Public API — orchestrates the 9-stage classification pipeline.
+// Public API — orchestrates the 10-stage classification pipeline.
 //
-// Pure-function. No I/O at runtime — all JSON loads happen at module init in
-// the rules modules (extract/keyword.ts loads patterns.{en,de}.json,
-// rules/article-6-annex-iii.ts loads annex-iii.json, rules/three-category.ts
-// loads three-category.gen.json, util/rules-hash.ts loads all 4 + package.json).
+// Async (since Day 9) because the LLM extraction path is asynchronous. The
+// deterministic mode `await` resolves immediately (no microtask delay beyond
+// the awaited value) — no network call, no I/O.
 //
 // Pipeline (DO NOT REORDER — Day-4/5 cascade modules depend on the prior outputs):
-//   1. extractFeatures(text, {lang})        — Day 2 keyword extractor
-//   2. classifyArticle5(features)           — Day 3 prohibited practices
-//   3. classifyAnnexIII(features, art5)     — Day 3 high-risk classification
-//   4. classifyArticle10(annex, art5)       — Day 4 data governance
-//   5. classifyArticle12(annex, art5)       — Day 5 record-keeping
-//   6. classifyArticle13(annex, art5)       — Day 4 deployer transparency
-//   7. classifyArticle14(annex, art5)       — Day 4 human oversight
-//   8. classifyArticle15(annex, art5)       — Day 4 accuracy/robustness/cybersecurity
-//   9. classifyArticle50(features, art5, annex) — Day 5 GPAI/deployer transparency
-//  10. classifyThreeCategory(annex, art5, art10, art12, art14, art15) — Day 5 overlay
-//  11. annex_iv_required derived from annex.high_risk && !suppressed_by_article_5
-//  12. confidence computed via v0.1 placeholder formula
+//   1a. extractFeatures(text, {lang})            — Day 2 deterministic keyword extractor (default)
+//   1b. extractFeaturesLLM(text, {provider})     — Day 9 LLM extractor (when opts.llm set)
+//   2.  classifyArticle5(features)               — Day 3 prohibited practices
+//   3.  classifyAnnexIII(features, art5)         — Day 3 high-risk classification
+//   4.  classifyArticle10(annex, art5)           — Day 4 data governance
+//   5.  classifyArticle12(annex, art5)           — Day 5 record-keeping
+//   6.  classifyArticle13(annex, art5)           — Day 4 deployer transparency
+//   7.  classifyArticle14(annex, art5)           — Day 4 human oversight
+//   8.  classifyArticle15(annex, art5)           — Day 4 accuracy/robustness/cybersecurity
+//   9.  classifyArticle50(features, art5, annex) — Day 5 GPAI/deployer transparency
+//  10.  classifyThreeCategory(annex, art5, art10, art12, art14, art15) — Day 5 overlay
+//  11.  annex_iv_required derived from annex.high_risk && !suppressed_by_article_5
+//  12.  confidence computed via v0.1 placeholder formula
 //
-// Forward-compat: `mode` is `'deterministic' | \`llm-${string}\`` so the Day-9
-// LLM path lands without a breaking signature change. `opts.llm` is accepted +
-// ignored in Day 6 to keep the CLI shape stable across days.
+// `mode` is `'deterministic'` when `opts.llm` is unset, or `\`llm-${provider}\``
+// (Day 9: `'llm-anthropic'`) when set. The rules engine downstream is identical
+// in both modes — the LLM only changes how features are extracted.
 
 import { extractFeatures } from './extract/keyword.js';
+import { extractFeaturesLLM } from './extract/llm.js';
+import type { LLMProvider } from './extract/llm.js';
 import type { ExtractedFeatures } from './extract/keyword.js';
 import { classifyArticle5 } from './rules/article-5.js';
 import { classifyAnnexIII } from './rules/article-6-annex-iii.js';
@@ -54,8 +56,13 @@ import { RULES_VERSION, RULES_HASH, RULES_HASH_FULL_HEX } from './util/rules-has
 export interface ClassifyOptions {
   /** Force locale (default: auto-detect from input). */
   lang?: 'en' | 'de';
-  /** v0.1 placeholder — when set, signals the Day-9 LLM extractor would replace the keyword extractor. Day-6 ignores it. */
-  llm?: 'anthropic' | 'openai' | 'groq';
+  /**
+   * When set, replaces the deterministic keyword extractor with an LLM-based
+   * feature extractor. Day 9 lights up `anthropic` only; `openai` + `groq`
+   * land in Day 10 and currently throw `LLM_PROVIDER_NOT_IMPLEMENTED`.
+   * The downstream rules engine is unchanged — the LLM only extracts features.
+   */
+  llm?: LLMProvider;
   /** When false, the three-category overlay is omitted (returns null). Default: true. */
   threeCategory?: boolean;
   /** Display-pass-through; mismatched value vs current rules version throws Error (CLI maps to exit 2). Default: undefined. */
@@ -152,7 +159,7 @@ function computeConfidence(features: ExtractedFeatures): number {
  * @throws Error if `opts.rulesVersion` is set and does not match the current
  *   rules version.
  */
-export function classify(text: string, opts: ClassifyOptions = {}): ClassifyResult {
+export async function classify(text: string, opts: ClassifyOptions = {}): Promise<ClassifyResult> {
   if (typeof text !== 'string' || text.trim().length === 0) {
     throw new TypeError('classify(): input text must be a non-empty string.');
   }
@@ -162,9 +169,21 @@ export function classify(text: string, opts: ClassifyOptions = {}): ClassifyResu
     );
   }
 
-  // 1. Feature extraction. extractFeatures validates `text` again (defense in
-  //    depth) and normalizes the `lang` option.
-  const features = extractFeatures(text, opts.lang !== undefined ? { lang: opts.lang } : {});
+  // 1. Feature extraction.
+  //    - Deterministic mode (default): `extractFeatures` (keyword.ts) — zero-network,
+  //      zero-dep, synchronous-equivalent under the await.
+  //    - LLM mode (opts.llm set): `extractFeaturesLLM` dispatches to the
+  //      provider module (dynamic-imported). The returned ExtractedFeatures
+  //      has the same shape; downstream rule modules are unchanged.
+  //    extractFeatures validates `text` again (defense in depth) and normalizes
+  //    the `lang` option.
+  const features: ExtractedFeatures =
+    opts.llm !== undefined
+      ? await extractFeaturesLLM(text, {
+          provider: opts.llm,
+          ...(opts.lang !== undefined ? { lang: opts.lang } : {}),
+        })
+      : extractFeatures(text, opts.lang !== undefined ? { lang: opts.lang } : {});
 
   // 2. Article 5 prohibited practices — must run BEFORE classifyAnnexIII (which
   //    consumes its `prohibited` flag).
@@ -197,6 +216,9 @@ export function classify(text: string, opts: ClassifyOptions = {}): ClassifyResu
   // 12. v0.1 placeholder confidence.
   const confidence = computeConfidence(features);
 
+  const mode: ClassifyResult['mode'] =
+    opts.llm !== undefined ? (`llm-${opts.llm}` as const) : 'deterministic';
+
   return {
     input_text: text,
     detected_lang: features.lang,
@@ -204,7 +226,7 @@ export function classify(text: string, opts: ClassifyOptions = {}): ClassifyResu
     rules_version: RULES_VERSION,
     rules_hash: RULES_HASH,
     rules_hash_full: RULES_HASH_FULL_HEX,
-    mode: 'deterministic',
+    mode,
     confidence,
     features,
     article_5,

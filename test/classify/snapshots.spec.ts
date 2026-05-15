@@ -99,24 +99,24 @@ describe('classify() — end-to-end orchestration snapshots', () => {
   });
 
   for (const fixture of fixtures) {
-    it(`${fixture.id} — projected ClassifyResult matches snapshot`, () => {
-      const r = classify(fixture.input, { lang: fixture.lang });
+    it(`${fixture.id} — projected ClassifyResult matches snapshot`, async () => {
+      const r = await classify(fixture.input, { lang: fixture.lang });
       expect(project(r)).toMatchSnapshot();
     });
   }
 
-  it('all 11 fixtures produce a ClassifyResult without throwing', () => {
+  it('all 11 fixtures produce a ClassifyResult without throwing', async () => {
     for (const f of fixtures) {
-      expect(() => classify(f.input, { lang: f.lang })).not.toThrow();
+      await expect(classify(f.input, { lang: f.lang })).resolves.toBeDefined();
     }
   });
 
-  it('idempotency: classifying the same fixture twice returns equal projections', () => {
+  it('idempotency: classifying the same fixture twice returns equal projections', async () => {
     // Pick a representative high-risk fixture.
     const employment = fixtures.find((f) => f.id === 'fixture-day3-04-employment-en');
     expect(employment).toBeDefined();
-    const a = classify(employment!.input, { lang: employment!.lang });
-    const b = classify(employment!.input, { lang: employment!.lang });
+    const a = await classify(employment!.input, { lang: employment!.lang });
+    const b = await classify(employment!.input, { lang: employment!.lang });
     expect(project(a)).toEqual(project(b));
   });
 });
