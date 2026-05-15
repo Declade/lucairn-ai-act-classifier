@@ -157,9 +157,9 @@ const LETTER_TABLE: readonly LetterMetadata[] = [
     letter: 'h',
     category_key: 'h_realtime_remote_biometric_le',
     summary_en:
-      'Real-time remote biometric identification in publicly accessible spaces for law-enforcement (narrow exceptions only). (Art 5(1)(h))',
+      "Real-time remote biometric identification in publicly accessible spaces for law-enforcement, prohibited unless strictly necessary for one of three statutory carve-outs: (i) targeted search for specific victims of abduction, trafficking in human beings, or sexual exploitation, or for missing persons; (ii) prevention of a specific, substantial and imminent threat to life or physical safety, or genuine and present or genuine and foreseeable threat of a terrorist attack; (iii) localisation or identification of a person suspected of having committed a serious criminal offence per Annex II. (Art 5(1)(h))",
     summary_de:
-      'Biometrische Echtzeit-Fernidentifizierung in öffentlich zugänglichen Räumen zu Strafverfolgungszwecken (nur enge Ausnahmen). (Art. 5 Abs. 1 Buchst. h)',
+      'Biometrische Echtzeit-Fernidentifizierung in öffentlich zugänglichen Räumen zu Strafverfolgungszwecken, verboten außer wenn unbedingt erforderlich für eine von drei gesetzlichen Ausnahmen: (i) gezielte Suche nach bestimmten Opfern von Entführung, Menschenhandel oder sexueller Ausbeutung sowie nach vermissten Personen; (ii) Abwehr einer konkreten, erheblichen und unmittelbaren Gefahr für Leib oder Leben oder einer tatsächlichen und gegenwärtigen oder tatsächlichen und vorhersehbaren Gefahr eines Terroranschlags; (iii) Lokalisierung oder Identifizierung einer Person, die einer schweren Straftat im Sinne von Anhang II verdächtigt wird. (Art. 5 Abs. 1 Buchst. h)',
   },
 ];
 
