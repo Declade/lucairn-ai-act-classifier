@@ -2,10 +2,10 @@
 
 Kostenloses CLI, das jede Beschreibung eines KI-Anwendungsfalls den auslösenden Artikeln der EU-KI-Verordnung zuordnet.
 
-> **⚠ Status: Vorab-Gerüst (v0.1.0, Tag 1 eines 14-tägigen Builds).**
+> **⚠ Status: Vorab-Gerüst (v0.1.1, Tag 9 eines 14-tägigen Builds).**
 > Build-Fenster: 2026-05-16 → 2026-05-29. Das Paket ist noch nicht einsatzbereit; die öffentliche CLI-Oberfläche landet an Tag 6, die Klassifizierungsregeln an Tag 3-5, der kuratierte Testdatensatz an Tag 7-8. Repository ist während des Builds privat und wird am Launch-Tag öffentlich.
 
-## Was das Tool leisten wird (Ziel v0.1.0)
+## Was das Tool leisten wird (Ziel v0.1.1)
 
 Eine freitext-formulierte Beschreibung eines KI-Anwendungsfalls (Englisch oder Deutsch) entgegennehmen und zurückgeben:
 
