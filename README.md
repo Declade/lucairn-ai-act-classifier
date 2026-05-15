@@ -88,6 +88,8 @@ Reports: [accuracy/REPORT.md](./accuracy/REPORT.md) (deterministic, CI-gated), [
 
 LLM-mode results are cached on disk at `~/.cache/lucairn-ai-act-classifier/llm/` (respects `XDG_CACHE_HOME`). The cache key is `sha256(provider + model + lexicon-version + lang + normalized-input)`, so the same input on the same lexicon version returns a byte-stable result without burning the API.
 
+> 🔒 **Cache file contents:** each cache entry stores the full `ExtractedFeatures` object including the original input text (so the rules engine can re-render its citation chain on a hit). The cache lives in your user-private `~/.cache/` directory and is not transmitted anywhere. For sensitive use-case descriptions, either run with `--no-cache` (one-off) or include `~/.cache/lucairn-ai-act-classifier/` in your session-cleanup routine (recurring).
+
 - **Cache hit:** typically <100ms (no network) vs ~1-5s for a fresh API call — well over 10× speedup on every repeat invocation.
 - **Cache miss:** the provider runs, the result is written to cache, and the cached features serve every subsequent call until the lexicon version changes.
 - **Bypass:** pass `--no-cache` to force a fresh API call (the cache is neither read nor written for that invocation).
