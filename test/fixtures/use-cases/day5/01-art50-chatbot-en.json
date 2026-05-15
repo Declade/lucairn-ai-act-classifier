@@ -7,7 +7,12 @@
     "article_5_letters": [],
     "annex_iii_high_risk": false,
     "annex_iii_domains": [],
+    "article_50_paragraphs": [
+      "50(1)"
+    ],
     "suppressed_by_article_5": false,
-    "notes": "Article 50(1) chatbot transparency path. This is a low-risk, non-high-risk system (customer-service FAQ navigation is not within any Annex III paragraph — no biometrics, no critical infrastructure, no employment / essential-services decision-making, no law-enforcement / migration / justice / democracy use). Article 5 prohibitions do not fire. The lexicon term 'chatbot' (article_50_gpai.1_interaction_disclosure) triggers Article 50(1) transparency: end users must be informed that they are interacting with an AI system. All Day-3/4 cascade modules (Art 10/12/13/14/15) return applicable=false because high_risk===false. Three-category overlay therefore has applicable_categories=[] (the high-risk obligation overlay does not apply). EUR-Lex grounding: Art 50(1) chapeau + Annex III + Art 6(3) limitations."
-  }
+    "notes": "Article 50(1) chatbot transparency path. This is a low-risk, non-high-risk system (customer-service FAQ navigation is not within any Annex III paragraph — no biometrics, no critical infrastructure, no employment / essential-services decision-making, no law-enforcement / migration / justice / democracy use). Article 5 prohibitions do not fire. The lexicon term 'chatbot' (article_50_gpai.1_interaction_disclosure) triggers Article 50(1) transparency: end users must be informed that they are interacting with an AI system. All Day-3/4 cascade modules (Art 10/12/13/14/15) return applicable=false because high_risk===false. Three-category overlay therefore has applicable_categories=[] (the high-risk obligation overlay does not apply). Day-8 M-3 backfill: bucket, source_url, and article_50_paragraphs fields added. EUR-Lex grounding: Art 50(1) chapeau + Annex III + Art 6(3) limitations."
+  },
+  "bucket": "article_50",
+  "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689"
 }

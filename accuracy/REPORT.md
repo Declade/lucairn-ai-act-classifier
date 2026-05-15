@@ -2,7 +2,7 @@
 
 - **Rules version:** `v0.1.0`
 - **Rules hash:** `4a8a49ba` (full: `4a8a49bae4d52c6b7a8b466308a8113e2661833f18909758aa0a788141bb9b61`)
-- **Last run:** 2026-05-15T21:01:47.796Z
+- **Last run:** 2026-05-15T21:03:28.750Z
 - **Fixture corpus:** 50 cases
 
 > **What this report measures:** internal consistency between the curated 50-case fixture corpus and the v0.1.0 lexicon. The headline numbers below are **not** a measure of arbitrary real-world accuracy — the corpus was shaped during the Day-7 build to match the lexicon's canonical phrases. Per-fixture accuracy uses set-equality on Day-7 fixtures and subset-containment on the 11 legacy day3/4/5 fixtures pending Day-8 backfill. See [METHODOLOGY.md §"Honest limitations"](./METHODOLOGY.md#honest-limitations) for the Day-8 polish backlog. The CI floor is 80% overall + 100% Article 5; current numbers exceed both.
@@ -21,9 +21,9 @@
 |---|---|---|---|
 | annex_iii | 17 | 17 | 100.0% |
 | article_5 | 7 | 7 | 100.0% |
-| article_50 | 6 | 5 | 83.3% |
+| article_50 | 8 | 7 | 87.5% |
 | negative | 9 | 9 | 100.0% |
-| legacy | 11 | 11 | 100.0% |
+| legacy | 9 | 9 | 100.0% |
 
 ## Targets vs CI floor
 
@@ -46,8 +46,8 @@
 | `fixture-day3-07-migration-border-de` | de | legacy | PASS | — |
 | `fixture-day3-08-justice-democracy-en` | en | legacy | PASS | — |
 | `fixture-day4-01-low-risk-en` | en | legacy | PASS | — |
-| `fixture-day5-01-art50-chatbot-en` | en | legacy | PASS | — |
-| `fixture-day5-02-art50-deepfake-de` | de | legacy | PASS | — |
+| `fixture-day5-01-art50-chatbot-en` | en | article_50 | PASS | — |
+| `fixture-day5-02-art50-deepfake-de` | de | article_50 | PASS | — |
 | `fixture-day7-01-annex-biometric-categorisation-de` | de | annex_iii | PASS | — |
 | `fixture-day7-02-annex-emotion-recognition-en` | en | annex_iii | PASS | — |
 | `fixture-day7-03-annex-remote-biometric-id-de` | de | annex_iii | PASS | — |
