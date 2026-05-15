@@ -223,13 +223,6 @@ describe('classifyArticle5() — Day-8 G-4(a) paraphrase variants for letter (d)
     expect(result.hits.map((h) => h.letter)).toContain('d');
   });
 
-  it('EN — "profiling only" triggers (d)', () => {
-    const result = classify(
-      'A predictive policing profiling tool whose risk score is based on profiling only.',
-    );
-    expect(result.hits.map((h) => h.letter)).toContain('d');
-  });
-
   it('DE — "nur auf Profiling" triggers (d)', () => {
     const result = classify(
       'Eine Polizeibehörde nutzt vorhersagende Polizeiarbeit Profiling, die nur auf Profiling der natürlichen Person basiert.',
@@ -244,5 +237,25 @@ describe('classifyArticle5() — Day-8 G-4(a) paraphrase variants for letter (d)
       'de',
     );
     expect(result.hits.map((h) => h.letter)).toContain('d');
+  });
+});
+
+describe('classifyArticle5() — Day-8 PR-#8 fix-up disambiguator FP guards', () => {
+  it('Day-8 fix-up regression lock: consultant academic prose about predictive policing does NOT fire Art 5(1)(d)', () => {
+    const result = classify(
+      'This study evaluates predictive policing profiling tools and warns against systems based only on profiling.',
+      'en',
+    );
+    expect(result.prohibited).toBe(false);
+    expect(result.hits.some((h) => h.letter === 'd')).toBe(false);
+  });
+
+  it('Day-8 fix-up regression lock: DE consultant critique of vorhersagende Polizeiarbeit does NOT fire Art 5(1)(d)', () => {
+    const result = classify(
+      'Eine Berater-Studie kritisiert vorhersagende Polizeiarbeit, die nur auf Profiling basiert.',
+      'de',
+    );
+    expect(result.prohibited).toBe(false);
+    expect(result.hits.some((h) => h.letter === 'd')).toBe(false);
   });
 });

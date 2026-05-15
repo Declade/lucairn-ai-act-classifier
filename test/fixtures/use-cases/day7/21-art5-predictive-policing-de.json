@@ -1,7 +1,7 @@
 {
   "id": "fixture-day7-21-art5-predictive-policing-de",
   "lang": "de",
-  "input": "Eine Polizeibehörde nutzt unser KI-System für vorhersagende Polizeiarbeit, die ausschließlich auf Profiling der natürlichen Person basiert, um das Risiko künftiger Straftaten zu prognostizieren.",
+  "input": "Eine Polizeibehörde nutzt unser KI-System für vorhersagende Kriminalanalyse, die ausschließlich auf Profiling der natürlichen Person basiert, um das Risiko künftiger Straftaten zu prognostizieren.",
   "expected": {
     "article_5_prohibited": true,
     "article_5_letters": [
@@ -19,7 +19,7 @@
     "article_15_applicable": false,
     "three_category_applicable": [],
     "annex_iv_required": false,
-    "notes": "Art. 5 Abs. 1 Buchst. d — Risikobewertung künftiger Straftaten allein auf der Grundlage des Profilings einer natürlichen Person oder der Bewertung ihrer Persönlichkeitsmerkmale. Die Disambiguierungs-Logik in classifyArticle5 erfordert das Schlagwort 'ausschließlich profiling' oder 'persönlichkeit ausschließlich' als Substring im Input — hier durch 'ausschließlich auf Profiling der natürlichen Person' erfüllt (Day-8 fixture-rewrite to natural German per G-4). Ohne diesen Disambiguator wäre nur Anhang III Nr. 6 (Hochrisiko-Strafverfolgung) ausgelöst. Lexikon-Treffer: 'vorhersagende polizeiarbeit' (Day-8 G-4 natural-German variant; lives in BOTH annex_iii.6_law_enforcement AND article_5_prohibited.d_predictive_policing — the (d) hit fires because the disambiguator is present). Cite: EUR-Lex Regulation (EU) 2024/1689, Art. 5 Abs. 1 Buchst. d."
+    "notes": "Art. 5 Abs. 1 Buchst. d — Risikobewertung künftiger Straftaten allein auf der Grundlage des Profilings einer natürlichen Person oder der Bewertung ihrer Persönlichkeitsmerkmale. Die Disambiguierungs-Logik in classifyArticle5 erfordert das Schlagwort 'ausschließlich profiling' oder 'persönlichkeit ausschließlich' als Substring im Input — hier durch 'ausschließlich auf Profiling der natürlichen Person' erfüllt (Day-8 fixture-rewrite to natural German per G-4). Ohne diesen Disambiguator wäre nur Anhang III Nr. 6 (Hochrisiko-Strafverfolgung) ausgelöst. Lexikon-Treffer: 'vorhersagende kriminalanalyse' (Day-8 G-4 natural-German variant; BfDI- und Bundesregierung-dokumentierte Synonymform von 'vorhersagende Polizeiarbeit / predictive policing'). Cite: EUR-Lex Regulation (EU) 2024/1689, Art. 5 Abs. 1 Buchst. d."
   },
   "bucket": "article_5",
   "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689"

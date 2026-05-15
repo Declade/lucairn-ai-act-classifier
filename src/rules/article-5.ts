@@ -180,12 +180,18 @@ const CATEGORY_TO_LETTER: ReadonlyMap<string, LetterMetadata> = new Map(
 // Each phrase below is a verbatim lift from EUR-Lex Art 5(1)(d) (EN) and the
 // EUR-Lex DE body, with two near-equivalent rephrasings the spec calls out
 // ("personality only" / "Persönlichkeit ausschließlich"). Day-8 G-4(a)
-// appended 5 EN + 5 DE paraphrase variants that real EU/DE consultants
-// commonly write (e.g. "profiling only", "only on profiling", "solely based
-// on profiling"; DE "nur auf Profiling", "allein auf Grundlage von Profiling",
-// "nur auf der Grundlage des Profilings"). The strict-substring architecture
-// stays unchanged — these are additive verbatim variants, NOT a switch to
-// n-gram match against a curated lexicon group (that's still future work).
+// appended additive paraphrase variants that real EU/DE consultants commonly
+// write (e.g. "solely based on profiling"; DE "nur auf Profiling", "allein
+// auf Grundlage von Profiling"). The strict-substring architecture stays
+// unchanged — these are additive verbatim variants, NOT a switch to n-gram
+// match against a curated lexicon group (that's still future work).
+//
+// Removed in Day-8 PR-#8 fix-up: 'profiling only' and 'only on profiling'
+// produced false-positives on consultant meta-prose discussing predictive-
+// policing systems (e.g. "...the authors warn against systems based only on
+// profiling..." → FP). The strict-substring discipline + 4+ word phrases
+// keep the FP surface bounded while preserving disambiguator coverage on the
+// EUR-Lex verbatim forms and natural consultant phrasings.
 const PREDICTIVE_POLICING_DISAMBIGUATORS_EN: readonly string[] = [
   'solely on profiling',
   'solely on the profiling',
@@ -199,9 +205,7 @@ const PREDICTIVE_POLICING_DISAMBIGUATORS_EN: readonly string[] = [
   // designs whose risk score is profiling-only.
   'solely based on profiling',
   'based solely on the profiling',
-  'only on profiling',
   'only on the profiling',
-  'profiling only',
 ];
 
 const PREDICTIVE_POLICING_DISAMBIGUATORS_DE: readonly string[] = [
