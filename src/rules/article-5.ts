@@ -186,6 +186,17 @@ const CATEGORY_TO_LETTER: ReadonlyMap<string, LetterMetadata> = new Map(
 // unchanged — these are additive verbatim variants, NOT a switch to n-gram
 // match against a curated lexicon group (that's still future work).
 //
+// **Colloquial-paraphrase architecture (regulator-validator WARN C, Day-9):**
+// The DE side intentionally accepts `nur` and `allein` as paraphrases of the
+// EUR-Lex canonical `ausschließlich`. This is a documented loosening — German
+// consultants describing predictive-policing designs in client-facing
+// documents commonly write "Risiko-Score basierend nur auf Profiling" rather
+// than the EUR-Lex-verbatim "ausschließlich auf Profiling". The fixture
+// corpus + reviewer chains confirm the FP surface stays bounded at 4+ word
+// substring length. If a future EUR-Lex update sharpens the legal test, this
+// disambiguator may need to be tightened back to verbatim `ausschließlich`
+// only — that is a v0.2 candidate, not a Day-9 task.
+//
 // Removed in Day-8 PR-#8 fix-up: 'profiling only' and 'only on profiling'
 // produced false-positives on consultant meta-prose discussing predictive-
 // policing systems (e.g. "...the authors warn against systems based only on

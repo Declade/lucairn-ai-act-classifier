@@ -42,7 +42,9 @@
         { "phrase": "prüfungsüberwachung" },
         { "phrase": "betrugserkennung prüfung" },
         { "phrase": "bildungsniveau bestimmen" },
-        { "phrase": "bildungszuweisung" }
+        { "phrase": "bildungszuweisung" },
+        { "phrase": "bewertung des bildungsniveaus" },
+        { "phrase": "bewertung angemessenes bildungsniveau" }
       ]
     },
     "4_employment": {
@@ -106,7 +108,9 @@
         { "phrase": "aufenthaltstitel" },
         { "phrase": "migrationsrisiko" },
         { "phrase": "grenzüberwachung" },
-        { "phrase": "sicherheitsrisiko grenze" }
+        { "phrase": "sicherheitsrisiko grenze" },
+        { "phrase": "risiko der irregulären einwanderung" },
+        { "phrase": "irreguläre einwanderung" }
       ]
     },
     "8_justice_democracy": {

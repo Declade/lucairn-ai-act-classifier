@@ -1,6 +1,6 @@
 {
   "name": "@lucairn/ai-act-classifier",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Free CLI that maps EU AI Act articles to your AI use case",
   "license": "MIT",
   "author": "Declade",
