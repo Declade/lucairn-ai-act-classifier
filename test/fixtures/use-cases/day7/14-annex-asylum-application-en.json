@@ -1,0 +1,23 @@
+{
+  "id": "fixture-day7-14-annex-asylum-application-en",
+  "lang": "en",
+  "input": "We deploy an AI system that assists asylum officers in evaluating asylum applications by scoring credibility of applicant statements against country-of-origin information.",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": true,
+    "annex_iii_domains": [7],
+    "annex_iii_sub_letters": { "7": ["b", "c"] },
+    "suppressed_by_article_5": false,
+    "article_10_applicable": true,
+    "article_12_applicable": true,
+    "article_13_applicable": true,
+    "article_14_applicable": true,
+    "article_15_applicable": true,
+    "three_category_applicable": [1, 2, 3],
+    "annex_iv_required": true,
+    "bucket": "annex_iii",
+    "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "notes": "Annex III paragraph 7(b) — examining applications for asylum, visa or residence permits, plus paragraph 7(c) — assessing reliability of evidence in the context of asylum / migration. Lexicon hit: 'asylum application'. Cite: EUR-Lex Regulation (EU) 2024/1689, Annex III paragraph 7(b) and (c)."
+  }
+}

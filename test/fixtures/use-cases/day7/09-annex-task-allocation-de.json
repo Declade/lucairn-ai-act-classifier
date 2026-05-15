@@ -1,0 +1,23 @@
+{
+  "id": "fixture-day7-09-annex-task-allocation-de",
+  "lang": "de",
+  "input": "Unsere Plattform betreibt automatisierte Mitarbeiterüberwachung in einer Logistikzentrale und teilt Arbeitsaufgaben individuell zu.",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": true,
+    "annex_iii_domains": [4],
+    "annex_iii_sub_letters": { "4": ["b"] },
+    "suppressed_by_article_5": false,
+    "article_10_applicable": true,
+    "article_12_applicable": true,
+    "article_13_applicable": true,
+    "article_14_applicable": true,
+    "article_15_applicable": true,
+    "three_category_applicable": [1, 2, 3],
+    "annex_iv_required": true,
+    "bucket": "annex_iii",
+    "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
+    "notes": "Anhang III Nr. 4(b) — Entscheidungen über Arbeitsbedingungen einschließlich Aufgabenzuweisung sowie Leistungs- und Verhaltensüberwachung. Lexikon-Treffer: 'mitarbeiterüberwachung'. Cite: EUR-Lex Regulation (EU) 2024/1689, Anhang III Nr. 4(b)."
+  }
+}

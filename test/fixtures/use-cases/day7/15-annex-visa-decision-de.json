@@ -1,0 +1,23 @@
+{
+  "id": "fixture-day7-15-annex-visa-decision-de",
+  "lang": "de",
+  "input": "Eine Bundesbehörde nutzt unser KI-System zur Vorprüfung von Visumantragen und zur automatisierten Risikoeinstufung des Aufenthaltstitels.",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": true,
+    "annex_iii_domains": [7],
+    "annex_iii_sub_letters": { "7": ["b"] },
+    "suppressed_by_article_5": false,
+    "article_10_applicable": true,
+    "article_12_applicable": true,
+    "article_13_applicable": true,
+    "article_14_applicable": true,
+    "article_15_applicable": true,
+    "three_category_applicable": [1, 2, 3],
+    "annex_iv_required": true,
+    "bucket": "annex_iii",
+    "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
+    "notes": "Anhang III Nr. 7(b) — Prüfung von Anträgen auf Asyl, Visum oder Aufenthaltstitel. Lexikon-Treffer: 'visumantrag', 'aufenthaltstitel'. Cite: EUR-Lex Regulation (EU) 2024/1689, Anhang III Nr. 7(b)."
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "id": "fixture-day7-16-annex-judicial-research-de",
+  "lang": "de",
+  "input": "Wir bauen ein KI-System, das Richter bei der richterlichen Unterstützung in der Rechtsauslegung und Recherche von Präzedenzfällen unterstützt.",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": true,
+    "annex_iii_domains": [8],
+    "annex_iii_sub_letters": { "8": ["a"] },
+    "suppressed_by_article_5": false,
+    "article_10_applicable": true,
+    "article_12_applicable": true,
+    "article_13_applicable": true,
+    "article_14_applicable": true,
+    "article_15_applicable": true,
+    "three_category_applicable": [1, 2, 3],
+    "annex_iv_required": true,
+    "bucket": "annex_iii",
+    "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
+    "notes": "Anhang III Nr. 8(a) — KI-Systeme zur Unterstützung einer Justizbehörde bei der Recherche und Auslegung von Sachverhalten und Rechtsvorschriften und der Anwendung des Rechts auf einen konkreten Sachverhalt. Lexikon-Treffer: 'richterliche unterstützung', 'rechtsauslegung'. Cite: EUR-Lex Regulation (EU) 2024/1689, Anhang III Nr. 8(a)."
+  }
+}

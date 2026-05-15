@@ -1,0 +1,23 @@
+{
+  "id": "fixture-day7-06-annex-admission-en",
+  "lang": "en",
+  "input": "Our AI tool supports student admission decisions at a private university by ranking applicants on academic record and predicted graduation probability.",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": true,
+    "annex_iii_domains": [3],
+    "annex_iii_sub_letters": { "3": ["a"] },
+    "suppressed_by_article_5": false,
+    "article_10_applicable": true,
+    "article_12_applicable": true,
+    "article_13_applicable": true,
+    "article_14_applicable": true,
+    "article_15_applicable": true,
+    "three_category_applicable": [1, 2, 3],
+    "annex_iv_required": true,
+    "bucket": "annex_iii",
+    "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "notes": "Annex III paragraph 3(a) — determining access, admission or assignment to educational and vocational training institutions. Lexicon hit: 'student admission'. Cite: EUR-Lex Regulation (EU) 2024/1689, Annex III paragraph 3(a)."
+  }
+}
