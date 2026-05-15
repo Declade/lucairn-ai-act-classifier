@@ -89,7 +89,7 @@ An EU/DE consultant reading the fixture would mark this as BOTH Annex III.1(c) h
 2. **Naive substring fallback for high-risk Annex III categories.** When a lexicon n-gram fails to fire AND the input contains the lexicon phrase as a substring of a longer token, surface the hit with a "compound-noun fallback" reasoning tag. Higher risk (false positives on partial-word matches like `traffic` in `pacific`).
 3. **Full DE compound-noun decomposer** (e.g. `compound-splitter` npm package or a hand-rolled `CharLM`-style splitter). Highest leverage; biggest engineering cost; orthogonal to the Day-2 normalize.ts lock.
 
-**Why this is shipped honestly rather than engineered away:** Day-7 lesson logged in CLAUDE.md and Day-8 dispatch §0 — write fixtures per consultant judgment, observe misclassifications, document them. DO NOT engineer fixtures back to fit the lexicon. The 98.2% honest-with-disclosure number beats a fake 100%.
+**Why this is shipped honestly rather than engineered away:** write fixtures per EU/DE consultant judgment, observe misclassifications, document them. DO NOT engineer fixtures back to fit the lexicon — the v0.1 honest-disclosure framing is the credibility moat for the launch audience. The 98.2% honest-with-disclosure number beats a fake 100%.
 
 ## Medium-priority gaps (Day-8 nice-to-have / v0.2 hardening)
 
