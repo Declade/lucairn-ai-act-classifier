@@ -347,24 +347,102 @@ function loadAllFixtures(): Fixture[] {
 }
 
 // ---------------------------------------------------------------------------
+// Bounded-concurrency helper (Day-9 LLM harness; deterministic mode skips)
+// ---------------------------------------------------------------------------
+
+/**
+ * Run `fn` over `items` with at most `concurrency` in-flight at any time.
+ * Preserves input order in the output. Used by the LLM-mode accuracy harness
+ * to stay under Anthropic's free-tier RPM and to keep cost predictable.
+ */
+async function runWithConcurrency<TItem, TOut>(
+  items: ReadonlyArray<TItem>,
+  concurrency: number,
+  fn: (item: TItem, index: number) => Promise<TOut>,
+): Promise<TOut[]> {
+  const results: TOut[] = new Array(items.length);
+  let cursor = 0;
+  async function worker(): Promise<void> {
+    while (true) {
+      const i = cursor;
+      cursor += 1;
+      if (i >= items.length) return;
+      // Non-null assertion is safe: items.length checked above
+      results[i] = await fn(items[i]!, i);
+    }
+  }
+  const workers: Promise<void>[] = [];
+  const lanes = Math.max(1, Math.min(concurrency, items.length));
+  for (let w = 0; w < lanes; w += 1) workers.push(worker());
+  await Promise.all(workers);
+  return results;
+}
+
+// ---------------------------------------------------------------------------
 // Public harness entry-point (importable from vitest spec)
 // ---------------------------------------------------------------------------
 
 export interface RunAccuracyOptions {
   /** Override the "last_run_at" timestamp (used by tests for byte-stable assertions). */
   lastRunAtOverride?: string;
+  /**
+   * When set, replaces the deterministic keyword extractor with an LLM-based
+   * extractor for every fixture invocation. Day 9 supports `anthropic` only;
+   * the LLM mode requires the upstream API key in env (e.g. `ANTHROPIC_API_KEY`).
+   * LLM-mode results are reported separately at `accuracy/REPORT.llm-anthropic.md`.
+   */
+  llm?: 'anthropic';
+  /**
+   * Concurrency cap for LLM-mode calls. Default 5 (matches Anthropic's free-tier
+   * RPM budget; safe for paid tier too). Ignored in deterministic mode.
+   */
+  llmConcurrency?: number;
 }
 
-export function runAccuracy(opts: RunAccuracyOptions = {}): AccuracyReport {
+/**
+ * Cost-cap sentinel: hardcodes the maximum number of fixtures the LLM-mode
+ * harness will process in a single run. Set deliberately conservatively at the
+ * current corpus size (50) so a fat-fingered loop never burns more than ~$0.13
+ * of API spend per invocation.
+ */
+const MAX_FIXTURES_PER_RUN = 50;
+
+/**
+ * Run `runAccuracy` once over the local fixture corpus. Async since Day 9
+ * (classify() is now async; deterministic mode awaits immediately, LLM mode
+ * does the real network call).
+ */
+export async function runAccuracy(opts: RunAccuracyOptions = {}): Promise<AccuracyReport> {
   const fixtures = loadAllFixtures();
   if (fixtures.length === 0) {
     throw new Error('runAccuracy(): no fixtures found under test/fixtures/use-cases/.');
   }
+  if (fixtures.length > MAX_FIXTURES_PER_RUN) {
+    throw new Error(
+      `runAccuracy(): refusing to run on ${fixtures.length} fixtures (cap = ${MAX_FIXTURES_PER_RUN}). Cost-discipline guard.`,
+    );
+  }
 
-  const fixtureChecks: FixtureCheck[] = fixtures.map((f) => {
-    const result = classify(f.input, { lang: f.lang });
-    return checkFixture(f, result);
-  });
+  const llm = opts.llm;
+  const concurrency = Math.max(1, opts.llmConcurrency ?? 5);
+
+  let fixtureChecks: FixtureCheck[];
+  if (llm === undefined) {
+    // Deterministic mode: simple sequential (microtask) loop. classify()
+    // awaits immediately (no network, no I/O), so this is effectively a
+    // microtask-yielded sync map.
+    fixtureChecks = [];
+    for (const f of fixtures) {
+      const result = await classify(f.input, { lang: f.lang });
+      fixtureChecks.push(checkFixture(f, result));
+    }
+  } else {
+    // LLM mode: bounded concurrency, preserves input order.
+    fixtureChecks = await runWithConcurrency(fixtures, concurrency, async (f) => {
+      const result = await classify(f.input, { lang: f.lang, llm });
+      return checkFixture(f, result);
+    });
+  }
 
   // Overall accuracy (granular per-field pass / total).
   let totalChecks = 0;
@@ -444,10 +522,28 @@ function pct(x: number): string {
   return `${(x * 100).toFixed(1)}%`;
 }
 
-export function renderMarkdown(report: AccuracyReport): string {
+export interface RenderMarkdownOptions {
+  /** Day-9: when 'anthropic', the report title + disclaimer text reflect LLM mode. */
+  llm?: 'anthropic';
+}
+
+export function renderMarkdown(
+  report: AccuracyReport,
+  opts: RenderMarkdownOptions = {},
+): string {
   const lines: string[] = [];
-  lines.push('# Accuracy report — @lucairn/ai-act-classifier');
+  const title =
+    opts.llm === 'anthropic'
+      ? '# Accuracy report — @lucairn/ai-act-classifier (LLM Anthropic mode)'
+      : '# Accuracy report — @lucairn/ai-act-classifier';
+  lines.push(title);
   lines.push('');
+  if (opts.llm === 'anthropic') {
+    lines.push(
+      '> **LLM mode (opt-in).** This report reflects the Day-9 `--llm anthropic` extractor (Claude Haiku 4.5 via the Anthropic API). The rules engine that selects articles is unchanged — only feature extraction is replaced. LLM-mode results are NOT a CI-blocking metric. Cost: ~\$0.13 per run on the 50-case corpus.',
+    );
+    lines.push('');
+  }
   lines.push(`- **Rules version:** \`${report.rules_version}\``);
   lines.push(`- **Rules hash:** \`${report.rules_hash}\` (full: \`${report.rules_hash_full_hex}\`)`);
   lines.push(`- **Last run:** ${report.last_run_at}`);
@@ -538,6 +634,7 @@ export function renderMarkdown(report: AccuracyReport): string {
 interface ParsedArgv {
   verbose: boolean;
   format: 'json' | 'markdown' | 'both';
+  llm?: 'anthropic';
 }
 
 function parseArgv(argv: ReadonlyArray<string>): ParsedArgv {
@@ -558,8 +655,26 @@ function parseArgv(argv: ReadonlyArray<string>): ParsedArgv {
       i += 1;
       continue;
     }
+    if (arg === '--llm') {
+      const next = argv[i + 1];
+      if (next === 'anthropic') {
+        out.llm = next;
+      } else if (next === 'openai' || next === 'groq') {
+        process.stderr.write(
+          `accuracy: --llm ${next} not implemented in Day 9 (lands in Day 10). Use --llm anthropic, or omit --llm.\n`,
+        );
+        process.exit(2);
+      } else {
+        process.stderr.write(
+          `accuracy: --llm <provider> currently supports 'anthropic' only. Got: ${next}\n`,
+        );
+        process.exit(2);
+      }
+      i += 1;
+      continue;
+    }
     if (arg !== undefined && arg.length > 0) {
-      process.stderr.write(`accuracy: unknown argument "${arg}". Usage: --verbose | --format json|markdown|both\n`);
+      process.stderr.write(`accuracy: unknown argument "${arg}". Usage: --verbose | --format json|markdown|both | --llm anthropic\n`);
       process.exit(2);
     }
   }
@@ -589,33 +704,93 @@ function meetsCIFloor(report: AccuracyReport): boolean {
 // CLI entry-point
 // ---------------------------------------------------------------------------
 
-function runCli(argv: ReadonlyArray<string> = process.argv.slice(2)): never {
+/**
+ * Output-file name for a given run mode.
+ *   - Deterministic: `REPORT.md` + `REPORT.json` (CI-gated).
+ *   - LLM Anthropic: `REPORT.llm-anthropic.md` + `REPORT.llm-anthropic.json`
+ *     (NOT CI-gated; opt-in observation, regenerable by Marc on demand).
+ */
+function reportBasenameFor(llm: 'anthropic' | undefined): string {
+  if (llm === 'anthropic') return 'REPORT.llm-anthropic';
+  return 'REPORT';
+}
+
+/** "LLM mode skipped" placeholder shipped when ANTHROPIC_API_KEY is absent. */
+function renderLlmSkippedReport(): string {
+  return `# Accuracy report — @lucairn/ai-act-classifier (LLM Anthropic mode)
+
+LLM mode skipped — ANTHROPIC_API_KEY env var not set.
+
+To regenerate this report:
+
+\`\`\`bash
+ANTHROPIC_API_KEY="<your-anthropic-key>" pnpm accuracy:llm-anthropic
+\`\`\`
+
+The LLM-mode harness costs approximately \$0.13 per run on Claude Haiku 4.5
+across the 50-case bilingual fixture corpus. LLM-mode accuracy is an opt-in
+observation — it is NOT a CI-blocking metric. The deterministic-mode CI floor
+(overall ≥80%, Art 5 100%) remains the only enforced gate.
+
+See [README.md §--llm anthropic mode (opt-in)](../README.md) for setup.
+`;
+}
+
+async function runCli(argv: ReadonlyArray<string> = process.argv.slice(2)): Promise<never> {
   const parsed = parseArgv(argv);
 
+  const accuracyDir = join(getRepoRoot(), 'accuracy');
+  if (!existsSync(accuracyDir)) {
+    mkdirSync(accuracyDir, { recursive: true });
+  }
+
+  // ----- LLM-mode "skipped" short-circuit: emit placeholder + exit 0. ------
+  // Treat absence of ANTHROPIC_API_KEY as a documented no-op (NOT a failure)
+  // so CI environments and casual `pnpm accuracy:llm-anthropic` invocations
+  // without a key do not error out.
+  if (parsed.llm === 'anthropic') {
+    const apiKey = process.env['ANTHROPIC_API_KEY'];
+    if (typeof apiKey !== 'string' || apiKey.length === 0) {
+      const mdPath = join(accuracyDir, 'REPORT.llm-anthropic.md');
+      writeFileSync(mdPath, renderLlmSkippedReport(), 'utf8');
+      process.stdout.write(
+        'accuracy: LLM mode skipped — ANTHROPIC_API_KEY env var not set. Emitted placeholder report.\n',
+      );
+      process.exit(0);
+    }
+  }
+
+  // ----- Run the harness. --------------------------------------------------
   let report: AccuracyReport;
   try {
-    report = runAccuracy();
+    const runOpts: RunAccuracyOptions = {};
+    if (parsed.llm !== undefined) runOpts.llm = parsed.llm;
+    report = await runAccuracy(runOpts);
   } catch (err) {
     process.stderr.write(`accuracy: harness error — ${(err as Error).message}\n`);
     process.exit(2);
   }
 
-  // Write outputs.
-  const accuracyDir = join(getRepoRoot(), 'accuracy');
-  if (!existsSync(accuracyDir)) {
-    mkdirSync(accuracyDir, { recursive: true });
-  }
+  // ----- Write outputs (path depends on llm mode). -------------------------
+  const basename = reportBasenameFor(parsed.llm);
   if (parsed.format === 'json' || parsed.format === 'both') {
-    const jsonPath = join(accuracyDir, 'REPORT.json');
+    const jsonPath = join(accuracyDir, `${basename}.json`);
     writeFileSync(jsonPath, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
   }
   if (parsed.format === 'markdown' || parsed.format === 'both') {
-    const mdPath = join(accuracyDir, 'REPORT.md');
-    writeFileSync(mdPath, renderMarkdown(report), 'utf8');
+    const mdPath = join(accuracyDir, `${basename}.md`);
+    writeFileSync(
+      mdPath,
+      renderMarkdown(report, parsed.llm !== undefined ? { llm: parsed.llm } : {}),
+      'utf8',
+    );
   }
 
-  // Stdout summary.
-  process.stdout.write(`accuracy: ${report.fixture_count} fixtures — overall ${pct(report.overall_accuracy)}, Art 5 ${pct(report.article_5_accuracy)}, binary high-risk ${pct(report.binary_high_risk_accuracy)}\n`);
+  // ----- Stdout summary. ---------------------------------------------------
+  const modeLabel = parsed.llm === 'anthropic' ? ' [llm-anthropic]' : '';
+  process.stdout.write(
+    `accuracy${modeLabel}: ${report.fixture_count} fixtures — overall ${pct(report.overall_accuracy)}, Art 5 ${pct(report.article_5_accuracy)}, binary high-risk ${pct(report.binary_high_risk_accuracy)}\n`,
+  );
   if (parsed.verbose) {
     for (const fc of report.fixtures) {
       const status = fc.passed ? 'PASS' : 'FAIL';
@@ -624,10 +799,14 @@ function runCli(argv: ReadonlyArray<string> = process.argv.slice(2)): never {
     }
   }
   if (report.misclassifications.length > 0 && !parsed.verbose) {
-    process.stdout.write(`accuracy: ${report.misclassifications.length} misclassifications (use --verbose for details, or see accuracy/REPORT.md)\n`);
+    process.stdout.write(
+      `accuracy: ${report.misclassifications.length} misclassifications (use --verbose for details, or see accuracy/${basename}.md)\n`,
+    );
   }
 
-  if (!meetsCIFloor(report)) {
+  // ----- CI gate (deterministic mode only). --------------------------------
+  // LLM-mode is opt-in observation; it never blocks CI.
+  if (parsed.llm === undefined && !meetsCIFloor(report)) {
     process.stderr.write(
       `accuracy: CI floor NOT met (overall ${pct(report.overall_accuracy)} < ${pct(CI_OVERALL_FLOOR)} or Art 5 ${pct(report.article_5_accuracy)} < ${pct(CI_ARTICLE_5_FLOOR)}).\n`,
     );
@@ -643,5 +822,8 @@ const isDirectInvocation =
   (process.argv[1] !== undefined && import.meta.url.endsWith(process.argv[1]));
 
 if (isDirectInvocation) {
-  runCli();
+  runCli().catch((err: unknown) => {
+    process.stderr.write(`accuracy: unexpected error — ${(err as Error).message}\n`);
+    process.exit(2);
+  });
 }

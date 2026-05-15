@@ -180,6 +180,48 @@ describe('CLI integration — --annex iv format dispatch (M4 fix-up)', () => {
   });
 });
 
+describe('CLI integration — --llm flag (Day 9)', () => {
+  itDist('--llm anthropic without ANTHROPIC_API_KEY → exit 3 + helpful stderr', () => {
+    // Strip the env var explicitly so any local-shell ANTHROPIC_API_KEY
+    // doesn't leak in and turn this test into a real API call.
+    const env = { ...process.env };
+    delete env['ANTHROPIC_API_KEY'];
+    const r = spawnSync(process.execPath, [CLI_PATH, '--llm', 'anthropic', 'We use AI for CV screening.'], {
+      input: '',
+      encoding: 'utf8',
+      env: { ...env, NO_COLOR: '1' },
+    });
+    expect(r.status).toBe(3);
+    expect(r.stderr).toContain('ANTHROPIC_API_KEY');
+  });
+
+  itDist('--llm openai → exit 3 with Day-10 deferral message', () => {
+    const r = runCli(['--llm', 'openai', 'We use AI for CV screening.']);
+    expect(r.status).toBe(3);
+    expect(r.stderr).toContain('Day 10');
+  });
+
+  itDist('--llm groq → exit 3 with Day-10 deferral message', () => {
+    const r = runCli(['--llm', 'groq', 'We use AI for CV screening.']);
+    expect(r.status).toBe(3);
+    expect(r.stderr).toContain('Day 10');
+  });
+
+  itDist('--llm mistral → exit 3 with "Supported: anthropic" hint', () => {
+    const r = runCli(['--llm', 'mistral', 'We use AI for CV screening.']);
+    expect(r.status).toBe(3);
+    expect(r.stderr).toContain('Supported');
+    expect(r.stderr).toContain('anthropic');
+  });
+
+  itDist('--help mentions --llm flag', () => {
+    const r = runCli(['--help']);
+    expect(r.status).toBe(0);
+    expect(r.stdout).toContain('--llm');
+    expect(r.stdout).toContain('anthropic');
+  });
+});
+
 describe('CLI integration — disclaimer present', () => {
   itDist('CLI table output contains the disclaimer footer (EN)', () => {
     const r = runCli(['We use AI for CV screening.']);

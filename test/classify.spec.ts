@@ -42,29 +42,29 @@ function loadAllFixtures(): Fixture[] {
 }
 
 describe('classify() — input validation', () => {
-  it('throws TypeError on empty string', () => {
-    expect(() => classify('')).toThrow(TypeError);
-    expect(() => classify('')).toThrow(/non-empty string/);
+  it('rejects with TypeError on empty string', async () => {
+    await expect(classify('')).rejects.toThrow(TypeError);
+    await expect(classify('')).rejects.toThrow(/non-empty string/);
   });
 
-  it('throws TypeError on whitespace-only input', () => {
-    expect(() => classify('   ')).toThrow(TypeError);
-    expect(() => classify('\n\t  ')).toThrow(TypeError);
+  it('rejects with TypeError on whitespace-only input', async () => {
+    await expect(classify('   ')).rejects.toThrow(TypeError);
+    await expect(classify('\n\t  ')).rejects.toThrow(TypeError);
   });
 
-  it('throws TypeError on non-string input', () => {
+  it('rejects with TypeError on non-string input', async () => {
     // @ts-expect-error: deliberately invalid for runtime guard test
-    expect(() => classify(123)).toThrow(TypeError);
+    await expect(classify(123)).rejects.toThrow(TypeError);
     // @ts-expect-error: deliberately invalid for runtime guard test
-    expect(() => classify(null)).toThrow(TypeError);
+    await expect(classify(null)).rejects.toThrow(TypeError);
     // @ts-expect-error: deliberately invalid for runtime guard test
-    expect(() => classify(undefined)).toThrow(TypeError);
+    await expect(classify(undefined)).rejects.toThrow(TypeError);
   });
 });
 
 describe('classify() — result shape', () => {
-  it('returns an object with all 18 top-level keys + correct types', () => {
-    const r = classify('We use AI for CV screening and applicant tracking.');
+  it('returns an object with all 18 top-level keys + correct types', async () => {
+    const r = await classify('We use AI for CV screening and applicant tracking.');
     expect(typeof r.input_text).toBe('string');
     expect(r.detected_lang === 'en' || r.detected_lang === 'de').toBe(true);
     expect(typeof r.lang_confident).toBe('boolean');
@@ -87,56 +87,58 @@ describe('classify() — result shape', () => {
     expect(r.three_category !== null && typeof r.three_category === 'object').toBe(true);
   });
 
-  it('rules_version matches the current package.json version', () => {
-    const r = classify('We use AI for CV screening.');
+  it('rules_version matches the current package.json version', async () => {
+    const r = await classify('We use AI for CV screening.');
     expect(r.rules_version).toBe(RULES_VERSION);
   });
 
-  it('mode === "deterministic" always in Day 6 (LLM mode is Day 9)', () => {
-    const r = classify('We use AI for CV screening.', { llm: 'anthropic' });
+  it('mode === "deterministic" when --llm is unset (Day 9 default)', async () => {
+    const r = await classify('We use AI for CV screening.');
     expect(r.mode).toBe('deterministic');
   });
 });
 
 describe('classify() — opts.threeCategory', () => {
-  it('opts.threeCategory: false → three_category is null', () => {
-    const r = classify('We use AI for CV screening.', { threeCategory: false });
+  it('opts.threeCategory: false → three_category is null', async () => {
+    const r = await classify('We use AI for CV screening.', { threeCategory: false });
     expect(r.three_category).toBeNull();
   });
 
-  it('opts.threeCategory: true (default) → three_category is ThreeCategoryResult', () => {
-    const r = classify('We use AI for CV screening.', { threeCategory: true });
+  it('opts.threeCategory: true (default) → three_category is ThreeCategoryResult', async () => {
+    const r = await classify('We use AI for CV screening.', { threeCategory: true });
     expect(r.three_category).not.toBeNull();
     expect(r.three_category!.categories['1'].key).toBe('1');
   });
 
-  it('opts.threeCategory omitted → three_category is ThreeCategoryResult (default true)', () => {
-    const r = classify('We use AI for CV screening.');
+  it('opts.threeCategory omitted → three_category is ThreeCategoryResult (default true)', async () => {
+    const r = await classify('We use AI for CV screening.');
     expect(r.three_category).not.toBeNull();
   });
 });
 
 describe('classify() — opts.lang override', () => {
-  it('opts.lang: "de" on EN text → detected_lang === "de"', () => {
-    const r = classify('AI system for facial recognition.', { lang: 'de' });
+  it('opts.lang: "de" on EN text → detected_lang === "de"', async () => {
+    const r = await classify('AI system for facial recognition.', { lang: 'de' });
     expect(r.detected_lang).toBe('de');
   });
 
-  it('opts.lang: "en" on DE text → detected_lang === "en"', () => {
-    const r = classify('Wir setzen ein KI-System zur Bewerberauswahl ein.', { lang: 'en' });
+  it('opts.lang: "en" on DE text → detected_lang === "en"', async () => {
+    const r = await classify('Wir setzen ein KI-System zur Bewerberauswahl ein.', { lang: 'en' });
     expect(r.detected_lang).toBe('en');
   });
 });
 
 describe('classify() — opts.rulesVersion', () => {
-  it('matching → no throw', () => {
-    expect(() => classify('We use AI for CV screening.', { rulesVersion: RULES_VERSION })).not.toThrow();
+  it('matching → no reject', async () => {
+    await expect(
+      classify('We use AI for CV screening.', { rulesVersion: RULES_VERSION }),
+    ).resolves.toBeDefined();
   });
 
-  it('mismatching → throws Error with specific message format', () => {
-    expect(() => classify('We use AI for CV screening.', { rulesVersion: 'v99.99.99' })).toThrow(
-      /rules_version mismatch/,
-    );
+  it('mismatching → rejects with Error matching /rules_version mismatch/', async () => {
+    await expect(
+      classify('We use AI for CV screening.', { rulesVersion: 'v99.99.99' }),
+    ).rejects.toThrow(/rules_version mismatch/);
   });
 });
 
@@ -148,38 +150,38 @@ describe('classify() — fixture invariants', () => {
   });
 
   for (const fixture of fixtures) {
-    it(`${fixture.id} — annex_iv_required derivation matches annex_iii.high_risk && !suppressed_by_article_5`, () => {
-      const r = classify(fixture.input, { lang: fixture.lang });
+    it(`${fixture.id} — annex_iv_required derivation matches annex_iii.high_risk && !suppressed_by_article_5`, async () => {
+      const r = await classify(fixture.input, { lang: fixture.lang });
       expect(r.annex_iv_required).toBe(
         r.annex_iii.high_risk && !r.annex_iii.suppressed_by_article_5,
       );
     });
 
-    it(`${fixture.id} — confidence is in [0.20, 0.99]`, () => {
-      const r = classify(fixture.input, { lang: fixture.lang });
+    it(`${fixture.id} — confidence is in [0.20, 0.99]`, async () => {
+      const r = await classify(fixture.input, { lang: fixture.lang });
       expect(r.confidence).toBeGreaterThanOrEqual(0.2);
       expect(r.confidence).toBeLessThanOrEqual(0.99);
     });
 
-    it(`${fixture.id} — mode === 'deterministic'`, () => {
-      const r = classify(fixture.input, { lang: fixture.lang });
+    it(`${fixture.id} — mode === 'deterministic'`, async () => {
+      const r = await classify(fixture.input, { lang: fixture.lang });
       expect(r.mode).toBe('deterministic');
     });
   }
 });
 
 describe('classify() — confidence formula sanity', () => {
-  it('produces a confidence in [0.20, 0.99] for every fixture (invariant)', () => {
+  it('produces a confidence in [0.20, 0.99] for every fixture (invariant)', async () => {
     const fixtures = loadAllFixtures();
     for (const f of fixtures) {
-      const r = classify(f.input, { lang: f.lang });
+      const r = await classify(f.input, { lang: f.lang });
       expect(r.confidence).toBeGreaterThanOrEqual(0.2);
       expect(r.confidence).toBeLessThanOrEqual(0.99);
     }
   });
 
-  it('rounds to 2 decimal places (no floating-point spew)', () => {
-    const r = classify('We use AI for CV screening and applicant tracking.');
+  it('rounds to 2 decimal places (no floating-point spew)', async () => {
+    const r = await classify('We use AI for CV screening and applicant tracking.');
     const rounded = Number(r.confidence.toFixed(2));
     expect(r.confidence).toBe(rounded);
   });

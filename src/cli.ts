@@ -4,15 +4,16 @@
 // Design constraints:
 //   - All output flows through formatter functions; cli.ts only routes data and
 //     handles process-level state (stdin, exit code, color toggle).
-//   - Zero network. Zero LLM. Day 6 ignores --llm flag (reserved for Day 9).
+//   - Zero network in deterministic mode. The `--llm anthropic` opt-in path
+//     (Day 9+) calls the Anthropic API using the user's own
+//     `ANTHROPIC_API_KEY` env var; otherwise no network ever touched.
 //   - The disclaimer footer is MANDATORY (rendered by every formatter). No
 //     --no-disclaimer flag.
-//   - Exit codes match the AI-Act-classifier build plan §exit-codes
-//     (private build plan):
+//   - Exit codes match the AI-Act-classifier build plan §exit-codes:
 //       0 = ok
 //       1 = Article 5 prohibited triggered
 //       2 = parse error (empty input, invalid flag, version mismatch, --annex without 'iv')
-//       3 = LLM error (reserved for Day 9; never produced here)
+//       3 = LLM error (no API key, SDK not installed, parse error after retry, API error)
 //
 // Run from npx: `npx @lucairn/ai-act-classifier "..."` invokes this file
 // via the package.json `bin.ai-act-classify` shim and the `#!/usr/bin/env node`
@@ -113,6 +114,7 @@ interface RawOptions {
   threeCategory?: boolean;
   rulesVersion?: string;
   annex?: string;
+  llm?: string;
 }
 
 function resolveFormat(rawOpts: RawOptions): 'cli' | 'json' | 'markdown' {
@@ -130,6 +132,43 @@ function resolveLang(rawOpts: RawOptions, errLocale: 'en' | 'de'): 'en' | 'de' |
   const locale = getLocale(errLocale);
   err(`${locale.labels.error_invalid_lang}${rawOpts.lang}`);
   exit(2);
+}
+
+/**
+ * Resolve and validate the `--llm <provider>` flag. Day 9 supports `anthropic`
+ * only. `openai` and `groq` are reserved for Day 10 and exit with code 3 + a
+ * pointer to the Day-10 milestone. Unknown providers exit 3 with an error
+ * listing the supported set.
+ *
+ * When `--llm anthropic` is set but `ANTHROPIC_API_KEY` is absent, exit 3 with
+ * a setup pointer. This catches the most common configuration mistake before
+ * any classification work runs.
+ */
+function resolveLlm(rawOpts: RawOptions): 'anthropic' | undefined {
+  if (rawOpts.llm === undefined) return undefined;
+  const provider = rawOpts.llm.toLowerCase().trim();
+  if (provider === 'anthropic') {
+    if (
+      typeof process.env['ANTHROPIC_API_KEY'] !== 'string' ||
+      process.env['ANTHROPIC_API_KEY'].length === 0
+    ) {
+      err(
+        'Error: --llm anthropic requires the ANTHROPIC_API_KEY env var. See README §--llm anthropic mode (opt-in).',
+      );
+      exit(3);
+    }
+    return 'anthropic';
+  }
+  if (provider === 'openai' || provider === 'groq') {
+    err(
+      `Error: --llm ${provider} is not implemented in Day 9 (openai + groq land in Day 10). Use --llm anthropic, or omit --llm for deterministic mode.`,
+    );
+    exit(3);
+  }
+  err(
+    `Error: unknown --llm provider "${rawOpts.llm}". Supported: anthropic. (openai + groq land in Day 10.)`,
+  );
+  exit(3);
 }
 
 async function main(): Promise<void> {
@@ -153,6 +192,10 @@ async function main(): Promise<void> {
     )
     .option('--rules-version <v>', 'Verify the loaded rules match this version (exits 2 on mismatch)')
     .option('--annex <ref>', "Print static Annex IV technical-documentation reference and exit (use 'iv')")
+    .option(
+      '--llm <provider>',
+      "Opt-in LLM feature extraction. Day 9 supports 'anthropic' only (openai+groq land in Day 10). Requires the upstream API key (e.g. ANTHROPIC_API_KEY) in env.",
+    )
     .addHelpText(
       'after',
       `
@@ -161,12 +204,13 @@ Examples:
   cat use-case.txt | ai-act-classify --format json
   ai-act-classify "..." --cite --lang de
   ai-act-classify --annex iv
+  ANTHROPIC_API_KEY="<your-key>" ai-act-classify --llm anthropic "..."
 
 Exit codes:
   0  classification ok
   1  Article 5 prohibited triggered
   2  parse error (empty input, invalid flag, version mismatch, --annex without 'iv', etc.)
-  3  LLM error (reserved; not produced by Day-6 code)
+  3  LLM error (no API key, SDK not installed, parse error after retry, network error)
 `,
     )
     .allowUnknownOption(false)
@@ -248,20 +292,33 @@ Exit codes:
     exit(2);
   }
 
+  // ----- Resolve --llm (may exit 3 if invalid or env missing). -------------
+  const llmProvider = resolveLlm(rawOpts);
+
   // ----- Run classification. -----------------------------------------------
   const classifyOpts: ClassifyOptions = {};
   if (langOverride !== undefined) classifyOpts.lang = langOverride;
   // commander's --no-three-category sets `threeCategory: false`.
   if (rawOpts.threeCategory === false) classifyOpts.threeCategory = false;
   if (rawOpts.rulesVersion !== undefined) classifyOpts.rulesVersion = rawOpts.rulesVersion;
+  if (llmProvider !== undefined) classifyOpts.llm = llmProvider;
 
   let result;
   try {
-    result = classify(inputText, classifyOpts);
+    result = await classify(inputText, classifyOpts);
   } catch (e: unknown) {
     if (e instanceof TypeError) {
       err(`Error: ${e.message}`);
       exit(2);
+    }
+    // LLM error envelope. The provider throws Error with one of these
+    // stable prefixes; the CLI exit code is 3 (LLM error) per build-plan §exit-codes.
+    if (e instanceof Error && /^LLM_/.test(e.message)) {
+      err(`Error: ${e.message}`);
+      if (process.env['AI_ACT_CLASSIFY_DEBUG'] === '1' && typeof e.stack === 'string') {
+        err(e.stack);
+      }
+      exit(3);
     }
     // Generic Error (e.g. rules-version mismatch via classify()) — friendly stderr.
     if (e instanceof Error) {

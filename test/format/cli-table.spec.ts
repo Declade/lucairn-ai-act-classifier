@@ -19,21 +19,21 @@ import { formatAnnexIVReferenceMarkdown } from '../../src/format/markdown.js';
 const ANSI_RE = /\[[0-9;]*m/;
 
 describe('formatCliTable() — type-guards', () => {
-  it('throws TypeError on null result', () => {
+  it('throws TypeError on null result', async () => {
     // @ts-expect-error
     expect(() => formatCliTable(null, { locale: 'en', cite: false, useColor: false })).toThrow(
       TypeError,
     );
   });
 
-  it('throws TypeError on non-object opts', () => {
-    const r = classify('We use AI for CV screening.');
+  it('throws TypeError on non-object opts', async () => {
+    const r = await classify('We use AI for CV screening.');
     // @ts-expect-error
     expect(() => formatCliTable(r, null)).toThrow(TypeError);
   });
 
-  it('throws TypeError on invalid locale', () => {
-    const r = classify('We use AI for CV screening.');
+  it('throws TypeError on invalid locale', async () => {
+    const r = await classify('We use AI for CV screening.');
     // @ts-expect-error
     expect(() => formatCliTable(r, { locale: 'fr', cite: false, useColor: false })).toThrow(
       TypeError,
@@ -42,20 +42,20 @@ describe('formatCliTable() — type-guards', () => {
 });
 
 describe('formatCliTable() — high-risk fixture (EN)', () => {
-  it('matches snapshot when useColor: false, cite: false, three-category: on', () => {
-    const r = classify('We use AI for CV screening and applicant tracking.', { lang: 'en' });
+  it('matches snapshot when useColor: false, cite: false, three-category: on', async () => {
+    const r = await classify('We use AI for CV screening and applicant tracking.', { lang: 'en' });
     const out = formatCliTable(r, { locale: 'en', cite: false, useColor: false });
     expect(out).toMatchSnapshot();
   });
 
-  it('matches snapshot when cite: true (adds Cite block)', () => {
-    const r = classify('We use AI for CV screening and applicant tracking.', { lang: 'en' });
+  it('matches snapshot when cite: true (adds Cite block)', async () => {
+    const r = await classify('We use AI for CV screening and applicant tracking.', { lang: 'en' });
     const out = formatCliTable(r, { locale: 'en', cite: true, useColor: false });
     expect(out).toMatchSnapshot();
   });
 
-  it('matches snapshot with --no-three-category (overlay suppressed note)', () => {
-    const r = classify('We use AI for CV screening and applicant tracking.', {
+  it('matches snapshot with --no-three-category (overlay suppressed note)', async () => {
+    const r = await classify('We use AI for CV screening and applicant tracking.', {
       lang: 'en',
       threeCategory: false,
     });
@@ -65,16 +65,16 @@ describe('formatCliTable() — high-risk fixture (EN)', () => {
 });
 
 describe('formatCliTable() — high-risk fixture (DE)', () => {
-  it('matches snapshot when useColor: false, cite: false, three-category: on', () => {
-    const r = classify('Wir setzen ein KI-System zur Bewerberauswahl ein.', { lang: 'de' });
+  it('matches snapshot when useColor: false, cite: false, three-category: on', async () => {
+    const r = await classify('Wir setzen ein KI-System zur Bewerberauswahl ein.', { lang: 'de' });
     const out = formatCliTable(r, { locale: 'de', cite: false, useColor: false });
     expect(out).toMatchSnapshot();
   });
 });
 
 describe('formatCliTable() — Article 5 prohibition fixture (EN)', () => {
-  it('matches snapshot — Art 5 prohibited variant', () => {
-    const r = classify(
+  it('matches snapshot — Art 5 prohibited variant', async () => {
+    const r = await classify(
       'We deploy real-time facial recognition for general law-enforcement surveillance in public.',
       { lang: 'en' },
     );
@@ -84,8 +84,8 @@ describe('formatCliTable() — Article 5 prohibition fixture (EN)', () => {
 });
 
 describe('formatCliTable() — color discipline', () => {
-  it('emits ANSI escape codes when useColor: true', () => {
-    const r = classify('We use AI for CV screening.', { lang: 'en' });
+  it('emits ANSI escape codes when useColor: true', async () => {
+    const r = await classify('We use AI for CV screening.', { lang: 'en' });
     // kleur's $.enabled is environment-driven; force-enable via FORCE_COLOR-style
     // path is fragile, so we just check the output WHEN kleur is enabled. If
     // kleur is disabled in this environment, we still verify the no-op-vs-color
@@ -103,8 +103,8 @@ describe('formatCliTable() — color discipline', () => {
     expect(plain).toContain('EU AI Act mapping');
   });
 
-  it('NO_COLOR-style off path: useColor: false → zero ANSI sequences', () => {
-    const r = classify('We use AI for CV screening.', { lang: 'en' });
+  it('NO_COLOR-style off path: useColor: false → zero ANSI sequences', async () => {
+    const r = await classify('We use AI for CV screening.', { lang: 'en' });
     const plain = formatCliTable(r, { locale: 'en', cite: false, useColor: false });
     expect(ANSI_RE.test(plain)).toBe(false);
   });
@@ -118,9 +118,9 @@ describe('formatCliTable() — color discipline force-enabled (M2 fix-up)', () =
     kleur.enabled = previousEnabled;
   });
 
-  it('forces kleur.enabled = true → output contains at least one ANSI escape sequence', () => {
+  it('forces kleur.enabled = true → output contains at least one ANSI escape sequence', async () => {
     kleur.enabled = true;
-    const r = classify(
+    const r = await classify(
       'We deploy real-time facial recognition for general law-enforcement surveillance in public spaces.',
       { lang: 'en' },
     );
@@ -136,8 +136,8 @@ describe('formatCliTable() — color discipline force-enabled (M2 fix-up)', () =
 });
 
 describe('formatCliTable() — disclaimer footer is mandatory', () => {
-  function checkAllVariants(text: string, lang: 'en' | 'de'): void {
-    const r = classify(text, { lang });
+  async function checkAllVariants(text: string, lang: 'en' | 'de'): Promise<void> {
+    const r = await classify(text, { lang });
     const variants: ReadonlyArray<{ cite: boolean; useColor: boolean }> = [
       { cite: false, useColor: false },
       { cite: false, useColor: true },
@@ -153,39 +153,39 @@ describe('formatCliTable() — disclaimer footer is mandatory', () => {
     }
   }
 
-  it('EN — disclaimer present across 4-variant cite × useColor matrix', () => {
-    checkAllVariants('We use AI for CV screening and applicant tracking.', 'en');
+  it('EN — disclaimer present across 4-variant cite × useColor matrix', async () => {
+    await checkAllVariants('We use AI for CV screening and applicant tracking.', 'en');
   });
 
-  it('DE — disclaimer present across 4-variant cite × useColor matrix', () => {
-    checkAllVariants('Wir setzen ein KI-System zur Bewerberauswahl ein.', 'de');
+  it('DE — disclaimer present across 4-variant cite × useColor matrix', async () => {
+    await checkAllVariants('Wir setzen ein KI-System zur Bewerberauswahl ein.', 'de');
   });
 });
 
 describe('formatAnnexIVReference()', () => {
-  it('EN snapshot — 9 numbered Annex IV requirements', () => {
+  it('EN snapshot — 9 numbered Annex IV requirements', async () => {
     const out = formatAnnexIVReference({ locale: 'en' });
     expect(out).toMatchSnapshot();
   });
 
-  it('DE snapshot — 9 numbered Annex IV requirements', () => {
+  it('DE snapshot — 9 numbered Annex IV requirements', async () => {
     const out = formatAnnexIVReference({ locale: 'de' });
     expect(out).toMatchSnapshot();
   });
 
-  it('EN — contains the EUR-Lex source line', () => {
+  it('EN — contains the EUR-Lex source line', async () => {
     const out = formatAnnexIVReference({ locale: 'en' });
     expect(out).toContain('Regulation (EU) 2024/1689');
   });
 
-  it('DE — contains the EUR-Lex source line', () => {
+  it('DE — contains the EUR-Lex source line', async () => {
     const out = formatAnnexIVReference({ locale: 'de' });
     expect(out).toContain('Verordnung (EU) 2024/1689');
   });
 });
 
 describe('formatAnnexIVReferenceJson() — M4 fix-up', () => {
-  it('EN — produces parseable JSON with title, source, items, disclaimer', () => {
+  it('EN — produces parseable JSON with title, source, items, disclaimer', async () => {
     const out = formatAnnexIVReferenceJson({ locale: 'en' });
     const parsed = JSON.parse(out) as {
       title: string;
@@ -200,7 +200,7 @@ describe('formatAnnexIVReferenceJson() — M4 fix-up', () => {
     expect(parsed.disclaimer).toContain('Informational tool');
   });
 
-  it('DE — produces parseable JSON with verbatim Tier-1 wording', () => {
+  it('DE — produces parseable JSON with verbatim Tier-1 wording', async () => {
     const out = formatAnnexIVReferenceJson({ locale: 'de' });
     const parsed = JSON.parse(out) as {
       title: string;
@@ -216,12 +216,12 @@ describe('formatAnnexIVReferenceJson() — M4 fix-up', () => {
     expect(parsed.disclaimer).toContain('Informationelles Werkzeug');
   });
 
-  it('throws TypeError on invalid locale', () => {
+  it('throws TypeError on invalid locale', async () => {
     // @ts-expect-error
     expect(() => formatAnnexIVReferenceJson({ locale: 'fr' })).toThrow(TypeError);
   });
 
-  it('pretty: false produces single-line JSON', () => {
+  it('pretty: false produces single-line JSON', async () => {
     const out = formatAnnexIVReferenceJson({ locale: 'en', pretty: false });
     expect(out.includes('\n')).toBe(false);
     expect(() => JSON.parse(out)).not.toThrow();
@@ -229,7 +229,7 @@ describe('formatAnnexIVReferenceJson() — M4 fix-up', () => {
 });
 
 describe('formatAnnexIVReferenceMarkdown() — M4 fix-up', () => {
-  it('EN — starts with an H2 title, lists 9 numbered items, ends with disclaimer', () => {
+  it('EN — starts with an H2 title, lists 9 numbered items, ends with disclaimer', async () => {
     const out = formatAnnexIVReferenceMarkdown({ locale: 'en' });
     expect(out.startsWith('## Annex IV')).toBe(true);
     // 9 numbered list items 1. through 9.
@@ -240,7 +240,7 @@ describe('formatAnnexIVReferenceMarkdown() — M4 fix-up', () => {
     expect(out).toContain('Informational tool');
   });
 
-  it('DE — Tier-1 verbatim wording across all 9 items', () => {
+  it('DE — Tier-1 verbatim wording across all 9 items', async () => {
     const out = formatAnnexIVReferenceMarkdown({ locale: 'de' });
     expect(out.startsWith('## Anhang IV')).toBe(true);
     expect(out).toContain('Allgemeine Beschreibung des KI-Systems.');
@@ -250,7 +250,7 @@ describe('formatAnnexIVReferenceMarkdown() — M4 fix-up', () => {
     expect(out).toContain('Informationelles Werkzeug');
   });
 
-  it('throws TypeError on invalid locale', () => {
+  it('throws TypeError on invalid locale', async () => {
     // @ts-expect-error
     expect(() => formatAnnexIVReferenceMarkdown({ locale: 'fr' })).toThrow(TypeError);
   });

@@ -17,23 +17,23 @@ import { describe, it, expect } from 'vitest';
 import { runAccuracy, renderMarkdown } from '../../scripts/accuracy.js';
 
 describe('accuracy harness — CI floor + structural invariants', () => {
-  it('loads exactly 50 fixtures', () => {
-    const report = runAccuracy({ lastRunAtOverride: '2026-05-15T00:00:00Z' });
+  it('loads exactly 50 fixtures', async () => {
+    const report = await runAccuracy({ lastRunAtOverride: '2026-05-15T00:00:00Z' });
     expect(report.fixture_count).toBe(50);
   });
 
-  it('meets CI overall floor (>= 0.80)', () => {
-    const report = runAccuracy({ lastRunAtOverride: '2026-05-15T00:00:00Z' });
+  it('meets CI overall floor (>= 0.80)', async () => {
+    const report = await runAccuracy({ lastRunAtOverride: '2026-05-15T00:00:00Z' });
     expect(report.overall_accuracy).toBeGreaterThanOrEqual(0.8);
   });
 
-  it('meets CI Article-5 floor (== 1.0) — safety-critical zero-false-negative bar', () => {
-    const report = runAccuracy({ lastRunAtOverride: '2026-05-15T00:00:00Z' });
+  it('meets CI Article-5 floor (== 1.0) — safety-critical zero-false-negative bar', async () => {
+    const report = await runAccuracy({ lastRunAtOverride: '2026-05-15T00:00:00Z' });
     expect(report.article_5_accuracy).toBe(1.0);
   });
 
-  it('per-bucket counts match locked corpus matrix', () => {
-    const report = runAccuracy({ lastRunAtOverride: '2026-05-15T00:00:00Z' });
+  it('per-bucket counts match locked corpus matrix', async () => {
+    const report = await runAccuracy({ lastRunAtOverride: '2026-05-15T00:00:00Z' });
     // Day-8 M-3 backfill: day5/01 + day5/02 now carry bucket=article_50, so
     // they shifted from 'legacy' (-2) into 'article_50' (+2). Legacy now
     // carries 9 fixtures (8 day3 + 1 day4) and article_50 carries 8 (6 day7
@@ -45,22 +45,22 @@ describe('accuracy harness — CI floor + structural invariants', () => {
     expect(report.bucket_accuracy.legacy.count).toBe(9);
   });
 
-  it('misclassifications list aligns with fixture pass/fail', () => {
-    const report = runAccuracy({ lastRunAtOverride: '2026-05-15T00:00:00Z' });
+  it('misclassifications list aligns with fixture pass/fail', async () => {
+    const report = await runAccuracy({ lastRunAtOverride: '2026-05-15T00:00:00Z' });
     const failedIds = report.fixtures.filter((fc) => !fc.passed).map((fc) => fc.id).sort();
     expect([...report.misclassifications].sort()).toEqual(failedIds);
   });
 
-  it('every fixture emits at least one field_check (no fixture silently skipped)', () => {
-    const report = runAccuracy({ lastRunAtOverride: '2026-05-15T00:00:00Z' });
+  it('every fixture emits at least one field_check (no fixture silently skipped)', async () => {
+    const report = await runAccuracy({ lastRunAtOverride: '2026-05-15T00:00:00Z' });
     for (const fc of report.fixtures) {
       expect(fc.field_checks.length).toBeGreaterThan(0);
     }
   });
 
-  it('rules_version + rules_hash are stable across two consecutive harness runs (purity)', () => {
-    const r1 = runAccuracy({ lastRunAtOverride: '2026-05-15T00:00:00Z' });
-    const r2 = runAccuracy({ lastRunAtOverride: '2026-05-15T00:00:00Z' });
+  it('rules_version + rules_hash are stable across two consecutive harness runs (purity)', async () => {
+    const r1 = await runAccuracy({ lastRunAtOverride: '2026-05-15T00:00:00Z' });
+    const r2 = await runAccuracy({ lastRunAtOverride: '2026-05-15T00:00:00Z' });
     expect(r1.rules_version).toBe(r2.rules_version);
     expect(r1.rules_hash).toBe(r2.rules_hash);
     expect(r1.rules_hash_full_hex).toBe(r2.rules_hash_full_hex);
@@ -69,8 +69,8 @@ describe('accuracy harness — CI floor + structural invariants', () => {
     expect(r1.article_5_accuracy).toBe(r2.article_5_accuracy);
   });
 
-  it('renderMarkdown produces a report that mentions the headline metrics', () => {
-    const report = runAccuracy({ lastRunAtOverride: '2026-05-15T00:00:00Z' });
+  it('renderMarkdown produces a report that mentions the headline metrics', async () => {
+    const report = await runAccuracy({ lastRunAtOverride: '2026-05-15T00:00:00Z' });
     const md = renderMarkdown(report);
     expect(md).toContain('# Accuracy report');
     expect(md).toContain('Overall accuracy');
@@ -80,8 +80,8 @@ describe('accuracy harness — CI floor + structural invariants', () => {
     expect(md).toContain('2026-05-15T00:00:00Z');
   });
 
-  it('binary_high_risk_accuracy is at least 0.85 (sanity floor; v1.0 target is 0.90)', () => {
-    const report = runAccuracy({ lastRunAtOverride: '2026-05-15T00:00:00Z' });
+  it('binary_high_risk_accuracy is at least 0.85 (sanity floor; v1.0 target is 0.90)', async () => {
+    const report = await runAccuracy({ lastRunAtOverride: '2026-05-15T00:00:00Z' });
     expect(report.binary_high_risk_accuracy).toBeGreaterThanOrEqual(0.85);
   });
 
@@ -89,8 +89,8 @@ describe('accuracy harness — CI floor + structural invariants', () => {
   // Day-13 / pre-launch session flips .skip → .it as a 1-character ratchet
   // when the lexicon expansion plateau has settled and headline accuracy is
   // stable above 85%.
-  it.skip('v1.0 launch target: overall accuracy >= 0.85 (currently informational)', () => {
-    const report = runAccuracy({ lastRunAtOverride: '2026-05-15T00:00:00Z' });
+  it.skip('v1.0 launch target: overall accuracy >= 0.85 (currently informational)', async () => {
+    const report = await runAccuracy({ lastRunAtOverride: '2026-05-15T00:00:00Z' });
     expect(report.overall_accuracy).toBeGreaterThanOrEqual(0.85);
   });
 });
