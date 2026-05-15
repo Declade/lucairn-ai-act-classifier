@@ -1,0 +1,13 @@
+{
+  "id": "fixture-day4-01-low-risk-en",
+  "lang": "en",
+  "input": "An internal scheduling tool that allocates office cleaning shifts among contractors based on availability and historical preferences.",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": false,
+    "annex_iii_domains": [],
+    "suppressed_by_article_5": false,
+    "notes": "Mundane non-high-risk system: office cleaning shift allocation does not touch any Annex III paragraph (no biometrics, no critical infrastructure, no education/vocational training, no employment-decision triggering — see notes below). Article 10/13/14/15 all return applicable=false because high_risk===false. This fixture covers the non-high-risk branch that Day-3 fixtures (1 prohibited + 7 high-risk) do not exercise. Note: 'allocates ... shifts among contractors' does NOT trigger Annex III.4 employment because that paragraph targets decisions on recruitment, selection, promotion, termination, work-task allocation in employment relationships, and performance/behaviour monitoring of natural persons — a contractor-scheduling tool that picks who works when based on availability is operationally adjacent but not within the legislative scope. EUR-Lex Annex III paragraph 4 + Article 6(3) limitations."
+  }
+}
