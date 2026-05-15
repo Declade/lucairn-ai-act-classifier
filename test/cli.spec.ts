@@ -1,0 +1,152 @@
+// CLI integration tests. Spawn the built `dist/cli.js` via `child_process.spawnSync`.
+//
+// Sandbox-EPERM-friendly: if `dist/cli.js` doesn't exist, skip the suite with
+// a console warning rather than failing (Day-4 lesson 6 / Day-5 PR #5 effective-PASS
+// pattern — orchestrator pre-commit gates confirm all-green against the same
+// SHA).
+
+import { describe, it, expect } from 'vitest';
+import { spawnSync, type SpawnSyncReturns } from 'node:child_process';
+import { existsSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const REPO_ROOT = join(__dirname, '..');
+const CLI_PATH = join(REPO_ROOT, 'dist', 'cli.js');
+const HAS_DIST = existsSync(CLI_PATH);
+
+if (!HAS_DIST) {
+  // eslint-disable-next-line no-console
+  console.warn(
+    `[cli.spec.ts] dist/cli.js not found at ${CLI_PATH} — skipping CLI integration suite. Run \`pnpm build\` first.`,
+  );
+}
+
+function runCli(args: string[], opts: { stdin?: string; env?: Record<string, string> } = {}): SpawnSyncReturns<string> {
+  return spawnSync(process.execPath, [CLI_PATH, ...args], {
+    input: opts.stdin ?? '',
+    encoding: 'utf8',
+    env: {
+      ...process.env,
+      // Force NO_COLOR by default so test assertions don't need to deal with ANSI.
+      NO_COLOR: '1',
+      ...(opts.env ?? {}),
+    },
+  });
+}
+
+// `it.skipIf` lets us cleanly skip every test in the suite when dist isn't there.
+const itDist = HAS_DIST ? it : it.skip;
+
+describe('CLI integration — happy paths', () => {
+  itDist('high-risk EN input → exit 0 + stdout contains "EU AI Act mapping" + "HIGH-RISK"', () => {
+    const r = runCli(['We use AI for CV screening and applicant tracking.']);
+    expect(r.status).toBe(0);
+    expect(r.stdout).toContain('EU AI Act mapping');
+    expect(r.stdout).toContain('HIGH-RISK');
+  });
+
+  itDist('--json flag → stdout is parseable JSON', () => {
+    const r = runCli(['--json', 'We use AI for CV screening.']);
+    expect(r.status).toBe(0);
+    expect(() => JSON.parse(r.stdout)).not.toThrow();
+  });
+
+  itDist('--format markdown → stdout begins with "## EU AI Act mapping"', () => {
+    const r = runCli(['--format', 'markdown', 'We use AI for CV screening.']);
+    expect(r.status).toBe(0);
+    expect(r.stdout.trimStart().startsWith('## EU AI Act mapping')).toBe(true);
+  });
+
+  itDist('stdin pipe → exit 0', () => {
+    const r = runCli([], { stdin: 'We use AI for CV screening and applicant tracking.\n' });
+    expect(r.status).toBe(0);
+    expect(r.stdout).toContain('EU AI Act mapping');
+  });
+
+  itDist('--annex iv → exits 0, prints Annex IV table', () => {
+    const r = runCli(['--annex', 'iv']);
+    expect(r.status).toBe(0);
+    expect(r.stdout).toContain('Annex IV — Technical documentation');
+    expect(r.stdout).toContain('Regulation (EU) 2024/1689');
+  });
+
+  itDist('--annex iv with --lang de → DE Anhang IV table', () => {
+    const r = runCli(['--annex', 'iv', '--lang', 'de']);
+    expect(r.status).toBe(0);
+    expect(r.stdout).toContain('Anhang IV — Technische Dokumentation');
+    expect(r.stdout).toContain('Verordnung (EU) 2024/1689');
+  });
+
+  itDist('--rules-version v0.1.0 → exits 0 (matches current)', () => {
+    const r = runCli(['--rules-version', 'v0.1.0', 'We use AI for CV screening.']);
+    expect(r.status).toBe(0);
+  });
+
+  itDist('--help → exits 0 + stdout contains every flag name', () => {
+    const r = runCli(['--help']);
+    expect(r.status).toBe(0);
+    expect(r.stdout).toContain('--format');
+    expect(r.stdout).toContain('--json');
+    expect(r.stdout).toContain('--lang');
+    expect(r.stdout).toContain('--cite');
+    expect(r.stdout).toContain('--no-three-category');
+    expect(r.stdout).toContain('--rules-version');
+    expect(r.stdout).toContain('--annex');
+  });
+});
+
+describe('CLI integration — error + exit-code paths', () => {
+  itDist('empty input (no args, no stdin) → exit 2 + stderr non-empty', () => {
+    const r = runCli([]);
+    expect(r.status).toBe(2);
+    expect(r.stderr.length).toBeGreaterThan(0);
+    expect(r.stderr).toContain('no input');
+  });
+
+  itDist('Article 5 prohibited fixture → exit 1', () => {
+    const r = runCli([
+      'We deploy real-time facial recognition for general law-enforcement surveillance in public spaces.',
+    ]);
+    expect(r.status).toBe(1);
+    // The output should still render (prohibited shown to the user).
+    expect(r.stdout).toContain('PROHIBITED');
+  });
+
+  itDist('--annex foo (unsupported reference) → exit 2', () => {
+    const r = runCli(['--annex', 'foo']);
+    expect(r.status).toBe(2);
+    expect(r.stderr.length).toBeGreaterThan(0);
+  });
+
+  itDist('--rules-version v99.99.99 → exits 2 + stderr', () => {
+    const r = runCli(['--rules-version', 'v99.99.99', 'anything']);
+    expect(r.status).toBe(2);
+    expect(r.stderr).toContain('rules-version');
+  });
+
+  itDist('--lang fr (invalid value) → exit 2', () => {
+    const r = runCli(['--lang', 'fr', 'anything']);
+    expect(r.status).toBe(2);
+    expect(r.stderr.length).toBeGreaterThan(0);
+  });
+});
+
+describe('CLI integration — disclaimer present', () => {
+  itDist('CLI table output contains the disclaimer footer (EN)', () => {
+    const r = runCli(['We use AI for CV screening.']);
+    expect(r.stdout).toContain('Informational tool');
+    expect(r.stdout).toContain('§Disclaimer');
+  });
+
+  itDist('CLI table output contains the disclaimer footer (DE)', () => {
+    const r = runCli(['--lang', 'de', 'Wir setzen ein KI-System zur Bewerberauswahl ein.']);
+    expect(r.stdout).toContain('Informationelles Werkzeug');
+  });
+
+  itDist('Markdown output contains the disclaimer footer', () => {
+    const r = runCli(['--format', 'markdown', 'We use AI for CV screening.']);
+    expect(r.stdout).toContain('Informational tool');
+  });
+});

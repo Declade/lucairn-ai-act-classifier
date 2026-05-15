@@ -1,0 +1,655 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`classify() — end-to-end orchestration snapshots > fixture-day3-01-biometrics-prohibited-en — projected ClassifyResult matches snapshot 1`] = `
+{
+  "annex_iii": {
+    "domains": [
+      {
+        "annex_iii_number": 1,
+        "sub_letters": [
+          "a",
+        ],
+      },
+    ],
+    "high_risk": false,
+    "suppressed_by_article_5": true,
+  },
+  "annex_iv_required": false,
+  "article_10": {
+    "applicable": false,
+  },
+  "article_12": {
+    "applicable": false,
+  },
+  "article_13": {
+    "applicable": false,
+  },
+  "article_14": {
+    "applicable": false,
+  },
+  "article_15": {
+    "applicable": false,
+  },
+  "article_5": {
+    "hits": [
+      {
+        "category_key": "h_realtime_remote_biometric_le",
+        "letter": "h",
+      },
+    ],
+    "prohibited": true,
+  },
+  "article_50": {
+    "applicable": false,
+    "triggered_by": {
+      "paragraph_1_interaction": false,
+      "paragraph_2_synthetic_content": false,
+      "paragraph_3_emotion_or_biometric_categorisation": false,
+      "paragraph_4_deepfake": false,
+      "paragraph_4_public_interest_text": false,
+    },
+  },
+  "confidence": 0.56,
+  "detected_lang": "en",
+  "lang_confident": true,
+  "mode": "deterministic",
+  "rules_hash": "3b3e3d37",
+  "rules_version": "v0.1.0",
+  "three_category": {
+    "applicable_categories": [],
+    "cat_1_applicable": false,
+    "cat_2_applicable": false,
+    "cat_3_applicable": false,
+  },
+}
+`;
+
+exports[`classify() — end-to-end orchestration snapshots > fixture-day3-02-critical-infrastructure-en — projected ClassifyResult matches snapshot 1`] = `
+{
+  "annex_iii": {
+    "domains": [
+      {
+        "annex_iii_number": 2,
+        "sub_letters": [],
+      },
+    ],
+    "high_risk": true,
+    "suppressed_by_article_5": false,
+  },
+  "annex_iv_required": true,
+  "article_10": {
+    "applicable": true,
+  },
+  "article_12": {
+    "applicable": true,
+  },
+  "article_13": {
+    "applicable": true,
+  },
+  "article_14": {
+    "applicable": true,
+  },
+  "article_15": {
+    "applicable": true,
+  },
+  "article_5": {
+    "hits": [],
+    "prohibited": false,
+  },
+  "article_50": {
+    "applicable": false,
+    "triggered_by": {
+      "paragraph_1_interaction": false,
+      "paragraph_2_synthetic_content": false,
+      "paragraph_3_emotion_or_biometric_categorisation": false,
+      "paragraph_4_deepfake": false,
+      "paragraph_4_public_interest_text": false,
+    },
+  },
+  "confidence": 0.6,
+  "detected_lang": "en",
+  "lang_confident": true,
+  "mode": "deterministic",
+  "rules_hash": "3b3e3d37",
+  "rules_version": "v0.1.0",
+  "three_category": {
+    "applicable_categories": [
+      "1",
+      "2",
+      "3",
+    ],
+    "cat_1_applicable": true,
+    "cat_2_applicable": true,
+    "cat_3_applicable": true,
+  },
+}
+`;
+
+exports[`classify() — end-to-end orchestration snapshots > fixture-day3-03-education-de — projected ClassifyResult matches snapshot 1`] = `
+{
+  "annex_iii": {
+    "domains": [
+      {
+        "annex_iii_number": 3,
+        "sub_letters": [],
+      },
+    ],
+    "high_risk": true,
+    "suppressed_by_article_5": false,
+  },
+  "annex_iv_required": true,
+  "article_10": {
+    "applicable": true,
+  },
+  "article_12": {
+    "applicable": true,
+  },
+  "article_13": {
+    "applicable": true,
+  },
+  "article_14": {
+    "applicable": true,
+  },
+  "article_15": {
+    "applicable": true,
+  },
+  "article_5": {
+    "hits": [],
+    "prohibited": false,
+  },
+  "article_50": {
+    "applicable": false,
+    "triggered_by": {
+      "paragraph_1_interaction": false,
+      "paragraph_2_synthetic_content": false,
+      "paragraph_3_emotion_or_biometric_categorisation": false,
+      "paragraph_4_deepfake": false,
+      "paragraph_4_public_interest_text": false,
+    },
+  },
+  "confidence": 0.64,
+  "detected_lang": "de",
+  "lang_confident": true,
+  "mode": "deterministic",
+  "rules_hash": "3b3e3d37",
+  "rules_version": "v0.1.0",
+  "three_category": {
+    "applicable_categories": [
+      "1",
+      "2",
+      "3",
+    ],
+    "cat_1_applicable": true,
+    "cat_2_applicable": true,
+    "cat_3_applicable": true,
+  },
+}
+`;
+
+exports[`classify() — end-to-end orchestration snapshots > fixture-day3-04-employment-en — projected ClassifyResult matches snapshot 1`] = `
+{
+  "annex_iii": {
+    "domains": [
+      {
+        "annex_iii_number": 4,
+        "sub_letters": [
+          "a",
+        ],
+      },
+    ],
+    "high_risk": true,
+    "suppressed_by_article_5": false,
+  },
+  "annex_iv_required": true,
+  "article_10": {
+    "applicable": true,
+  },
+  "article_12": {
+    "applicable": true,
+  },
+  "article_13": {
+    "applicable": true,
+  },
+  "article_14": {
+    "applicable": true,
+  },
+  "article_15": {
+    "applicable": true,
+  },
+  "article_5": {
+    "hits": [],
+    "prohibited": false,
+  },
+  "article_50": {
+    "applicable": false,
+    "triggered_by": {
+      "paragraph_1_interaction": false,
+      "paragraph_2_synthetic_content": false,
+      "paragraph_3_emotion_or_biometric_categorisation": false,
+      "paragraph_4_deepfake": false,
+      "paragraph_4_public_interest_text": false,
+    },
+  },
+  "confidence": 0.6,
+  "detected_lang": "en",
+  "lang_confident": true,
+  "mode": "deterministic",
+  "rules_hash": "3b3e3d37",
+  "rules_version": "v0.1.0",
+  "three_category": {
+    "applicable_categories": [
+      "1",
+      "2",
+      "3",
+    ],
+    "cat_1_applicable": true,
+    "cat_2_applicable": true,
+    "cat_3_applicable": true,
+  },
+}
+`;
+
+exports[`classify() — end-to-end orchestration snapshots > fixture-day3-05-essential-services-life-insurance-de — projected ClassifyResult matches snapshot 1`] = `
+{
+  "annex_iii": {
+    "domains": [
+      {
+        "annex_iii_number": 5,
+        "sub_letters": [
+          "b",
+          "c",
+        ],
+      },
+    ],
+    "high_risk": true,
+    "suppressed_by_article_5": false,
+  },
+  "annex_iv_required": true,
+  "article_10": {
+    "applicable": true,
+  },
+  "article_12": {
+    "applicable": true,
+  },
+  "article_13": {
+    "applicable": true,
+  },
+  "article_14": {
+    "applicable": true,
+  },
+  "article_15": {
+    "applicable": true,
+  },
+  "article_5": {
+    "hits": [],
+    "prohibited": false,
+  },
+  "article_50": {
+    "applicable": false,
+    "triggered_by": {
+      "paragraph_1_interaction": false,
+      "paragraph_2_synthetic_content": false,
+      "paragraph_3_emotion_or_biometric_categorisation": false,
+      "paragraph_4_deepfake": false,
+      "paragraph_4_public_interest_text": false,
+    },
+  },
+  "confidence": 0.56,
+  "detected_lang": "de",
+  "lang_confident": true,
+  "mode": "deterministic",
+  "rules_hash": "3b3e3d37",
+  "rules_version": "v0.1.0",
+  "three_category": {
+    "applicable_categories": [
+      "1",
+      "2",
+      "3",
+    ],
+    "cat_1_applicable": true,
+    "cat_2_applicable": true,
+    "cat_3_applicable": true,
+  },
+}
+`;
+
+exports[`classify() — end-to-end orchestration snapshots > fixture-day3-06-law-enforcement-broad-en — projected ClassifyResult matches snapshot 1`] = `
+{
+  "annex_iii": {
+    "domains": [
+      {
+        "annex_iii_number": 6,
+        "sub_letters": [
+          "d",
+        ],
+      },
+    ],
+    "high_risk": true,
+    "suppressed_by_article_5": false,
+  },
+  "annex_iv_required": true,
+  "article_10": {
+    "applicable": true,
+  },
+  "article_12": {
+    "applicable": true,
+  },
+  "article_13": {
+    "applicable": true,
+  },
+  "article_14": {
+    "applicable": true,
+  },
+  "article_15": {
+    "applicable": true,
+  },
+  "article_5": {
+    "hits": [],
+    "prohibited": false,
+  },
+  "article_50": {
+    "applicable": false,
+    "triggered_by": {
+      "paragraph_1_interaction": false,
+      "paragraph_2_synthetic_content": false,
+      "paragraph_3_emotion_or_biometric_categorisation": false,
+      "paragraph_4_deepfake": false,
+      "paragraph_4_public_interest_text": false,
+    },
+  },
+  "confidence": 0.56,
+  "detected_lang": "en",
+  "lang_confident": true,
+  "mode": "deterministic",
+  "rules_hash": "3b3e3d37",
+  "rules_version": "v0.1.0",
+  "three_category": {
+    "applicable_categories": [
+      "1",
+      "2",
+      "3",
+    ],
+    "cat_1_applicable": true,
+    "cat_2_applicable": true,
+    "cat_3_applicable": true,
+  },
+}
+`;
+
+exports[`classify() — end-to-end orchestration snapshots > fixture-day3-07-migration-border-de — projected ClassifyResult matches snapshot 1`] = `
+{
+  "annex_iii": {
+    "domains": [
+      {
+        "annex_iii_number": 7,
+        "sub_letters": [],
+      },
+    ],
+    "high_risk": true,
+    "suppressed_by_article_5": false,
+  },
+  "annex_iv_required": true,
+  "article_10": {
+    "applicable": true,
+  },
+  "article_12": {
+    "applicable": true,
+  },
+  "article_13": {
+    "applicable": true,
+  },
+  "article_14": {
+    "applicable": true,
+  },
+  "article_15": {
+    "applicable": true,
+  },
+  "article_5": {
+    "hits": [],
+    "prohibited": false,
+  },
+  "article_50": {
+    "applicable": false,
+    "triggered_by": {
+      "paragraph_1_interaction": false,
+      "paragraph_2_synthetic_content": false,
+      "paragraph_3_emotion_or_biometric_categorisation": false,
+      "paragraph_4_deepfake": false,
+      "paragraph_4_public_interest_text": false,
+    },
+  },
+  "confidence": 0.64,
+  "detected_lang": "de",
+  "lang_confident": true,
+  "mode": "deterministic",
+  "rules_hash": "3b3e3d37",
+  "rules_version": "v0.1.0",
+  "three_category": {
+    "applicable_categories": [
+      "1",
+      "2",
+      "3",
+    ],
+    "cat_1_applicable": true,
+    "cat_2_applicable": true,
+    "cat_3_applicable": true,
+  },
+}
+`;
+
+exports[`classify() — end-to-end orchestration snapshots > fixture-day3-08-justice-democracy-en — projected ClassifyResult matches snapshot 1`] = `
+{
+  "annex_iii": {
+    "domains": [
+      {
+        "annex_iii_number": 8,
+        "sub_letters": [],
+      },
+    ],
+    "high_risk": true,
+    "suppressed_by_article_5": false,
+  },
+  "annex_iv_required": true,
+  "article_10": {
+    "applicable": true,
+  },
+  "article_12": {
+    "applicable": true,
+  },
+  "article_13": {
+    "applicable": true,
+  },
+  "article_14": {
+    "applicable": true,
+  },
+  "article_15": {
+    "applicable": true,
+  },
+  "article_5": {
+    "hits": [],
+    "prohibited": false,
+  },
+  "article_50": {
+    "applicable": false,
+    "triggered_by": {
+      "paragraph_1_interaction": false,
+      "paragraph_2_synthetic_content": false,
+      "paragraph_3_emotion_or_biometric_categorisation": false,
+      "paragraph_4_deepfake": false,
+      "paragraph_4_public_interest_text": false,
+    },
+  },
+  "confidence": 0.6,
+  "detected_lang": "en",
+  "lang_confident": true,
+  "mode": "deterministic",
+  "rules_hash": "3b3e3d37",
+  "rules_version": "v0.1.0",
+  "three_category": {
+    "applicable_categories": [
+      "1",
+      "2",
+      "3",
+    ],
+    "cat_1_applicable": true,
+    "cat_2_applicable": true,
+    "cat_3_applicable": true,
+  },
+}
+`;
+
+exports[`classify() — end-to-end orchestration snapshots > fixture-day4-01-low-risk-en — projected ClassifyResult matches snapshot 1`] = `
+{
+  "annex_iii": {
+    "domains": [],
+    "high_risk": false,
+    "suppressed_by_article_5": false,
+  },
+  "annex_iv_required": false,
+  "article_10": {
+    "applicable": false,
+  },
+  "article_12": {
+    "applicable": false,
+  },
+  "article_13": {
+    "applicable": false,
+  },
+  "article_14": {
+    "applicable": false,
+  },
+  "article_15": {
+    "applicable": false,
+  },
+  "article_5": {
+    "hits": [],
+    "prohibited": false,
+  },
+  "article_50": {
+    "applicable": false,
+    "triggered_by": {
+      "paragraph_1_interaction": false,
+      "paragraph_2_synthetic_content": false,
+      "paragraph_3_emotion_or_biometric_categorisation": false,
+      "paragraph_4_deepfake": false,
+      "paragraph_4_public_interest_text": false,
+    },
+  },
+  "confidence": 0.48,
+  "detected_lang": "en",
+  "lang_confident": true,
+  "mode": "deterministic",
+  "rules_hash": "3b3e3d37",
+  "rules_version": "v0.1.0",
+  "three_category": {
+    "applicable_categories": [],
+    "cat_1_applicable": false,
+    "cat_2_applicable": false,
+    "cat_3_applicable": false,
+  },
+}
+`;
+
+exports[`classify() — end-to-end orchestration snapshots > fixture-day5-01-art50-chatbot-en — projected ClassifyResult matches snapshot 1`] = `
+{
+  "annex_iii": {
+    "domains": [],
+    "high_risk": false,
+    "suppressed_by_article_5": false,
+  },
+  "annex_iv_required": false,
+  "article_10": {
+    "applicable": false,
+  },
+  "article_12": {
+    "applicable": false,
+  },
+  "article_13": {
+    "applicable": false,
+  },
+  "article_14": {
+    "applicable": false,
+  },
+  "article_15": {
+    "applicable": false,
+  },
+  "article_5": {
+    "hits": [],
+    "prohibited": false,
+  },
+  "article_50": {
+    "applicable": true,
+    "triggered_by": {
+      "paragraph_1_interaction": true,
+      "paragraph_2_synthetic_content": false,
+      "paragraph_3_emotion_or_biometric_categorisation": false,
+      "paragraph_4_deepfake": false,
+      "paragraph_4_public_interest_text": false,
+    },
+  },
+  "confidence": 0.44,
+  "detected_lang": "en",
+  "lang_confident": false,
+  "mode": "deterministic",
+  "rules_hash": "3b3e3d37",
+  "rules_version": "v0.1.0",
+  "three_category": {
+    "applicable_categories": [],
+    "cat_1_applicable": false,
+    "cat_2_applicable": false,
+    "cat_3_applicable": false,
+  },
+}
+`;
+
+exports[`classify() — end-to-end orchestration snapshots > fixture-day5-02-art50-deepfake-de — projected ClassifyResult matches snapshot 1`] = `
+{
+  "annex_iii": {
+    "domains": [],
+    "high_risk": false,
+    "suppressed_by_article_5": false,
+  },
+  "annex_iv_required": false,
+  "article_10": {
+    "applicable": false,
+  },
+  "article_12": {
+    "applicable": false,
+  },
+  "article_13": {
+    "applicable": false,
+  },
+  "article_14": {
+    "applicable": false,
+  },
+  "article_15": {
+    "applicable": false,
+  },
+  "article_5": {
+    "hits": [],
+    "prohibited": false,
+  },
+  "article_50": {
+    "applicable": true,
+    "triggered_by": {
+      "paragraph_1_interaction": false,
+      "paragraph_2_synthetic_content": false,
+      "paragraph_3_emotion_or_biometric_categorisation": false,
+      "paragraph_4_deepfake": true,
+      "paragraph_4_public_interest_text": false,
+    },
+  },
+  "confidence": 0.52,
+  "detected_lang": "de",
+  "lang_confident": true,
+  "mode": "deterministic",
+  "rules_hash": "3b3e3d37",
+  "rules_version": "v0.1.0",
+  "three_category": {
+    "applicable_categories": [],
+    "cat_1_applicable": false,
+    "cat_2_applicable": false,
+    "cat_3_applicable": false,
+  },
+}
+`;
