@@ -235,12 +235,15 @@ function renderCitations(
  * Static Annex IV technical-documentation reference table.
  *
  * Pure function. Locale-keyed. Source-of-truth: `src/i18n/{en,de}.json` field
- * `annex_iv_reference[]`. EN titles verbatim from Tier-3 EU AI Office reference
- * (artificialintelligenceact.eu/annex/4/). DE titles verbatim from Tier-3
- * (artificialintelligenceact.eu/de/annex/4/) with the obvious "AI-Systems" →
- * "KI-Systems" Tier-3 typo corrected in item 9 (canonical EUR-Lex DE uses
- * "KI-Systems" throughout — Tier-1 PDF cross-check). Regulator-validator agent
- * is expected to flag any further divergences on PR review.
+ * `annex_iv_reference[]`. EN+DE titles ship verbatim from Tier-1 EUR-Lex
+ * Regulation (EU) 2024/1689, Annex IV / Anhang IV (PDF). The 9 top-level
+ * requirements are truncated to title-only form (period replaces the trailing
+ * comma/colon plus enumerated sub-letters) so the CLI prints a stable 9-line
+ * reference table. DE was previously sourced from a Tier-3 mirror
+ * (artificialintelligenceact.eu/de/annex/4/) which paraphrased Tier-1 with
+ * "Eine "-prefixed openings; restored to Tier-1 verbatim opening clauses in
+ * the PR #6 fix-up commit on `feat/day-6-cli-surface-and-formatters` (the
+ * trailing-period truncation is the only deliberate divergence from Tier-1).
  */
 export function formatAnnexIVReference(opts: { locale: 'en' | 'de' }): string {
   const locale = getLocale(opts.locale);

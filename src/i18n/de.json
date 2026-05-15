@@ -43,39 +43,39 @@
   "annex_iv_reference": [
     {
       "number": "1.",
-      "title": "Eine allgemeine Beschreibung des KI-Systems."
+      "title": "Allgemeine Beschreibung des KI-Systems."
     },
     {
       "number": "2.",
-      "title": "Eine ausführliche Beschreibung der Elemente des KI-Systems und des Prozesses für seine Entwicklung."
+      "title": "Detaillierte Beschreibung der Bestandteile des KI-Systems und seines Entwicklungsprozesses."
     },
     {
       "number": "3.",
-      "title": "Ausführliche Informationen über die Überwachung, die Funktionsweise und die Kontrolle des KI-Systems."
+      "title": "Detaillierte Informationen über die Überwachung, Funktionsweise und Kontrolle des KI-Systems."
     },
     {
       "number": "4.",
-      "title": "Eine Beschreibung der Eignung der Leistungsmetriken für das spezifische KI-System."
+      "title": "Darlegungen zur Eignung der Leistungskennzahlen für das spezifische KI-System."
     },
     {
       "number": "5.",
-      "title": "Eine ausführliche Beschreibung des Risikomanagementsystems gemäß Artikel 9."
+      "title": "Detaillierte Beschreibung des Risikomanagementsystems gemäß Artikel 9."
     },
     {
       "number": "6.",
-      "title": "Eine Beschreibung der relevanten Änderungen, die der Anbieter über den Lebenszyklus des Systems hinweg vorgenommen hat."
+      "title": "Beschreibung einschlägiger Änderungen, die der Anbieter während des Lebenszyklus an dem System vorgenommen hat."
     },
     {
       "number": "7.",
-      "title": "Eine Liste der ganz oder teilweise angewandten harmonisierten Normen, deren Fundstellen im Amtsblatt der Europäischen Union veröffentlicht wurden."
+      "title": "Aufstellung der vollständig oder teilweise angewandten harmonisierten Normen, deren Fundstellen im Amtsblatt der Europäischen Union veröffentlicht wurden."
     },
     {
       "number": "8.",
-      "title": "Eine Kopie der EU-Konformitätserklärung gemäß Artikel 47."
+      "title": "Kopie der EU-Konformitätserklärung gemäß Artikel 47."
     },
     {
       "number": "9.",
-      "title": "Eine ausführliche Beschreibung des Systems zur Bewertung der Leistung des KI-Systems in der Phase nach dem Inverkehrbringen gemäß Artikel 72."
+      "title": "Detaillierte Beschreibung des Systems zur Bewertung der Leistung des KI-Systems in der Phase nach dem Inverkehrbringen gemäß Artikel 72."
     }
   ]
 }
