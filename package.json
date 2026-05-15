@@ -43,7 +43,7 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "pnpm run clean && tsc && cp -R src/data dist/data",
+    "build": "pnpm run clean && tsc && cp -R src/data dist/data && mkdir -p dist/i18n && cp src/i18n/en.json src/i18n/de.json dist/i18n/",
     "prepack": "pnpm run build && chmod +x dist/cli.js",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -51,6 +51,11 @@
     "typecheck:test": "tsc -p tsconfig.test.json --noEmit",
     "sync:three-category": "node --import tsx scripts/sync-three-category.ts",
     "sync:three-category:check": "node --import tsx scripts/sync-three-category.ts --check"
+  },
+  "dependencies": {
+    "cli-table3": "^0.6.5",
+    "commander": "^12.1.0",
+    "kleur": "^4.1.5"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
