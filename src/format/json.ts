@@ -10,6 +10,7 @@
 // machine-readable surface; CLI table + Markdown carry the disclaimer.
 
 import type { ClassifyResult } from '../classify.js';
+import { getLocale } from '../i18n/load.js';
 
 export interface JsonFormatOptions {
   /** When true, output is pretty-printed with 2-space indent. Default: true. */
@@ -67,5 +68,36 @@ export function formatJson(result: ClassifyResult, opts: JsonFormatOptions = {})
     out[key] = result[key];
   }
 
+  return pretty ? JSON.stringify(out, null, 2) : JSON.stringify(out);
+}
+
+/**
+ * Render the static Annex IV technical-documentation reference as JSON.
+ *
+ * Pure function. Locale-keyed. Source-of-truth: `src/i18n/{en,de}.json` field
+ * `annex_iv_reference[]`. JSON shape mirrors the structured i18n data with the
+ * locale's title + source + items + disclaimer footer included so machine
+ * consumers can render their own UI without losing provenance.
+ *
+ * M4 fix-up — `--annex iv` now honours `--format json` (was previously
+ * CLI-table-only). See cli.ts:runAnnexIV().
+ */
+export function formatAnnexIVReferenceJson(opts: { locale: 'en' | 'de'; pretty?: boolean }): string {
+  if (opts.locale !== 'en' && opts.locale !== 'de') {
+    throw new TypeError(
+      `formatAnnexIVReferenceJson(): opts.locale must be 'en' or 'de'. Got: ${String(opts.locale)}`,
+    );
+  }
+  const locale = getLocale(opts.locale);
+  const out = {
+    title: locale.labels.annex_iv_reference_title,
+    source: locale.labels.annex_iv_reference_source,
+    items: locale.annex_iv_reference.map((item) => ({
+      number: item.number,
+      title: item.title,
+    })),
+    disclaimer: locale.labels.disclaimer_footer,
+  };
+  const pretty = opts.pretty !== false; // default true
   return pretty ? JSON.stringify(out, null, 2) : JSON.stringify(out);
 }

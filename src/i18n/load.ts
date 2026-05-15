@@ -58,6 +58,8 @@ export interface I18nLabels {
   error_annex_invalid: string;
   annex_iv_reference_title: string;
   annex_iv_reference_source: string;
+  annex_iii_prefix: string;
+  annex_iv_prefix: string;
 }
 
 export interface I18nLocale {

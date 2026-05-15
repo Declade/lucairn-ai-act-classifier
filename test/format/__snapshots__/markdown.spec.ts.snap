@@ -6,7 +6,7 @@ exports[`formatMarkdown() — output shape > DE snapshot — high-risk fixture, 
 | Artikel | Status | Hinweise |
 | --- | --- | --- |
 | Artikel 5  (verboten) | ✅ nicht ausgelöst |  |
-| Artikel 6  + Anhang III | ⚠️ HOCHRISIKO | Annex III.4(a) — Beschäftigung, Personalmanagement und Zugang zur Selbstständigkeit |
+| Artikel 6  + Anhang III | ⚠️ HOCHRISIKO | Anhang III.4(a) — Beschäftigung, Personalmanagement und Zugang zur Selbstständigkeit |
 | Artikel 10 (Daten-Governance) | ✅ anwendbar |  |
 | Artikel 12 (Protokollierung/Aufzeichnungen) | ✅ anwendbar |  |
 | Artikel 13 (Betreiber-Transparenz) | ✅ anwendbar |  |

@@ -141,14 +141,16 @@ function renderAnnexIIITree(annex: ClassifyResult['annex_iii'], locale: 'en' | '
   const out: string[] = [];
   // Domains are already sorted by classifyAnnexIII; defensive resort doesn't hurt.
   const sortedDomains = [...annex.domains].sort((a, b) => a.annex_iii_number - b.annex_iii_number);
+  // M1 fix-up — the "Annex III" prefix is locale-aware ("Anhang III" in DE).
+  const prefix = getLocale(locale).labels.annex_iii_prefix;
   for (const d of sortedDomains) {
     const title = locale === 'de' ? d.title_de : d.title_en;
     if (d.sub_letters.length === 0) {
-      out.push(`    └─ Annex III.${d.annex_iii_number} — ${title}`);
+      out.push(`    └─ ${prefix}.${d.annex_iii_number} — ${title}`);
     } else {
       const sortedSubs = [...d.sub_letters].sort();
       for (const letter of sortedSubs) {
-        out.push(`    └─ Annex III.${d.annex_iii_number}(${letter}) — ${title}`);
+        out.push(`    └─ ${prefix}.${d.annex_iii_number}(${letter}) — ${title}`);
       }
     }
   }
