@@ -28,6 +28,38 @@ Optionale LLM-gestützte Feature-Extraktion (verwendet Ihren eigenen API-Key; wi
 ANTHROPIC_API_KEY="<ihr-anthropic-key>" npx @lucairn/ai-act-classifier --llm anthropic "..."
 ```
 
+## `--llm anthropic` Modus (optional)
+
+Der Standardmodus ist deterministisch: ein Stichwort- und Phrasen-Matcher in DE+EN gegen das kuratierte Lexikon. Kein Netzwerk, kein API-Key, keine Kosten. Dies ist der empfohlene Modus für die meisten Anwendungsfälle — die deterministische Genauigkeit liegt auf dem kuratierten 50-Fall-Korpus über der LLM-Genauigkeit.
+
+Der optionale `--llm anthropic` Modus ersetzt den Stichwort-Extraktor durch [Claude Haiku 4.5](https://docs.anthropic.com/) für semantische Feature-Extraktion. Die Regel-Engine, die die Artikel auswählt, ist **unverändert** — nur die Feature-Extraktion wird ersetzt. Das LLM ist darauf beschränkt, Phrasen aus dem kuratierten Lexikon zu zitieren; jede halluzinierte Phrase wird verworfen, bevor die Regel-Engine sie sieht.
+
+**Einrichtung:**
+
+```bash
+# Optionale Abhängigkeit — nur für den --llm anthropic Modus benötigt.
+pnpm add @anthropic-ai/sdk
+
+export ANTHROPIC_API_KEY="<ihr-anthropic-key>"
+ai-act-classify --llm anthropic "KI-System, das Bewerber nach Lebenslauf bewertet"
+```
+
+**Kosten:** etwa \$0,003 pro Aufruf auf Haiku 4.5 (~\$0,13 für einen vollständigen 50-Fixture-Genauigkeits-Harness-Lauf).
+
+**Tag-9 Genauigkeits-Delta gegenüber dem deterministischen Basiswert (50-Fall-Korpus, einzelner Lauf):**
+
+| Metrik | Deterministisch (Standard) | `--llm anthropic` (Tag 9) |
+|---|---|---|
+| Gesamtgenauigkeit | 98,2% | 97,6% |
+| Art. 5 Verbots-Erkennung | 100,0% | 100,0% |
+| Binäre Hochrisiko-Klassifikation | 98,0% | 98,0% |
+
+> **Hinweis zur LLM-Modus-Nicht-Determinismus.** Im Gegensatz zum deterministischen Modus können die Ergebnisse im LLM-Modus zwischen Läufen leicht variieren, weil Haiku ein probabilistisches Modell ist. Bei zwei unabhängigen Harness-Läufen während des Tag-9-Builds beobachteten wir Gesamtgenauigkeiten zwischen 93,5% und 97,6%. Für reproduzierbare Klassifikation sollten Sie den deterministischen Modus bevorzugen.
+
+Der deterministische Modus ist auf dem kuratierten Korpus in der Regel zuverlässiger, weil der Korpus so geformt wurde, dass er den kanonischen Phrasen des Lexikons entspricht. Der LLM-Modus tauscht Reproduzierbarkeit gegen eine bessere Abdeckung von semantisch ähnlichen Paraphrasen ein, die nicht im Lexikon erscheinen (z. B. deutsche Komposita wie `Emotionserkennungssystems`, die der deterministische n-Gramm-Extraktor verfehlt). Wählen Sie den Modus, der zu Ihrer Eingabe-Verteilung passt.
+
+Berichte: [accuracy/REPORT.md](./accuracy/REPORT.md) (deterministisch) und [accuracy/REPORT.llm-anthropic.md](./accuracy/REPORT.llm-anthropic.md) (LLM-Modus).
+
 ## Architektur (in einem Absatz)
 
 Regelwerk-zuerst-Hybrid. Eine deterministische Regel-Engine in TypeScript wertet Art. 5, 6 + Anhang III, 10, 13, 14, 15, 50 gegen aus Ihrer Eingabe extrahierte Merkmale aus. Die Standard-Extraktion ist ein Stichwort- und Phrasen-Mustererkenner in DE+EN — funktioniert offline, ohne API-Key. Der optionale `--llm`-Modus nutzt Ihren eigenen API-Key für genauere Feature-Extraktion; die Regel-Engine wählt die Artikel weiterhin deterministisch aus. Jede Ausgabe enthält die Regelsatz-Version (SHA-fixiert), sodass dieselbe Eingabe immer dieselbe Klassifizierung erzeugt.
