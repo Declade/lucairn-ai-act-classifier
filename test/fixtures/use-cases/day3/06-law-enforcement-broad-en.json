@@ -1,0 +1,13 @@
+{
+  "id": "fixture-day3-06-law-enforcement-broad-en",
+  "lang": "en",
+  "input": "Our system supports law enforcement with predictive policing risk analytics that combine crime profiling with broad demographic and economic indicators across regions.",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": true,
+    "annex_iii_domains": [6],
+    "suppressed_by_article_5": false,
+    "notes": "Annex III.6 high-risk law-enforcement risk assessment. Crucially the input does NOT contain 'solely on profiling' / 'personality only' language → the Art 5(1)(d) prohibition disambiguator does NOT fire. The classifier correctly downgrades the lexicon hit to Annex III.6 high-risk per EUR-Lex Art 5(1)(d) text and Annex III.6(d). This is the negative-trigger half of the predictive-policing disambiguation rule."
+  }
+}

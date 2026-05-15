@@ -1,0 +1,220 @@
+{
+  "version": "v0.1.0-seed",
+  "_meta": {
+    "notice": "Annex III of Regulation (EU) 2024/1689 — high-risk AI systems referred to in Article 6(2). Each domain entry cites its EUR-Lex paragraph. Sub-letters reproduce the legislative breakdown VERBATIM from EUR-Lex; where the legislative text fuses multiple obligations into a single sub-letter we have NOT decomposed it. The regulator-validator agent (~/.claude/agents/regulator-validator.md) verifies every `source` field and `summary_*` line against EUR-Lex EN+DE before merge. The German summaries are pulled from the EUR-Lex DE body (NOT machine-translated). Where the DE EUR-Lex body could not be reached at compile time, that sub-letter is marked `de_summary_provenance: \"TBD\"` and is a polish item for the regulator-validator follow-up pass.",
+    "primary_source_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "primary_source_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
+    "secondary_source": "https://ai-act-service-desk.ec.europa.eu/en/ai-act/annex-3",
+    "regulator_validator": "~/.claude/agents/regulator-validator.md"
+  },
+  "source_primary": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+  "source_secondary": "https://ai-act-service-desk.ec.europa.eu/en/ai-act/annex-3",
+  "domains": [
+    {
+      "annex_iii_number": 1,
+      "key": "biometrics",
+      "title_en": "Biometrics",
+      "title_de": "Biometrie",
+      "lexicon_categories": ["1_biometrics"],
+      "source": "EUR-Lex Regulation (EU) 2024/1689 — Annex III paragraph 1",
+      "sub_letters": [
+        {
+          "letter": "a",
+          "summary_en": "Remote biometric identification systems (excluding biometric verification confirming a person is who they claim to be).",
+          "summary_de": "Biometrische Fernidentifizierungssysteme (ausgenommen biometrische Verifizierung zur Bestätigung der Identität)."
+        },
+        {
+          "letter": "b",
+          "summary_en": "Biometric categorisation according to sensitive or protected attributes or characteristics based on the inference of those attributes or characteristics.",
+          "summary_de": "Biometrische Kategorisierung nach sensiblen oder geschützten Attributen oder Merkmalen auf der Grundlage der Ableitung dieser Attribute oder Merkmale."
+        },
+        {
+          "letter": "c",
+          "summary_en": "Emotion recognition.",
+          "summary_de": "Emotionserkennung."
+        }
+      ]
+    },
+    {
+      "annex_iii_number": 2,
+      "key": "critical_infrastructure",
+      "title_en": "Critical infrastructure",
+      "title_de": "Kritische Infrastruktur",
+      "lexicon_categories": ["2_critical_infrastructure"],
+      "source": "EUR-Lex Regulation (EU) 2024/1689 — Annex III paragraph 2",
+      "sub_letters": [
+        {
+          "letter": "a",
+          "summary_en": "AI systems intended to be used as safety components in the management and operation of critical digital infrastructure, road traffic, or in the supply of water, gas, heating or electricity.",
+          "summary_de": "KI-Systeme, die bestimmungsgemäß als Sicherheitsbauteile im Rahmen der Verwaltung und des Betriebs kritischer digitaler Infrastruktur, des Straßenverkehrs oder der Versorgung mit Wasser, Gas, Wärme oder Strom verwendet werden sollen."
+        }
+      ]
+    },
+    {
+      "annex_iii_number": 3,
+      "key": "education",
+      "title_en": "Education and vocational training",
+      "title_de": "Bildung und berufliche Bildung",
+      "lexicon_categories": ["3_education"],
+      "source": "EUR-Lex Regulation (EU) 2024/1689 — Annex III paragraph 3",
+      "sub_letters": [
+        {
+          "letter": "a",
+          "summary_en": "Determining access, admission or assignment of natural persons to educational and vocational training institutions at all levels.",
+          "summary_de": "Bestimmung des Zugangs, der Zulassung oder der Zuweisung natürlicher Personen zu Einrichtungen aller Ebenen der allgemeinen und beruflichen Bildung."
+        },
+        {
+          "letter": "b",
+          "summary_en": "Evaluating learning outcomes, including when those outcomes are used to steer the learning process.",
+          "summary_de": "Bewertung von Lernergebnissen, auch wenn diese Ergebnisse zur Steuerung des Lernprozesses verwendet werden."
+        },
+        {
+          "letter": "c",
+          "summary_en": "Assessing the appropriate level of education that an individual will receive or be able to access in the context of or within educational and vocational training institutions at all levels.",
+          "summary_de": "Bestimmung des angemessenen Bildungsniveaus, das eine Person erhalten oder zu dem sie Zugang haben kann, im Rahmen oder innerhalb von Einrichtungen aller Ebenen der allgemeinen und beruflichen Bildung."
+        },
+        {
+          "letter": "d",
+          "summary_en": "Monitoring and detecting prohibited behaviour of students during tests in the context of or within educational and vocational training institutions at all levels.",
+          "summary_de": "Überwachung und Erkennung verbotenen Verhaltens von Schülern bei Prüfungen im Rahmen oder innerhalb von Einrichtungen aller Ebenen der allgemeinen und beruflichen Bildung."
+        }
+      ]
+    },
+    {
+      "annex_iii_number": 4,
+      "key": "employment",
+      "title_en": "Employment, workers' management and access to self-employment",
+      "title_de": "Beschäftigung, Personalmanagement und Zugang zur Selbstständigkeit",
+      "lexicon_categories": ["4_employment"],
+      "source": "EUR-Lex Regulation (EU) 2024/1689 — Annex III paragraph 4",
+      "sub_letters": [
+        {
+          "letter": "a",
+          "summary_en": "Recruitment or selection of natural persons, in particular to place targeted job advertisements, to analyse and filter job applications, and to evaluate candidates.",
+          "summary_de": "Einstellung oder Auswahl natürlicher Personen, insbesondere zur Schaltung gezielter Stellenanzeigen, zur Analyse und Filterung von Bewerbungen und zur Bewertung von Bewerbern."
+        },
+        {
+          "letter": "b",
+          "summary_en": "Making decisions affecting terms of work-related relationships, the promotion or termination of work-related contractual relationships, allocating tasks based on individual behaviour or personal traits or characteristics, or monitoring and evaluating the performance and behaviour of persons in such relationships.",
+          "summary_de": "Entscheidungen, die die Bedingungen von Arbeitsverhältnissen, die Beförderung oder Beendigung arbeitsvertraglicher Beziehungen beeinflussen, die Zuweisung von Aufgaben auf der Grundlage individuellen Verhaltens oder persönlicher Merkmale, oder die Überwachung und Bewertung der Leistung und des Verhaltens von Personen in solchen Beziehungen."
+        }
+      ]
+    },
+    {
+      "annex_iii_number": 5,
+      "key": "essential_services",
+      "title_en": "Access to and enjoyment of essential private services and essential public services and benefits",
+      "title_de": "Zugang zu und Inanspruchnahme wesentlicher privater Dienste und wesentlicher öffentlicher Dienste und Leistungen",
+      "lexicon_categories": ["5_essential_services"],
+      "source": "EUR-Lex Regulation (EU) 2024/1689 — Annex III paragraph 5",
+      "sub_letters": [
+        {
+          "letter": "a",
+          "summary_en": "Used by or on behalf of public authorities to evaluate the eligibility of natural persons for essential public assistance benefits and services, including healthcare services, as well as to grant, reduce, revoke, or reclaim such benefits and services.",
+          "summary_de": "Bewertung des Anspruchs natürlicher Personen auf wesentliche öffentliche Unterstützungsleistungen und -dienste, einschließlich Gesundheitsdiensten, sowie Gewährung, Reduzierung, Widerruf oder Rückforderung solcher Leistungen und Dienste durch oder im Namen öffentlicher Stellen."
+        },
+        {
+          "letter": "b",
+          "summary_en": "Evaluating the creditworthiness of natural persons or establishing their credit score, with the exception of AI systems used for the purpose of detecting financial fraud.",
+          "summary_de": "Bewertung der Kreditwürdigkeit natürlicher Personen oder Festlegung ihrer Bonitätseinstufung, mit Ausnahme von KI-Systemen, die zur Aufdeckung von Finanzbetrug eingesetzt werden."
+        },
+        {
+          "letter": "c",
+          "summary_en": "Risk assessment and pricing in relation to natural persons in the case of life and health insurance.",
+          "summary_de": "Risikobewertung und Tarifierung in Bezug auf natürliche Personen im Fall von Lebens- und Krankenversicherungen."
+        },
+        {
+          "letter": "d",
+          "summary_en": "To evaluate and classify emergency calls by natural persons or to be used to dispatch, or to establish priority in the dispatching of, emergency first response services, including by police, firefighters and medical aid, as well as for emergency healthcare patient triage systems.",
+          "summary_de": "Bewertung und Klassifizierung von Notrufen natürlicher Personen oder Verwendung zur Disposition bzw. zur Priorisierung der Disposition von Notfalleinsatzkräften, einschließlich Polizei, Feuerwehr und medizinischer Notfallhilfe, sowie für medizinische Notfall-Triagesysteme."
+        }
+      ]
+    },
+    {
+      "annex_iii_number": 6,
+      "key": "law_enforcement",
+      "title_en": "Law enforcement",
+      "title_de": "Strafverfolgung",
+      "lexicon_categories": ["6_law_enforcement"],
+      "source": "EUR-Lex Regulation (EU) 2024/1689 — Annex III paragraph 6",
+      "sub_letters": [
+        {
+          "letter": "a",
+          "summary_en": "Used by or on behalf of law enforcement authorities, or by Union institutions, bodies, offices or agencies in support of law enforcement authorities, or on their behalf, to assess the risk of a natural person becoming a victim of criminal offences.",
+          "summary_de": "Bewertung des Risikos einer natürlichen Person, Opfer einer Straftat zu werden, durch oder im Namen von Strafverfolgungsbehörden oder Unionseinrichtungen zu deren Unterstützung."
+        },
+        {
+          "letter": "b",
+          "summary_en": "Used by or on behalf of law enforcement authorities or by Union institutions, bodies, offices or agencies in support of law enforcement authorities as polygraphs or similar tools.",
+          "summary_de": "Verwendung durch oder im Namen von Strafverfolgungsbehörden oder Unionseinrichtungen als Polygraphen oder ähnliche Werkzeuge."
+        },
+        {
+          "letter": "c",
+          "summary_en": "Used by or on behalf of law enforcement authorities, or by Union institutions, bodies, offices or agencies in support of law enforcement authorities, to evaluate the reliability of evidence in the course of the investigation or prosecution of criminal offences.",
+          "summary_de": "Bewertung der Zuverlässigkeit von Beweismitteln im Rahmen der Untersuchung oder Verfolgung von Straftaten durch oder im Namen von Strafverfolgungsbehörden oder Unionseinrichtungen."
+        },
+        {
+          "letter": "d",
+          "summary_en": "Used by or on behalf of law enforcement authorities or by Union institutions, bodies, offices or agencies in support of law enforcement authorities for assessing the risk of a natural person offending or re-offending not solely on the basis of the profiling of natural persons referred to in Article 3(4) of Directive (EU) 2016/680, or to assess personality traits and characteristics or past criminal behaviour of natural persons or groups.",
+          "summary_de": "Bewertung des Risikos einer natürlichen Person, eine Straftat zu begehen oder rückfällig zu werden, NICHT allein auf der Grundlage des Profilings natürlicher Personen im Sinne von Artikel 3 Absatz 4 der Richtlinie (EU) 2016/680, oder Bewertung von Persönlichkeitsmerkmalen oder vergangenem kriminellen Verhalten natürlicher Personen oder Gruppen.",
+          "_note": "Annex III.6(d) is the high-risk counterpart to Art 5(1)(d). The line between the two is the 'solely on profiling / personality traits' qualifier: solely-based → Art 5 prohibition; broader risk assessment that includes other factors → Annex III.6 high-risk. See classifyArticle5() disambiguation logic."
+        },
+        {
+          "letter": "e",
+          "summary_en": "Used by or on behalf of law enforcement authorities or by Union institutions, bodies, offices or agencies in support of law enforcement authorities for the profiling of natural persons as referred to in Article 3(4) of Directive (EU) 2016/680 in the course of the detection, investigation or prosecution of criminal offences.",
+          "summary_de": "Profiling natürlicher Personen im Sinne von Artikel 3 Absatz 4 der Richtlinie (EU) 2016/680 im Rahmen der Aufdeckung, Untersuchung oder Verfolgung von Straftaten durch oder im Namen von Strafverfolgungsbehörden oder Unionseinrichtungen."
+        }
+      ]
+    },
+    {
+      "annex_iii_number": 7,
+      "key": "migration_border",
+      "title_en": "Migration, asylum and border control management",
+      "title_de": "Migration, Asyl und Grenzkontrolle",
+      "lexicon_categories": ["7_migration_border"],
+      "source": "EUR-Lex Regulation (EU) 2024/1689 — Annex III paragraph 7",
+      "sub_letters": [
+        {
+          "letter": "a",
+          "summary_en": "Used by or on behalf of competent public authorities or by Union institutions, bodies, offices or agencies as polygraphs or similar tools.",
+          "summary_de": "Verwendung durch oder im Namen zuständiger Behörden oder Unionseinrichtungen als Polygraphen oder ähnliche Werkzeuge."
+        },
+        {
+          "letter": "b",
+          "summary_en": "Used by or on behalf of competent public authorities or by Union institutions, bodies, offices or agencies to assess a risk, including a security risk, a risk of irregular migration, or a health risk, posed by a natural person who intends to enter or who has entered into the territory of a Member State.",
+          "summary_de": "Bewertung eines Risikos, einschließlich eines Sicherheitsrisikos, eines Risikos irregulärer Migration oder eines Gesundheitsrisikos, das von einer natürlichen Person ausgeht, die in das Hoheitsgebiet eines Mitgliedstaats einreisen möchte oder eingereist ist."
+        },
+        {
+          "letter": "c",
+          "summary_en": "Used by or on behalf of competent public authorities or by Union institutions, bodies, offices or agencies to assist competent public authorities for the examination of applications for asylum, visa or residence permits and for associated complaints with regard to the eligibility of the natural persons applying for a status, including related assessments of the reliability of evidence.",
+          "summary_de": "Unterstützung zuständiger Behörden bei der Prüfung von Asyl-, Visa- oder Aufenthaltsanträgen und damit verbundenen Beschwerden hinsichtlich der Berechtigung der antragstellenden natürlichen Personen, einschließlich damit verbundener Bewertungen der Zuverlässigkeit von Beweismitteln."
+        },
+        {
+          "letter": "d",
+          "summary_en": "Used by or on behalf of competent public authorities, or by Union institutions, bodies, offices or agencies, in the context of migration, asylum or border control management, for the purpose of detecting, recognising or identifying natural persons, with the exception of the verification of travel documents.",
+          "summary_de": "Aufdeckung, Erkennung oder Identifizierung natürlicher Personen im Kontext von Migration, Asyl oder Grenzkontrolle, mit Ausnahme der Überprüfung von Reisedokumenten."
+        }
+      ]
+    },
+    {
+      "annex_iii_number": 8,
+      "key": "justice_democracy",
+      "title_en": "Administration of justice and democratic processes",
+      "title_de": "Rechtspflege und demokratische Prozesse",
+      "lexicon_categories": ["8_justice_democracy"],
+      "source": "EUR-Lex Regulation (EU) 2024/1689 — Annex III paragraph 8",
+      "sub_letters": [
+        {
+          "letter": "a",
+          "summary_en": "Intended to be used by a judicial authority or on their behalf to assist a judicial authority in researching and interpreting facts and the law and in applying the law to a concrete set of facts, or to be used in a similar way in alternative dispute resolution.",
+          "summary_de": "Bestimmungsgemäße Verwendung durch eine Justizbehörde oder in deren Namen zur Unterstützung einer Justizbehörde bei der Recherche und Auslegung von Sachverhalten und Recht und bei der Anwendung des Rechts auf einen konkreten Sachverhalt, oder in ähnlicher Weise bei alternativer Streitbeilegung."
+        },
+        {
+          "letter": "b",
+          "summary_en": "Intended to be used for influencing the outcome of an election or referendum or the voting behaviour of natural persons in the exercise of their vote in elections or referendums. This does not include AI systems to whose output natural persons are not directly exposed, such as tools used to organise, optimise or structure political campaigns from an administrative or logistical point of view.",
+          "summary_de": "Bestimmungsgemäße Verwendung zur Beeinflussung des Ausgangs einer Wahl oder eines Referendums oder des Wahlverhaltens natürlicher Personen bei der Ausübung ihres Wahlrechts. Dies umfasst keine KI-Systeme, deren Ausgabe natürliche Personen nicht direkt ausgesetzt sind, wie Werkzeuge zur administrativen oder logistischen Organisation politischer Kampagnen."
+        }
+      ]
+    }
+  ]
+}

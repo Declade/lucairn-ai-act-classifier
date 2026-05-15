@@ -1,0 +1,14 @@
+{
+  "id": "fixture-day3-05-essential-services-life-insurance-de",
+  "lang": "de",
+  "input": "KI-gestützte Versicherungstarifierung für unsere Lebensversicherung und private Krankenversicherung Produkte. Bonitätsprüfung wird ebenfalls durchgeführt.",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": true,
+    "annex_iii_domains": [5],
+    "annex_iii_sub_letters": { "5": ["c"] },
+    "suppressed_by_article_5": false,
+    "notes": "Anhang III.5(c) — Risikobewertung und Tarifierung im Fall von Lebens- und Krankenversicherungen. Lexikon-Treffer auf 'versicherungstarifierung', 'lebensversicherung', 'private krankenversicherung', 'bonitätsprüfung'. EUR-Lex Anhang III Absatz 5(c). Disambiguierungs-Test: Lebens-/Krankenversicherungs-Kontext ist präsent → Anhang III.5(c) trifft. (Bonitätsprüfung trifft zusätzlich Anhang III.5(b).)"
+  }
+}
