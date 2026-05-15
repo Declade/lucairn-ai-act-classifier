@@ -112,7 +112,10 @@ describe('snapshot — Day 3 fixtures (8 Annex III domains)', () => {
         expect(actualDomains).toContain(expectedDomain);
       }
 
-      // Sub-letter expectations (when the fixture pins them).
+      // Sub-letter expectations (when the fixture pins them). Uses toEqual
+      // (not toContain) so an over-narrowed OR over-claimed result fails the
+      // fixture — toContain would silently accept extra sub-letters and
+      // defeat the point of pinning the expected set.
       if (fixture.expected.annex_iii_sub_letters !== undefined) {
         for (const [domainStr, expectedSubs] of Object.entries(
           fixture.expected.annex_iii_sub_letters,
@@ -120,9 +123,7 @@ describe('snapshot — Day 3 fixtures (8 Annex III domains)', () => {
           const domainNum = Number(domainStr);
           const actualDomain = annexIII.domains.find((d) => d.annex_iii_number === domainNum);
           expect(actualDomain).toBeDefined();
-          for (const expectedSub of expectedSubs) {
-            expect(actualDomain!.sub_letters).toContain(expectedSub);
-          }
+          expect([...actualDomain!.sub_letters].sort()).toEqual([...expectedSubs].sort());
         }
       }
     });

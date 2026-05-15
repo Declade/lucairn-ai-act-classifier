@@ -196,6 +196,13 @@ const PREDICTIVE_POLICING_DISAMBIGUATORS_DE: readonly string[] = [
   'allein auf der grundlage des profilings',
   'persönlichkeit ausschließlich',
   'persönlichkeitsmerkmale ausschließlich',
+  // Canonical EUR-Lex DE Art 5(1)(d) phrasings where the qualifier
+  // ("ausschließlich" / "allein") precedes the noun. The literal EUR-Lex DE
+  // body reads "allein auf der Grundlage des Profilings ... oder der
+  // Bewertung von Persönlichkeitsmerkmalen". These substrings catch
+  // Persönlichkeit / Persönlichkeitsmerkmal / Persönlichkeitsmerkmalen.
+  'ausschließlich auf persönlichkeit',
+  'allein auf persönlichkeit',
 ];
 
 /**

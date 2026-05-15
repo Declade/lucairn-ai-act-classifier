@@ -165,6 +165,20 @@ describe('classifyArticle5() — DE trigger cases (3+ letters covered)', () => {
     expect(result.prohibited).toBe(true);
     expect(result.hits.map((h) => h.letter)).toContain('d');
   });
+
+  it('DE letter (d) — predictive policing fires when EUR-Lex "ausschließlich auf Persönlichkeitsmerkmalen" phrasing present', () => {
+    // Canonical EUR-Lex DE Art 5(1)(d) phrasing where the qualifier precedes
+    // the noun (Persönlichkeitsmerkmalen). Before this fix-up the
+    // disambiguator list only covered "persönlichkeit ausschließlich" /
+    // "persönlichkeitsmerkmale ausschließlich" (qualifier-after-noun) and
+    // missed the literal EUR-Lex morphology.
+    const result = classify(
+      'Tool für Kriminalrisiko-Profiling, das ausschließlich auf Persönlichkeitsmerkmalen basiert.',
+      'de',
+    );
+    expect(result.prohibited).toBe(true);
+    expect(result.hits.some((h) => h.letter === 'd')).toBe(true);
+  });
 });
 
 describe('classifyArticle5() — output shape and metadata', () => {
