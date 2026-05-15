@@ -22,36 +22,55 @@ npx @lucairn/ai-act-classifier "AI system that ranks job applicants by CV"
 
 Zero config. Zero network. No API key required for the deterministic mode.
 
-Optional LLM-augmented feature extraction (uses your own API key, never sent anywhere except the chosen provider):
+Optional LLM-augmented feature extraction with one of three providers (uses your own API key, never sent anywhere except the chosen provider):
 
 ```bash
-ANTHROPIC_API_KEY="<your-anthropic-key>" npx @lucairn/ai-act-classifier --llm anthropic "..."
+ANTHROPIC_API_KEY="<your-key>" npx @lucairn/ai-act-classifier --llm anthropic "..."
+OPENAI_API_KEY="<your-key>"    npx @lucairn/ai-act-classifier --llm openai    "..."
+GROQ_API_KEY="<your-key>"      npx @lucairn/ai-act-classifier --llm groq      "..."
 ```
 
-## `--llm anthropic` mode (opt-in)
+## `--llm` mode (opt-in, 3 providers)
 
 Default mode is deterministic: a keyword + phrase matcher in EN+DE against the curated lexicon. Zero network, zero API key, zero cost. This is the recommended mode for most use cases — the deterministic accuracy is higher than the LLM mode on the curated 50-case corpus.
 
-The optional `--llm anthropic` mode replaces the keyword extractor with [Claude Haiku 4.5](https://docs.anthropic.com/) for semantic feature extraction. The rules engine that selects articles is **unchanged** — only feature extraction is replaced. The LLM is constrained to cite phrases from the curated lexicon; any hallucinated phrase is dropped before the rules engine sees it.
+The optional `--llm <provider>` mode replaces the keyword extractor with an LLM for semantic feature extraction. The rules engine that selects articles is **unchanged** — only feature extraction is replaced. The LLM is constrained to cite phrases from the curated lexicon; any hallucinated phrase is dropped before the rules engine sees it.
+
+**Supported providers and default models:**
+
+| Provider | Default model | Cost per call (≈) | Cost per 50-fixture run (≈) |
+|---|---|---|---|
+| `anthropic` | Claude Haiku 4.5 | \$0.003 | \$0.13 |
+| `openai` | GPT-4o-mini | \$0.0005 | \$0.025 |
+| `groq` | Llama 3.3 70B Versatile | \$0.0001 | \$0.005 |
+
+(Pricing as of dispatch date 2026-05-16. Override the model per call with the SDK's `model` parameter; the CLI currently uses defaults.)
 
 **Setup:**
 
 ```bash
-# Optional dependency — only needed for --llm anthropic mode.
-pnpm add @anthropic-ai/sdk
+# Optional dependencies — install only the SDKs you'll use.
+pnpm add @anthropic-ai/sdk      # for --llm anthropic
+pnpm add openai                 # for --llm openai AND --llm groq (Groq reuses the OpenAI SDK)
 
 export ANTHROPIC_API_KEY="<your-anthropic-key>"
 ai-act-classify --llm anthropic "AI system that ranks job applicants by CV"
+
+export OPENAI_API_KEY="<your-openai-key>"
+ai-act-classify --llm openai "AI system that ranks job applicants by CV"
+
+export GROQ_API_KEY="<your-groq-key>"
+ai-act-classify --llm groq "AI system that ranks job applicants by CV"
 ```
 
-**Cost:** approximately \$0.003 per call on Haiku 4.5 (~\$0.13 for a full 50-fixture accuracy harness run).
+> ⚠️ **LLM-mode non-determinism note.** LLMs are probabilistic; rerunning the harness on the
+> same input may return different (correlated but not identical) features.
+> Day-9 measured Anthropic Haiku 4.5 at **93.5%–97.6%** overall accuracy across two
+> independent runs on the 50-case corpus. The cache layer (next section) mitigates
+> by storing the first-call result, so re-runs on identical inputs are byte-stable.
+> For reproducible classification on novel inputs, prefer the default deterministic mode.
 
-**Day-9 accuracy delta vs deterministic baseline (50-fixture corpus):**
-
-> ⚠️ **LLM-mode non-determinism note.** Across two independent harness runs during the
-> Day-9 build, overall LLM-mode accuracy fluctuated between **93.5% and 97.6%**.
-> Haiku is probabilistic; rerunning the harness produces different (correlated but
-> not identical) numbers. For reproducible classification, prefer deterministic mode.
+**Day-9 accuracy delta (Anthropic) vs deterministic baseline (50-fixture corpus):**
 
 | Metric | Deterministic (default) | `--llm anthropic` (Day 9) |
 |---|---|---|
@@ -59,9 +78,23 @@ ai-act-classify --llm anthropic "AI system that ranks job applicants by CV"
 | Article 5 prohibition detection | 100.0% | 100.0% |
 | Binary high-risk classification | 98.0% | 98.0% |
 
+OpenAI + Groq accuracy numbers will be added when the harness is run against those providers. Marc can regenerate any report on demand with `<PROVIDER>_API_KEY=... pnpm accuracy:llm-<provider>`.
+
 The deterministic mode is generally more reliable on the curated corpus because the corpus was shaped to match the lexicon's canonical phrases. LLM mode trades reproducibility for better coverage of semantically-similar paraphrases that don't appear in the lexicon (e.g. German compound nouns like `Emotionserkennungssystems` that the deterministic n-gram extractor misses). Choose the mode that fits your input distribution.
 
-Reports: [accuracy/REPORT.md](./accuracy/REPORT.md) (deterministic) and [accuracy/REPORT.llm-anthropic.md](./accuracy/REPORT.llm-anthropic.md) (LLM mode).
+Reports: [accuracy/REPORT.md](./accuracy/REPORT.md) (deterministic, CI-gated), [accuracy/REPORT.llm-anthropic.md](./accuracy/REPORT.llm-anthropic.md), [accuracy/REPORT.llm-openai.md](./accuracy/REPORT.llm-openai.md), and [accuracy/REPORT.llm-groq.md](./accuracy/REPORT.llm-groq.md).
+
+## Cache layer
+
+LLM-mode results are cached on disk at `~/.cache/lucairn-ai-act-classifier/llm/` (respects `XDG_CACHE_HOME`). The cache key is `sha256(provider + model + lexicon-version + lang + normalized-input)`, so the same input on the same lexicon version returns a byte-stable result without burning the API.
+
+- **Cache hit:** typically <100ms (no network) vs ~1-5s for a fresh API call — well over 10× speedup on every repeat invocation.
+- **Cache miss:** the provider runs, the result is written to cache, and the cached features serve every subsequent call until the lexicon version changes.
+- **Bypass:** pass `--no-cache` to force a fresh API call (the cache is neither read nor written for that invocation).
+- **Invalidation:** automatic on lexicon-version bump (e.g. v0.1.1 → v0.2.0); the lexicon-version is part of the cache key, so old entries are simply unreferenced after an upgrade.
+- **Failed calls are not cached.** Only successful provider returns hit the cache.
+
+To clear the cache manually: `rm -rf ~/.cache/lucairn-ai-act-classifier`.
 
 ## Architecture (one paragraph)
 
