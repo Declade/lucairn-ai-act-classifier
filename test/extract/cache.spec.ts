@@ -33,6 +33,7 @@ const SAMPLE_KEY_PARAMS: CacheKeyParams = {
   provider: 'anthropic',
   model: 'claude-haiku-4-5-20251001',
   lexiconVersion: 'v0.1.0-seed',
+  promptChecksum: 'sample-checksum1',
   lang: 'en',
   inputNormalized: 'AI system for CV screening',
 };
@@ -96,6 +97,18 @@ describe('cacheKey — determinism + invalidation', () => {
       ...SAMPLE_KEY_PARAMS,
       inputNormalized: 'AI system for invoice fraud detection',
     });
+    expect(k1).not.toBe(k2);
+  });
+
+  it('different promptChecksum → different key (invariant: prompt or tool-schema edits invalidate cache)', () => {
+    // Day-10 fix-up round 1 / bug-hunter M1 closure: editing SYSTEM_PROMPT or
+    // EMIT_FEATURES_PARAMETERS_SCHEMA without bumping the lexicon version
+    // would otherwise serve cached features generated under the OLD prompt to
+    // callers expecting the new prompt's behavior. The PROMPT_CHECKSUM
+    // constant in providers/_shared.ts rolls automatically on any edit; this
+    // test locks the invariant that the cache key is sensitive to it.
+    const k1 = cacheKey({ ...SAMPLE_KEY_PARAMS, promptChecksum: 'aaaaaaaaaaaaaaaa' });
+    const k2 = cacheKey({ ...SAMPLE_KEY_PARAMS, promptChecksum: 'bbbbbbbbbbbbbbbb' });
     expect(k1).not.toBe(k2);
   });
 });

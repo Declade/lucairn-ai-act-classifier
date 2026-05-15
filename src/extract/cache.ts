@@ -9,9 +9,12 @@
 // Architecture:
 //   - File-per-entry: `~/.cache/lucairn-ai-act-classifier/llm/<sha256>.json`.
 //   - Cache key inputs (hashed together): provider, model, lexiconVersion,
-//     lang, inputNormalized. Adding any of these as a key dimension means a
-//     change there invalidates the cache automatically (lexicon-version bump,
-//     model swap, language override, prompt-text edit).
+//     promptChecksum, lang, inputNormalized. Adding any of these as a key
+//     dimension means a change there invalidates the cache automatically
+//     (lexicon-version bump, model swap, prompt or tool-schema edit, language
+//     override, normalized-input change). promptChecksum is the 16-hex-char
+//     digest of `SYSTEM_PROMPT + EMIT_FEATURES_PARAMETERS_SCHEMA` (see
+//     providers/_shared.ts:PROMPT_CHECKSUM).
 //   - Cache scope: LLM mode only. Deterministic mode is fast + reproducible
 //     and not worth cache management overhead.
 //   - Atomic writes: `<sha>.tmp` → `rename(<sha>.json)`. POSIX rename is
@@ -49,6 +52,14 @@ export interface CacheKeyParams {
   provider: LLMProvider | string;
   model: string;
   lexiconVersion: string;
+  /**
+   * Short hex digest of SYSTEM_PROMPT + EMIT_FEATURES_PARAMETERS_SCHEMA
+   * (see providers/_shared.ts:PROMPT_CHECKSUM). Required as of Day-10 fix-up
+   * round 1 (bug-hunter M1 closure) — without it, an edit to the prompt or
+   * tool schema would silently serve cached features generated under the OLD
+   * prompt to callers expecting the new prompt's behavior.
+   */
+  promptChecksum: string;
   lang: 'en' | 'de';
   inputNormalized: string;
 }
@@ -82,6 +93,7 @@ export function cacheKey(params: CacheKeyParams): string {
     provider: params.provider,
     model: params.model,
     lexiconVersion: params.lexiconVersion,
+    promptChecksum: params.promptChecksum,
     lang: params.lang,
     inputNormalized: params.inputNormalized,
   });

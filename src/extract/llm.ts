@@ -176,17 +176,22 @@ export async function extractFeaturesLLM(
 
   // ----- Cache lookup (Day 10) ------------------------------------------------
   // The cache key is computed from the provider + model + lexicon version +
-  // language + normalized input. We compute it BEFORE dispatching to the
-  // provider so that a hit short-circuits the network call entirely.
+  // prompt checksum + language + normalized input. We compute it BEFORE
+  // dispatching to the provider so that a hit short-circuits the network call
+  // entirely.
   //
   // Model defaults per provider live inside the provider modules; for cache-
   // key stability across cache-miss → cache-hit pairs we must resolve the
   // default here too. The mapping is centralised in `getDefaultModel()`.
+  //
+  // promptChecksum is the 16-hex-char digest of SYSTEM_PROMPT +
+  // EMIT_FEATURES_PARAMETERS_SCHEMA — any edit to either constant rolls the
+  // checksum and invalidates existing cache entries (bug-hunter M1 closure).
   const cacheDisabled = opts.cache?.disabled === true;
   // The lexicon version comes from the loaded lexicon; the provider modules
   // load their own copy via `_shared.ts`. To avoid importing the lexicon
   // twice we read the active version through the same shared module here.
-  const { LEXICONS_CACHE } = await import('./providers/_shared.js');
+  const { LEXICONS_CACHE, PROMPT_CHECKSUM } = await import('./providers/_shared.js');
   const { detectLang } = await import('./lang.js');
   const detection = detectLang(text);
   const lang: 'en' | 'de' = opts.lang ?? detection.lang;
@@ -197,6 +202,7 @@ export async function extractFeaturesLLM(
     provider: opts.provider as LLMProvider,
     model,
     lexiconVersion,
+    promptChecksum: PROMPT_CHECKSUM,
     lang,
     inputNormalized,
   });
