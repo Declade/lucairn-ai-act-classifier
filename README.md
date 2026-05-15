@@ -46,15 +46,18 @@ ai-act-classify --llm anthropic "AI system that ranks job applicants by CV"
 
 **Cost:** approximately \$0.003 per call on Haiku 4.5 (~\$0.13 for a full 50-fixture accuracy harness run).
 
-**Day-9 accuracy delta vs deterministic baseline (50-fixture corpus, single run):**
+**Day-9 accuracy delta vs deterministic baseline (50-fixture corpus):**
+
+> ⚠️ **LLM-mode non-determinism note.** Across two independent harness runs during the
+> Day-9 build, overall LLM-mode accuracy fluctuated between **93.5% and 97.6%**.
+> Haiku is probabilistic; rerunning the harness produces different (correlated but
+> not identical) numbers. For reproducible classification, prefer deterministic mode.
 
 | Metric | Deterministic (default) | `--llm anthropic` (Day 9) |
 |---|---|---|
-| Overall accuracy | 98.2% | 97.6% |
+| Overall accuracy | 98.2% | 97.6% _(one of two observed runs; range 93.5–97.6%)_ |
 | Article 5 prohibition detection | 100.0% | 100.0% |
 | Binary high-risk classification | 98.0% | 98.0% |
-
-> **LLM-mode non-determinism note.** Unlike deterministic mode, LLM mode results can vary slightly between runs because Haiku is a probabilistic model. Across two independent harness runs during the Day-9 build we observed overall accuracy fluctuating between 93.5% and 97.6%. For reproducible classification, prefer deterministic mode.
 
 The deterministic mode is generally more reliable on the curated corpus because the corpus was shaped to match the lexicon's canonical phrases. LLM mode trades reproducibility for better coverage of semantically-similar paraphrases that don't appear in the lexicon (e.g. German compound nouns like `Emotionserkennungssystems` that the deterministic n-gram extractor misses). Choose the mode that fits your input distribution.
 

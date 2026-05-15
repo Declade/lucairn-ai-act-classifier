@@ -46,15 +46,19 @@ ai-act-classify --llm anthropic "KI-System, das Bewerber nach Lebenslauf bewerte
 
 **Kosten:** etwa \$0,003 pro Aufruf auf Haiku 4.5 (~\$0,13 für einen vollständigen 50-Fixture-Genauigkeits-Harness-Lauf).
 
-**Tag-9 Genauigkeits-Delta gegenüber dem deterministischen Basiswert (50-Fall-Korpus, einzelner Lauf):**
+**Tag-9 Genauigkeits-Delta gegenüber dem deterministischen Basiswert (50-Fall-Korpus):**
+
+> ⚠️ **Hinweis zur LLM-Modus-Nicht-Determinismus.** Bei zwei unabhängigen Harness-Läufen
+> während des Tag-9-Builds schwankte die LLM-Modus-Gesamtgenauigkeit zwischen **93,5 %
+> und 97,6 %**. Haiku ist probabilistisch; ein erneuter Lauf erzeugt unterschiedliche
+> (korrelierte aber nicht identische) Werte. Für reproduzierbare Klassifizierung
+> empfehlen wir den deterministischen Modus.
 
 | Metrik | Deterministisch (Standard) | `--llm anthropic` (Tag 9) |
 |---|---|---|
-| Gesamtgenauigkeit | 98,2% | 97,6% |
+| Gesamtgenauigkeit | 98,2% | 97,6% _(einer von zwei beobachteten Läufen; Bereich 93,5–97,6 %)_ |
 | Art. 5 Verbots-Erkennung | 100,0% | 100,0% |
 | Binäre Hochrisiko-Klassifikation | 98,0% | 98,0% |
-
-> **Hinweis zur LLM-Modus-Nicht-Determinismus.** Im Gegensatz zum deterministischen Modus können die Ergebnisse im LLM-Modus zwischen Läufen leicht variieren, weil Haiku ein probabilistisches Modell ist. Bei zwei unabhängigen Harness-Läufen während des Tag-9-Builds beobachteten wir Gesamtgenauigkeiten zwischen 93,5% und 97,6%. Für reproduzierbare Klassifikation sollten Sie den deterministischen Modus bevorzugen.
 
 Der deterministische Modus ist auf dem kuratierten Korpus in der Regel zuverlässiger, weil der Korpus so geformt wurde, dass er den kanonischen Phrasen des Lexikons entspricht. Der LLM-Modus tauscht Reproduzierbarkeit gegen eine bessere Abdeckung von semantisch ähnlichen Paraphrasen ein, die nicht im Lexikon erscheinen (z. B. deutsche Komposita wie `Emotionserkennungssystems`, die der deterministische n-Gramm-Extraktor verfehlt). Wählen Sie den Modus, der zu Ihrer Eingabe-Verteilung passt.
 
