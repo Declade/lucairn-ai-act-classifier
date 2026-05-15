@@ -81,7 +81,11 @@
         { "phrase": "polygraph" },
         { "phrase": "lügendetektor" },
         { "phrase": "beweismittelzuverlässigkeit" },
-        { "phrase": "kriminalprofiling" }
+        { "phrase": "kriminalprofiling" },
+        { "phrase": "opfer-risiko-bewertung" },
+        { "phrase": "risikobewertung opfer" },
+        { "phrase": "risiko opfer einer straftat" },
+        { "phrase": "bewertung opfer straftat" }
       ]
     },
     "7_migration_border": {
