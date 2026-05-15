@@ -2,10 +2,10 @@
 
 Free CLI that maps any AI use case description to the EU AI Act articles it triggers.
 
-> **⚠ Status: Pre-release scaffold (v0.1.0, Day 1 of a 14-day build).**
+> **⚠ Status: Pre-release scaffold (v0.1.1, Day 9 of a 14-day build).**
 > Build window: 2026-05-16 → 2026-05-29. The package is not yet usable; the public CLI surface lands across Day 6, classification rules across Day 3-5, and the curated test set across Day 7-8. Repo is private during build and flips public on the launch day.
 
-## What this will do (target v0.1.0)
+## What this will do (target v0.1.1)
 
 Take a free-text description of an AI use case (English or German) and return:
 
