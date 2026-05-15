@@ -1,8 +1,8 @@
 # Accuracy report — @lucairn/ai-act-classifier
 
 - **Rules version:** `v0.1.0`
-- **Rules hash:** `3b3e3d37` (full: `3b3e3d370d5d9d2ed351fc0b4aba42fa0f324b826c63b73c3af9343e18fb9bf1`)
-- **Last run:** 2026-05-15T12:00:00Z
+- **Rules hash:** `0b5ecc3d` (full: `0b5ecc3d29931baa6563ed7fa3c160c50b654b29c7c5cc325d7ea38aa685c1dc`)
+- **Last run:** 2026-05-15T20:52:26.104Z
 - **Fixture corpus:** 50 cases
 
 > **What this report measures:** internal consistency between the curated 50-case fixture corpus and the v0.1.0 lexicon. The headline numbers below are **not** a measure of arbitrary real-world accuracy — the corpus was shaped during the Day-7 build to match the lexicon's canonical phrases. Per-fixture accuracy uses set-equality on Day-7 fixtures and subset-containment on the 11 legacy day3/4/5 fixtures pending Day-8 backfill. See [METHODOLOGY.md §"Honest limitations"](./METHODOLOGY.md#honest-limitations) for the Day-8 polish backlog. The CI floor is 80% overall + 100% Article 5; current numbers exceed both.

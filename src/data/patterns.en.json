@@ -36,9 +36,13 @@
       "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
       "entries": [
         { "phrase": "student admission" },
+        { "phrase": "student admissions" },
+        { "phrase": "admission decision" },
+        { "phrase": "admission decisions" },
         { "phrase": "exam scoring" },
         { "phrase": "automated grading" },
         { "phrase": "learning assessment" },
+        { "phrase": "learning assessments" },
         { "phrase": "proctoring" },
         { "phrase": "cheating detection" },
         { "phrase": "education level determination" }
@@ -49,11 +53,15 @@
       "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
       "entries": [
         { "phrase": "cv screening" },
+        { "phrase": "cv screenings" },
         { "phrase": "resume screening" },
+        { "phrase": "resume screenings" },
         { "phrase": "candidate ranking" },
         { "phrase": "applicant tracking" },
         { "phrase": "hiring decision" },
+        { "phrase": "hiring decisions" },
         { "phrase": "performance evaluation" },
+        { "phrase": "performance evaluations" },
         { "phrase": "worker monitoring" }
       ]
     },
@@ -65,6 +73,7 @@
         { "phrase": "creditworthiness" },
         { "phrase": "insurance pricing" },
         { "phrase": "insurance risk assessment" },
+        { "phrase": "insurance risk assessments" },
         { "phrase": "benefit eligibility" },
         { "phrase": "emergency dispatch" },
         { "phrase": "triage" }
@@ -77,7 +86,9 @@
         { "phrase": "predictive policing" },
         { "phrase": "recidivism risk" },
         { "phrase": "polygraph" },
+        { "phrase": "polygraphs" },
         { "phrase": "lie detector" },
+        { "phrase": "lie detectors" },
         { "phrase": "evidence reliability" },
         { "phrase": "crime profiling" },
         { "phrase": "victim-risk assessment" },
@@ -90,13 +101,17 @@
       "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
       "entries": [
         { "phrase": "visa application" },
+        { "phrase": "visa applications" },
         { "phrase": "asylum application" },
+        { "phrase": "asylum applications" },
         { "phrase": "border control" },
         { "phrase": "residence permit" },
+        { "phrase": "residence permits" },
         { "phrase": "migration risk" },
         { "phrase": "border surveillance" },
         { "phrase": "irregular migration risk" },
-        { "phrase": "residence permit application" }
+        { "phrase": "residence permit application" },
+        { "phrase": "residence permit applications" }
       ]
     },
     "8_justice_democracy": {
