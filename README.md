@@ -34,15 +34,15 @@ Rules-first hybrid. A deterministic TypeScript rules engine evaluates Article 5,
 
 ## Accuracy
 
-The classifier is benchmarked against a 50-case bilingual fixture corpus (CC-BY-4.0): 24 Annex III high-risk + 8 Article 5 prohibited + 8 Article 50 transparency + 10 negative cases; 21 EN + 29 DE. Current numbers on the v0.1.0 rule-set:
+The classifier is benchmarked against a 50-case bilingual fixture corpus (CC-BY-4.0): 24 Annex III high-risk + 8 Article 5 prohibited + 8 Article 50 transparency + 10 negative cases; 21 EN + 29 DE. Current numbers on the v0.1.1 rule-set:
 
-- **Overall:** 100.0% (granular per-field pass rate)
+- **Overall:** 98.2% (granular per-field pass rate)
 - **Article 5 prohibition** (safety-critical): 100.0%
-- **Binary high-risk classification:** 100.0%
+- **Binary high-risk classification:** 98.0%
 
 CI floor (locked): ≥80% overall + 100% Article 5. v1.0 release target: ≥85% overall + 100% Article 5 + ≥90% binary high-risk.
 
-The 100% headline reflects internal consistency between curated fixtures and curated lexicon — not arbitrary real-world accuracy. See [accuracy/METHODOLOGY.md](./accuracy/METHODOLOGY.md) §"Honest limitations" and [accuracy/KNOWN-MISCLASSIFICATIONS.md](./accuracy/KNOWN-MISCLASSIFICATIONS.md) for the v0.2 polish backlog.
+The headline reflects internal consistency between curated fixtures and curated lexicon — not arbitrary real-world accuracy. v0.1.1 (Day 8) rewrote five Day-7 DE fixtures with natural German per consultant judgment and extended the lexicon to cover the natural-German phrasings; one residual gap surfaced (compound-noun tokenization on `Emotionserkennungssystems`) and is tracked in [accuracy/KNOWN-MISCLASSIFICATIONS.md](./accuracy/KNOWN-MISCLASSIFICATIONS.md) G-5 rather than engineered away. See [accuracy/METHODOLOGY.md](./accuracy/METHODOLOGY.md) §"Honest limitations" for the full disclosure.
 
 Reports: [accuracy/REPORT.md](./accuracy/REPORT.md).
 

@@ -8,6 +8,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- **Day 8 — lexicon patch, G-1/G-2/G-3/G-4 closure, real-accuracy measurement.** Closes the 4 highest-priority Day-7 polish items (G-1 Annex III sub-letter narrowing for ¶¶ 2/3/7/8; G-2 ¶6(a) victim-risk coverage; G-3 plurals + DE morphology via additive lexicon variants; G-4(a) Art 5(1)(d) disambiguator paraphrase coverage + G-4(b) natural-German variants alongside lexicon-canonical phrases). Rewrites 5 DE Day-7 contamination fixtures (19/21/23/28/30) with natural German per EU/DE consultant judgment; the credibility moat is now consistent ("every fixture reads as natural German"). Backfills `expected.annex_iii_sub_letters` on 8 Day-7 fixtures and `bucket` + `source_url` + `article_50_paragraphs` on the 2 day5 fixtures (M-3). Path A chosen for fixture-12 (combine recidivism + victim-risk in one sentence using `sowie` connector); corpus size stays at 50. New G-5 entry filed: fixture-28's natural-German rewrite surfaced a compound-noun tokenization gap (`emotionserkennung` 1-gram doesn't fire inside `Emotionserkennungssystems`) — shipped honestly rather than engineered away. Adds `CI_OVERALL_FLOOR_V1_LAUNCH = 0.85` informational constant in `scripts/accuracy.ts` and a `.skip()` vitest spec asserting the v1.0 launch target; flipping to `.it()` becomes a 1-character ratchet for Day 13. METHODOLOGY.md §"CI floor vs v1.0 release targets" updated with binary high-risk row (≥85% sanity floor; ≥90% v1.0 target) and §3 "Sub-letter narrowing is incomplete" rewritten to reflect completeness across all 8 Annex III paragraphs. KNOWN-MISCLASSIFICATIONS.md G-1/G-2/G-3/G-4/M-3 marked closed with commit SHAs; G-5 added under high-priority gaps.
+
+  **Final numbers** (pnpm accuracy on 50 fixtures, v0.1.1 rule-set):
+  - Overall accuracy: **98.2%** (was 100.0% pre-rewrite — honest disclosure of the 1.8% residual).
+  - Article 5 prohibition: **100.0%** (safety-critical zero-false-negative bar unchanged).
+  - Binary high-risk: **98.0%** (was 100.0%).
+
+  **Files touched** (across 10 atomic commits):
+  - `src/rules/article-6-annex-iii.ts` — `narrowSubLetters()` extended with branches for paragraphs 2/3/7/8 + ¶6(a) victim-risk clause.
+  - `src/rules/article-5.ts` — predictive-policing disambiguator substring sets extended with 5 EN + 5 DE paraphrase variants.
+  - `src/data/patterns.{en,de}.json` — additive lexicon entries only (~58 new entries total across G-1/G-2/G-3/G-5 expansions). No existing entry removed.
+  - `test/fixtures/use-cases/day7/{19,21,23,28,30}-*.json` — 5 contamination fixtures rewritten with natural German.
+  - `test/fixtures/use-cases/day7/{04,05,06,07,14,15,16,17}-*.json` — 8 fixtures backfilled with `annex_iii_sub_letters`.
+  - `test/fixtures/use-cases/day7/12-*.json` — Path A combined victim-risk + recidivism.
+  - `test/fixtures/use-cases/day5/{01,02}-*.json` — M-3 backfill (`bucket`, `source_url`, `article_50_paragraphs`).
+  - `test/rules/article-{5,6-annex-iii}.spec.ts` — 18 new tests (11 for narrowing, 2 for victim-risk, 4 for Art 5(1)(d) paraphrases, 1 invariant).
+  - `test/accuracy/accuracy.spec.ts` — per-bucket counts updated for the day5 bucket shift; new `.skip()` spec for v1.0 launch target.
+  - `scripts/accuracy.ts` — `CI_OVERALL_FLOOR_V1_LAUNCH = 0.85` informational constant.
+  - `test/classify/__snapshots__/snapshots.spec.ts.snap` + 4 other snap files — rules_hash rolled `3b3e3d37` → `4a8a49ba`; sub_letters non-empty for day3 ¶2/¶3/¶7/¶8 fixtures.
+  - `accuracy/REPORT.md` — regenerated; per-bucket totals reflect new article_50 (8) + legacy (9) split.
+  - `accuracy/METHODOLOGY.md` — §3 "Sub-letter narrowing" updated to reflect completeness; §9 + §10 added documenting Day-8 fixture rewrites + the G-5 residual.
+  - `accuracy/KNOWN-MISCLASSIFICATIONS.md` — G-1/G-2/G-3/G-4 marked closed with commit SHAs; G-5 entry filed under high-priority gaps; M-3 marked closed.
+  - `README.md` + `README.de.md` — Accuracy section updated to v0.1.1 numbers and Day-8 disclosure paragraph.
+
+  Test count: 406 → 424 (15 new in article-6-annex-iii.spec, 4 new in article-5.spec; net +18). All gates green: `pnpm typecheck`, `pnpm typecheck:test`, `pnpm test`, `pnpm accuracy:check`, `pnpm sync:three-category` (no drift), `pnpm build`.
+
+  EUR-Lex grounding unchanged: Regulation (EU) 2024/1689 Annex III paragraphs 1-8 + Article 5(1) letters a-h + Article 50 paragraphs 1-5. Lexicon expansion remains MIT-licensed; fixture rewrites remain CC-BY-4.0.
+
 - **Day 7 — 50-case bilingual fixture corpus + accuracy harness + CI floor + paragraph projection helper.** Adds 39 new bilingual use-case fixtures at `test/fixtures/use-cases/day7/` to complete the locked 50-case corpus matrix (17 Annex III high-risk + 7 Article 5 prohibited + 6 Article 50 transparency + 9 negative cases). Combined with the 11 existing day3/4/5 fixtures: 24 Annex III + 8 Article 5 + 8 Article 50 + 10 negatives; 21 EN + 29 DE. The 58:42 DE:EN split intentionally favours German credibility for the EU/DE consultant launch audience; every DE fixture's INPUT text is hand-written German-natural (BSI / BfDI / Bitkom / EUR-Lex DE PDF vocabulary), not Google-Translated EN. Fixture-schema additively extends the legacy `Fixture` interface with optional fields: `article_50_paragraphs` (sorted paragraph-id array), `three_category_applicable`, `annex_iv_required`, `article_{10,12,13,14,15}_applicable`, plus top-level `bucket` ('annex_iii' | 'article_5' | 'article_50' | 'negative') and `source_url` (allowlisted Tier-1 regulator hosts). Absent fields are SKIPPED by the harness — the additive-schema guarantee that lets legacy fixtures coexist without backfilling.
 
   **New `scripts/accuracy.ts` harness** — pure-TypeScript script invoked via `pnpm accuracy`. Loads every JSON fixture under `test/fixtures/use-cases/day{3,4,5,7}/`, runs each through `classify(fixture.input, { lang: fixture.lang })`, compares actual against expected on every present field, computes three headline metrics (overall accuracy = granular per-field pass rate; Article 5 accuracy = safety-critical zero-false-negative bar across all 50 fixtures; binary high-risk accuracy across all 50 fixtures), per-bucket pass-all accuracy, and emits `accuracy/REPORT.md` (committed) + `accuracy/REPORT.json` (gitignored). CI gate: exit 0 only if `overall_accuracy >= 0.80 AND article_5_accuracy === 1.0`; exit 1 otherwise. Deterministic — same fixtures + same rules → byte-stable report bytes (modulo `last_run_at` timestamp; supply via `LAST_RUN_AT_OVERRIDE` env for stable rebuilds). CLI flags: `--verbose` (per-fixture pass/fail to stdout), `--format json|markdown|both` (default both).
