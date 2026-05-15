@@ -1,0 +1,250 @@
+{
+  "language": "en",
+  "version": "v0.1.0-seed",
+  "_meta": {
+    "notice": "Seed lexicon for Day 2 of the v0.1.0 build. Every entry's `source` MUST be verified against EUR-Lex by the regulator-validator agent before Day 3 rule modules consume these triggers. NO_DIRECT_SOURCE or FAIL findings from regulator-validator block Day 3 work.",
+    "primary_source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+    "regulator_validator": "~/.claude/agents/regulator-validator.md"
+  },
+  "annex_iii": {
+    "1_biometrics": {
+      "description": "Annex III.1 — remote biometric identification, biometric categorisation by sensitive/protected attributes, emotion recognition.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "remote biometric identification" },
+        { "phrase": "facial recognition" },
+        { "phrase": "biometric categorisation" },
+        { "phrase": "biometric categorization" },
+        { "phrase": "emotion recognition" },
+        { "phrase": "fingerprint identification" }
+      ]
+    },
+    "2_critical_infrastructure": {
+      "description": "Annex III.2 — safety components of critical digital, road traffic, water, gas, heating, electricity supply infrastructure.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "critical infrastructure" },
+        { "phrase": "traffic control" },
+        { "phrase": "power grid" },
+        { "phrase": "water supply" },
+        { "phrase": "gas supply" },
+        { "phrase": "safety component" }
+      ]
+    },
+    "3_education": {
+      "description": "Annex III.3 — access/admission to educational institutions, evaluation of learning outcomes, assessing level of education, monitoring prohibited behaviour during tests.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "student admission" },
+        { "phrase": "exam scoring" },
+        { "phrase": "automated grading" },
+        { "phrase": "learning assessment" },
+        { "phrase": "proctoring" },
+        { "phrase": "cheating detection" }
+      ]
+    },
+    "4_employment": {
+      "description": "Annex III.4 — recruitment, selection, decisions affecting terms of employment, promotion, termination, task allocation, monitoring/evaluation of performance.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "cv screening" },
+        { "phrase": "resume screening" },
+        { "phrase": "candidate ranking" },
+        { "phrase": "applicant tracking" },
+        { "phrase": "hiring decision" },
+        { "phrase": "performance evaluation" },
+        { "phrase": "worker monitoring" }
+      ]
+    },
+    "5_essential_services": {
+      "description": "Annex III.5 — public assistance eligibility, creditworthiness/credit scoring, life and health insurance risk assessment/pricing, emergency services dispatch.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "credit scoring" },
+        { "phrase": "creditworthiness" },
+        { "phrase": "insurance pricing" },
+        { "phrase": "insurance risk assessment" },
+        { "phrase": "benefit eligibility" },
+        { "phrase": "emergency dispatch" },
+        { "phrase": "triage" }
+      ]
+    },
+    "6_law_enforcement": {
+      "description": "Annex III.6 — risk assessment, polygraphs, evidence reliability, profiling of natural persons, deep analytical crime data analysis.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "predictive policing" },
+        { "phrase": "recidivism risk" },
+        { "phrase": "polygraph" },
+        { "phrase": "lie detector" },
+        { "phrase": "evidence reliability" },
+        { "phrase": "crime profiling" }
+      ]
+    },
+    "7_migration_border": {
+      "description": "Annex III.7 — migration, asylum, border control: risk assessment, polygraphs, examining applications for visa/asylum/residence, detection/identification at borders.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "visa application" },
+        { "phrase": "asylum application" },
+        { "phrase": "border control" },
+        { "phrase": "residence permit" },
+        { "phrase": "migration risk" },
+        { "phrase": "border surveillance" }
+      ]
+    },
+    "8_justice_democracy": {
+      "description": "Annex III.8 — administration of justice (researching/interpreting facts and law, applying law to facts), influencing elections/referendums/voting behaviour.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "judicial decision" },
+        { "phrase": "judicial assistance" },
+        { "phrase": "legal interpretation" },
+        { "phrase": "election influencing" },
+        { "phrase": "voter targeting" }
+      ]
+    }
+  },
+  "article_5_prohibited": {
+    "a_subliminal_manipulative": {
+      "description": "Art 5(1)(a) — subliminal techniques beyond awareness, or purposefully manipulative or deceptive techniques materially distorting behaviour.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "subliminal technique" },
+        { "phrase": "manipulative technique" },
+        { "phrase": "deceptive technique" }
+      ]
+    },
+    "b_exploit_vulnerabilities": {
+      "description": "Art 5(1)(b) — exploiting vulnerabilities due to age, disability, or specific social/economic situation.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "exploit vulnerability" },
+        { "phrase": "exploit children" },
+        { "phrase": "exploit elderly" }
+      ]
+    },
+    "c_social_scoring": {
+      "description": "Art 5(1)(c) — evaluation/classification of natural persons over time based on social behaviour or personality characteristics (social scoring).",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "social scoring" },
+        { "phrase": "social credit" },
+        { "phrase": "trustworthiness score" }
+      ]
+    },
+    "d_predictive_policing": {
+      "description": "Art 5(1)(d) — risk assessment to predict criminal offences based solely on profiling or personality traits.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "predictive policing profiling" },
+        { "phrase": "criminal risk profiling" }
+      ]
+    },
+    "e_facial_scraping": {
+      "description": "Art 5(1)(e) — untargeted scraping of facial images from the internet or CCTV to build facial-recognition databases.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "facial scraping" },
+        { "phrase": "scrape facial images" },
+        { "phrase": "untargeted facial scraping" }
+      ]
+    },
+    "f_emotion_in_workplace_education": {
+      "description": "Art 5(1)(f) — inferring emotions in workplace or education (with medical/safety exceptions).",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "emotion inference at work" },
+        { "phrase": "workplace emotion" },
+        { "phrase": "classroom emotion recognition" }
+      ]
+    },
+    "g_biometric_categorisation_sensitive": {
+      "description": "Art 5(1)(g) — biometric categorisation to infer race, political opinion, trade-union membership, religious or philosophical beliefs, sex life, sexual orientation.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "infer political opinion" },
+        { "phrase": "infer sexual orientation" },
+        { "phrase": "infer race" },
+        { "phrase": "infer religion" }
+      ]
+    },
+    "h_realtime_remote_biometric_le": {
+      "description": "Art 5(1)(h) — real-time remote biometric identification in publicly accessible spaces for law-enforcement (narrow exceptions only).",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "real-time biometric identification" },
+        { "phrase": "live facial recognition" },
+        { "phrase": "real-time facial recognition" }
+      ]
+    }
+  },
+  "article_50_gpai": {
+    "1_interaction_disclosure": {
+      "description": "Art 50(1) — providers of AI systems intended to interact directly with natural persons must disclose AI nature.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "chatbot" },
+        { "phrase": "ai assistant" },
+        { "phrase": "conversational ai" }
+      ]
+    },
+    "2_synthetic_content_marking": {
+      "description": "Art 50(2) — generative AI outputs must be marked in a machine-readable format as artificially generated.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "synthetic content" },
+        { "phrase": "ai-generated content" },
+        { "phrase": "generative ai" }
+      ]
+    },
+    "3_emotion_categorisation_disclosure": {
+      "description": "Art 50(3) — deployers of emotion-recognition or biometric-categorisation systems must inform exposed persons.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "emotion recognition deployer" },
+        { "phrase": "biometric categorisation deployer" }
+      ]
+    },
+    "4_deepfake_labeling": {
+      "description": "Art 50(4) — deployers generating or manipulating image/audio/video to constitute a deep fake must disclose artificial generation.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "deepfake" },
+        { "phrase": "deep fake" },
+        { "phrase": "face swap" }
+      ]
+    }
+  },
+  "scope_qualifiers": {
+    "research_only": {
+      "description": "Article 2(8) — research, testing, and development activity scope exclusion (pre-market). Surface for the rules engine to consider suppressing high-risk classification.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "research only" },
+        { "phrase": "experimental" },
+        { "phrase": "experimental purpose" },
+        { "phrase": "research and development" },
+        { "phrase": "pre-market testing" }
+      ]
+    },
+    "open_source_exemption": {
+      "description": "Recital 102-104 / Art 2(12) — free and open-source AI components have a narrow exception (does NOT apply to GPAI models with systemic risk or to high-risk systems). Flag for rules engine to handle nuance.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "open-source" },
+        { "phrase": "open source ai" },
+        { "phrase": "permissive license" }
+      ]
+    },
+    "internal_use": {
+      "description": "Hints at non-public deployment that may affect deployer obligations under Art 50 transparency.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "internal use only" },
+        { "phrase": "internal tooling" },
+        { "phrase": "developer testing" }
+      ]
+    }
+  }
+}
