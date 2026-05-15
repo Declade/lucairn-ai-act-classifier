@@ -78,43 +78,49 @@ exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-01-bio
     "applicable": false,
     "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
     "triggered_by": {
-      "paragraph_1_chatbot": false,
+      "paragraph_1_interaction": false,
       "paragraph_2_synthetic_content": false,
-      "paragraph_3_emotion_or_biometric": false,
-      "paragraph_4_deep_fake": false,
+      "paragraph_3_emotion_or_biometric_categorisation": false,
+      "paragraph_4_deepfake": false,
+      "paragraph_4_public_interest_text": false,
     },
   },
   "id": "fixture-day3-01-biometrics-prohibited-en",
   "input": "We deploy a real-time facial recognition system in public spaces for general law-enforcement surveillance.",
   "lang": "en",
   "threeCategory": {
-    "category_1_sanitizer": {
-      "articles": [
-        "10",
-        "15",
-      ],
-      "contributing_articles": [],
-      "required": false,
+    "applicable_categories": [],
+    "categories": {
+      "1": {
+        "applicable": false,
+        "key": "1",
+        "required_articles": [
+          10,
+          15,
+        ],
+        "triggered_articles": [],
+      },
+      "2": {
+        "applicable": false,
+        "key": "2",
+        "required_articles": [
+          12,
+          14,
+        ],
+        "triggered_articles": [],
+      },
+      "3": {
+        "applicable": false,
+        "key": "3",
+        "required_articles": [
+          10,
+          12,
+          14,
+          15,
+        ],
+        "triggered_articles": [],
+      },
     },
-    "category_2_evidence": {
-      "articles": [
-        "12",
-        "14",
-      ],
-      "contributing_articles": [],
-      "required": false,
-    },
-    "category_3_inventory": {
-      "articles": [
-        "10",
-        "12",
-        "14",
-        "15",
-      ],
-      "contributing_articles": [],
-      "required": false,
-    },
-    "source": "https://lucairn.eu/compliance/eu-ai-act",
   },
 }
 `;
@@ -198,54 +204,64 @@ exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-02-cri
     "applicable": false,
     "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
     "triggered_by": {
-      "paragraph_1_chatbot": false,
+      "paragraph_1_interaction": false,
       "paragraph_2_synthetic_content": false,
-      "paragraph_3_emotion_or_biometric": false,
-      "paragraph_4_deep_fake": false,
+      "paragraph_3_emotion_or_biometric_categorisation": false,
+      "paragraph_4_deepfake": false,
+      "paragraph_4_public_interest_text": false,
     },
   },
   "id": "fixture-day3-02-critical-infrastructure-en",
   "input": "AI safety component for managing the power grid load-balancing in critical infrastructure operations.",
   "lang": "en",
   "threeCategory": {
-    "category_1_sanitizer": {
-      "articles": [
-        "10",
-        "15",
-      ],
-      "contributing_articles": [
-        "10",
-        "15",
-      ],
-      "required": true,
+    "applicable_categories": [
+      "1",
+      "2",
+      "3",
+    ],
+    "categories": {
+      "1": {
+        "applicable": true,
+        "key": "1",
+        "required_articles": [
+          10,
+          15,
+        ],
+        "triggered_articles": [
+          10,
+          15,
+        ],
+      },
+      "2": {
+        "applicable": true,
+        "key": "2",
+        "required_articles": [
+          12,
+          14,
+        ],
+        "triggered_articles": [
+          12,
+          14,
+        ],
+      },
+      "3": {
+        "applicable": true,
+        "key": "3",
+        "required_articles": [
+          10,
+          12,
+          14,
+          15,
+        ],
+        "triggered_articles": [
+          10,
+          12,
+          14,
+          15,
+        ],
+      },
     },
-    "category_2_evidence": {
-      "articles": [
-        "12",
-        "14",
-      ],
-      "contributing_articles": [
-        "12",
-        "14",
-      ],
-      "required": true,
-    },
-    "category_3_inventory": {
-      "articles": [
-        "10",
-        "12",
-        "14",
-        "15",
-      ],
-      "contributing_articles": [
-        "10",
-        "12",
-        "14",
-        "15",
-      ],
-      "required": true,
-    },
-    "source": "https://lucairn.eu/compliance/eu-ai-act",
   },
 }
 `;
@@ -330,54 +346,64 @@ exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-03-edu
     "applicable": false,
     "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
     "triggered_by": {
-      "paragraph_1_chatbot": false,
+      "paragraph_1_interaction": false,
       "paragraph_2_synthetic_content": false,
-      "paragraph_3_emotion_or_biometric": false,
-      "paragraph_4_deep_fake": false,
+      "paragraph_3_emotion_or_biometric_categorisation": false,
+      "paragraph_4_deepfake": false,
+      "paragraph_4_public_interest_text": false,
     },
   },
   "id": "fixture-day3-03-education-de",
   "input": "Wir bauen ein automatisierte Benotung Werkzeug für die Prüfungsbewertung in Hochschulen, einschließlich Schüleraufnahme und Prüfungsüberwachung.",
   "lang": "de",
   "threeCategory": {
-    "category_1_sanitizer": {
-      "articles": [
-        "10",
-        "15",
-      ],
-      "contributing_articles": [
-        "10",
-        "15",
-      ],
-      "required": true,
+    "applicable_categories": [
+      "1",
+      "2",
+      "3",
+    ],
+    "categories": {
+      "1": {
+        "applicable": true,
+        "key": "1",
+        "required_articles": [
+          10,
+          15,
+        ],
+        "triggered_articles": [
+          10,
+          15,
+        ],
+      },
+      "2": {
+        "applicable": true,
+        "key": "2",
+        "required_articles": [
+          12,
+          14,
+        ],
+        "triggered_articles": [
+          12,
+          14,
+        ],
+      },
+      "3": {
+        "applicable": true,
+        "key": "3",
+        "required_articles": [
+          10,
+          12,
+          14,
+          15,
+        ],
+        "triggered_articles": [
+          10,
+          12,
+          14,
+          15,
+        ],
+      },
     },
-    "category_2_evidence": {
-      "articles": [
-        "12",
-        "14",
-      ],
-      "contributing_articles": [
-        "12",
-        "14",
-      ],
-      "required": true,
-    },
-    "category_3_inventory": {
-      "articles": [
-        "10",
-        "12",
-        "14",
-        "15",
-      ],
-      "contributing_articles": [
-        "10",
-        "12",
-        "14",
-        "15",
-      ],
-      "required": true,
-    },
-    "source": "https://lucairn.eu/compliance/eu-ai-act",
   },
 }
 `;
@@ -463,54 +489,64 @@ exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-04-emp
     "applicable": false,
     "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
     "triggered_by": {
-      "paragraph_1_chatbot": false,
+      "paragraph_1_interaction": false,
       "paragraph_2_synthetic_content": false,
-      "paragraph_3_emotion_or_biometric": false,
-      "paragraph_4_deep_fake": false,
+      "paragraph_3_emotion_or_biometric_categorisation": false,
+      "paragraph_4_deepfake": false,
+      "paragraph_4_public_interest_text": false,
     },
   },
   "id": "fixture-day3-04-employment-en",
   "input": "Our AI tool performs CV screening and applicant tracking, ranks candidates, and supports the hiring decision for our enterprise customers.",
   "lang": "en",
   "threeCategory": {
-    "category_1_sanitizer": {
-      "articles": [
-        "10",
-        "15",
-      ],
-      "contributing_articles": [
-        "10",
-        "15",
-      ],
-      "required": true,
+    "applicable_categories": [
+      "1",
+      "2",
+      "3",
+    ],
+    "categories": {
+      "1": {
+        "applicable": true,
+        "key": "1",
+        "required_articles": [
+          10,
+          15,
+        ],
+        "triggered_articles": [
+          10,
+          15,
+        ],
+      },
+      "2": {
+        "applicable": true,
+        "key": "2",
+        "required_articles": [
+          12,
+          14,
+        ],
+        "triggered_articles": [
+          12,
+          14,
+        ],
+      },
+      "3": {
+        "applicable": true,
+        "key": "3",
+        "required_articles": [
+          10,
+          12,
+          14,
+          15,
+        ],
+        "triggered_articles": [
+          10,
+          12,
+          14,
+          15,
+        ],
+      },
     },
-    "category_2_evidence": {
-      "articles": [
-        "12",
-        "14",
-      ],
-      "contributing_articles": [
-        "12",
-        "14",
-      ],
-      "required": true,
-    },
-    "category_3_inventory": {
-      "articles": [
-        "10",
-        "12",
-        "14",
-        "15",
-      ],
-      "contributing_articles": [
-        "10",
-        "12",
-        "14",
-        "15",
-      ],
-      "required": true,
-    },
-    "source": "https://lucairn.eu/compliance/eu-ai-act",
   },
 }
 `;
@@ -596,54 +632,64 @@ exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-05-ess
     "applicable": false,
     "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
     "triggered_by": {
-      "paragraph_1_chatbot": false,
+      "paragraph_1_interaction": false,
       "paragraph_2_synthetic_content": false,
-      "paragraph_3_emotion_or_biometric": false,
-      "paragraph_4_deep_fake": false,
+      "paragraph_3_emotion_or_biometric_categorisation": false,
+      "paragraph_4_deepfake": false,
+      "paragraph_4_public_interest_text": false,
     },
   },
   "id": "fixture-day3-05-essential-services-life-insurance-de",
   "input": "KI-gestützte Versicherungstarifierung für unsere Lebensversicherung und private Krankenversicherung Produkte. Bonitätsprüfung wird ebenfalls durchgeführt.",
   "lang": "de",
   "threeCategory": {
-    "category_1_sanitizer": {
-      "articles": [
-        "10",
-        "15",
-      ],
-      "contributing_articles": [
-        "10",
-        "15",
-      ],
-      "required": true,
+    "applicable_categories": [
+      "1",
+      "2",
+      "3",
+    ],
+    "categories": {
+      "1": {
+        "applicable": true,
+        "key": "1",
+        "required_articles": [
+          10,
+          15,
+        ],
+        "triggered_articles": [
+          10,
+          15,
+        ],
+      },
+      "2": {
+        "applicable": true,
+        "key": "2",
+        "required_articles": [
+          12,
+          14,
+        ],
+        "triggered_articles": [
+          12,
+          14,
+        ],
+      },
+      "3": {
+        "applicable": true,
+        "key": "3",
+        "required_articles": [
+          10,
+          12,
+          14,
+          15,
+        ],
+        "triggered_articles": [
+          10,
+          12,
+          14,
+          15,
+        ],
+      },
     },
-    "category_2_evidence": {
-      "articles": [
-        "12",
-        "14",
-      ],
-      "contributing_articles": [
-        "12",
-        "14",
-      ],
-      "required": true,
-    },
-    "category_3_inventory": {
-      "articles": [
-        "10",
-        "12",
-        "14",
-        "15",
-      ],
-      "contributing_articles": [
-        "10",
-        "12",
-        "14",
-        "15",
-      ],
-      "required": true,
-    },
-    "source": "https://lucairn.eu/compliance/eu-ai-act",
   },
 }
 `;
@@ -728,54 +774,64 @@ exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-06-law
     "applicable": false,
     "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
     "triggered_by": {
-      "paragraph_1_chatbot": false,
+      "paragraph_1_interaction": false,
       "paragraph_2_synthetic_content": false,
-      "paragraph_3_emotion_or_biometric": false,
-      "paragraph_4_deep_fake": false,
+      "paragraph_3_emotion_or_biometric_categorisation": false,
+      "paragraph_4_deepfake": false,
+      "paragraph_4_public_interest_text": false,
     },
   },
   "id": "fixture-day3-06-law-enforcement-broad-en",
   "input": "Our system supports law enforcement with predictive policing risk analytics that combine crime profiling with broad demographic and economic indicators across regions.",
   "lang": "en",
   "threeCategory": {
-    "category_1_sanitizer": {
-      "articles": [
-        "10",
-        "15",
-      ],
-      "contributing_articles": [
-        "10",
-        "15",
-      ],
-      "required": true,
+    "applicable_categories": [
+      "1",
+      "2",
+      "3",
+    ],
+    "categories": {
+      "1": {
+        "applicable": true,
+        "key": "1",
+        "required_articles": [
+          10,
+          15,
+        ],
+        "triggered_articles": [
+          10,
+          15,
+        ],
+      },
+      "2": {
+        "applicable": true,
+        "key": "2",
+        "required_articles": [
+          12,
+          14,
+        ],
+        "triggered_articles": [
+          12,
+          14,
+        ],
+      },
+      "3": {
+        "applicable": true,
+        "key": "3",
+        "required_articles": [
+          10,
+          12,
+          14,
+          15,
+        ],
+        "triggered_articles": [
+          10,
+          12,
+          14,
+          15,
+        ],
+      },
     },
-    "category_2_evidence": {
-      "articles": [
-        "12",
-        "14",
-      ],
-      "contributing_articles": [
-        "12",
-        "14",
-      ],
-      "required": true,
-    },
-    "category_3_inventory": {
-      "articles": [
-        "10",
-        "12",
-        "14",
-        "15",
-      ],
-      "contributing_articles": [
-        "10",
-        "12",
-        "14",
-        "15",
-      ],
-      "required": true,
-    },
-    "source": "https://lucairn.eu/compliance/eu-ai-act",
   },
 }
 `;
@@ -860,54 +916,64 @@ exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-07-mig
     "applicable": false,
     "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
     "triggered_by": {
-      "paragraph_1_chatbot": false,
+      "paragraph_1_interaction": false,
       "paragraph_2_synthetic_content": false,
-      "paragraph_3_emotion_or_biometric": false,
-      "paragraph_4_deep_fake": false,
+      "paragraph_3_emotion_or_biometric_categorisation": false,
+      "paragraph_4_deepfake": false,
+      "paragraph_4_public_interest_text": false,
     },
   },
   "id": "fixture-day3-07-migration-border-de",
   "input": "Wir entwickeln ein KI-System zur Prüfung von Asylantrag und Visumantrag Anträgen, einschließlich Migrationsrisiko Bewertung an der Grenzkontrolle.",
   "lang": "de",
   "threeCategory": {
-    "category_1_sanitizer": {
-      "articles": [
-        "10",
-        "15",
-      ],
-      "contributing_articles": [
-        "10",
-        "15",
-      ],
-      "required": true,
+    "applicable_categories": [
+      "1",
+      "2",
+      "3",
+    ],
+    "categories": {
+      "1": {
+        "applicable": true,
+        "key": "1",
+        "required_articles": [
+          10,
+          15,
+        ],
+        "triggered_articles": [
+          10,
+          15,
+        ],
+      },
+      "2": {
+        "applicable": true,
+        "key": "2",
+        "required_articles": [
+          12,
+          14,
+        ],
+        "triggered_articles": [
+          12,
+          14,
+        ],
+      },
+      "3": {
+        "applicable": true,
+        "key": "3",
+        "required_articles": [
+          10,
+          12,
+          14,
+          15,
+        ],
+        "triggered_articles": [
+          10,
+          12,
+          14,
+          15,
+        ],
+      },
     },
-    "category_2_evidence": {
-      "articles": [
-        "12",
-        "14",
-      ],
-      "contributing_articles": [
-        "12",
-        "14",
-      ],
-      "required": true,
-    },
-    "category_3_inventory": {
-      "articles": [
-        "10",
-        "12",
-        "14",
-        "15",
-      ],
-      "contributing_articles": [
-        "10",
-        "12",
-        "14",
-        "15",
-      ],
-      "required": true,
-    },
-    "source": "https://lucairn.eu/compliance/eu-ai-act",
   },
 }
 `;
@@ -991,54 +1057,64 @@ exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-08-jus
     "applicable": false,
     "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
     "triggered_by": {
-      "paragraph_1_chatbot": false,
+      "paragraph_1_interaction": false,
       "paragraph_2_synthetic_content": false,
-      "paragraph_3_emotion_or_biometric": false,
-      "paragraph_4_deep_fake": false,
+      "paragraph_3_emotion_or_biometric_categorisation": false,
+      "paragraph_4_deepfake": false,
+      "paragraph_4_public_interest_text": false,
     },
   },
   "id": "fixture-day3-08-justice-democracy-en",
   "input": "An AI tool offering judicial assistance for legal interpretation tasks: it helps a judicial decision support workflow by retrieving and applying relevant case law.",
   "lang": "en",
   "threeCategory": {
-    "category_1_sanitizer": {
-      "articles": [
-        "10",
-        "15",
-      ],
-      "contributing_articles": [
-        "10",
-        "15",
-      ],
-      "required": true,
+    "applicable_categories": [
+      "1",
+      "2",
+      "3",
+    ],
+    "categories": {
+      "1": {
+        "applicable": true,
+        "key": "1",
+        "required_articles": [
+          10,
+          15,
+        ],
+        "triggered_articles": [
+          10,
+          15,
+        ],
+      },
+      "2": {
+        "applicable": true,
+        "key": "2",
+        "required_articles": [
+          12,
+          14,
+        ],
+        "triggered_articles": [
+          12,
+          14,
+        ],
+      },
+      "3": {
+        "applicable": true,
+        "key": "3",
+        "required_articles": [
+          10,
+          12,
+          14,
+          15,
+        ],
+        "triggered_articles": [
+          10,
+          12,
+          14,
+          15,
+        ],
+      },
     },
-    "category_2_evidence": {
-      "articles": [
-        "12",
-        "14",
-      ],
-      "contributing_articles": [
-        "12",
-        "14",
-      ],
-      "required": true,
-    },
-    "category_3_inventory": {
-      "articles": [
-        "10",
-        "12",
-        "14",
-        "15",
-      ],
-      "contributing_articles": [
-        "10",
-        "12",
-        "14",
-        "15",
-      ],
-      "required": true,
-    },
-    "source": "https://lucairn.eu/compliance/eu-ai-act",
   },
 }
 `;
@@ -1100,43 +1176,49 @@ exports[`snapshot — Day 4 fixtures (low-risk non-applicable path) > fixture-da
     "applicable": false,
     "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
     "triggered_by": {
-      "paragraph_1_chatbot": false,
+      "paragraph_1_interaction": false,
       "paragraph_2_synthetic_content": false,
-      "paragraph_3_emotion_or_biometric": false,
-      "paragraph_4_deep_fake": false,
+      "paragraph_3_emotion_or_biometric_categorisation": false,
+      "paragraph_4_deepfake": false,
+      "paragraph_4_public_interest_text": false,
     },
   },
   "id": "fixture-day4-01-low-risk-en",
   "input": "An internal scheduling tool that allocates office cleaning shifts among contractors based on availability and historical preferences.",
   "lang": "en",
   "threeCategory": {
-    "category_1_sanitizer": {
-      "articles": [
-        "10",
-        "15",
-      ],
-      "contributing_articles": [],
-      "required": false,
+    "applicable_categories": [],
+    "categories": {
+      "1": {
+        "applicable": false,
+        "key": "1",
+        "required_articles": [
+          10,
+          15,
+        ],
+        "triggered_articles": [],
+      },
+      "2": {
+        "applicable": false,
+        "key": "2",
+        "required_articles": [
+          12,
+          14,
+        ],
+        "triggered_articles": [],
+      },
+      "3": {
+        "applicable": false,
+        "key": "3",
+        "required_articles": [
+          10,
+          12,
+          14,
+          15,
+        ],
+        "triggered_articles": [],
+      },
     },
-    "category_2_evidence": {
-      "articles": [
-        "12",
-        "14",
-      ],
-      "contributing_articles": [],
-      "required": false,
-    },
-    "category_3_inventory": {
-      "articles": [
-        "10",
-        "12",
-        "14",
-        "15",
-      ],
-      "contributing_articles": [],
-      "required": false,
-    },
-    "source": "https://lucairn.eu/compliance/eu-ai-act",
   },
 }
 `;

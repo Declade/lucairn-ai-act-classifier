@@ -84,25 +84,24 @@ describe('snapshot — Day 3 fixtures (8 Annex III domains)', () => {
       const article14 = classifyArticle14(annexIII, article5);
       const article15 = classifyArticle15(annexIII, article5);
       const article50 = classifyArticle50(features, article5);
-      const threeCategory = classifyThreeCategory({
+      const threeCategory = classifyThreeCategory(
+        annexIII,
         article5,
-        annex: annexIII,
         article10,
         article12,
-        article13,
         article14,
         article15,
-        article50,
-      });
+      );
 
       // Snapshot the load-bearing structural output (omits internal noise like
       // raw input, lang detection internals — those are covered by unit tests
       // on the extractor itself). For Article 10/12/13/14/15/50 we project
       // ONLY load-bearing fields (`applicable`, `triggered_by`, `source`) and
       // NOT the prose summaries (Day-3 design choice — see file-header
-      // comment). For three-category we project `required`, `articles`, and
-      // `contributing_articles` per category — NOT `items[]` / `title_*` /
-      // `disclaimer_*` which are synced website-managed copy.
+      // comment). For three-category we project per-category `applicable`,
+      // `required_articles`, `triggered_articles`, plus `applicable_categories`
+      // — NOT `items[]` / `title_*` / `disclaimer_*` which are synced
+      // website-managed copy.
       expect({
         id: fixture.id,
         lang: fixture.lang,
@@ -160,22 +159,27 @@ describe('snapshot — Day 3 fixtures (8 Annex III domains)', () => {
           source: article50.source,
         },
         threeCategory: {
-          category_1_sanitizer: {
-            required: threeCategory.category_1_sanitizer.required,
-            articles: threeCategory.category_1_sanitizer.articles,
-            contributing_articles: threeCategory.category_1_sanitizer.contributing_articles,
+          categories: {
+            '1': {
+              key: threeCategory.categories['1'].key,
+              applicable: threeCategory.categories['1'].applicable,
+              required_articles: threeCategory.categories['1'].required_articles,
+              triggered_articles: threeCategory.categories['1'].triggered_articles,
+            },
+            '2': {
+              key: threeCategory.categories['2'].key,
+              applicable: threeCategory.categories['2'].applicable,
+              required_articles: threeCategory.categories['2'].required_articles,
+              triggered_articles: threeCategory.categories['2'].triggered_articles,
+            },
+            '3': {
+              key: threeCategory.categories['3'].key,
+              applicable: threeCategory.categories['3'].applicable,
+              required_articles: threeCategory.categories['3'].required_articles,
+              triggered_articles: threeCategory.categories['3'].triggered_articles,
+            },
           },
-          category_2_evidence: {
-            required: threeCategory.category_2_evidence.required,
-            articles: threeCategory.category_2_evidence.articles,
-            contributing_articles: threeCategory.category_2_evidence.contributing_articles,
-          },
-          category_3_inventory: {
-            required: threeCategory.category_3_inventory.required,
-            articles: threeCategory.category_3_inventory.articles,
-            contributing_articles: threeCategory.category_3_inventory.contributing_articles,
-          },
-          source: threeCategory.source,
+          applicable_categories: threeCategory.applicable_categories,
         },
       }).toMatchSnapshot();
     });
@@ -220,7 +224,7 @@ describe('snapshot — Day 3 fixtures (8 Annex III domains)', () => {
 
   // Targeted Day-4 + Day-5 cascade invariants that the snapshot also pins
   // but which deserve explicit assertions for traceability.
-  it('fixture-day3-01 (Art 5(1)(h) prohibition) → Article 10/12/13/14/15 all NOT applicable; all 3 categories required: false', () => {
+  it('fixture-day3-01 (Art 5(1)(h) prohibition) → Article 10/12/13/14/15 all NOT applicable; all 3 categories applicable: false', () => {
     const fixture = fixtures.find((f) => f.id === 'fixture-day3-01-biometrics-prohibited-en');
     expect(fixture).toBeDefined();
     const features = extractFeatures(fixture!.input, { lang: fixture!.lang });
@@ -232,7 +236,6 @@ describe('snapshot — Day 3 fixtures (8 Annex III domains)', () => {
     const a13 = classifyArticle13(annexIII, article5);
     const a14 = classifyArticle14(annexIII, article5);
     const a15 = classifyArticle15(annexIII, article5);
-    const a50 = classifyArticle50(features, article5);
 
     for (const r of [a10, a12, a13, a14, a15]) {
       expect(r.applicable).toBe(false);
@@ -242,25 +245,17 @@ describe('snapshot — Day 3 fixtures (8 Annex III domains)', () => {
       expect(r.triggered_by.annex_iii_domains).toEqual([]);
     }
 
-    const tc = classifyThreeCategory({
-      article5,
-      annex: annexIII,
-      article10: a10,
-      article12: a12,
-      article13: a13,
-      article14: a14,
-      article15: a15,
-      article50: a50,
-    });
-    expect(tc.category_1_sanitizer.required).toBe(false);
-    expect(tc.category_2_evidence.required).toBe(false);
-    expect(tc.category_3_inventory.required).toBe(false);
-    expect(tc.category_1_sanitizer.contributing_articles).toEqual([]);
-    expect(tc.category_2_evidence.contributing_articles).toEqual([]);
-    expect(tc.category_3_inventory.contributing_articles).toEqual([]);
+    const tc = classifyThreeCategory(annexIII, article5, a10, a12, a14, a15);
+    expect(tc.categories['1'].applicable).toBe(false);
+    expect(tc.categories['2'].applicable).toBe(false);
+    expect(tc.categories['3'].applicable).toBe(false);
+    expect(tc.categories['1'].triggered_articles).toEqual([]);
+    expect(tc.categories['2'].triggered_articles).toEqual([]);
+    expect(tc.categories['3'].triggered_articles).toEqual([]);
+    expect(tc.applicable_categories).toEqual([]);
   });
 
-  it('fixture-day3-04 (Annex III.4 employment) → Article 10/12/13/14/15 all applicable; all 3 categories required: true with sorted contributing_articles', () => {
+  it('fixture-day3-04 (Annex III.4 employment) → Article 10/12/13/14/15 all applicable; all 3 categories applicable: true with sorted triggered_articles', () => {
     const fixture = fixtures.find((f) => f.id === 'fixture-day3-04-employment-en');
     expect(fixture).toBeDefined();
     const features = extractFeatures(fixture!.input, { lang: fixture!.lang });
@@ -272,7 +267,6 @@ describe('snapshot — Day 3 fixtures (8 Annex III domains)', () => {
     const a13 = classifyArticle13(annexIII, article5);
     const a14 = classifyArticle14(annexIII, article5);
     const a15 = classifyArticle15(annexIII, article5);
-    const a50 = classifyArticle50(features, article5);
 
     for (const r of [a10, a12, a13, a14, a15]) {
       expect(r.applicable).toBe(true);
@@ -280,23 +274,15 @@ describe('snapshot — Day 3 fixtures (8 Annex III domains)', () => {
       expect(r.triggered_by.annex_iii_domains).toEqual([4]);
     }
 
-    const tc = classifyThreeCategory({
-      article5,
-      annex: annexIII,
-      article10: a10,
-      article12: a12,
-      article13: a13,
-      article14: a14,
-      article15: a15,
-      article50: a50,
-    });
-    expect(tc.category_1_sanitizer.required).toBe(true);
-    expect(tc.category_2_evidence.required).toBe(true);
-    expect(tc.category_3_inventory.required).toBe(true);
-    expect(tc.category_1_sanitizer.contributing_articles).toEqual(['10', '15']);
-    expect(tc.category_2_evidence.contributing_articles).toEqual(['12', '14']);
+    const tc = classifyThreeCategory(annexIII, article5, a10, a12, a14, a15);
+    expect(tc.categories['1'].applicable).toBe(true);
+    expect(tc.categories['2'].applicable).toBe(true);
+    expect(tc.categories['3'].applicable).toBe(true);
+    expect(tc.categories['1'].triggered_articles).toEqual([10, 15]);
+    expect(tc.categories['2'].triggered_articles).toEqual([12, 14]);
     // ≥3 out-of-order sort exercise: Cat 3 has 4 contributing articles.
-    expect(tc.category_3_inventory.contributing_articles).toEqual(['10', '12', '14', '15']);
+    expect(tc.categories['3'].triggered_articles).toEqual([10, 12, 14, 15]);
+    expect(tc.applicable_categories).toEqual(['1', '2', '3']);
   });
 });
 
@@ -318,16 +304,14 @@ describe('snapshot — Day 4 fixtures (low-risk non-applicable path)', () => {
       const article14 = classifyArticle14(annexIII, article5);
       const article15 = classifyArticle15(annexIII, article5);
       const article50 = classifyArticle50(features, article5);
-      const threeCategory = classifyThreeCategory({
+      const threeCategory = classifyThreeCategory(
+        annexIII,
         article5,
-        annex: annexIII,
         article10,
         article12,
-        article13,
         article14,
         article15,
-        article50,
-      });
+      );
 
       expect({
         id: fixture.id,
@@ -386,27 +370,32 @@ describe('snapshot — Day 4 fixtures (low-risk non-applicable path)', () => {
           source: article50.source,
         },
         threeCategory: {
-          category_1_sanitizer: {
-            required: threeCategory.category_1_sanitizer.required,
-            articles: threeCategory.category_1_sanitizer.articles,
-            contributing_articles: threeCategory.category_1_sanitizer.contributing_articles,
+          categories: {
+            '1': {
+              key: threeCategory.categories['1'].key,
+              applicable: threeCategory.categories['1'].applicable,
+              required_articles: threeCategory.categories['1'].required_articles,
+              triggered_articles: threeCategory.categories['1'].triggered_articles,
+            },
+            '2': {
+              key: threeCategory.categories['2'].key,
+              applicable: threeCategory.categories['2'].applicable,
+              required_articles: threeCategory.categories['2'].required_articles,
+              triggered_articles: threeCategory.categories['2'].triggered_articles,
+            },
+            '3': {
+              key: threeCategory.categories['3'].key,
+              applicable: threeCategory.categories['3'].applicable,
+              required_articles: threeCategory.categories['3'].required_articles,
+              triggered_articles: threeCategory.categories['3'].triggered_articles,
+            },
           },
-          category_2_evidence: {
-            required: threeCategory.category_2_evidence.required,
-            articles: threeCategory.category_2_evidence.articles,
-            contributing_articles: threeCategory.category_2_evidence.contributing_articles,
-          },
-          category_3_inventory: {
-            required: threeCategory.category_3_inventory.required,
-            articles: threeCategory.category_3_inventory.articles,
-            contributing_articles: threeCategory.category_3_inventory.contributing_articles,
-          },
-          source: threeCategory.source,
+          applicable_categories: threeCategory.applicable_categories,
         },
       }).toMatchSnapshot();
     });
 
-    it(`${fixture.id} — non-high-risk path: all Day-4 + Day-5 cascade articles return applicable === false; all 3 categories required: false`, () => {
+    it(`${fixture.id} — non-high-risk path: all Day-4 + Day-5 cascade articles return applicable === false; all 3 categories applicable: false`, () => {
       const features = extractFeatures(fixture.input, { lang: fixture.lang });
       const article5 = classifyArticle5(features);
       const annexIII = classifyAnnexIII(features, article5);
@@ -420,7 +409,6 @@ describe('snapshot — Day 4 fixtures (low-risk non-applicable path)', () => {
       const a13 = classifyArticle13(annexIII, article5);
       const a14 = classifyArticle14(annexIII, article5);
       const a15 = classifyArticle15(annexIII, article5);
-      const a50 = classifyArticle50(features, article5);
 
       for (const r of [a10, a12, a13, a14, a15]) {
         expect(r.applicable).toBe(false);
@@ -428,19 +416,11 @@ describe('snapshot — Day 4 fixtures (low-risk non-applicable path)', () => {
         expect(r.triggered_by.annex_iii_domains).toEqual([]);
       }
 
-      const tc = classifyThreeCategory({
-        article5,
-        annex: annexIII,
-        article10: a10,
-        article12: a12,
-        article13: a13,
-        article14: a14,
-        article15: a15,
-        article50: a50,
-      });
-      expect(tc.category_1_sanitizer.required).toBe(false);
-      expect(tc.category_2_evidence.required).toBe(false);
-      expect(tc.category_3_inventory.required).toBe(false);
+      const tc = classifyThreeCategory(annexIII, article5, a10, a12, a14, a15);
+      expect(tc.categories['1'].applicable).toBe(false);
+      expect(tc.categories['2'].applicable).toBe(false);
+      expect(tc.categories['3'].applicable).toBe(false);
+      expect(tc.applicable_categories).toEqual([]);
     });
   }
 });

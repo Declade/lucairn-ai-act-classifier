@@ -1,13 +1,22 @@
 {
-  "_source_sha256": "8264bbbfe361fb95c0db89e3c43b195ebd3e06a37fa6f05ce214539d54800b5f",
-  "_source_label": "theveil-website/src/lib/compliance/checklist-content.ts",
+  "version": "v0.1.0-gen",
+  "_meta": {
+    "notice": "GENERATED FILE — DO NOT EDIT. Source: theveil-website/src/lib/compliance/checklist-content.ts. Regenerate via `pnpm sync:three-category`. Drift check: `pnpm sync:three-category:check`. Locked three-category mapping: Cat 1 = Art 10+15 (Sanitizer); Cat 2 = Art 12+14 (Evidence); Cat 3 = Art 10+12+14+15 (Inventory). Source file SHA-256 captured in _source_sha256 for drift detection.",
+    "source_file": "theveil-website/src/lib/compliance/checklist-content.ts",
+    "source_lines": "18-107",
+    "generator": "scripts/sync-three-category.ts",
+    "_source_sha256": "8264bbbfe361fb95c0db89e3c43b195ebd3e06a37fa6f05ce214539d54800b5f"
+  },
+  "disclaimer_en": "This checklist is based on Lucairn platform’s interpretation of EU AI Act requirements for high-risk AI systems. It is not legal advice. Consult your legal team for jurisdiction-specific guidance.",
+  "disclaimer_de": "Diese Checkliste basiert auf der Interpretation der KI-Verordnungs-Anforderungen für Hochrisiko-KI-Systeme durch die Plattform Lucairn. Sie stellt keine Rechtsberatung dar. Konsultieren Sie Ihr Rechtsteam für jurisdiktionsspezifische Hinweise.",
   "categories": {
     "1": {
+      "key": "1",
       "title_en": "Category 1: Sanitizer — PII detection & identity separation (Art. 10 + 15)",
       "title_de": "Kategorie 1: Sanitizer — PII-Erkennung & Identitätstrennung (Art. 10 + 15)",
-      "articles": [
-        "10",
-        "15"
+      "required_articles": [
+        10,
+        15
       ],
       "items": [
         {
@@ -58,11 +67,12 @@
       ]
     },
     "2": {
+      "key": "2",
       "title_en": "Category 2: Evidence — decision logging & human oversight (Art. 12 + 14)",
       "title_de": "Kategorie 2: Nachweis — Entscheidungsprotokollierung & menschliche Aufsicht (Art. 12 + 14)",
-      "articles": [
-        "12",
-        "14"
+      "required_articles": [
+        12,
+        14
       ],
       "items": [
         {
@@ -118,13 +128,14 @@
       ]
     },
     "3": {
+      "key": "3",
       "title_en": "Category 3: Inventory — data governance across the system (Art. 10 + 12 + 14 + 15)",
       "title_de": "Kategorie 3: Inventar — Datengovernance über das Gesamtsystem (Art. 10 + 12 + 14 + 15)",
-      "articles": [
-        "10",
-        "12",
-        "14",
-        "15"
+      "required_articles": [
+        10,
+        12,
+        14,
+        15
       ],
       "items": [
         {
@@ -149,7 +160,5 @@
         }
       ]
     }
-  },
-  "disclaimer_en": "This checklist is based on Lucairn platform’s interpretation of EU AI Act requirements for high-risk AI systems. It is not legal advice. Consult your legal team for jurisdiction-specific guidance.",
-  "disclaimer_de": "Diese Checkliste basiert auf der Interpretation der KI-Verordnungs-Anforderungen für Hochrisiko-KI-Systeme durch die Plattform Lucairn. Sie stellt keine Rechtsberatung dar. Konsultieren Sie Ihr Rechtsteam für jurisdiktionsspezifische Hinweise."
+  }
 }

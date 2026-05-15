@@ -1,46 +1,67 @@
 // Article 50 — Transparency obligations for providers and deployers of certain
-// AI systems (chatbots, GPAI synthetic content, emotion recognition / biometric
-// categorisation deployers, deep-fake deployers).
+// AI systems (chatbots, GPAI synthetic content, emotion recognition /
+// biometric categorisation deployers, deepfake deployers, public-interest-
+// text deployers).
 //
-// Pure-function rule module. Cascade root that is INDEPENDENT of Annex III
-// high-risk classification — Article 50 transparency obligations apply to
-// specific system shapes regardless of whether the system is also classified
-// high-risk under Article 6 + Annex III.
+// Pure-function rule module. NEW non-cascade root: Article 50 transparency
+// obligations apply based on AI-system FUNCTION (interaction with persons,
+// GPAI synthetic content, emotion/biometric categorisation, deep fakes,
+// public-interest text). It is NOT gated on Annex III high-risk and is NOT
+// suppressed by Article 5 — per 50(6) "without prejudice to other transparency
+// obligations." We surface Article 5 as a sanity input only.
 //
 // Cite-and-match: every emitted result carries the EUR-Lex source URL for
-// Article 50 of Regulation (EU) 2024/1689. The summary fields quote EUR-Lex
-// EN verbatim (via EU AI Office Service Desk Tier-2 — Tier-1 EUR-Lex HTML
-// shell returns empty on programmatic fetch as of 2026-05-15) and EUR-Lex DE
-// via the same Tier-2 path. The regulator-validator agent re-verifies these
-// citations on every PR.
+// Article 50 of Regulation (EU) 2024/1689. The summary fields concatenate
+// verbatim EUR-Lex EN+DE chapeau text(s) for the fired paragraph(s) in
+// paragraph order: 50(1) → 50(2) → 50(3) → 50(4) sub-paragraph 1 (deepfake)
+// → 50(4) sub-paragraph 2 (public-interest text), with 50(5) format-and-
+// timing language appended as a trailing sentence when applicable === true.
+// If applicable === false, summary_en/de still carries the 50(1) chapeau
+// alone so consultants can read what Article 50 would require.
 //
 // EUR-Lex source: https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689
 // EU AI Office Service Desk (EN): https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-50
 // EU AI Office Service Desk (DE): https://ai-act-service-desk.ec.europa.eu/de/ai-act/article-50
 //
-// Applicability — four independent paragraphs:
+// DE wording escalation (per regulator-validator Day-3 lesson 4 ladder):
+//   - 50(1) + 50(2) Tier-2 EU AI Office Service Desk DE returned the chapeau
+//     without the law-enforcement / standard-editing / assistive-function
+//     carve-outs. The Tier-3 mirror artificialintelligenceact.eu/de/article/50/
+//     returns the full carve-out language verbatim. We ship the Tier-3
+//     variant so DE consultants see the same carve-outs as EN consultants.
+//   - 50(3) + 50(4)a + 50(4)b + 50(5) Tier-2 was truncated on the orchestrator's
+//     fetch; Tier-3 mirror used after live re-fetch. CHANGELOG carries the
+//     Tier-3 cross-validation flag (Day-3 lesson 5).
+//
+// Applicability — five independent paragraph paths consuming Day-2 lexicon:
 //   50(1) Providers of AI systems intended to INTERACT DIRECTLY with natural
 //         persons must inform exposed users that they are interacting with an
-//         AI system (unless this is obvious from circumstances and context).
-//         Statutory carve-out: AI systems authorised by law to detect, prevent,
-//         investigate or prosecute criminal offences.
+//         AI system. Statutory carve-outs (verbatim in summary): obvious from
+//         a reasonable person's perspective; AI authorised by law to detect/
+//         prevent/investigate/prosecute criminal offences (unless the system
+//         is available for the public to report a criminal offence).
 //   50(2) Providers of AI systems (including GPAI) generating SYNTHETIC audio,
 //         image, video or text content must ensure outputs are marked in a
-//         machine-readable format and detectable as artificially generated or
-//         manipulated. Statutory carve-out: AI systems that perform an
-//         assistive function for standard editing OR do not substantially alter
-//         the input data; AI authorised by law to detect, prevent, investigate
-//         or prosecute criminal offences.
-//   50(3) Deployers of EMOTION RECOGNITION or BIOMETRIC CATEGORISATION systems
-//         must inform natural persons exposed to them. Statutory carve-out:
-//         systems permitted by law to detect, prevent or investigate criminal
-//         offences (subject to safeguards).
-//   50(4) Deployers of AI systems generating or manipulating image/audio/video
-//         content constituting a DEEP FAKE must disclose that the content has
-//         been artificially generated or manipulated. Statutory carve-out:
-//         editorial / artistic / satirical / fictional works (with proportionate
-//         disclosure that does not hamper enjoyment), and AI authorised by law
-//         to detect, prevent, investigate or prosecute criminal offences.
+//         machine-readable format and detectable as artificially generated
+//         or manipulated. Statutory carve-outs (verbatim in summary): assistive
+//         function for standard editing OR no substantial alteration of input
+//         data / semantics; AI authorised by law for criminal-offence purposes.
+//   50(3) Deployers of EMOTION RECOGNITION or BIOMETRIC CATEGORISATION
+//         systems must inform exposed natural persons. Statutory carve-out
+//         (verbatim in summary): AI permitted by law to detect/prevent/
+//         investigate criminal offences, subject to safeguards.
+//   50(4) FIRST sub-paragraph — Deployers generating or manipulating image/
+//         audio/video content constituting a DEEP FAKE must disclose
+//         artificial generation/manipulation. Statutory carve-outs (verbatim
+//         in summary): AI authorised by law for criminal-offence purposes;
+//         artistic / creative / satirical / fictional / analogous works (with
+//         proportionate disclosure that doesn't hamper display/enjoyment).
+//   50(4) SECOND sub-paragraph — Deployers generating or manipulating TEXT
+//         published to inform the public on matters of PUBLIC INTEREST must
+//         disclose artificial generation/manipulation. Statutory carve-outs
+//         (verbatim in summary): AI authorised by law for criminal-offence
+//         purposes; human-reviewed / editorially-controlled content where a
+//         natural or legal person holds editorial responsibility.
 //
 // Three-category mapping (locked, do NOT reopen — cite CLAUDE.md
 // `## Locked decisions`):
@@ -51,354 +72,298 @@
 //   specific GPAI/deployer shapes, on a different cascade root, and surfaces
 //   independently in the classifier output.
 //
-// Suppression interaction with Article 5:
-//   Some Article 5 prohibitions overlap with Article 50(3) (emotion recognition
-//   in workplace/education is prohibited under Art 5(1)(f), making the Art 50(3)
-//   transparency obligation moot for that specific case). When article5.hits
-//   contains letter 'f' AND article5.prohibited === true, paragraph_3 is
-//   suppressed. Other paragraphs (50(1), 50(2), 50(4)) are independent of
-//   Article 5.
+// Carve-outs — programmatic detection is NOT attempted.
+//   Day 5 does NOT classify whether a system actually qualifies for a
+//   law-enforcement / artistic-work / editorial-review carve-out (no NLP for
+//   "law enforcement", "artistic", or "editorial responsibility"). The
+//   carve-out language is enumerated VERBATIM in summary_en / summary_de so
+//   consultants can apply them downstream. This mirrors the Day-3 design
+//   choice on Art 5(1)(h) carve-outs (commit `bda998c`).
 //
 // Pure-function discipline:
 //   - No I/O. No network. No module-init side effects.
 //   - Same input → same output, byte-for-byte.
-//   - Consumes an ExtractedFeatures + Article5Result; emits an Article50Result.
-//   - Pattern matching uses word-boundary regex on the LOWERCASED raw input
-//     (NOT the extractor's tokenized features) so we can apply Article-50-
-//     specific phrasing without coupling to Day-2 lexicon categorization.
+//   - Consumes ExtractedFeatures + Article5Result + optional AnnexIIIResult;
+//     emits Article50Result.
 
 import type { ExtractedFeatures } from '../extract/keyword.js';
 import type { Article5Result } from './article-5.js';
+import type { AnnexIIIResult } from './article-6-annex-iii.js';
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
 /**
- * Trace of WHICH paragraphs of Article 50 triggered (or not).
+ * Trace of WHICH of the 5 Article-50 paragraph paths fired.
+ *
+ * Note: 50(4) splits into two distinct sub-paragraphs (deepfake; public-
+ * interest text). We track them separately because they have different
+ * applicability conditions and different statutory carve-outs.
  */
 export interface Article50TriggeredBy {
-  /** 50(1) — AI systems intended to interact directly with natural persons. */
-  paragraph_1_chatbot: boolean;
-  /** 50(2) — Providers generating synthetic content (GPAI + general). */
+  /** 50(1) — AI system intended to interact directly with natural persons. */
+  paragraph_1_interaction: boolean;
+  /** 50(2) — Provider of GPAI / generative AI producing synthetic audio/image/video/text. */
   paragraph_2_synthetic_content: boolean;
-  /** 50(3) — Deployers of emotion-recognition or biometric-categorisation systems. */
-  paragraph_3_emotion_or_biometric: boolean;
-  /** 50(4) — Deployers generating deep-fake content. */
-  paragraph_4_deep_fake: boolean;
+  /** 50(3) — Deployer of emotion-recognition or biometric-categorisation system. */
+  paragraph_3_emotion_or_biometric_categorisation: boolean;
+  /** 50(4) first sub-paragraph — Deployer generating/manipulating image/audio/video deep fake. */
+  paragraph_4_deepfake: boolean;
+  /** 50(4) second sub-paragraph — Deployer generating text published informing public on public-interest matters. */
+  paragraph_4_public_interest_text: boolean;
 }
 
 export interface Article50Result {
-  /** True iff at least one of the 4 paragraphs fires after Article 5 suppression. */
+  /** True iff ANY of the 5 paragraph triggers fired. */
   applicable: boolean;
   triggered_by: Article50TriggeredBy;
-  /** EN summary of all 4 paragraph chapeaux with statutory carve-outs enumerated. */
+  /**
+   * Verbatim EUR-Lex EN chapeau text(s) for the fired paragraph(s),
+   * concatenated in paragraph order: 50(1) → 50(2) → 50(3) → 50(4)a → 50(4)b,
+   * each ending with its citation marker e.g. "(Art 50(1))", separated by a
+   * single space. If applicable === false, the 50(1) chapeau text is
+   * returned alone (so consultants can still read what Article 50 would
+   * require when applicable). Concatenates 50(5) format-and-timing chapeau
+   * as a trailing sentence IFF applicable === true.
+   */
   summary_en: string;
-  /** DE summary of all 4 paragraph chapeaux with statutory carve-outs enumerated. */
+  /** Verbatim DE; same concatenation rule. */
   summary_de: string;
-  /** EUR-Lex citation URL. */
+  /** EUR-Lex citation URL (Tier-1 canonical). */
   source: string;
 }
 
 // ---------------------------------------------------------------------------
-// Static metadata
+// Static metadata (verbatim EUR-Lex citation)
 // ---------------------------------------------------------------------------
 
 const EUR_LEX_SOURCE =
   'https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689';
 
-// All four paragraph chapeaux in EN+DE. We enumerate the statutory law-
-// enforcement carve-outs explicitly (per regulator-validator's anti-hand-wave
-// rule, Day-3 lesson 5) — Article 50(1), (2), (3) and (4) all have
-// law-enforcement carve-outs and Article 50(2) + 50(4) carry additional
-// editorial / assistive-function carve-outs.
-const SUMMARY_EN =
-  'Article 50 transparency obligations apply to specific AI system shapes. ' +
-  '(50(1)) Providers of AI systems intended to interact directly with natural ' +
-  'persons shall ensure that the AI system is designed and developed in such a way ' +
-  'that the natural persons concerned are informed that they are interacting with ' +
-  'an AI system, unless this is obvious from the point of view of a natural person ' +
-  'who is reasonably well-informed, observant and circumspect, taking into account ' +
-  'the circumstances and the context of use; this obligation does not apply to AI ' +
-  'systems authorised by law to detect, prevent, investigate or prosecute criminal ' +
-  'offences, subject to appropriate safeguards. ' +
-  '(50(2)) Providers of AI systems, including general-purpose AI systems, generating ' +
-  'synthetic audio, image, video or text content, shall ensure that the outputs of ' +
-  'the AI system are marked in a machine-readable format and detectable as ' +
-  'artificially generated or manipulated; this obligation does not apply to AI ' +
-  'systems that perform an assistive function for standard editing or do not ' +
-  'substantially alter the input data, nor to AI authorised by law to detect, ' +
-  'prevent, investigate or prosecute criminal offences. ' +
-  '(50(3)) Deployers of an emotion recognition system or a biometric ' +
-  'categorisation system shall inform the natural persons exposed thereto of the ' +
-  'operation of the system; this obligation does not apply to AI systems permitted ' +
-  'by law to detect, prevent or investigate criminal offences, subject to ' +
-  'appropriate safeguards. ' +
-  '(50(4)) Deployers of an AI system that generates or manipulates image, audio or ' +
-  'video content constituting a deep fake shall disclose that the content has been ' +
-  'artificially generated or manipulated; this obligation does not apply where the ' +
-  'use is authorised by law to detect, prevent, investigate or prosecute criminal ' +
-  'offences, nor where the content is part of an evidently artistic, creative, ' +
-  'satirical, fictional or analogous work, in which case proportionate disclosure ' +
-  'is required that does not hamper the display or enjoyment of the work. ' +
-  '(Art 50(1)–(4))';
+// Per-paragraph EN chapeau quotes — verbatim EUR-Lex EN. Statutory carve-outs
+// enumerated in full (anti-hand-wave per regulator-validator Day-3 lesson 5).
+const CHAPEAU_EN: Record<keyof Article50TriggeredBy | '5', string> = {
+  paragraph_1_interaction:
+    'Providers shall ensure that AI systems intended to interact directly with natural persons are designed and developed in such a way that the natural persons concerned are informed that they are interacting with an AI system, unless this is obvious from the point of view of a natural person who is reasonably well-informed, observant and circumspect, taking into account the circumstances and the context of use. This obligation shall not apply to AI systems authorised by law to detect, prevent, investigate or prosecute criminal offences, subject to appropriate safeguards for the rights and freedoms of third parties, unless those systems are available for the public to report a criminal offence. (Art 50(1))',
+  paragraph_2_synthetic_content:
+    'Providers of AI systems, including general-purpose AI systems, generating synthetic audio, image, video or text content, shall ensure that the outputs of the AI system are marked in a machine-readable format and detectable as artificially generated or manipulated. Providers shall ensure their technical solutions are effective, interoperable, robust and reliable as far as this is technically feasible, taking into account the specificities and limitations of various types of content, the costs of implementation and the generally acknowledged state of the art, as may be reflected in relevant technical standards. This obligation shall not apply to the extent the AI systems perform an assistive function for standard editing or do not substantially alter the input data provided by the deployer or the semantics thereof, or where authorised by law to detect, prevent, investigate or prosecute criminal offences. (Art 50(2))',
+  paragraph_3_emotion_or_biometric_categorisation:
+    'Deployers of an emotion recognition system or a biometric categorisation system shall inform the natural persons exposed thereto of the operation of the system, and shall process the personal data in accordance with Regulations (EU) 2016/679 and (EU) 2018/1725 and Directive (EU) 2016/680, as applicable. This obligation shall not apply to AI systems used for biometric categorisation and emotion recognition, which are permitted by law to detect, prevent or investigate criminal offences, subject to appropriate safeguards for the rights and freedoms of third parties, and in accordance with Union law. (Art 50(3))',
+  paragraph_4_deepfake:
+    'Deployers of an AI system that generates or manipulates image, audio or video content constituting a deep fake, shall disclose that the content has been artificially generated or manipulated. This obligation shall not apply where the use is authorised by law to detect, prevent, investigate or prosecute criminal offence. Where the content forms part of an evidently artistic, creative, satirical, fictional or analogous work or programme, the transparency obligations set out in this paragraph are limited to disclosure of the existence of such generated or manipulated content in an appropriate manner that does not hamper the display or enjoyment of the work. (Art 50(4) sub-paragraph 1)',
+  paragraph_4_public_interest_text:
+    'Deployers of an AI system that generates or manipulates text which is published with the purpose of informing the public on matters of public interest shall disclose that the text has been artificially generated or manipulated. This obligation shall not apply where the use is authorised by law to detect, prevent, investigate or prosecute criminal offences or where the AI-generated content has undergone a process of human review or editorial control and where a natural or legal person holds editorial responsibility for the publication of the content. (Art 50(4) sub-paragraph 2)',
+  '5':
+    'The information referred to in paragraphs 1 to 4 shall be provided to the natural persons concerned in a clear and distinguishable manner at the latest at the time of the first interaction or exposure. The information shall conform to the applicable accessibility requirements. (Art 50(5))',
+};
 
-const SUMMARY_DE =
-  'Artikel 50 Transparenzpflichten gelten für bestimmte KI-System-Konstellationen. ' +
-  '(50 Abs. 1) Anbieter von KI-Systemen, die für die direkte Interaktion mit ' +
-  'natürlichen Personen bestimmt sind, sorgen dafür, dass das KI-System so ' +
-  'konzipiert und entwickelt wird, dass die betroffenen natürlichen Personen ' +
-  'informiert werden, dass sie mit einem KI-System interagieren, es sei denn, ' +
-  'dies ist aus Sicht einer angemessen aufmerksamen, gut informierten und ' +
-  'umsichtigen natürlichen Person unter Berücksichtigung der Umstände und des ' +
-  'Verwendungskontexts offensichtlich; diese Pflicht gilt nicht für KI-Systeme, ' +
-  'die gesetzlich zur Aufdeckung, Verhütung, Ermittlung oder Verfolgung von ' +
-  'Straftaten zugelassen sind, vorbehaltlich angemessener Garantien. ' +
-  '(50 Abs. 2) Anbieter von KI-Systemen, einschließlich KI-Modellen mit ' +
-  'allgemeinem Verwendungszweck, die synthetische Audio-, Bild-, Video- oder ' +
-  'Textinhalte erzeugen, sorgen dafür, dass die Ausgaben des KI-Systems in einem ' +
-  'maschinenlesbaren Format gekennzeichnet und als künstlich erzeugt oder ' +
-  'manipuliert erkennbar sind; diese Pflicht gilt nicht für KI-Systeme, die eine ' +
-  'unterstützende Funktion für die Standardbearbeitung ausüben oder die Eingabe ' +
-  'nicht wesentlich verändern, ebenso wenig wie für KI, die gesetzlich zur ' +
-  'Aufdeckung, Verhütung, Ermittlung oder Verfolgung von Straftaten zugelassen ' +
-  'ist. ' +
-  '(50 Abs. 3) Betreiber eines Emotionserkennungssystems oder eines biometrischen ' +
-  'Kategorisierungssystems informieren die diesem System ausgesetzten natürlichen ' +
-  'Personen über den Betrieb des Systems; diese Pflicht gilt nicht für KI-Systeme, ' +
-  'die gesetzlich zur Aufdeckung, Verhütung oder Ermittlung von Straftaten ' +
-  'zugelassen sind, vorbehaltlich angemessener Garantien. ' +
-  '(50 Abs. 4) Betreiber eines KI-Systems, das Bild-, Audio- oder Videoinhalte ' +
-  'erzeugt oder manipuliert, die einen Deepfake darstellen, legen offen, dass die ' +
-  'Inhalte künstlich erzeugt oder manipuliert wurden; diese Pflicht gilt nicht, ' +
-  'sofern die Verwendung gesetzlich zur Aufdeckung, Verhütung, Ermittlung oder ' +
-  'Verfolgung von Straftaten zugelassen ist, oder sofern die Inhalte Teil eines ' +
-  'offensichtlich künstlerischen, kreativen, satirischen, fiktionalen oder ' +
-  'analogen Werks sind; in diesem Fall ist eine angemessene Offenlegung ' +
-  'erforderlich, die die Darbietung oder den Genuss des Werks nicht ' +
-  'beeinträchtigt. ' +
-  '(Art. 50 Abs. 1–4)';
+// Per-paragraph DE chapeau quotes — verbatim from Tier-3 mirror
+// artificialintelligenceact.eu/de/article/50/ (full carve-outs preserved).
+// Tier-1 EUR-Lex DE HTML shell returns empty on programmatic fetch; Tier-2
+// EU AI Office Service Desk DE returned abridged variants without carve-outs.
+// CHANGELOG carries the Tier-3 cross-validation flag.
+const CHAPEAU_DE: Record<keyof Article50TriggeredBy | '5', string> = {
+  paragraph_1_interaction:
+    'Die Anbieter stellen sicher, dass KI-Systeme, die für eine direkte Interaktion mit natürlichen Personen bestimmt sind, so konzipiert und entwickelt werden, dass die betreffenden natürlichen Personen darüber informiert werden, dass sie mit einem KI-System interagieren, es sei denn, dies ist aus der Sicht einer natürlichen Person, die unter Berücksichtigung der Umstände und des Nutzungskontexts angemessen informiert, aufmerksam und umsichtig ist, offensichtlich. Diese Verpflichtung gilt nicht für KI-Systeme, die gesetzlich zur Aufdeckung, Verhütung, Untersuchung oder Verfolgung von Straftaten zugelassen sind, vorbehaltlich angemessener Garantien für die Rechte und Freiheiten Dritter, es sei denn, diese Systeme stehen der Öffentlichkeit zur Verfügung, um eine Straftat zu melden. (Art. 50 Abs. 1)',
+  paragraph_2_synthetic_content:
+    'Die Anbieter von KI-Systemen, einschließlich KI-Systemen für allgemeine Zwecke, die synthetische Audio-, Bild-, Video- oder Textinhalte erzeugen, stellen sicher, dass die Ausgaben des KI-Systems in einem maschinenlesbaren Format gekennzeichnet sind und als künstlich erzeugt oder manipuliert erkannt werden können. Diese Verpflichtung gilt nicht, soweit die KI-Systeme eine Hilfsfunktion für die Standardredaktion erfüllen oder die vom Anwender bereitgestellten Eingabedaten oder deren Semantik nicht wesentlich verändern, oder soweit sie gesetzlich zur Aufdeckung, Verhütung, Untersuchung oder Verfolgung von Straftaten zugelassen sind. (Art. 50 Abs. 2)',
+  paragraph_3_emotion_or_biometric_categorisation:
+    'Die Betreiber eines Emotionserkennungssystems oder eines Systems zur biometrischen Kategorisierung unterrichten die betroffenen natürlichen Personen über den Betrieb des Systems und verarbeiten die personenbezogenen Daten im Einklang mit den Verordnungen (EU) 2016/679 und (EU) 2018/1725 sowie der Richtlinie (EU) 2016/680, soweit anwendbar. Diese Verpflichtung gilt nicht für KI-Systeme, die zur biometrischen Kategorisierung und Emotionserkennung eingesetzt werden und die vorbehaltlich angemessener Garantien für die Rechte und Freiheiten Dritter und im Einklang mit dem Unionsrecht gesetzlich zur Aufdeckung, Verhütung oder Untersuchung von Straftaten zulässig sind. (Art. 50 Abs. 3)',
+  paragraph_4_deepfake:
+    'Wer ein KI-System einsetzt, das Bild-, Audio- oder Videoinhalte erzeugt oder manipuliert, die einen Deep Fake darstellen, muss offenlegen, dass die Inhalte künstlich erzeugt oder manipuliert wurden. Diese Verpflichtung gilt nicht, wenn die Verwendung zur Aufdeckung, Verhütung, Ermittlung oder Verfolgung von Straftaten gesetzlich zugelassen ist. Ist der Inhalt Teil eines offensichtlich künstlerischen, kreativen, satirischen, fiktionalen oder analogen Werks oder Programms, so beschränken sich die in diesem Absatz genannten Transparenzpflichten auf die Offenlegung des Vorhandenseins eines solchen künstlich erzeugten oder manipulierten Inhalts in einer angemessenen Weise, die die Darstellung oder den Genuss des Werks nicht beeinträchtigt. (Art. 50 Abs. 4 Unterabsatz 1)',
+  paragraph_4_public_interest_text:
+    'Wer ein KI-System einsetzt, das Text generiert oder manipuliert, der zu dem Zweck veröffentlicht wird, die Öffentlichkeit über Angelegenheiten von öffentlichem Interesse zu informieren, muss offenlegen, dass der Text künstlich generiert oder manipuliert wurde. Diese Verpflichtung gilt nicht, wenn die Nutzung gesetzlich erlaubt ist, um Straftaten aufzudecken, zu verhindern, zu untersuchen oder strafrechtlich zu verfolgen, oder wenn die KI-generierten Inhalte einer menschlichen Überprüfung oder redaktionellen Kontrolle unterzogen wurden und eine natürliche oder juristische Person die redaktionelle Verantwortung für die Veröffentlichung der Inhalte trägt. (Art. 50 Abs. 4 Unterabsatz 2)',
+  '5':
+    'Die in den Absätzen 1 bis 4 genannten Informationen werden den betroffenen natürlichen Personen spätestens zum Zeitpunkt der ersten Interaktion oder Exposition in klarer und erkennbarer Weise zur Verfügung gestellt. Die Informationen müssen den geltenden Anforderungen an die Zugänglichkeit entsprechen. (Art. 50 Abs. 5)',
+};
 
 // ---------------------------------------------------------------------------
-// Inline pattern set (Day-5 self-contained; not coupled to Day-2 lexicon)
+// Lexicon → paragraph mapping (consumes Day-2 lexicon `article_50_gpai` group)
 // ---------------------------------------------------------------------------
 //
-// Design choice (vs consuming features.byCategory.article_50_gpai): keeping
-// the Article-50 phrasing inline in this module makes the cascade-root
-// trigger logic auditable in one file, decouples Day-5 from Day-2 lexicon
-// categorization decisions, and follows the dispatch's recommended
-// architecture (option b — mirrors article-5.ts's inline LETTER_TABLE
-// pattern). The Day-7/8 fixture-curation pass can expand these phrase sets
-// or extract them to JSON if real BSI/BfDI phrasing surfaces accuracy gaps.
+// Day-2 extractor already curates the AI-Act-50-relevant phrases under the
+// `article_50_gpai` lexicon group at `src/data/patterns.{en,de}.json`. We
+// project the lexicon match into paragraph applicability via the static map
+// below. Day-5 extends the group with the new `5_public_interest_text`
+// category (see CHANGELOG); the 4 prior categories (1_interaction_disclosure,
+// 2_synthetic_content_marking, 3_emotion_categorisation_disclosure,
+// 4_deepfake_labeling) are unchanged.
 //
-// Each phrase is matched with word-boundary discipline on the LOWERCASED
-// raw input (NOT the tokenized feature set), case-insensitively. Substring
-// matches without boundaries would over-fire on partial words (e.g.
-// "synthetic" inside "synthetically"). Boundaries also catch hyphenated and
-// non-hyphenated variants of German compound nouns.
+// Why consume the lexicon instead of inlining patterns: keeps phrase curation
+// (and EN+DE coverage) in ONE place. The lexicon is what regulator-validator
+// reviews; ad-hoc inline patterns would split the source-of-truth and create
+// drift between phrase coverage and module behavior. Day-3 design choice.
 
-const PARAGRAPH_1_PATTERNS_EN: readonly string[] = [
-  'chatbot',
-  'virtual assistant',
-  'ai assistant',
-  'interacts with users',
-  'interacts directly with',
-  'conversational ai',
-  'conversational agent',
-  'ai agent that responds',
-];
+const LEXICON_GROUP = 'article_50_gpai';
 
-const PARAGRAPH_1_PATTERNS_DE: readonly string[] = [
-  'chatbot',
-  'virtueller assistent',
-  'ki-assistent',
-  'ki assistent',
-  'interagiert mit nutzern',
-  'interagiert direkt mit',
-  'konversations-ki',
-  'konversationelle ki',
-  'dialogsystem',
-];
+type Article50Category =
+  | '1_interaction_disclosure'
+  | '2_synthetic_content_marking'
+  | '3_emotion_categorisation_disclosure'
+  | '4_deepfake_labeling'
+  | '5_public_interest_text';
 
-const PARAGRAPH_2_PATTERNS_EN: readonly string[] = [
-  'synthetic content',
-  'synthetic audio',
-  'synthetic image',
-  'synthetic video',
-  'synthetic text',
-  'ai-generated',
-  'ai generated',
-  'generative ai',
-  'gpai',
-  'general-purpose ai',
-  'foundation model',
-];
-
-const PARAGRAPH_2_PATTERNS_DE: readonly string[] = [
-  'synthetische inhalte',
-  'synthetisches audio',
-  'synthetisches bild',
-  'synthetisches video',
-  'synthetischer text',
-  'ki-generiert',
-  'ki-generierte inhalte',
-  'generative ki',
-  'gpai',
-  'ki mit allgemeinem verwendungszweck',
-  'basismodell',
-];
-
-const PARAGRAPH_3_PATTERNS_EN: readonly string[] = [
-  'emotion recognition',
-  'emotion detection',
-  'biometric categorisation',
-  'biometric categorization',
-];
-
-const PARAGRAPH_3_PATTERNS_DE: readonly string[] = [
-  'emotionserkennung',
-  'emotionserkennungssystem',
-  'biometrische kategorisierung',
-  'biometrisches kategorisierungssystem',
-];
-
-const PARAGRAPH_4_PATTERNS_EN: readonly string[] = [
-  'deep fake',
-  'deep-fake',
-  'deepfake',
-  'ai-manipulated video',
-  'ai-manipulated image',
-  'ai-manipulated audio',
-  'synthetic video',
-  'manipulated video',
-];
-
-const PARAGRAPH_4_PATTERNS_DE: readonly string[] = [
-  'deepfake',
-  'deep-fake',
-  'deep fake',
-  'ki-manipuliertes video',
-  'ki-manipuliertes bild',
-  'ki-manipuliertes audio',
-  'synthetisches video',
-  'manipuliertes video',
-];
-
-// ---------------------------------------------------------------------------
-// Matching helpers
-// ---------------------------------------------------------------------------
-
-/**
- * Word-boundary, case-insensitive substring match. The patterns themselves
- * may contain spaces / hyphens; we anchor with `\b` at both ends in the
- * compiled regex. Spaces inside the pattern are treated as literal spaces
- * (NOT `\s+`) — the extractor is the right layer for whitespace
- * normalisation; here we trust the caller's input as-is.
- */
-function escapeRegex(pattern: string): string {
-  // Escape regex metacharacters. Hyphens and spaces are intentionally left
-  // unescaped — they're literal characters in our patterns.
-  return pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-function matchesAny(input: string, patterns: readonly string[]): boolean {
-  const lower = input.toLowerCase();
-  for (const phrase of patterns) {
-    // Build a per-phrase regex with word boundaries. Pre-compiled at the
-    // call site (no module-init regex array — the cost is negligible
-    // compared to the I/O-less call frequency).
-    const re = new RegExp(`\\b${escapeRegex(phrase.toLowerCase())}\\b`, 'i');
-    if (re.test(lower)) return true;
-  }
-  return false;
-}
+const CATEGORY_TO_PARAGRAPH: Record<Article50Category, keyof Article50TriggeredBy> = {
+  '1_interaction_disclosure': 'paragraph_1_interaction',
+  '2_synthetic_content_marking': 'paragraph_2_synthetic_content',
+  '3_emotion_categorisation_disclosure': 'paragraph_3_emotion_or_biometric_categorisation',
+  '4_deepfake_labeling': 'paragraph_4_deepfake',
+  '5_public_interest_text': 'paragraph_4_public_interest_text',
+};
 
 // ---------------------------------------------------------------------------
 // Public API
 // ---------------------------------------------------------------------------
 
 /**
- * Classify the input against Article 50 (transparency obligations for certain
- * AI systems — chatbots, synthetic content, emotion recognition, deep fakes).
+ * Classify the input against Article 50 (transparency obligations for
+ * chatbots, GPAI synthetic content, emotion recognition / biometric
+ * categorisation, deep fakes, public-interest text).
  *
  * Workflow:
  *   1. Type-guard inputs (friendly TypeError if upstream contract violated).
- *   2. Run each paragraph's pattern set against the raw input. Each paragraph
- *      fires independently — multiple paragraphs may trigger on a single use
- *      case description.
- *   3. Apply Article 5 suppression: if `article5.prohibited === true` AND
- *      Art 5(1)(f) (emotion recognition in workplace/education) fired, set
- *      `paragraph_3_emotion_or_biometric: false` (the prohibition supersedes
- *      the transparency obligation for that specific case). Other paragraphs
- *      are independent of Article 5.
- *   4. `applicable === true` iff any of the 4 paragraphs is true after
- *      suppression.
+ *   2. For each of the 5 Article-50 paragraph paths, check whether the Day-2
+ *      lexicon's `article_50_gpai.<category>` matched in the extracted
+ *      features.
+ *   3. Paragraph 50(3) also fires via the optional `annex` fallback when
+ *      Annex III paragraph 1 (biometrics) was matched with sub-letter `b`
+ *      (biometric categorisation by sensitive attributes) or sub-letter `c`
+ *      (emotion recognition) — useful when the user describes the system in
+ *      Annex-III-style language without using GPAI-side phrases. Pass
+ *      `annex: null` to disable the fallback.
+ *   4. `applicable === true` iff ANY of the 5 paragraphs is true.
+ *   5. `summary_en` / `summary_de` concatenate the verbatim chapeau text(s)
+ *      for the fired paragraphs in paragraph order. If no paragraph fires,
+ *      the 50(1) chapeau is returned alone. If at least one fires, the 50(5)
+ *      format-and-timing chapeau is appended as a trailing sentence.
  *
- * @param features - Result from `extractFeatures()`. We read `features.input`
- *   (raw text) and do not depend on the tokenized hits — Article 50 patterns
- *   live in this module.
- * @param article5 - Result from `classifyArticle5()`. Used for the 50(3)
- *   suppression check against Art 5(1)(f).
+ * Article 5 is taken as a sanity input only — per Art 50(6), Article 50
+ * applies "without prejudice to other transparency obligations." A
+ * prohibited system can still be subject to Article 50 transparency
+ * obligations (although a prohibited system shouldn't be placed on the
+ * market in the first place — that's downstream consultant judgment).
+ *
+ * @param features - Result from `extractFeatures()`. We read `features.byCategory`.
+ * @param article5 - Result from `classifyArticle5()`. Sanity input only.
+ * @param annex - Optional `AnnexIIIResult`. When provided AND Annex III
+ *   paragraph 1 fired with sub-letter `b` or `c`, paragraph_3 also fires
+ *   (Annex-III-style description fallback).
  */
 export function classifyArticle50(
   features: ExtractedFeatures,
   article5: Article5Result,
+  annex: AnnexIIIResult | null = null,
 ): Article50Result {
-  if (features === null || typeof features !== 'object' || typeof (features as ExtractedFeatures).input !== 'string') {
+  if (
+    features === null ||
+    typeof features !== 'object' ||
+    Array.isArray(features) ||
+    typeof (features as ExtractedFeatures).input !== 'string' ||
+    (features as ExtractedFeatures).byCategory === null ||
+    typeof (features as ExtractedFeatures).byCategory !== 'object'
+  ) {
     throw new TypeError(
-      'classifyArticle50(): features must be an ExtractedFeatures object with an input string (call extractFeatures() first).',
+      'classifyArticle50(): features must be an ExtractedFeatures object with input:string and byCategory:object (call extractFeatures() first).',
     );
   }
-  if (article5 === null || typeof article5 !== 'object' || !Array.isArray((article5 as Article5Result).hits)) {
+  if (article5 === null || typeof article5 !== 'object' || Array.isArray(article5)) {
     throw new TypeError(
-      'classifyArticle50(): article5 must be an Article5Result object with a hits array (call classifyArticle5() first).',
+      'classifyArticle50(): article5 must be an Article5Result object (call classifyArticle5() first).',
     );
   }
-
-  const input = features.input;
-
-  const paragraph_1_chatbot =
-    matchesAny(input, PARAGRAPH_1_PATTERNS_EN) ||
-    matchesAny(input, PARAGRAPH_1_PATTERNS_DE);
-
-  const paragraph_2_synthetic_content =
-    matchesAny(input, PARAGRAPH_2_PATTERNS_EN) ||
-    matchesAny(input, PARAGRAPH_2_PATTERNS_DE);
-
-  // Suppression check for 50(3): Art 5(1)(f) prohibits emotion-recognition in
-  // workplace/education. When that prohibition fires, the 50(3) transparency
-  // obligation is moot (a prohibited system cannot be placed on the market).
-  const art5fFired =
-    article5.prohibited &&
-    article5.hits.some((h) => h.letter === 'f');
-
-  let paragraph_3_emotion_or_biometric =
-    matchesAny(input, PARAGRAPH_3_PATTERNS_EN) ||
-    matchesAny(input, PARAGRAPH_3_PATTERNS_DE);
-  if (art5fFired) {
-    paragraph_3_emotion_or_biometric = false;
+  if (annex !== null) {
+    if (typeof annex !== 'object' || !Array.isArray((annex as AnnexIIIResult).domains)) {
+      throw new TypeError(
+        'classifyArticle50(): annex must be an AnnexIIIResult object with a domains array or null (call classifyAnnexIII() first, or pass null to disable the fallback).',
+      );
+    }
   }
 
-  const paragraph_4_deep_fake =
-    matchesAny(input, PARAGRAPH_4_PATTERNS_EN) ||
-    matchesAny(input, PARAGRAPH_4_PATTERNS_DE);
+  // Suppress unused-warning while preserving public-API stability: Article 5
+  // is a sanity input documented above; current logic does not branch on it.
+  void article5;
+
+  // Project Day-2 lexicon matches into the 5 paragraph booleans.
+  const lex = features.byCategory[LEXICON_GROUP] ?? {};
+  const triggers: Article50TriggeredBy = {
+    paragraph_1_interaction: false,
+    paragraph_2_synthetic_content: false,
+    paragraph_3_emotion_or_biometric_categorisation: false,
+    paragraph_4_deepfake: false,
+    paragraph_4_public_interest_text: false,
+  };
+  for (const [cat, paragraphKey] of Object.entries(CATEGORY_TO_PARAGRAPH) as ReadonlyArray<
+    [Article50Category, keyof Article50TriggeredBy]
+  >) {
+    const matched = lex[cat];
+    if (Array.isArray(matched) && matched.length > 0) {
+      triggers[paragraphKey] = true;
+    }
+  }
+
+  // Annex III fallback for 50(3): biometrics (Annex III.1) with sub-letter
+  // `b` (biometric categorisation) or `c` (emotion recognition) is described
+  // in Annex-III language and we accept that as a paragraph_3 trigger even
+  // when the GPAI-side lexicon doesn't fire.
+  if (annex !== null && !triggers.paragraph_3_emotion_or_biometric_categorisation) {
+    for (const domain of annex.domains) {
+      if (domain.annex_iii_number !== 1) continue;
+      if (
+        Array.isArray(domain.sub_letters) &&
+        (domain.sub_letters.includes('b') || domain.sub_letters.includes('c'))
+      ) {
+        triggers.paragraph_3_emotion_or_biometric_categorisation = true;
+        break;
+      }
+    }
+  }
 
   const applicable =
-    paragraph_1_chatbot ||
-    paragraph_2_synthetic_content ||
-    paragraph_3_emotion_or_biometric ||
-    paragraph_4_deep_fake;
+    triggers.paragraph_1_interaction ||
+    triggers.paragraph_2_synthetic_content ||
+    triggers.paragraph_3_emotion_or_biometric_categorisation ||
+    triggers.paragraph_4_deepfake ||
+    triggers.paragraph_4_public_interest_text;
+
+  // Concatenation in fixed paragraph order: 50(1) → 50(2) → 50(3) → 50(4)a → 50(4)b.
+  // If none fired, summary carries 50(1) chapeau alone (consultants still see
+  // what Article 50 would require). 50(5) format-and-timing trails when applicable.
+  const PARAGRAPH_ORDER: ReadonlyArray<keyof Article50TriggeredBy> = [
+    'paragraph_1_interaction',
+    'paragraph_2_synthetic_content',
+    'paragraph_3_emotion_or_biometric_categorisation',
+    'paragraph_4_deepfake',
+    'paragraph_4_public_interest_text',
+  ];
+
+  const firedEN: string[] = [];
+  const firedDE: string[] = [];
+  for (const key of PARAGRAPH_ORDER) {
+    if (triggers[key]) {
+      firedEN.push(CHAPEAU_EN[key]);
+      firedDE.push(CHAPEAU_DE[key]);
+    }
+  }
+
+  let summary_en: string;
+  let summary_de: string;
+  if (applicable) {
+    firedEN.push(CHAPEAU_EN['5']);
+    firedDE.push(CHAPEAU_DE['5']);
+    summary_en = firedEN.join(' ');
+    summary_de = firedDE.join(' ');
+  } else {
+    // Non-applicable: surface the 50(1) chapeau alone (no 50(5) trailer).
+    summary_en = CHAPEAU_EN.paragraph_1_interaction;
+    summary_de = CHAPEAU_DE.paragraph_1_interaction;
+  }
 
   return {
     applicable,
-    triggered_by: {
-      paragraph_1_chatbot,
-      paragraph_2_synthetic_content,
-      paragraph_3_emotion_or_biometric,
-      paragraph_4_deep_fake,
-    },
-    summary_en: SUMMARY_EN,
-    summary_de: SUMMARY_DE,
+    triggered_by: triggers,
+    summary_en,
+    summary_de,
     source: EUR_LEX_SOURCE,
   };
 }

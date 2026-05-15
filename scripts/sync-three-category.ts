@@ -2,47 +2,85 @@
 // scheme from the website's compliance checklist source-of-truth to a
 // generated JSON artifact that `src/rules/three-category.ts` consumes.
 //
-// Invocation: `pnpm sync-three-category` (wired in package.json).
+// CLI:
+//   tsx scripts/sync-three-category.ts [--input <path>] [--output <path>] [--check]
 //
-// Source resolution priority:
-//   1. process.env.THREE_CATEGORY_SOURCE_PATH (operator override, absolute or
-//      relative to the script's CWD).
-//   2. Relative fallback: ../theveil-website/src/lib/compliance/
-//      checklist-content.ts (works when both repos are checked out
-//      side-by-side under ~/).
-//   3. If neither exists / is readable, exit 2 with a clear error pointing at
-//      the env-var override.
+//   --input    Path to the website checklist TypeScript file. Defaults to
+//              ../theveil-website/src/lib/compliance/checklist-content.ts
+//              relative to this repo's root. Override via env var
+//              THREE_CATEGORY_SOURCE_PATH (CLI flag wins over env; env wins
+//              over relative fallback).
+//   --output   Path to the generated JSON artifact. Defaults to
+//              src/data/three-category.gen.json relative to this repo's
+//              root.
+//   --check    Read the input, compare against the existing output, and exit
+//              0 if they match, 1 if they differ. Do NOT overwrite the
+//              output. CI drift detection.
+//
+// Exit codes:
+//   0   — success (sync OK, or --check matched).
+//   1   — --check detected drift between input and output.
+//   2   — file error (input not found / unreadable, output not writable, parse
+//         error in input file, etc.).
 //
 // Parsing strategy: TypeScript's official `createSourceFile` AST walker reads
-// the exported `checklistContent` object literal. We do NOT regex the source
-// — comments, string-quote drift, or whitespace changes in the upstream file
-// would break a regex-based parser. The AST walker is robust against those.
+// the exported `checklistContent` object literal. We intentionally do NOT use
+// `tsx` dynamic import here because the website source file imports
+// `@/i18n/config` (a Next.js project alias that does NOT resolve outside the
+// website repo). AST parsing is robust against that — it doesn't actually
+// load the module.
 //
-// CI drift detection (NOT in this PR — Day 13/14 polish):
-//   `pnpm sync-three-category && git diff --exit-code
-//     src/data/three-category.gen.json` — non-zero on drift. The committed
-//   `three-category.gen.json` is the deterministic build artifact; if the
-//   upstream checklist changes without re-sync, CI fails.
+// Determinism guarantees:
+//   - NO wall-clock `_synced_at` timestamp (would defeat --check).
+//   - `_source_sha256` is computed over LF-normalised content (no \r\n) so
+//     Windows checkouts don't drift the SHA.
+//   - All object keys serialized in fixed order via the buildOutput shape.
+//   - JSON.stringify with 2-space indent + trailing newline (POSIX
+//     convention; git-diff friendly).
 //
-// `_synced_at` timestamp design choice: OMITTED from the emitted JSON.
-//   Including a timestamp would defeat the CI drift-check (every re-run would
-//   show a diff on the timestamp alone). Git's commit timestamp records when
-//   the JSON was last regenerated.
-//
-// `articles` field per category: HARDCODED from CLAUDE.md `## Locked
-//   decisions` rather than parsed from the category `title` text. Title-text
-//   parsing is fragile (a translator could change "Art. 10 + 15" to "Articles
-//   10 and 15" without changing the substantive content). The mapping is
-//   locked at the architecture layer, not the copy layer.
+// `required_articles` is HARDCODED below (CATEGORY_REQUIRED_ARTICLES). It is
+// NOT parsed from the website source's title strings — title parsing is
+// fragile and the article-list mapping is locked at the architecture layer
+// in CLAUDE.md `## Locked decisions`.
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
-import { dirname, isAbsolute, resolve as pathResolve, join } from 'node:path';
+import {
+  readFileSync,
+  writeFileSync,
+  existsSync,
+  mkdirSync,
+} from 'node:fs';
+import {
+  dirname,
+  isAbsolute,
+  resolve as pathResolve,
+  relative as pathRelative,
+} from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
 import * as ts from 'typescript';
 
 // ---------------------------------------------------------------------------
-// Output shape
+// Locked three-category → required-articles mapping (CLAUDE.md `## Locked decisions`)
+// ---------------------------------------------------------------------------
+
+const CATEGORY_REQUIRED_ARTICLES: Record<'1' | '2' | '3', readonly number[]> = {
+  '1': [10, 15],
+  '2': [12, 14],
+  '3': [10, 12, 14, 15],
+};
+
+const VERSION = 'v0.1.0-gen';
+const SOURCE_FILE_LABEL = 'theveil-website/src/lib/compliance/checklist-content.ts';
+const SOURCE_LINES_LABEL = '18-107';
+const GENERATOR_LABEL = 'scripts/sync-three-category.ts';
+const META_NOTICE =
+  'GENERATED FILE — DO NOT EDIT. Source: theveil-website/src/lib/compliance/checklist-content.ts. ' +
+  'Regenerate via `pnpm sync:three-category`. Drift check: `pnpm sync:three-category:check`. ' +
+  'Locked three-category mapping: Cat 1 = Art 10+15 (Sanitizer); Cat 2 = Art 12+14 (Evidence); ' +
+  'Cat 3 = Art 10+12+14+15 (Inventory). Source file SHA-256 captured in _source_sha256 for drift detection.';
+
+// ---------------------------------------------------------------------------
+// Output shape (kept in sync with src/rules/three-category.ts ThreeCategoryJson)
 // ---------------------------------------------------------------------------
 
 interface ThreeCategoryItemOut {
@@ -52,62 +90,105 @@ interface ThreeCategoryItemOut {
 }
 
 interface ThreeCategoryCategoryOut {
+  key: '1' | '2' | '3';
   title_en: string;
   title_de: string;
-  articles: string[];
+  required_articles: number[];
   items: ThreeCategoryItemOut[];
 }
 
 export interface ThreeCategoryGenJson {
-  _source_sha256: string;
-  /**
-   * Stable, machine-independent label identifying the source-of-truth. We
-   * deliberately do NOT emit the absolute filesystem path here — that would
-   * make the committed JSON differ per checkout location and defeat CI drift
-   * detection. The literal string below is the canonical reference to the
-   * website source-of-truth.
-   */
-  _source_label: string;
+  version: string;
+  _meta: {
+    notice: string;
+    source_file: string;
+    source_lines: string;
+    generator: string;
+    _source_sha256: string;
+  };
+  disclaimer_en: string;
+  disclaimer_de: string;
   categories: {
     '1': ThreeCategoryCategoryOut;
     '2': ThreeCategoryCategoryOut;
     '3': ThreeCategoryCategoryOut;
   };
-  disclaimer_en: string;
-  disclaimer_de: string;
 }
 
-const SOURCE_LABEL =
-  'theveil-website/src/lib/compliance/checklist-content.ts';
-
 // ---------------------------------------------------------------------------
-// Locked three-category → article-list mapping (CLAUDE.md `## Locked decisions`)
+// CLI argv parsing
 // ---------------------------------------------------------------------------
 
-const CATEGORY_ARTICLES: Record<'1' | '2' | '3', string[]> = {
-  '1': ['10', '15'],
-  '2': ['12', '14'],
-  '3': ['10', '12', '14', '15'],
-};
+interface ParsedArgv {
+  input?: string;
+  output?: string;
+  check: boolean;
+}
+
+function parseArgv(argv: ReadonlyArray<string>): ParsedArgv {
+  const out: ParsedArgv = { check: false };
+  for (let i = 0; i < argv.length; i += 1) {
+    const arg = argv[i];
+    if (arg === '--check') {
+      out.check = true;
+      continue;
+    }
+    if (arg === '--input') {
+      const next = argv[i + 1];
+      if (next === undefined) {
+        fail('--input requires a path argument.\n');
+      }
+      out.input = next;
+      i += 1;
+      continue;
+    }
+    if (arg === '--output') {
+      const next = argv[i + 1];
+      if (next === undefined) {
+        fail('--output requires a path argument.\n');
+      }
+      out.output = next;
+      i += 1;
+      continue;
+    }
+    if (arg !== undefined && arg.length > 0) {
+      fail(`Unknown argument "${arg}". Usage: --input <path> --output <path> --check\n`);
+    }
+  }
+  return out;
+}
 
 // ---------------------------------------------------------------------------
 // Path resolution
 // ---------------------------------------------------------------------------
 
-function resolveSourcePath(scriptDir: string): string {
+function fail(msg: string): never {
+  process.stderr.write(`sync-three-category: ${msg}`);
+  process.exit(2);
+}
+
+function resolveSourcePath(scriptDir: string, cliInput?: string): string {
+  // Precedence: CLI flag > env var > relative fallback.
+  if (cliInput !== undefined && cliInput.length > 0) {
+    const absolute = isAbsolute(cliInput)
+      ? cliInput
+      : pathResolve(process.cwd(), cliInput);
+    if (existsSync(absolute)) return absolute;
+    fail(
+      `--input points at "${absolute}" but the file does not exist. ` +
+        `Fix the path or unset --input to fall through to the env override / relative fallback.\n`,
+    );
+  }
+
   const envOverride = process.env['THREE_CATEGORY_SOURCE_PATH'];
   if (envOverride !== undefined && envOverride.length > 0) {
     const absolute = isAbsolute(envOverride)
       ? envOverride
       : pathResolve(process.cwd(), envOverride);
-    if (existsSync(absolute)) {
-      return absolute;
-    }
-    // Operator explicitly set the override — fail loudly rather than silently
-    // falling through to the relative fallback.
+    if (existsSync(absolute)) return absolute;
     fail(
-      `THREE_CATEGORY_SOURCE_PATH points at "${absolute}" but the file does not exist.\n` +
-        `Either fix the env var, or unset it to fall back to the relative path.\n`,
+      `THREE_CATEGORY_SOURCE_PATH points at "${absolute}" but the file does not exist. ` +
+        `Fix the env var or unset it to fall back to the relative path.\n`,
     );
   }
 
@@ -123,21 +204,20 @@ function resolveSourcePath(scriptDir: string): string {
     'compliance',
     'checklist-content.ts',
   );
-  if (existsSync(fallback)) {
-    return fallback;
-  }
+  if (existsSync(fallback)) return fallback;
 
   fail(
     `Could not find the website checklist source-of-truth.\n` +
       `Looked for it at: ${fallback}\n` +
-      `Set THREE_CATEGORY_SOURCE_PATH to the absolute path of checklist-content.ts\n` +
-      `(usually under theveil-website/src/lib/compliance/) and re-run.\n`,
+      `Set --input <path> or env THREE_CATEGORY_SOURCE_PATH=<absolute path to checklist-content.ts>.\n`,
   );
 }
 
-function fail(msg: string): never {
-  process.stderr.write(`sync-three-category: ${msg}\n`);
-  process.exit(2);
+function resolveOutputPath(scriptDir: string, cliOutput?: string): string {
+  if (cliOutput !== undefined && cliOutput.length > 0) {
+    return isAbsolute(cliOutput) ? cliOutput : pathResolve(process.cwd(), cliOutput);
+  }
+  return pathResolve(scriptDir, '..', 'src', 'data', 'three-category.gen.json');
 }
 
 // ---------------------------------------------------------------------------
@@ -159,12 +239,15 @@ interface ParsedLocaleContent {
   disclaimer: string;
 }
 
+interface ParsedChecklistContent {
+  en: ParsedLocaleContent;
+  de: ParsedLocaleContent;
+}
+
 function getStringLiteral(node: ts.Node): string {
   if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) {
     return node.text;
   }
-  // Template strings without substitutions still match `isNoSubstitution...`,
-  // but a template with substitutions wouldn't reach us in this codebase.
   throw new Error(
     `Expected string literal, got ${ts.SyntaxKind[node.kind]} at position ${node.getStart()}`,
   );
@@ -194,9 +277,7 @@ function getPropertyValue(obj: ts.ObjectLiteralExpression, name: string): ts.Exp
 
 function parseItem(node: ts.Expression): ParsedChecklistItem {
   if (!ts.isObjectLiteralExpression(node)) {
-    throw new Error(
-      `Expected item object literal, got ${ts.SyntaxKind[node.kind]}`,
-    );
+    throw new Error(`Expected item object literal, got ${ts.SyntaxKind[node.kind]}`);
   }
   const number = getNumberLiteral(getPropertyValue(node, 'number'));
   const text = getStringLiteral(getPropertyValue(node, 'text'));
@@ -205,9 +286,7 @@ function parseItem(node: ts.Expression): ParsedChecklistItem {
 
 function parseCategory(node: ts.Expression): ParsedChecklistCategory {
   if (!ts.isObjectLiteralExpression(node)) {
-    throw new Error(
-      `Expected category object literal, got ${ts.SyntaxKind[node.kind]}`,
-    );
+    throw new Error(`Expected category object literal, got ${ts.SyntaxKind[node.kind]}`);
   }
   const title = getStringLiteral(getPropertyValue(node, 'title'));
   const itemsExpr = getPropertyValue(node, 'items');
@@ -237,11 +316,6 @@ function parseLocaleContent(node: ts.Expression): ParsedLocaleContent {
   return { categories, disclaimer };
 }
 
-interface ParsedChecklistContent {
-  en: ParsedLocaleContent;
-  de: ParsedLocaleContent;
-}
-
 function parseChecklistContent(sourceText: string, sourcePath: string): ParsedChecklistContent {
   const sourceFile = ts.createSourceFile(
     sourcePath,
@@ -251,7 +325,6 @@ function parseChecklistContent(sourceText: string, sourcePath: string): ParsedCh
     ts.ScriptKind.TS,
   );
 
-  // Find: `export const checklistContent: Record<Locale, ChecklistContent> = { ... };`
   let initializer: ts.Expression | undefined;
   for (const stmt of sourceFile.statements) {
     if (!ts.isVariableStatement(stmt)) continue;
@@ -276,7 +349,6 @@ function parseChecklistContent(sourceText: string, sourcePath: string): ParsedCh
       `Could not locate \`export const checklistContent = { ... }\` in ${sourcePath}.`,
     );
   }
-
   if (!ts.isObjectLiteralExpression(initializer)) {
     throw new Error(
       `Expected checklistContent initializer to be an object literal, got ${ts.SyntaxKind[initializer.kind]}.`,
@@ -289,16 +361,13 @@ function parseChecklistContent(sourceText: string, sourcePath: string): ParsedCh
 }
 
 // ---------------------------------------------------------------------------
-// Build the output JSON
+// Build the output JSON in fixed key order
 // ---------------------------------------------------------------------------
 
 function buildOutput(
   parsed: ParsedChecklistContent,
   sourceSha256: string,
 ): ThreeCategoryGenJson {
-  // Validate category counts: the website source ships exactly 3 categories per
-  // locale. Anything else means the upstream contract drifted and we need to
-  // re-check the mapping rather than silently shipping stale articles[].
   if (parsed.en.categories.length !== 3 || parsed.de.categories.length !== 3) {
     throw new Error(
       `Expected exactly 3 categories in both locales, got en=${parsed.en.categories.length} de=${parsed.de.categories.length}.`,
@@ -313,9 +382,6 @@ function buildOutput(
         `Category ${idx + 1} item count mismatch between locales: en=${enCat.items.length} de=${deCat.items.length}.`,
       );
     }
-    // Pair items by index — the website source maintains a stable index order
-    // across locales by construction. We also assert that the `number` field
-    // matches across locales to catch ordering drift early.
     const items: ThreeCategoryItemOut[] = [];
     for (let i = 0; i < enCat.items.length; i += 1) {
       const enItem = enCat.items[i]!;
@@ -329,23 +395,33 @@ function buildOutput(
     }
     const categoryKey = String(idx + 1) as '1' | '2' | '3';
     return {
+      key: categoryKey,
       title_en: enCat.title,
       title_de: deCat.title,
-      articles: CATEGORY_ARTICLES[categoryKey],
+      required_articles: [...CATEGORY_REQUIRED_ARTICLES[categoryKey]],
       items,
     };
   };
 
+  // Hand-built object literal in fixed key order. Do NOT reorder fields here —
+  // src/rules/three-category.ts and the published consumers may depend on
+  // key-stable serialization for downstream snapshot tests.
   return {
-    _source_sha256: sourceSha256,
-    _source_label: SOURCE_LABEL,
+    version: VERSION,
+    _meta: {
+      notice: META_NOTICE,
+      source_file: SOURCE_FILE_LABEL,
+      source_lines: SOURCE_LINES_LABEL,
+      generator: GENERATOR_LABEL,
+      _source_sha256: sourceSha256,
+    },
+    disclaimer_en: parsed.en.disclaimer,
+    disclaimer_de: parsed.de.disclaimer,
     categories: {
       '1': buildCategory(0),
       '2': buildCategory(1),
       '3': buildCategory(2),
     },
-    disclaimer_en: parsed.en.disclaimer,
-    disclaimer_de: parsed.de.disclaimer,
   };
 }
 
@@ -354,41 +430,48 @@ function buildOutput(
 // ---------------------------------------------------------------------------
 
 export interface SyncOptions {
-  /** Override source path. If omitted, env / fallback resolution applies. */
   sourcePath?: string;
-  /** Override output path. If omitted, writes to src/data/three-category.gen.json. */
   outputPath?: string;
-  /** When true, do not write the file — just return the computed JSON. */
-  dryRun?: boolean;
-  /** Override the script directory for path resolution (testing only). */
+  /** True = compare against existing output only; do not write. */
+  check?: boolean;
+  /** Override scriptDir for path resolution (testing only). */
   scriptDir?: string;
 }
 
 export interface SyncResult {
   json: ThreeCategoryGenJson;
-  /** Path that was actually read. */
+  serialized: string;
   sourcePath: string;
-  /** Path that was (or would be) written. */
   outputPath: string;
-  /** True iff a file was written (false on dryRun). */
+  /** True iff a file was written. */
   wrote: boolean;
+  /** Only meaningful in check mode. True iff output differs from would-be-generated content. */
+  driftDetected: boolean;
 }
 
-/** Pure(-ish) function: reads source, returns the parsed JSON. No process.exit. */
+function serialize(json: ThreeCategoryGenJson): string {
+  return `${JSON.stringify(json, null, 2)}\n`;
+}
+
+/**
+ * Pure-ish entry point. Reads source, optionally writes output, optionally
+ * compares to existing output. Does NOT process.exit on drift. Throws for
+ * parse errors. Drift is signalled via SyncResult.driftDetected.
+ */
 export function syncThreeCategory(opts: SyncOptions = {}): SyncResult {
   const scriptDir =
     opts.scriptDir ?? dirname(fileURLToPath(import.meta.url));
-  const sourcePath = opts.sourcePath ?? resolveSourcePath(scriptDir);
+
+  const sourcePath =
+    opts.sourcePath ?? resolveSourcePath(scriptDir);
 
   if (!existsSync(sourcePath)) {
-    fail(
-      `Source path "${sourcePath}" does not exist (after override resolution).\n`,
-    );
+    fail(`Source path "${sourcePath}" does not exist (after override resolution).\n`);
   }
 
   const sourceTextRaw = readFileSync(sourcePath, 'utf8');
-  // Normalise line endings before SHA — Windows checkouts may flip to \r\n
-  // and we don't want the SHA to drift on that alone.
+  // LF-normalise before SHA — Windows checkouts may flip to \r\n and we don't
+  // want the SHA to drift on that alone.
   const sourceTextNormalised = sourceTextRaw.replace(/\r\n/g, '\n');
   const sourceSha256 = createHash('sha256')
     .update(sourceTextNormalised, 'utf8')
@@ -396,47 +479,105 @@ export function syncThreeCategory(opts: SyncOptions = {}): SyncResult {
 
   const parsed = parseChecklistContent(sourceTextNormalised, sourcePath);
   const json = buildOutput(parsed, sourceSha256);
+  const serialized = serialize(json);
 
-  const outputPath =
-    opts.outputPath ??
-    pathResolve(scriptDir, '..', 'src', 'data', 'three-category.gen.json');
+  const outputPath = opts.outputPath ?? resolveOutputPath(scriptDir);
+  const check = opts.check === true;
 
-  if (opts.dryRun === true) {
-    return { json, sourcePath, outputPath, wrote: false };
+  if (check) {
+    if (!existsSync(outputPath)) {
+      return {
+        json,
+        serialized,
+        sourcePath,
+        outputPath,
+        wrote: false,
+        driftDetected: true,
+      };
+    }
+    const existing = readFileSync(outputPath, 'utf8');
+    const driftDetected = existing !== serialized;
+    return {
+      json,
+      serialized,
+      sourcePath,
+      outputPath,
+      wrote: false,
+      driftDetected,
+    };
   }
 
   const outDir = dirname(outputPath);
   if (!existsSync(outDir)) {
     mkdirSync(outDir, { recursive: true });
   }
-  // Pretty-printed with 2-space indent + trailing newline for git-diff
-  // friendliness.
-  writeFileSync(outputPath, JSON.stringify(json, null, 2) + '\n', 'utf8');
-  return { json, sourcePath, outputPath, wrote: true };
+  writeFileSync(outputPath, serialized, 'utf8');
+  return {
+    json,
+    serialized,
+    sourcePath,
+    outputPath,
+    wrote: true,
+    driftDetected: false,
+  };
 }
 
 // ---------------------------------------------------------------------------
 // CLI entrypoint
 // ---------------------------------------------------------------------------
 
-/**
- * Run the sync as a CLI tool. Returns the resolved {sourcePath, outputPath}
- * pair so callers (tests, future build scripts) can log them.
- */
-export function runCli(): SyncResult {
+function rel(p: string): string {
+  const cwd = process.cwd();
+  if (p.startsWith(cwd)) return p.slice(cwd.length + 1);
   try {
-    const result = syncThreeCategory();
-    const rel = (p: string): string => {
-      const cwd = process.cwd();
-      return p.startsWith(cwd) ? p.slice(cwd.length + 1) : p;
-    };
-    process.stdout.write(
-      `sync-three-category: wrote ${rel(result.outputPath)} from ${rel(result.sourcePath)}\n`,
-    );
-    return result;
+    return pathRelative(cwd, p);
+  } catch {
+    return p;
+  }
+}
+
+/** Run the sync as a CLI tool. Exits with the appropriate code. */
+export function runCli(argv: ReadonlyArray<string> = process.argv.slice(2)): never {
+  let parsed: ParsedArgv;
+  try {
+    parsed = parseArgv(argv);
   } catch (err) {
     fail(`${(err as Error).message}\n`);
   }
+
+  let result: SyncResult;
+  try {
+    const scriptDir = dirname(fileURLToPath(import.meta.url));
+    const sourcePath = resolveSourcePath(scriptDir, parsed.input);
+    const outputPath = resolveOutputPath(scriptDir, parsed.output);
+    result = syncThreeCategory({
+      sourcePath,
+      outputPath,
+      check: parsed.check,
+      scriptDir,
+    });
+  } catch (err) {
+    fail(`${(err as Error).message}\n`);
+  }
+
+  if (parsed.check) {
+    if (result.driftDetected) {
+      process.stderr.write(
+        `sync-three-category: drift detected between ${rel(result.sourcePath)} and ${rel(result.outputPath)}. ` +
+          `Run \`pnpm sync:three-category\` to regenerate.\n`,
+      );
+      process.exit(1);
+    }
+    process.stdout.write(
+      `sync-three-category: check OK (${rel(result.outputPath)} matches source ${rel(result.sourcePath)})\n`,
+    );
+    process.exit(0);
+  }
+
+  process.stdout.write(
+    `sync-three-category: wrote ${rel(result.outputPath)} from ${rel(result.sourcePath)}\n`,
+  );
+  process.exit(0);
 }
 
 // When run directly via `tsx scripts/sync-three-category.ts`, fire the CLI.
@@ -448,8 +589,3 @@ const isDirectInvocation =
 if (isDirectInvocation) {
   runCli();
 }
-
-// Suppress unused-import warnings when consumers only need the run helpers
-// (TS strict mode catches these otherwise; the `join` import is reserved for
-// follow-up extensions and kept for symmetry with pathResolve).
-void join;
