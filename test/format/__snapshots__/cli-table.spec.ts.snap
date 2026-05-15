@@ -3,15 +3,15 @@
 exports[`formatAnnexIVReference() > DE snapshot — 9 numbered Annex IV requirements 1`] = `
 "Anhang IV — Technische Dokumentation (Verordnung (EU) 2024/1689)
 
-  1. Eine allgemeine Beschreibung des KI-Systems.
-  2. Eine ausführliche Beschreibung der Elemente des KI-Systems und des Prozesses für seine Entwicklung.
-  3. Ausführliche Informationen über die Überwachung, die Funktionsweise und die Kontrolle des KI-Systems.
-  4. Eine Beschreibung der Eignung der Leistungsmetriken für das spezifische KI-System.
-  5. Eine ausführliche Beschreibung des Risikomanagementsystems gemäß Artikel 9.
-  6. Eine Beschreibung der relevanten Änderungen, die der Anbieter über den Lebenszyklus des Systems hinweg vorgenommen hat.
-  7. Eine Liste der ganz oder teilweise angewandten harmonisierten Normen, deren Fundstellen im Amtsblatt der Europäischen Union veröffentlicht wurden.
-  8. Eine Kopie der EU-Konformitätserklärung gemäß Artikel 47.
-  9. Eine ausführliche Beschreibung des Systems zur Bewertung der Leistung des KI-Systems in der Phase nach dem Inverkehrbringen gemäß Artikel 72.
+  1. Allgemeine Beschreibung des KI-Systems.
+  2. Detaillierte Beschreibung der Bestandteile des KI-Systems und seines Entwicklungsprozesses.
+  3. Detaillierte Informationen über die Überwachung, Funktionsweise und Kontrolle des KI-Systems.
+  4. Darlegungen zur Eignung der Leistungskennzahlen für das spezifische KI-System.
+  5. Detaillierte Beschreibung des Risikomanagementsystems gemäß Artikel 9.
+  6. Beschreibung einschlägiger Änderungen, die der Anbieter während des Lebenszyklus an dem System vorgenommen hat.
+  7. Aufstellung der vollständig oder teilweise angewandten harmonisierten Normen, deren Fundstellen im Amtsblatt der Europäischen Union veröffentlicht wurden.
+  8. Kopie der EU-Konformitätserklärung gemäß Artikel 47.
+  9. Detaillierte Beschreibung des Systems zur Bewertung der Leistung des KI-Systems in der Phase nach dem Inverkehrbringen gemäß Artikel 72.
 
 Quelle: EUR-Lex Verordnung (EU) 2024/1689, Anhang IV
 
