@@ -255,7 +255,8 @@ describe('classifyArticle50() — summary spot-check + source URL', () => {
 
   it('summary_de enumerates the law-enforcement carve-out (DE)', () => {
     const result = classify('Wir setzen einen Chatbot für den Kundenservice ein.', { lang: 'de' });
-    expect(result.summary_de).toContain('Aufdeckung, Verhütung, Untersuchung oder Verfolgung von Straftaten');
+    // Tier-1 EUR-Lex DE PDF uses "Ermittlung" (not the Tier-3 mirror's "Untersuchung").
+    expect(result.summary_de).toContain('Aufdeckung, Verhütung, Ermittlung oder Verfolgung von Straftaten');
   });
 
   it('source URL points at EUR-Lex (HTTPS)', () => {

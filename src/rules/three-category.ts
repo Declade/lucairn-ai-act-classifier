@@ -20,6 +20,16 @@
 //        (every required article must be applicable for the category to fire).
 //   applicable_categories = ['1','2','3'].filter(k => categories[k].applicable).
 //
+// Note on AND-semantics: through the Day-4/5 natural pipeline, all 4 cascade
+// modules (Art 10/12/14/15) share the identical applicability rule
+// (`annex.high_risk && !suppressed_by_article_5`), so in production all three
+// categories will always agree (either all applicable or all not). The AND-
+// vs-OR distinction only manifests when test code constructs `ArticleNResult`
+// values bypassing the natural cascade. The strict-AND rule + `triggered_articles`
+// pinning is forward-looking: it accommodates a future per-article-applicability
+// divergence (e.g. Art 12 narrowing to Annex III ¶1(a) per Art 12(3) without
+// affecting Art 10/14/15) without changing the overlay's public API.
+//
 // Articles INTENTIONALLY OMITTED from the three-category pairing:
 //   - Article 13 (transparency to deployers) — separate obligation track.
 //     Surfaces independently in the classifier output.

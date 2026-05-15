@@ -6,14 +6,21 @@
 // Pure-function rule module. NEW non-cascade root: Article 50 transparency
 // obligations apply based on AI-system FUNCTION (interaction with persons,
 // GPAI synthetic content, emotion/biometric categorisation, deep fakes,
-// public-interest text). It is NOT gated on Annex III high-risk and is NOT
-// suppressed by Article 5 — per 50(6) "without prejudice to other transparency
-// obligations." We surface Article 5 as a sanity input only.
+// public-interest text). It is NOT gated on Annex III high-risk.
+//
+// Article 50 fires independently of Article 5: Art 5 prohibits market placement,
+// Art 50 applies to systems that are on-market with specific functions. The two
+// articles operate at different lifecycle stages and obligation tracks. Art 50(6)
+// further clarifies that Article 50 (a) shall not affect Chapter III high-risk
+// requirements and (b) is without prejudice to OTHER transparency obligations
+// laid down in Union or national law for deployers of AI systems — i.e., Art 50
+// does not replace Art 13 / GDPR transparency obligations either. We surface
+// Article 5 as a sanity input only; current logic does not branch on it.
 //
 // Cite-and-match: every emitted result carries the EUR-Lex source URL for
 // Article 50 of Regulation (EU) 2024/1689. The summary fields concatenate
-// verbatim EUR-Lex EN+DE chapeau text(s) for the fired paragraph(s) in
-// paragraph order: 50(1) → 50(2) → 50(3) → 50(4) sub-paragraph 1 (deepfake)
+// verbatim Tier-1 EUR-Lex EN+DE PDF chapeau text(s) for the fired paragraph(s)
+// in paragraph order: 50(1) → 50(2) → 50(3) → 50(4) sub-paragraph 1 (deepfake)
 // → 50(4) sub-paragraph 2 (public-interest text), with 50(5) format-and-
 // timing language appended as a trailing sentence when applicable === true.
 // If applicable === false, summary_en/de still carries the 50(1) chapeau
@@ -23,15 +30,15 @@
 // EU AI Office Service Desk (EN): https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-50
 // EU AI Office Service Desk (DE): https://ai-act-service-desk.ec.europa.eu/de/ai-act/article-50
 //
-// DE wording escalation (per regulator-validator Day-3 lesson 4 ladder):
-//   - 50(1) + 50(2) Tier-2 EU AI Office Service Desk DE returned the chapeau
-//     without the law-enforcement / standard-editing / assistive-function
-//     carve-outs. The Tier-3 mirror artificialintelligenceact.eu/de/article/50/
-//     returns the full carve-out language verbatim. We ship the Tier-3
-//     variant so DE consultants see the same carve-outs as EN consultants.
-//   - 50(3) + 50(4)a + 50(4)b + 50(5) Tier-2 was truncated on the orchestrator's
-//     fetch; Tier-3 mirror used after live re-fetch. CHANGELOG carries the
-//     Tier-3 cross-validation flag (Day-3 lesson 5).
+// DE wording provenance: all 6 DE chapeaux (50(1), 50(2), 50(3), 50(4) sub-
+// paragraph 1, 50(4) sub-paragraph 2, 50(5)) are verbatim from the Tier-1
+// EUR-Lex DE PDF (page 82-83). Earlier drafts shipped the Tier-3 mirror
+// artificialintelligenceact.eu/de/article/50/ paraphrase after Tier-2 EU AI
+// Office Service Desk DE was observed to be truncated on a programmatic
+// fetch; regulator-validator's re-fetch of the Tier-1 DE PDF succeeded with
+// the full carve-out text (including 50(2)'s second sentence on technical
+// effectiveness, which the Tier-3 paraphrase had dropped). Day-5 fix-up
+// replaced all 6 paraphrased DE chapeaux with Tier-1 verbatim text.
 //
 // Applicability — five independent paragraph paths consuming Day-2 lexicon:
 //   50(1) Providers of AI systems intended to INTERACT DIRECTLY with natural
@@ -158,24 +165,24 @@ const CHAPEAU_EN: Record<keyof Article50TriggeredBy | '5', string> = {
     'The information referred to in paragraphs 1 to 4 shall be provided to the natural persons concerned in a clear and distinguishable manner at the latest at the time of the first interaction or exposure. The information shall conform to the applicable accessibility requirements. (Art 50(5))',
 };
 
-// Per-paragraph DE chapeau quotes — verbatim from Tier-3 mirror
-// artificialintelligenceact.eu/de/article/50/ (full carve-outs preserved).
-// Tier-1 EUR-Lex DE HTML shell returns empty on programmatic fetch; Tier-2
-// EU AI Office Service Desk DE returned abridged variants without carve-outs.
-// CHANGELOG carries the Tier-3 cross-validation flag.
+// Per-paragraph DE chapeau quotes — verbatim Tier-1 EUR-Lex DE PDF (page 82-83).
+// Earlier draft shipped Tier-3 mirror paraphrase; Day-5 fix-up replaced with
+// Tier-1 verbatim after regulator-validator re-fetched the Tier-1 DE PDF
+// successfully. Most notable correction: 50(2) DE now includes the second
+// sentence on technical effectiveness that the Tier-3 paraphrase had dropped.
 const CHAPEAU_DE: Record<keyof Article50TriggeredBy | '5', string> = {
   paragraph_1_interaction:
-    'Die Anbieter stellen sicher, dass KI-Systeme, die für eine direkte Interaktion mit natürlichen Personen bestimmt sind, so konzipiert und entwickelt werden, dass die betreffenden natürlichen Personen darüber informiert werden, dass sie mit einem KI-System interagieren, es sei denn, dies ist aus der Sicht einer natürlichen Person, die unter Berücksichtigung der Umstände und des Nutzungskontexts angemessen informiert, aufmerksam und umsichtig ist, offensichtlich. Diese Verpflichtung gilt nicht für KI-Systeme, die gesetzlich zur Aufdeckung, Verhütung, Untersuchung oder Verfolgung von Straftaten zugelassen sind, vorbehaltlich angemessener Garantien für die Rechte und Freiheiten Dritter, es sei denn, diese Systeme stehen der Öffentlichkeit zur Verfügung, um eine Straftat zu melden. (Art. 50 Abs. 1)',
+    'Die Anbieter stellen sicher, dass KI-Systeme, die für die direkte Interaktion mit natürlichen Personen bestimmt sind, so konzipiert und entwickelt werden, dass die betreffenden natürlichen Personen informiert werden, dass sie mit einem KI-System interagieren, es sei denn, dies ist aus Sicht einer angemessen informierten, aufmerksamen und verständigen natürlichen Person aufgrund der Umstände und des Kontexts der Nutzung offensichtlich. Diese Pflicht gilt nicht für gesetzlich zur Aufdeckung, Verhütung, Ermittlung oder Verfolgung von Straftaten zugelassene KI-Systeme, wenn geeignete Schutzvorkehrungen für die Rechte und Freiheiten Dritter bestehen, es sei denn, diese Systeme stehen der Öffentlichkeit zur Anzeige einer Straftat zur Verfügung. (Art. 50 Abs. 1)',
   paragraph_2_synthetic_content:
-    'Die Anbieter von KI-Systemen, einschließlich KI-Systemen für allgemeine Zwecke, die synthetische Audio-, Bild-, Video- oder Textinhalte erzeugen, stellen sicher, dass die Ausgaben des KI-Systems in einem maschinenlesbaren Format gekennzeichnet sind und als künstlich erzeugt oder manipuliert erkannt werden können. Diese Verpflichtung gilt nicht, soweit die KI-Systeme eine Hilfsfunktion für die Standardredaktion erfüllen oder die vom Anwender bereitgestellten Eingabedaten oder deren Semantik nicht wesentlich verändern, oder soweit sie gesetzlich zur Aufdeckung, Verhütung, Untersuchung oder Verfolgung von Straftaten zugelassen sind. (Art. 50 Abs. 2)',
+    'Anbieter von KI-Systemen, einschließlich KI-Systemen mit allgemeinem Verwendungszweck, die synthetische Audio-, Bild-, Video- oder Textinhalte erzeugen, stellen sicher, dass die Ausgaben des KI-Systems in einem maschinenlesbaren Format gekennzeichnet und als künstlich erzeugt oder manipuliert erkennbar sind. Die Anbieter sorgen dafür, dass — ihre technischen Lösungen wirksam, interoperabel, belastbar und zuverlässig sind und berücksichtigen dabei die Besonderheiten und Beschränkungen der verschiedenen Arten von Inhalten, die Umsetzungskosten und den allgemein anerkannten Stand der Technik, wie er in den einschlägigen technischen Normen zum Ausdruck kommen kann. Diese Pflicht gilt nicht, soweit die KI-Systeme eine unterstützende Funktion für die Standardbearbeitung ausführen oder die vom Betreiber bereitgestellten Eingabedaten oder deren Semantik nicht wesentlich verändern oder wenn sie zur Aufdeckung, Verhütung, Ermittlung oder Verfolgung von Straftaten gesetzlich zugelassen sind. (Art. 50 Abs. 2)',
   paragraph_3_emotion_or_biometric_categorisation:
-    'Die Betreiber eines Emotionserkennungssystems oder eines Systems zur biometrischen Kategorisierung unterrichten die betroffenen natürlichen Personen über den Betrieb des Systems und verarbeiten die personenbezogenen Daten im Einklang mit den Verordnungen (EU) 2016/679 und (EU) 2018/1725 sowie der Richtlinie (EU) 2016/680, soweit anwendbar. Diese Verpflichtung gilt nicht für KI-Systeme, die zur biometrischen Kategorisierung und Emotionserkennung eingesetzt werden und die vorbehaltlich angemessener Garantien für die Rechte und Freiheiten Dritter und im Einklang mit dem Unionsrecht gesetzlich zur Aufdeckung, Verhütung oder Untersuchung von Straftaten zulässig sind. (Art. 50 Abs. 3)',
+    'Die Betreiber eines Emotionserkennungssystems oder eines Systems zur biometrischen Kategorisierung informieren die davon betroffenen natürlichen Personen über den Betrieb des Systems und verarbeiten personenbezogene Daten gemäß den Verordnungen (EU) 2016/679 und (EU) 2018/1725 und der Richtlinie (EU) 2016/680. Diese Pflicht gilt nicht für gesetzlich zur Aufdeckung, Verhütung oder Ermittlung von Straftaten zugelassene KI-Systeme, die zur biometrischen Kategorisierung und Emotionserkennung im Einklang mit dem Unionsrecht verwendet werden, sofern geeignete Schutzvorkehrungen für die Rechte und Freiheiten Dritter bestehen. (Art. 50 Abs. 3)',
   paragraph_4_deepfake:
-    'Wer ein KI-System einsetzt, das Bild-, Audio- oder Videoinhalte erzeugt oder manipuliert, die einen Deep Fake darstellen, muss offenlegen, dass die Inhalte künstlich erzeugt oder manipuliert wurden. Diese Verpflichtung gilt nicht, wenn die Verwendung zur Aufdeckung, Verhütung, Ermittlung oder Verfolgung von Straftaten gesetzlich zugelassen ist. Ist der Inhalt Teil eines offensichtlich künstlerischen, kreativen, satirischen, fiktionalen oder analogen Werks oder Programms, so beschränken sich die in diesem Absatz genannten Transparenzpflichten auf die Offenlegung des Vorhandenseins eines solchen künstlich erzeugten oder manipulierten Inhalts in einer angemessenen Weise, die die Darstellung oder den Genuss des Werks nicht beeinträchtigt. (Art. 50 Abs. 4 Unterabsatz 1)',
+    'Betreiber eines KI-Systems, das Bild-, Ton- oder Videoinhalte erzeugt oder manipuliert, die ein Deepfake sind, müssen offenlegen, dass die Inhalte künstlich erzeugt oder manipuliert wurden. Diese Pflicht gilt nicht, wenn die Verwendung zur Aufdeckung, Verhütung, Ermittlung oder Verfolgung von Straftaten gesetzlich zugelassen ist. Ist der Inhalt Teil eines offensichtlich künstlerischen, kreativen, satirischen, fiktionalen oder analogen Werks oder Programms, so beschränken sich die in diesem Absatz festgelegten Transparenzpflichten darauf, das Vorhandensein solcher künstlich erzeugten oder manipulierten Inhalte in geeigneter Weise offenzulegen, die die Darstellung oder den Genuss des Werks nicht beeinträchtigt. (Art. 50 Abs. 4 Unterabsatz 1)',
   paragraph_4_public_interest_text:
-    'Wer ein KI-System einsetzt, das Text generiert oder manipuliert, der zu dem Zweck veröffentlicht wird, die Öffentlichkeit über Angelegenheiten von öffentlichem Interesse zu informieren, muss offenlegen, dass der Text künstlich generiert oder manipuliert wurde. Diese Verpflichtung gilt nicht, wenn die Nutzung gesetzlich erlaubt ist, um Straftaten aufzudecken, zu verhindern, zu untersuchen oder strafrechtlich zu verfolgen, oder wenn die KI-generierten Inhalte einer menschlichen Überprüfung oder redaktionellen Kontrolle unterzogen wurden und eine natürliche oder juristische Person die redaktionelle Verantwortung für die Veröffentlichung der Inhalte trägt. (Art. 50 Abs. 4 Unterabsatz 2)',
+    'Betreiber eines KI-Systems, das Text erzeugt oder manipuliert, der veröffentlicht wird, um die Öffentlichkeit über Angelegenheiten von öffentlichem Interesse zu informieren, müssen offenlegen, dass der Text künstlich erzeugt oder manipuliert wurde. Diese Pflicht gilt nicht, wenn die Verwendung zur Aufdeckung, Verhütung, Ermittlung oder Verfolgung von Straftaten gesetzlich zugelassen ist oder wenn die durch KI erzeugten Inhalte einem Verfahren der menschlichen Überprüfung oder redaktionellen Kontrolle unterzogen wurden und wenn eine natürliche oder juristische Person die redaktionelle Verantwortung für die Veröffentlichung der Inhalte trägt. (Art. 50 Abs. 4 Unterabsatz 2)',
   '5':
-    'Die in den Absätzen 1 bis 4 genannten Informationen werden den betroffenen natürlichen Personen spätestens zum Zeitpunkt der ersten Interaktion oder Exposition in klarer und erkennbarer Weise zur Verfügung gestellt. Die Informationen müssen den geltenden Anforderungen an die Zugänglichkeit entsprechen. (Art. 50 Abs. 5)',
+    'Die in den Absätzen 1 bis 4 genannten Informationen werden den betreffenden natürlichen Personen spätestens zum Zeitpunkt der ersten Interaktion oder Aussetzung in klarer und eindeutiger Weise bereitgestellt. Die Informationen müssen den geltenden Barrierefreiheitsanforderungen entsprechen. (Art. 50 Abs. 5)',
 };
 
 // ---------------------------------------------------------------------------
@@ -238,11 +245,16 @@ const CATEGORY_TO_PARAGRAPH: Record<Article50Category, keyof Article50TriggeredB
  *      the 50(1) chapeau is returned alone. If at least one fires, the 50(5)
  *      format-and-timing chapeau is appended as a trailing sentence.
  *
- * Article 5 is taken as a sanity input only — per Art 50(6), Article 50
- * applies "without prejudice to other transparency obligations." A
- * prohibited system can still be subject to Article 50 transparency
- * obligations (although a prohibited system shouldn't be placed on the
- * market in the first place — that's downstream consultant judgment).
+ * Article 5 is taken as a sanity input only — current logic does not branch
+ * on it. Rationale: Article 50 obligations are scoped by SYSTEM FUNCTION
+ * (interaction with persons, synthetic content, etc.), not by Annex III
+ * high-risk classification or Article 5 prohibition status. Art 5 and Art 50
+ * operate at different lifecycle stages — Art 5 prohibits market placement,
+ * Art 50 applies to on-market systems with specific functions. Art 50(6)
+ * further clarifies that Art 50 does not affect Chapter III requirements and
+ * is without prejudice to OTHER transparency obligations in Union or national
+ * law (Art 13, GDPR, etc.). A prohibited system shouldn't be placed on the
+ * market in the first place — that's downstream consultant judgment.
  *
  * @param features - Result from `extractFeatures()`. We read `features.byCategory`.
  * @param article5 - Result from `classifyArticle5()`. Sanity input only.
@@ -261,7 +273,8 @@ export function classifyArticle50(
     Array.isArray(features) ||
     typeof (features as ExtractedFeatures).input !== 'string' ||
     (features as ExtractedFeatures).byCategory === null ||
-    typeof (features as ExtractedFeatures).byCategory !== 'object'
+    typeof (features as ExtractedFeatures).byCategory !== 'object' ||
+    Array.isArray((features as ExtractedFeatures).byCategory)
   ) {
     throw new TypeError(
       'classifyArticle50(): features must be an ExtractedFeatures object with input:string and byCategory:object (call extractFeatures() first).',
