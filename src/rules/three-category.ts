@@ -49,7 +49,7 @@
 //
 // Source-of-truth: the static text content (category titles, item lists,
 // disclaimer) is synced from the Lucairn website's compliance checklist at
-// `theveil-website/src/lib/compliance/checklist-content.ts` via
+// `lucairn-website/compliance/checklist-content.ts` via
 // `scripts/sync-three-category.ts`, which emits the committed build artifact
 // `src/data/three-category.gen.json`. This module reads that JSON at module
 // init (the file is build-output checked into git, not regenerated at
@@ -170,7 +170,12 @@ const __dirname = dirname(__filename);
 // dist/rules/three-category.js → ../data/three-category.gen.json
 const DATA_DIR = join(__dirname, '..', 'data');
 const GEN_FILE_LABEL = 'src/data/three-category.gen.json';
-const SOURCE_FILE_LABEL = 'theveil-website/src/lib/compliance/checklist-content.ts';
+// Neutral repo-relative label (Day-5 fix-up — bundled claim-enforce W1 + personal-info-leak W2
+// closure). The repo flips public on Day 14; the pre-rebrand internal repo name
+// `theveil-website` would have leaked into the public ThreeCategoryResult.source.source_file
+// field and the shipped JSON's `_meta.source_file` in the npm tarball. Neutral label
+// matches the Lucairn brand without exposing the pre-rebrand private-repo name.
+const SOURCE_FILE_LABEL = 'lucairn-website/compliance/checklist-content.ts';
 
 function loadGenJson(): ThreeCategoryJson {
   const path = join(DATA_DIR, 'three-category.gen.json');
@@ -303,11 +308,14 @@ export function classifyThreeCategory(
 
   // Sanity guard: integration-bug catch. classifyAnnexIII() always sets
   // suppressed_by_article_5 === article5.prohibited when fed a fresh
-  // article5; if the caller passes an article5 that prohibited but an annex
-  // that did NOT suppress, the inputs are inconsistent.
-  if (article5.prohibited && !annex.suppressed_by_article_5) {
+  // article5; if the two booleans diverge in EITHER direction the inputs
+  // are inconsistent and the caller forgot to refresh the annex result
+  // after re-running classifyArticle5(). Symmetric guard — Day-5 fix-up
+  // bug-hunter M4 closure (the original asymmetric guard caught only one
+  // direction and silently accepted the opposite).
+  if (article5.prohibited !== annex.suppressed_by_article_5) {
     throw new Error(
-      'classifyThreeCategory(): inconsistent upstream state (article5.prohibited === true but annex.suppressed_by_article_5 === false). Re-run classifyAnnexIII(features, article5) to refresh.',
+      'classifyThreeCategory(): inconsistent upstream state (article5.prohibited !== annex.suppressed_by_article_5). Re-run classifyAnnexIII(features, article5) to refresh.',
     );
   }
 

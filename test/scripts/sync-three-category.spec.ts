@@ -57,7 +57,7 @@ describe('syncThreeCategory() — happy path against fixture', () => {
     expect(written.version.length).toBeGreaterThan(0);
     expect(written._meta._source_sha256).toMatch(/^[a-f0-9]{64}$/);
     expect(written._meta.source_file).toBe(
-      'theveil-website/src/lib/compliance/checklist-content.ts',
+      'lucairn-website/compliance/checklist-content.ts',
     );
 
     // Category 1: Sanitizer (Art. 10 + 15) — fixture ships 2 items.

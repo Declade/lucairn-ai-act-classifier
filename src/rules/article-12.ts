@@ -109,7 +109,7 @@ export function classifyArticle12(
       'classifyArticle12(): annex must be an AnnexIIIResult object with a domains array (call classifyAnnexIII() first).',
     );
   }
-  if (article5 === null || typeof article5 !== 'object') {
+  if (article5 === null || typeof article5 !== 'object' || Array.isArray(article5)) {
     throw new TypeError(
       'classifyArticle12(): article5 must be an Article5Result object (call classifyArticle5() first).',
     );

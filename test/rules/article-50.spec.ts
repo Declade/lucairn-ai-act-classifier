@@ -78,6 +78,20 @@ describe('classifyArticle50() — pure-function determinism', () => {
     expect(() => classifyArticle50([], makeArt5(false))).toThrow(TypeError);
   });
 
+  it('throws TypeError on features.byCategory = [] (Array.isArray guard — Day-5 bug-hunter M2 closure)', () => {
+    // typeof [] === 'object' so an array passes the bare typeof check. The
+    // guard MUST also reject Array-shaped `byCategory` projections explicitly,
+    // otherwise `features = { input: 'x', byCategory: [] }` silently returns
+    // all-5-false triggers — a false-negative applicability result. Same
+    // closure pattern Day-4 added for article-10/13/14/15.
+    const features = makeFeatures('hello');
+    const brokenFeatures = {
+      ...features,
+      byCategory: [] as unknown as ExtractedFeatures['byCategory'],
+    };
+    expect(() => classifyArticle50(brokenFeatures, makeArt5(false))).toThrow(TypeError);
+  });
+
   it('throws TypeError on non-object article5', () => {
     // @ts-expect-error: deliberately invalid
     expect(() => classifyArticle50(makeFeatures('hello'), null)).toThrow(TypeError);
@@ -257,6 +271,20 @@ describe('classifyArticle50() — summary spot-check + source URL', () => {
     const result = classify('Wir setzen einen Chatbot für den Kundenservice ein.', { lang: 'de' });
     // Tier-1 EUR-Lex DE PDF uses "Ermittlung" (not the Tier-3 mirror's "Untersuchung").
     expect(result.summary_de).toContain('Aufdeckung, Verhütung, Ermittlung oder Verfolgung von Straftaten');
+  });
+
+  it('summary_de carries the 50(2) technical-effectiveness sentence (Day-5 regulator-validator BLOCKER closure)', () => {
+    // EUR-Lex Art 50(2) sentence 2 imposes a SECOND obligation on providers:
+    // technical solutions must be "wirksam, interoperabel, belastbar und
+    // zuverlässig" (effective, interoperable, robust and reliable). EN ships
+    // 3 sentences (marking + technical effectiveness + carve-outs); DE was
+    // initially shipping only 2 sentences (marking + carve-outs), silently
+    // dropping the regulator-imposed technical-effectiveness obligation for
+    // German consultants. Day-5 fix-up restored the missing middle sentence.
+    const result = classify('Unsere Plattform erzeugt synthetische Inhalte für Marketing.', { lang: 'de' });
+    expect(result.applicable).toBe(true);
+    expect(result.triggered_by.paragraph_2_synthetic_content).toBe(true);
+    expect(result.summary_de).toContain('wirksam, interoperabel, belastbar und zuverlässig');
   });
 
   it('source URL points at EUR-Lex (HTTPS)', () => {

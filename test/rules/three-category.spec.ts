@@ -122,6 +122,25 @@ describe('classifyThreeCategory() — pure-function determinism', () => {
       ),
     ).toThrow(/inconsistent upstream state/);
   });
+
+  it('throws Error on inconsistent upstream state — OPPOSITE direction (annex.suppressed_by_article_5 true but article5.prohibited false) — Day-5 bug-hunter M4 closure', () => {
+    // The original asymmetric guard caught only one direction
+    // (article5.prohibited && !annex.suppressed_by_article_5) and silently
+    // accepted the opposite (!article5.prohibited && annex.suppressed_by_article_5),
+    // producing all-categories-non-applicable output without flagging the
+    // upstream inconsistency. Day-5 made the guard symmetric — it now throws
+    // in EITHER direction of divergence. This lock-test pins the new behavior.
+    expect(() =>
+      classifyThreeCategory(
+        makeAnnex({ high_risk: false, suppressed_by_article_5: true }),
+        makeArt5(false),
+        art10(false),
+        art12(false),
+        art14(false),
+        art15(false),
+      ),
+    ).toThrow(/inconsistent upstream state/);
+  });
 });
 
 describe('classifyThreeCategory() — category applicable: true (all required articles applicable)', () => {

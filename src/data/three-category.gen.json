@@ -1,8 +1,8 @@
 {
   "version": "v0.1.0-gen",
   "_meta": {
-    "notice": "GENERATED FILE — DO NOT EDIT. Source: theveil-website/src/lib/compliance/checklist-content.ts. Regenerate via `pnpm sync:three-category`. Drift check: `pnpm sync:three-category:check`. Locked three-category mapping: Cat 1 = Art 10+15 (Sanitizer); Cat 2 = Art 12+14 (Evidence); Cat 3 = Art 10+12+14+15 (Inventory). Source file SHA-256 captured in _source_sha256 for drift detection.",
-    "source_file": "theveil-website/src/lib/compliance/checklist-content.ts",
+    "notice": "GENERATED FILE — DO NOT EDIT. Source: lucairn-website/compliance/checklist-content.ts. Regenerate via `pnpm sync:three-category`. Drift check: `pnpm sync:three-category:check`. Locked three-category mapping: Cat 1 = Art 10+15 (Sanitizer); Cat 2 = Art 12+14 (Evidence); Cat 3 = Art 10+12+14+15 (Inventory). Source file SHA-256 captured in _source_sha256 for drift detection.",
+    "source_file": "lucairn-website/compliance/checklist-content.ts",
     "source_lines": "18-107",
     "generator": "scripts/sync-three-category.ts",
     "_source_sha256": "8264bbbfe361fb95c0db89e3c43b195ebd3e06a37fa6f05ce214539d54800b5f"

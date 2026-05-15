@@ -70,11 +70,17 @@ const CATEGORY_REQUIRED_ARTICLES: Record<'1' | '2' | '3', readonly number[]> = {
 };
 
 const VERSION = 'v0.1.0-gen';
-const SOURCE_FILE_LABEL = 'theveil-website/src/lib/compliance/checklist-content.ts';
+// Neutral repo-relative label (Day-5 fix-up — claim-enforce W1 + personal-info-leak W2
+// bundled closure). The pre-rebrand internal repo name (`theveil-website`) is replaced
+// with the neutral Lucairn-brand-aligned label before the classifier repo flips public
+// on Day 14. Both the in-memory `ThreeCategoryResult.source.source_file` field (read
+// from the generated JSON's `_meta.source_file`) and the literal string in `META_NOTICE`
+// use the same neutral label.
+const SOURCE_FILE_LABEL = 'lucairn-website/compliance/checklist-content.ts';
 const SOURCE_LINES_LABEL = '18-107';
 const GENERATOR_LABEL = 'scripts/sync-three-category.ts';
 const META_NOTICE =
-  'GENERATED FILE — DO NOT EDIT. Source: theveil-website/src/lib/compliance/checklist-content.ts. ' +
+  'GENERATED FILE — DO NOT EDIT. Source: lucairn-website/compliance/checklist-content.ts. ' +
   'Regenerate via `pnpm sync:three-category`. Drift check: `pnpm sync:three-category:check`. ' +
   'Locked three-category mapping: Cat 1 = Art 10+15 (Sanitizer); Cat 2 = Art 12+14 (Evidence); ' +
   'Cat 3 = Art 10+12+14+15 (Inventory). Source file SHA-256 captured in _source_sha256 for drift detection.';
@@ -206,9 +212,12 @@ function resolveSourcePath(scriptDir: string, cliInput?: string): string {
   );
   if (existsSync(fallback)) return fallback;
 
+  // Day-5 fix-up: use pathRelative to avoid leaking the absolute home directory
+  // (e.g. /Users/<name>/...) into stderr when the fallback path doesn't exist.
+  // The relative form is repo-rooted and safe to print in CI logs.
   fail(
     `Could not find the website checklist source-of-truth.\n` +
-      `Looked for it at: ${fallback}\n` +
+      `Looked for it at: ${pathRelative(process.cwd(), fallback)}\n` +
       `Set --input <path> or env THREE_CATEGORY_SOURCE_PATH=<absolute path to checklist-content.ts>.\n`,
   );
 }
