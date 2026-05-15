@@ -21,6 +21,7 @@
 
 import { Command, CommanderError, Option } from 'commander';
 import { classify, type ClassifyOptions } from './classify.js';
+import type { LLMProvider } from './extract/llm.js';
 import { formatCliTable, formatAnnexIVReference } from './format/cli-table.js';
 import { formatJson, formatAnnexIVReferenceJson } from './format/json.js';
 import { formatMarkdown, formatAnnexIVReferenceMarkdown } from './format/markdown.js';
@@ -135,16 +136,12 @@ function resolveLang(rawOpts: RawOptions, errLocale: 'en' | 'de'): 'en' | 'de' |
 }
 
 /**
- * Resolve and validate the `--llm <provider>` flag. Day 9 supports `anthropic`
- * only. `openai` and `groq` are reserved for Day 10 and exit with code 3 + a
- * pointer to the Day-10 milestone. Unknown providers exit 3 with an error
- * listing the supported set.
- *
- * When `--llm anthropic` is set but `ANTHROPIC_API_KEY` is absent, exit 3 with
- * a setup pointer. This catches the most common configuration mistake before
- * any classification work runs.
+ * Resolve and validate the `--llm <provider>` flag. This commit lights up
+ * `anthropic` + `openai`; `groq` ships in the next commit. Each provider's
+ * API-key env var is checked upfront — exit 3 with a setup pointer when
+ * missing. Unknown providers exit 3 with the supported list.
  */
-function resolveLlm(rawOpts: RawOptions): 'anthropic' | undefined {
+function resolveLlm(rawOpts: RawOptions): LLMProvider | undefined {
   if (rawOpts.llm === undefined) return undefined;
   const provider = rawOpts.llm.toLowerCase().trim();
   if (provider === 'anthropic') {
@@ -153,20 +150,32 @@ function resolveLlm(rawOpts: RawOptions): 'anthropic' | undefined {
       process.env['ANTHROPIC_API_KEY'].length === 0
     ) {
       err(
-        'Error: --llm anthropic requires the ANTHROPIC_API_KEY env var. See README §--llm anthropic mode (opt-in).',
+        'Error: --llm anthropic requires the ANTHROPIC_API_KEY env var. See README §--llm mode (opt-in).',
       );
       exit(3);
     }
     return 'anthropic';
   }
-  if (provider === 'openai' || provider === 'groq') {
+  if (provider === 'openai') {
+    if (
+      typeof process.env['OPENAI_API_KEY'] !== 'string' ||
+      process.env['OPENAI_API_KEY'].length === 0
+    ) {
+      err(
+        'Error: --llm openai requires the OPENAI_API_KEY env var. See README §--llm mode (opt-in).',
+      );
+      exit(3);
+    }
+    return 'openai';
+  }
+  if (provider === 'groq') {
     err(
-      `Error: --llm ${provider} is not implemented in Day 9 (openai + groq land in Day 10). Use --llm anthropic, or omit --llm for deterministic mode.`,
+      'Error: --llm groq lands in the next commit. Use --llm anthropic or --llm openai for now.',
     );
     exit(3);
   }
   err(
-    `Error: unknown --llm provider "${rawOpts.llm}". Supported: anthropic. (openai + groq land in Day 10.)`,
+    `Error: unknown --llm provider "${rawOpts.llm}". Supported: anthropic, openai.`,
   );
   exit(3);
 }
@@ -194,7 +203,7 @@ async function main(): Promise<void> {
     .option('--annex <ref>', "Print static Annex IV technical-documentation reference and exit (use 'iv')")
     .option(
       '--llm <provider>',
-      "Opt-in LLM feature extraction. Day 9 supports 'anthropic' only (openai+groq land in Day 10). Requires the upstream API key (e.g. ANTHROPIC_API_KEY) in env.",
+      "Opt-in LLM feature extraction. Supported: anthropic, openai. (groq ships in the next commit.) Requires the upstream API key in env (ANTHROPIC_API_KEY / OPENAI_API_KEY).",
     )
     .addHelpText(
       'after',
@@ -205,6 +214,7 @@ Examples:
   ai-act-classify "..." --cite --lang de
   ai-act-classify --annex iv
   ANTHROPIC_API_KEY="<your-key>" ai-act-classify --llm anthropic "..."
+  OPENAI_API_KEY="<your-key>" ai-act-classify --llm openai "..."
 
 Exit codes:
   0  classification ok

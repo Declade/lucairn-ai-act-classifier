@@ -180,7 +180,7 @@ describe('CLI integration — --annex iv format dispatch (M4 fix-up)', () => {
   });
 });
 
-describe('CLI integration — --llm flag (Day 9)', () => {
+describe('CLI integration — --llm flag (Day 10: anthropic + openai)', () => {
   itDist('--llm anthropic without ANTHROPIC_API_KEY → exit 3 + helpful stderr', () => {
     // Strip the env var explicitly so any local-shell ANTHROPIC_API_KEY
     // doesn't leak in and turn this test into a real API call.
@@ -195,30 +195,38 @@ describe('CLI integration — --llm flag (Day 9)', () => {
     expect(r.stderr).toContain('ANTHROPIC_API_KEY');
   });
 
-  itDist('--llm openai → exit 3 with Day-10 deferral message', () => {
-    const r = runCli(['--llm', 'openai', 'We use AI for CV screening.']);
+  itDist('--llm openai without OPENAI_API_KEY → exit 3 + helpful stderr', () => {
+    const env = { ...process.env };
+    delete env['OPENAI_API_KEY'];
+    const r = spawnSync(process.execPath, [CLI_PATH, '--llm', 'openai', 'We use AI for CV screening.'], {
+      input: '',
+      encoding: 'utf8',
+      env: { ...env, NO_COLOR: '1' },
+    });
     expect(r.status).toBe(3);
-    expect(r.stderr).toContain('Day 10');
+    expect(r.stderr).toContain('OPENAI_API_KEY');
   });
 
-  itDist('--llm groq → exit 3 with Day-10 deferral message', () => {
+  itDist('--llm groq → exit 3 with "lands in the next commit" hint', () => {
     const r = runCli(['--llm', 'groq', 'We use AI for CV screening.']);
     expect(r.status).toBe(3);
-    expect(r.stderr).toContain('Day 10');
+    expect(r.stderr).toContain('next commit');
   });
 
-  itDist('--llm mistral → exit 3 with "Supported: anthropic" hint', () => {
+  itDist('--llm mistral → exit 3 with "Supported: anthropic, openai" hint', () => {
     const r = runCli(['--llm', 'mistral', 'We use AI for CV screening.']);
     expect(r.status).toBe(3);
     expect(r.stderr).toContain('Supported');
     expect(r.stderr).toContain('anthropic');
+    expect(r.stderr).toContain('openai');
   });
 
-  itDist('--help mentions --llm flag', () => {
+  itDist('--help mentions --llm flag with anthropic + openai', () => {
     const r = runCli(['--help']);
     expect(r.status).toBe(0);
     expect(r.stdout).toContain('--llm');
     expect(r.stdout).toContain('anthropic');
+    expect(r.stdout).toContain('openai');
   });
 });
 

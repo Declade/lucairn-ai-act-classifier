@@ -91,14 +91,22 @@ describe('extractFeaturesLLM — input validation', () => {
   });
 });
 
-describe('extractFeaturesLLM — Day-10 deferral', () => {
-  it('openai provider throws LLM_PROVIDER_NOT_IMPLEMENTED', async () => {
-    await expect(
-      extractFeaturesLLM('We use AI for CV screening.', { provider: 'openai' }),
-    ).rejects.toThrow(/LLM_PROVIDER_NOT_IMPLEMENTED/);
+describe('extractFeaturesLLM — Day-10 multi-provider dispatch', () => {
+  it('openai provider rejects with LLM_NO_API_KEY when OPENAI_API_KEY is absent', async () => {
+    const prev = process.env['OPENAI_API_KEY'];
+    delete process.env['OPENAI_API_KEY'];
+    try {
+      await expect(
+        extractFeaturesLLM('We use AI for CV screening.', {
+          provider: 'openai',
+        }),
+      ).rejects.toThrow(/LLM_NO_API_KEY.*OPENAI_API_KEY/);
+    } finally {
+      if (prev !== undefined) process.env['OPENAI_API_KEY'] = prev;
+    }
   });
 
-  it('groq provider throws LLM_PROVIDER_NOT_IMPLEMENTED', async () => {
+  it('groq provider throws LLM_PROVIDER_NOT_IMPLEMENTED (lands in next commit)', async () => {
     await expect(
       extractFeaturesLLM('We use AI for CV screening.', { provider: 'groq' }),
     ).rejects.toThrow(/LLM_PROVIDER_NOT_IMPLEMENTED/);
