@@ -1,9 +1,9 @@
 // CLI table formatter for ClassifyResult.
 //
-// Pure function. Renders a multi-line plain-text block matching the plan's
-// example output (line 52-76 of `~/.claude/plans/ok-lets-plan-this-fluffy-graham.md`)
-// with one divergence: Article 12 is included between Article 10 and Article 13
-// (the plan example pre-dates Day 5's Article 12 promotion).
+// Pure function. Renders a multi-line plain-text block matching the
+// AI-Act-classifier build-plan example output for the CLI surface (private
+// build plan) with one divergence: Article 12 is included between Article 10
+// and Article 13 (the build-plan example pre-dates Day 5's Article 12 promotion).
 //
 // Color discipline:
 //   - useColor: false → no ANSI sequences (deterministic output).

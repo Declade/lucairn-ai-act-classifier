@@ -7,8 +7,8 @@
 //   - Zero network. Zero LLM. Day 6 ignores --llm flag (reserved for Day 9).
 //   - The disclaimer footer is MANDATORY (rendered by every formatter). No
 //     --no-disclaimer flag.
-//   - Exit codes match plan canonical (line 89 of
-//     `~/.claude/plans/ok-lets-plan-this-fluffy-graham.md`):
+//   - Exit codes match the AI-Act-classifier build plan §exit-codes
+//     (private build plan):
 //       0 = ok
 //       1 = Article 5 prohibited triggered
 //       2 = parse error (empty input, invalid flag, version mismatch, --annex without 'iv')
