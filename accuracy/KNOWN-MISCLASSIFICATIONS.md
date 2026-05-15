@@ -1,20 +1,20 @@
-# Known misclassifications & v0.2 polish backlog
+# Known misclassifications & Day-8 / v0.2 polish backlog
 
-This document lists known classifier limitations surfaced during the Day-7 build of the 50-case fixture corpus + accuracy harness. As of v0.1.0 the harness reports 0 fixture-level misclassifications on the 50-case corpus (overall 100.0%, Art 5 100.0%, binary high-risk 100.0%), but the harness only checks what the fixtures pin. The items below are real limitations the harness does NOT currently catch — every entry should be revisited in v0.2.
+This document lists known classifier limitations surfaced during the Day-7 build of the 50-case fixture corpus + accuracy harness. As of v0.1.0 the harness reports 0 fixture-level misclassifications on the 50-case corpus (overall 100.0%, Art 5 100.0%, binary high-risk 100.0%), but the harness only checks what the fixtures pin. The items below are real limitations the harness does NOT currently catch. Pre-launch items are flagged `Day-8 fix`; genuinely-post-launch items are flagged `v0.2 fix`.
 
 The full discussion of why the 100% headline is a fixture-engineering metric rather than a real-world-accuracy metric lives in [`METHODOLOGY.md`](./METHODOLOGY.md) §"Honest limitations". The entries below are the concrete, actionable items.
 
-## High-priority gaps (v0.2 target)
+## High-priority gaps (Day-8 / pre-launch target)
 
 ### G-1. Annex III sub-letter narrowing for paragraphs 2, 3, 7, 8
 
 **Status:** documented, not yet fixed.
 **Affected fixtures:** `fixture-day7-04` (water), `fixture-day7-05` (electricity), `fixture-day7-06` (admission), `fixture-day7-07` (grading), `fixture-day7-14` (asylum), `fixture-day7-15` (visa), `fixture-day7-16` (judicial), `fixture-day7-17` (election).
-**Where:** `src/rules/article-6-annex-iii.ts:285-468` `narrowSubLetters()`.
+**Where:** `src/rules/article-6-annex-iii.ts:285-445` `narrowSubLetters()`.
 
 The function only implements narrowing for Annex III paragraphs 1, 4, 5, 6. For paragraphs 2 (critical infrastructure), 3 (education), 7 (migration/border), 8 (justice/democracy), the result emits `sub_letters: []` — a "domain X applies, sub-letter unspecified" outcome. Day-7 fixtures for those domains correspondingly omit `expected.annex_iii_sub_letters` rather than pin a sub-letter expectation that the harness would fail.
 
-**v0.2 fix:** extend `narrowSubLetters()` with case branches for paragraphs 2, 3, 7, 8. Then backfill `expected.annex_iii_sub_letters` on the 8 Day-7 fixtures listed above.
+**Day-8 fix:** extend `narrowSubLetters()` with case branches for paragraphs 2, 3, 7, 8. Then backfill `expected.annex_iii_sub_letters` on the 8 Day-7 fixtures listed above.
 
 ### G-2. Annex III.6(a) victim-risk lexicon coverage gap
 
@@ -24,7 +24,7 @@ The function only implements narrowing for Annex III paragraphs 1, 4, 5, 6. For 
 
 The fixture covers a hybrid case where a recidivism-assessment system also assesses the risk of a natural person becoming a victim of crime (Annex III.6(a)). The lexicon currently only has `rückfallrisiko` mapping to sub-letter `d`. The fixture's `expected.annex_iii_sub_letters` was narrowed to `[d]` only — the (a) coverage gap is documented in the fixture's `notes` field.
 
-**v0.2 fix:** add EN+DE lexicon phrases for Annex III.6(a) "risk of becoming victim of a criminal offence" (e.g. `victim-risk assessment`, `opfer-risiko-bewertung`, `risikobewertung opfer`). Add sub-letter narrowing in `narrowSubLetters()` paragraph 6 branch. Update fixture expectation back to `[a, d]`.
+**Day-8 fix:** add EN+DE lexicon phrases for Annex III.6(a) "risk of becoming victim of a criminal offence" (e.g. `victim-risk assessment`, `opfer-risiko-bewertung`, `risikobewertung opfer`). Add sub-letter narrowing in `narrowSubLetters()` paragraph 6 branch. Update fixture expectation back to `[a, d]`.
 
 ### G-3. Plurals + German morphology not normalised
 
@@ -34,7 +34,7 @@ The fixture covers a hybrid case where a recidivism-assessment system also asses
 
 The keyword extractor matches n-grams against the lexicon verbatim after NFKC normalization, lowercasing, punctuation stripping, and tokenization — but no stemming or lemmatization. English plurals (`-s`, `-es`, `-ies`) and German morphological inflections (genitive `-s`, accusative `-en`, dative `-em`, irregular plurals) are NOT collapsed to canonical forms.
 
-**v0.2 fix:** add a simple stemming pass for English (`-s`, `-es`, `-ies` → singular) and a lemma-lookup table for German irregular morphology. Alternatively, expand the lexicon to include morphological variants. The stemming path is cheaper to maintain.
+**Day-8 fix:** add a simple stemming pass for English (`-s`, `-es`, `-ies` → singular) and a lemma-lookup table for German irregular morphology. Alternatively, expand the lexicon to include morphological variants. The stemming path is cheaper to maintain.
 
 ### G-4. DE fixture-engineering contamination — lexicon-aligned phrasings that an EU/DE consultant would spot as unnatural
 
@@ -64,7 +64,7 @@ Two related issues land under G-4:
 
 **Why this matters for credibility:** Marc's launch audience is EU/DE consultants. The "every case has REAL German phrasing — no Google-Translate" credibility moat is undercut whenever a fixture reads as wooden lexicon-aligned text. The Day-8 lexicon expansion is the single highest-leverage polish item before the 2026-05-29 public launch.
 
-## Medium-priority gaps (v0.2 nice-to-have)
+## Medium-priority gaps (Day-8 nice-to-have / v0.2 hardening)
 
 ### M-1. Annex III.4 worker-monitoring phrase coverage
 
@@ -73,7 +73,7 @@ Two related issues land under G-4:
 
 The `4_employment` DE lexicon includes `mitarbeiterüberwachung` as a single compound, but the fixture-23 input uses `mitarbeiter` separately. Real consultant descriptions of workplace emotion-tracking would routinely separate the words; the lexicon's monolithic compound misses them.
 
-**v0.2 fix:** add a 2-gram pattern like `mitarbeiter überwachen`, `mitarbeiter auswerten`, `arbeitnehmer beobachten` to the lexicon, OR add a normalization pass that merges compound-collocation pairs into compound-noun candidates before lexicon lookup.
+**Day-8 fix:** add a 2-gram pattern like `mitarbeiter überwachen`, `mitarbeiter auswerten`, `arbeitnehmer beobachten` to the lexicon, OR add a normalization pass that merges compound-collocation pairs into compound-noun candidates before lexicon lookup.
 
 ### M-2. Annex III set-equality vs subset asymmetry
 
@@ -82,7 +82,7 @@ The `4_employment` DE lexicon includes `mitarbeiterüberwachung` as a single com
 
 The harness uses set-equality for Day-7 fixtures (where `bucket` is present) and subset-containment for legacy day3/4/5 fixtures (matching the existing snapshot-spec semantics at `test/rules/snapshots.spec.ts:205-207`). This means a Day-7 fixture asserting `[5]` fails if the classifier also fires `[7]`; a legacy fixture would not.
 
-**v0.2 fix:** after backfilling Day-7 fields onto the 11 legacy fixtures, unify on set-equality. The legacy subset-containment will be removed.
+**Day-8 fix:** after backfilling Day-7 fields onto the 11 legacy fixtures, unify on set-equality. The legacy subset-containment will be removed.
 
 ### M-3. No `article_50_paragraphs` on legacy day5 fixtures
 
@@ -91,7 +91,7 @@ The harness uses set-equality for Day-7 fixtures (where `bucket` is present) and
 
 The 2 existing day5 fixtures cover Art 50 paragraph paths but don't carry the new `expected.article_50_paragraphs` field. The harness silently skips that check on them, so an unintended over-firing of (e.g.) 50(3) on the chatbot fixture would NOT be caught.
 
-**v0.2 fix:** backfill `expected.article_50_paragraphs: ['50(1)']` on day5/01 and `expected.article_50_paragraphs: ['50(4)_sub1']` on day5/02. (Also backfill `bucket`, `source_url`.)
+**Day-8 fix:** backfill `expected.article_50_paragraphs: ['50(1)']` on day5/01 and `expected.article_50_paragraphs: ['50(4)_sub1']` on day5/02. (Also backfill `bucket`, `source_url`.)
 
 ### M-4. No adversarial / out-of-distribution cases
 
@@ -111,15 +111,15 @@ The corpus is curated and friendly. v0.2 should add 5-10 "adversarial" cases per
 
 ### L-1. The 11 legacy fixtures lack `source_url`
 
-**Status:** additive-schema; backfilled in v0.2.
+**Status:** additive-schema; backfilled in Day-8.
 
 ### L-2. `legacy` bucket is a catch-all
 
-The harness lumps the 11 day3/4/5 fixtures into a single `legacy` bucket. v0.2 should re-tag them with the correct corpus bucket (annex_iii / article_5 / article_50 / negative).
+The harness lumps the 11 day3/4/5 fixtures into a single `legacy` bucket. Day-8 should re-tag them with the correct corpus bucket (annex_iii / article_5 / article_50 / negative).
 
 ### L-3. EN Article 5(1)(d) disambiguator coverage parity
 
-The EN lexicon's Art 5(1)(d) disambiguator (`solely on profiling`, `personality only`) is symmetric to DE (`ausschließlich profiling`, `persönlichkeit ausschließlich`). When v0.2 loosens the disambiguator (G-4 above), maintain EN/DE parity in both substring sets.
+The EN lexicon's Art 5(1)(d) disambiguator (`solely on profiling`, `personality only`) is symmetric to DE (`ausschließlich profiling`, `persönlichkeit ausschließlich`). When Day-8 loosens the disambiguator (G-4 above), maintain EN/DE parity in both substring sets.
 
 ## How to add an entry to this file
 
@@ -129,6 +129,6 @@ When the accuracy harness reveals a fixture failure that is NOT closed by re-sha
 2. **Fixture ID + URL of source.**
 3. **Expected vs actual** — paste the field check that failed.
 4. **Hypothesis** — fixture-side bug, lexicon-coverage gap, rule-engine narrowing gap, or genuine consultant-judgment disagreement.
-5. **Pointer to the fix-up workstream** — v0.2 backlog, Day-8 lexicon-tuning, or explicit consultant-input-needed flag.
+5. **Pointer to the fix-up workstream** — Day-8 pre-launch polish, v0.2 post-launch hardening, or explicit consultant-input-needed flag.
 
 This is the public-disclosure record. Better to ship "we score 100% on this corpus + these 5 known limitations" honestly than to ship a fake "100% accurate".
