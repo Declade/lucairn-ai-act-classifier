@@ -8,7 +8,7 @@ To regenerate this report:
 GROQ_API_KEY="<your-key>" pnpm accuracy:llm-groq
 ```
 
-The LLM-mode harness costs approximately $0.005 per run on Llama 3.3 70B
+The LLM-mode harness costs approximately $0.07 per run on Llama 3.3 70B
 across the 50-case bilingual fixture corpus. LLM-mode accuracy is an opt-in
 observation — it is NOT a CI-blocking metric. The deterministic-mode CI floor
 (overall ≥80%, Art 5 100%) remains the only enforced gate.

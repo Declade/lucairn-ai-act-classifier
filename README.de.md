@@ -42,7 +42,7 @@ Der optionale `--llm <provider>` Modus ersetzt den Stichwort-Extraktor durch ein
 |---|---|---|---|
 | `anthropic` | Claude Haiku 4.5 | \$0,003 | \$0,13 |
 | `openai` | GPT-4o-mini | \$0,0005 | \$0,025 |
-| `groq` | Llama 3.3 70B Versatile | \$0,0001 | \$0,005 |
+| `groq` | Llama 3.3 70B Versatile | \$0,0014 | \$0,07 |
 
 (Preise zum Versanddatum 2026-05-16. Modell pro Aufruf via SDK-Parameter `model` überschreibbar; die CLI verwendet derzeit die Standardwerte.)
 

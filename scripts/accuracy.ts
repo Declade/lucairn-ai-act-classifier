@@ -541,7 +541,7 @@ const PROVIDER_LABELS: Record<LLMProvider, { display: string; model: string; cos
   anthropic: { display: 'Anthropic', model: 'Claude Haiku 4.5', costPerRun: '\$0.13' },
   openai: { display: 'OpenAI', model: 'GPT-4o-mini', costPerRun: '\$0.025' },
   // groq lights up in the next commit alongside the groq.ts provider.
-  groq: { display: 'Groq', model: 'Llama 3.3 70B', costPerRun: '\$0.005' },
+  groq: { display: 'Groq', model: 'Llama 3.3 70B', costPerRun: '\$0.07' },
 };
 
 export function renderMarkdown(
