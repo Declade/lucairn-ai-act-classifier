@@ -1,0 +1,22 @@
+{
+  "id": "fixture-day7-24-art5-biometric-categorisation-sensitive-de",
+  "lang": "de",
+  "input": "Unser KI-System nutzt biometrische Kategorisierung von Gesichtsbildern, um daraus politische Meinung ableiten und automatisiert Religion ableiten zu können — etwa für gezielte Wahlwerbung.",
+  "expected": {
+    "article_5_prohibited": true,
+    "article_5_letters": ["g"],
+    "annex_iii_high_risk": false,
+    "annex_iii_domains": [1],
+    "suppressed_by_article_5": true,
+    "article_10_applicable": false,
+    "article_12_applicable": false,
+    "article_13_applicable": false,
+    "article_14_applicable": false,
+    "article_15_applicable": false,
+    "three_category_applicable": [],
+    "annex_iv_required": false,
+    "notes": "Art. 5 Abs. 1 Buchst. g — biometrische Kategorisierungssysteme, die natürliche Personen anhand ihrer biometrischen Daten kategorisieren, um deren Rasse, politische Meinung, Gewerkschaftszugehörigkeit, religiöse oder weltanschauliche Überzeugungen, Sexualleben oder sexuelle Ausrichtung abzuleiten. Lexikon-Treffer: 'politische meinung ableiten', 'religion ableiten' (DE-Lexikon-Gruppe g_biometric_categorisation_sensitive). Die Annex-III-Nr.-1-Lexikon-Phrase 'biometrische kategorisierung' feuert ebenfalls, wird aber durch das absolute Verbot in Art. 5(1)(g) verdrängt (high_risk = false; suppressed_by_article_5 = true). Cite: EUR-Lex Regulation (EU) 2024/1689, Artikel 5 Absatz 1 Buchstabe g."
+  },
+  "bucket": "article_5",
+  "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689"
+}
