@@ -1,6 +1,6 @@
 // Test fixture for scripts/sync-three-category.ts.
 //
-// Mirrors the SHAPE of theveil-website/src/lib/compliance/checklist-content.ts
+// Mirrors the SHAPE of lucairn-website/compliance/checklist-content.ts
 // but with stripped-down content (2 / 1 / 2 items per category instead of
 // 9 / 10 / 4) so the unit tests run fast and don't break when the real
 // website source changes by 1 item.

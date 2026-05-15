@@ -60,6 +60,19 @@ describe('classifyArticle12() — pure-function determinism', () => {
     // @ts-expect-error: deliberately invalid
     expect(() => classifyArticle12(makeAnnex({ high_risk: false, domains: [], suppressed_by_article_5: false }), null)).toThrow(TypeError);
   });
+
+  it('throws TypeError on article5 = [] (Array.isArray guard — Day-5 bug-hunter M1 closure)', () => {
+    // typeof [] === 'object' so an array passes the bare typeof check. The
+    // guard MUST also reject Array-shaped values explicitly, otherwise an
+    // upstream contract bug silently produces a false-positive applicability
+    // result. Same closure pattern Day-4 added for article-10/13/14/15.
+    expect(() =>
+      classifyArticle12(
+        makeAnnex({ high_risk: false, domains: [], suppressed_by_article_5: false }),
+        [] as unknown as Article5Result,
+      ),
+    ).toThrow(TypeError);
+  });
 });
 
 describe('classifyArticle12() — applicable: true cascade (multiple Annex III domains)', () => {
