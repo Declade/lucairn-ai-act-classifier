@@ -1,0 +1,23 @@
+{
+  "id": "fixture-day7-25-art50-customer-service-bot-de",
+  "lang": "de",
+  "input": "Wir setzen einen Chatbot auf unserer öffentlichen Webseite ein, um Kundenanfragen zu Versandstatus und Rückgaberichtlinien zu beantworten.",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": false,
+    "annex_iii_domains": [],
+    "suppressed_by_article_5": false,
+    "article_10_applicable": false,
+    "article_12_applicable": false,
+    "article_13_applicable": false,
+    "article_14_applicable": false,
+    "article_15_applicable": false,
+    "article_50_paragraphs": ["50(1)"],
+    "three_category_applicable": [],
+    "annex_iv_required": false,
+    "bucket": "article_50",
+    "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
+    "notes": "Art. 50 Abs. 1 — Anbieter von KI-Systemen, die für die direkte Interaktion mit natürlichen Personen bestimmt sind. Lexikon-Treffer: 'chatbot'. Kein Hochrisiko-Bezug, kein Verbot. Cite: EUR-Lex Regulation (EU) 2024/1689, Art. 50 Abs. 1."
+  }
+}

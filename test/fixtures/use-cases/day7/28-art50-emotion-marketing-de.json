@@ -1,0 +1,24 @@
+{
+  "id": "fixture-day7-28-art50-emotion-marketing-de",
+  "lang": "de",
+  "input": "Als Emotionserkennung Betreiber analysieren wir Kundengesichter in Werbedisplays in Einzelhandelsläden, um die Reaktion auf Plakate zu messen.",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": true,
+    "annex_iii_domains": [1],
+    "annex_iii_sub_letters": { "1": ["c"] },
+    "suppressed_by_article_5": false,
+    "article_10_applicable": true,
+    "article_12_applicable": true,
+    "article_13_applicable": true,
+    "article_14_applicable": true,
+    "article_15_applicable": true,
+    "article_50_paragraphs": ["50(3)"],
+    "three_category_applicable": [1, 2, 3],
+    "annex_iv_required": true,
+    "bucket": "article_50",
+    "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
+    "notes": "Art. 50 Abs. 3 — Betreiber von Emotionserkennungs- oder biometrischen Kategorisierungssystemen müssen die betroffenen natürlichen Personen über den Betrieb des Systems informieren. Da der Einsatz im Einzelhandel erfolgt (NICHT am Arbeitsplatz, NICHT in Bildungseinrichtungen), greift das Art. 5 Abs. 1 Buchst. f-Verbot nicht. Lexikon-Treffer: 'emotionserkennung betreiber'. Das System fällt zusätzlich unter Anhang III Nr. 1(c) (Emotionserkennung) als Hochrisiko-Anwendung, weshalb die Day-3/4-Kaskade ebenfalls greift. Cite: EUR-Lex Regulation (EU) 2024/1689, Art. 50 Abs. 3 + Anhang III Nr. 1(c)."
+  }
+}

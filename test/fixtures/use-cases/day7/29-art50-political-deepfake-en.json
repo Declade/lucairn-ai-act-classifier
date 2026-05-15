@@ -1,0 +1,23 @@
+{
+  "id": "fixture-day7-29-art50-political-deepfake-en",
+  "lang": "en",
+  "input": "Our marketing agency uses an AI system to produce deepfake political-commentary videos for distribution on social-media — the deep fake content includes face swap of public figures.",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": false,
+    "annex_iii_domains": [],
+    "suppressed_by_article_5": false,
+    "article_10_applicable": false,
+    "article_12_applicable": false,
+    "article_13_applicable": false,
+    "article_14_applicable": false,
+    "article_15_applicable": false,
+    "article_50_paragraphs": ["50(4)_sub1"],
+    "three_category_applicable": [],
+    "annex_iv_required": false,
+    "bucket": "article_50",
+    "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "notes": "Article 50(4) first sub-paragraph — deployers of AI systems that generate or manipulate image, audio or video content constituting a deep fake must disclose artificial generation. Lexicon hits: 'deepfake', 'deep fake', 'face swap'. The political-commentary framing does NOT escape the disclosure obligation (the carve-out is narrowed to evidently artistic/satirical works, NOT all political commentary). Cite: EUR-Lex Regulation (EU) 2024/1689, Article 50(4) first sub-paragraph."
+  }
+}

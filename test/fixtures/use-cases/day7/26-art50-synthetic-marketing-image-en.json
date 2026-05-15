@@ -1,0 +1,23 @@
+{
+  "id": "fixture-day7-26-art50-synthetic-marketing-image-en",
+  "lang": "en",
+  "input": "Our generative AI produces synthetic content for marketing image campaigns — fully ai-generated content distributed on social-media platforms.",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": false,
+    "annex_iii_domains": [],
+    "suppressed_by_article_5": false,
+    "article_10_applicable": false,
+    "article_12_applicable": false,
+    "article_13_applicable": false,
+    "article_14_applicable": false,
+    "article_15_applicable": false,
+    "article_50_paragraphs": ["50(2)"],
+    "three_category_applicable": [],
+    "annex_iv_required": false,
+    "bucket": "article_50",
+    "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "notes": "Article 50(2) — providers of AI systems (including GPAI) generating synthetic audio, image, video or text content must mark outputs in a machine-readable format as artificially generated. Lexicon hits: 'synthetic content', 'ai-generated content', 'generative ai'. Cite: EUR-Lex Regulation (EU) 2024/1689, Article 50(2)."
+  }
+}
