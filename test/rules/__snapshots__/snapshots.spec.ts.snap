@@ -20,6 +20,38 @@ exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-01-bio
     "reasoning_count": 2,
     "suppressed_by_article_5": true,
   },
+  "article10": {
+    "applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [],
+      "article_5": true,
+    },
+  },
+  "article13": {
+    "applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [],
+      "article_5": true,
+    },
+  },
+  "article14": {
+    "applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [],
+      "article_5": true,
+    },
+  },
+  "article15": {
+    "applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [],
+      "article_5": true,
+    },
+  },
   "article5": {
     "hits": [
       {
@@ -60,6 +92,46 @@ exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-02-cri
     "reasoning_count": 1,
     "suppressed_by_article_5": false,
   },
+  "article10": {
+    "applicable": true,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [
+        2,
+      ],
+      "article_5": false,
+    },
+  },
+  "article13": {
+    "applicable": true,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [
+        2,
+      ],
+      "article_5": false,
+    },
+  },
+  "article14": {
+    "applicable": true,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [
+        2,
+      ],
+      "article_5": false,
+    },
+  },
+  "article15": {
+    "applicable": true,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [
+        2,
+      ],
+      "article_5": false,
+    },
+  },
   "article5": {
     "hits": [],
     "prohibited": false,
@@ -91,6 +163,46 @@ exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-03-edu
     "high_risk": true,
     "reasoning_count": 1,
     "suppressed_by_article_5": false,
+  },
+  "article10": {
+    "applicable": true,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [
+        3,
+      ],
+      "article_5": false,
+    },
+  },
+  "article13": {
+    "applicable": true,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [
+        3,
+      ],
+      "article_5": false,
+    },
+  },
+  "article14": {
+    "applicable": true,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [
+        3,
+      ],
+      "article_5": false,
+    },
+  },
+  "article15": {
+    "applicable": true,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [
+        3,
+      ],
+      "article_5": false,
+    },
   },
   "article5": {
     "hits": [],
@@ -125,6 +237,46 @@ exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-04-emp
     "reasoning_count": 1,
     "suppressed_by_article_5": false,
   },
+  "article10": {
+    "applicable": true,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [
+        4,
+      ],
+      "article_5": false,
+    },
+  },
+  "article13": {
+    "applicable": true,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [
+        4,
+      ],
+      "article_5": false,
+    },
+  },
+  "article14": {
+    "applicable": true,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [
+        4,
+      ],
+      "article_5": false,
+    },
+  },
+  "article15": {
+    "applicable": true,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [
+        4,
+      ],
+      "article_5": false,
+    },
+  },
   "article5": {
     "hits": [],
     "prohibited": false,
@@ -158,6 +310,46 @@ exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-05-ess
     "reasoning_count": 1,
     "suppressed_by_article_5": false,
   },
+  "article10": {
+    "applicable": true,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [
+        5,
+      ],
+      "article_5": false,
+    },
+  },
+  "article13": {
+    "applicable": true,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [
+        5,
+      ],
+      "article_5": false,
+    },
+  },
+  "article14": {
+    "applicable": true,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [
+        5,
+      ],
+      "article_5": false,
+    },
+  },
+  "article15": {
+    "applicable": true,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [
+        5,
+      ],
+      "article_5": false,
+    },
+  },
   "article5": {
     "hits": [],
     "prohibited": false,
@@ -189,6 +381,46 @@ exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-06-law
     "high_risk": true,
     "reasoning_count": 1,
     "suppressed_by_article_5": false,
+  },
+  "article10": {
+    "applicable": true,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [
+        6,
+      ],
+      "article_5": false,
+    },
+  },
+  "article13": {
+    "applicable": true,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [
+        6,
+      ],
+      "article_5": false,
+    },
+  },
+  "article14": {
+    "applicable": true,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [
+        6,
+      ],
+      "article_5": false,
+    },
+  },
+  "article15": {
+    "applicable": true,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [
+        6,
+      ],
+      "article_5": false,
+    },
   },
   "article5": {
     "hits": [],
@@ -222,6 +454,46 @@ exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-07-mig
     "reasoning_count": 1,
     "suppressed_by_article_5": false,
   },
+  "article10": {
+    "applicable": true,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [
+        7,
+      ],
+      "article_5": false,
+    },
+  },
+  "article13": {
+    "applicable": true,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [
+        7,
+      ],
+      "article_5": false,
+    },
+  },
+  "article14": {
+    "applicable": true,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [
+        7,
+      ],
+      "article_5": false,
+    },
+  },
+  "article15": {
+    "applicable": true,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [
+        7,
+      ],
+      "article_5": false,
+    },
+  },
   "article5": {
     "hits": [],
     "prohibited": false,
@@ -253,6 +525,46 @@ exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-08-jus
     "reasoning_count": 1,
     "suppressed_by_article_5": false,
   },
+  "article10": {
+    "applicable": true,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [
+        8,
+      ],
+      "article_5": false,
+    },
+  },
+  "article13": {
+    "applicable": true,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [
+        8,
+      ],
+      "article_5": false,
+    },
+  },
+  "article14": {
+    "applicable": true,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [
+        8,
+      ],
+      "article_5": false,
+    },
+  },
+  "article15": {
+    "applicable": true,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [
+        8,
+      ],
+      "article_5": false,
+    },
+  },
   "article5": {
     "hits": [],
     "prohibited": false,
@@ -260,6 +572,57 @@ exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-08-jus
   },
   "id": "fixture-day3-08-justice-democracy-en",
   "input": "An AI tool offering judicial assistance for legal interpretation tasks: it helps a judicial decision support workflow by retrieving and applying relevant case law.",
+  "lang": "en",
+}
+`;
+
+exports[`snapshot — Day 4 fixtures (low-risk non-applicable path) > fixture-day4-01-low-risk-en — pipeline output matches snapshot 1`] = `
+{
+  "annexIII": {
+    "domains": [],
+    "high_risk": false,
+    "reasoning_count": 1,
+    "suppressed_by_article_5": false,
+  },
+  "article10": {
+    "applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [],
+      "article_5": false,
+    },
+  },
+  "article13": {
+    "applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [],
+      "article_5": false,
+    },
+  },
+  "article14": {
+    "applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [],
+      "article_5": false,
+    },
+  },
+  "article15": {
+    "applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [],
+      "article_5": false,
+    },
+  },
+  "article5": {
+    "hits": [],
+    "prohibited": false,
+    "reasoning_count": 1,
+  },
+  "id": "fixture-day4-01-low-risk-en",
+  "input": "An internal scheduling tool that allocates office cleaning shifts among contractors based on availability and historical preferences.",
   "lang": "en",
 }
 `;

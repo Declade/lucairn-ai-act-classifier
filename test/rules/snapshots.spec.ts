@@ -1,14 +1,23 @@
-// Snapshot tests for Day 3 rule modules.
+// Snapshot tests for Day 3 + Day 4 rule modules.
 //
-// Loads each fixture under test/fixtures/use-cases/day3/, runs it through the
-// full pipeline (extractFeatures → classifyArticle5 → classifyAnnexIII), and
+// Loads each fixture under test/fixtures/use-cases/day3/ and test/fixtures/
+// use-cases/day4/, runs it through the full pipeline (extractFeatures →
+// classifyArticle5 → classifyAnnexIII → classifyArticle10/13/14/15), and
 // snapshots the structural output. Snapshot files are committed to git; first
 // run via `pnpm test` writes them, subsequent runs compare.
 //
 // Why snapshots: the per-rule spec files validate specific invariants
-// (sub-letter narrowing, suppression, scope qualifiers). Snapshots catch
-// SHAPE drift — e.g. a refactor that accidentally drops a reasoning line or
-// reorders fields in the public API.
+// (sub-letter narrowing, suppression, scope qualifiers, applicability
+// cascades). Snapshots catch SHAPE drift — e.g. a refactor that accidentally
+// drops a reasoning line or reorders fields in the public API.
+//
+// Snapshot projection design choice (Day-3 lesson 2 carry-forward): the
+// projection captures load-bearing structural fields ONLY (booleans, letters,
+// matched_phrases, source URLs, applicable + triggered_by). It explicitly
+// OMITS prose summary fields (summary_en, summary_de) so that legitimate
+// summary-text edits (e.g. expanding a hand-wave to enumerate carve-outs)
+// don't flood snapshot diffs. The per-spec files have substring-match
+// assertions that pin the summary fields where their content is load-bearing.
 
 import { describe, it, expect } from 'vitest';
 import { readdirSync, readFileSync } from 'node:fs';
@@ -17,9 +26,15 @@ import { fileURLToPath } from 'node:url';
 import { extractFeatures } from '../../src/extract/keyword.js';
 import { classifyArticle5 } from '../../src/rules/article-5.js';
 import { classifyAnnexIII } from '../../src/rules/article-6-annex-iii.js';
+import { classifyArticle10 } from '../../src/rules/article-10.js';
+import { classifyArticle13 } from '../../src/rules/article-13.js';
+import { classifyArticle14 } from '../../src/rules/article-14.js';
+import { classifyArticle15 } from '../../src/rules/article-15.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const FIXTURES_DIR = join(__dirname, '..', 'fixtures', 'use-cases', 'day3');
+const FIXTURES_BASE = join(__dirname, '..', 'fixtures', 'use-cases');
+const DAY3_DIR = join(FIXTURES_BASE, 'day3');
+const DAY4_DIR = join(FIXTURES_BASE, 'day4');
 
 interface Fixture {
   id: string;
@@ -36,18 +51,18 @@ interface Fixture {
   };
 }
 
-function loadFixtures(): Fixture[] {
-  const files = readdirSync(FIXTURES_DIR)
+function loadFixturesFrom(dir: string): Fixture[] {
+  const files = readdirSync(dir)
     .filter((f) => f.endsWith('.json'))
     .sort();
   return files.map((filename) => {
-    const raw = readFileSync(join(FIXTURES_DIR, filename), 'utf8');
+    const raw = readFileSync(join(dir, filename), 'utf8');
     return JSON.parse(raw) as Fixture;
   });
 }
 
 describe('snapshot — Day 3 fixtures (8 Annex III domains)', () => {
-  const fixtures = loadFixtures();
+  const fixtures = loadFixturesFrom(DAY3_DIR);
 
   it('loaded exactly 8 fixtures (one per Annex III domain)', () => {
     expect(fixtures.length).toBe(8);
@@ -58,10 +73,16 @@ describe('snapshot — Day 3 fixtures (8 Annex III domains)', () => {
       const features = extractFeatures(fixture.input, { lang: fixture.lang });
       const article5 = classifyArticle5(features);
       const annexIII = classifyAnnexIII(features, article5);
+      const article10 = classifyArticle10(annexIII, article5);
+      const article13 = classifyArticle13(annexIII, article5);
+      const article14 = classifyArticle14(annexIII, article5);
+      const article15 = classifyArticle15(annexIII, article5);
 
       // Snapshot the load-bearing structural output (omits internal noise like
       // raw input, lang detection internals — those are covered by unit tests
-      // on the extractor itself).
+      // on the extractor itself). For Article 10/13/14/15 we project ONLY
+      // load-bearing fields (`applicable`, `triggered_by`, `source`) and NOT
+      // the prose summaries (Day-3 design choice — see file-header comment).
       expect({
         id: fixture.id,
         lang: fixture.lang,
@@ -87,6 +108,26 @@ describe('snapshot — Day 3 fixtures (8 Annex III domains)', () => {
             source: d.source,
           })),
           reasoning_count: annexIII.reasoning.length,
+        },
+        article10: {
+          applicable: article10.applicable,
+          triggered_by: article10.triggered_by,
+          source: article10.source,
+        },
+        article13: {
+          applicable: article13.applicable,
+          triggered_by: article13.triggered_by,
+          source: article13.source,
+        },
+        article14: {
+          applicable: article14.applicable,
+          triggered_by: article14.triggered_by,
+          source: article14.source,
+        },
+        article15: {
+          applicable: article15.applicable,
+          triggered_by: article15.triggered_by,
+          source: article15.source,
         },
       }).toMatchSnapshot();
     });
@@ -125,6 +166,137 @@ describe('snapshot — Day 3 fixtures (8 Annex III domains)', () => {
           expect(actualDomain).toBeDefined();
           expect([...actualDomain!.sub_letters].sort()).toEqual([...expectedSubs].sort());
         }
+      }
+    });
+  }
+
+  // Targeted Day-4 cascade invariants that the snapshot also pins but which
+  // deserve explicit assertions for traceability.
+  it('fixture-day3-01 (Art 5(1)(h) prohibition) → Article 10/13/14/15 all NOT applicable', () => {
+    const fixture = fixtures.find((f) => f.id === 'fixture-day3-01-biometrics-prohibited-en');
+    expect(fixture).toBeDefined();
+    const features = extractFeatures(fixture!.input, { lang: fixture!.lang });
+    const article5 = classifyArticle5(features);
+    const annexIII = classifyAnnexIII(features, article5);
+
+    const a10 = classifyArticle10(annexIII, article5);
+    const a13 = classifyArticle13(annexIII, article5);
+    const a14 = classifyArticle14(annexIII, article5);
+    const a15 = classifyArticle15(annexIII, article5);
+
+    for (const r of [a10, a13, a14, a15]) {
+      expect(r.applicable).toBe(false);
+      expect(r.triggered_by.article_5).toBe(true);
+      // Sub-letter accumulator pattern (Day-3 lesson 1): sorted toEqual on
+      // arrays, never toContain.
+      expect(r.triggered_by.annex_iii_domains).toEqual([]);
+    }
+  });
+
+  it('fixture-day3-04 (Annex III.4 employment) → Article 10/13/14/15 all applicable with sorted domains', () => {
+    const fixture = fixtures.find((f) => f.id === 'fixture-day3-04-employment-en');
+    expect(fixture).toBeDefined();
+    const features = extractFeatures(fixture!.input, { lang: fixture!.lang });
+    const article5 = classifyArticle5(features);
+    const annexIII = classifyAnnexIII(features, article5);
+
+    const a10 = classifyArticle10(annexIII, article5);
+    const a13 = classifyArticle13(annexIII, article5);
+    const a14 = classifyArticle14(annexIII, article5);
+    const a15 = classifyArticle15(annexIII, article5);
+
+    for (const r of [a10, a13, a14, a15]) {
+      expect(r.applicable).toBe(true);
+      expect(r.triggered_by.article_5).toBe(false);
+      expect(r.triggered_by.annex_iii_domains).toEqual([4]);
+    }
+  });
+});
+
+describe('snapshot — Day 4 fixtures (low-risk non-applicable path)', () => {
+  const fixtures = loadFixturesFrom(DAY4_DIR);
+
+  it('loaded at least 1 fixture', () => {
+    expect(fixtures.length).toBeGreaterThanOrEqual(1);
+  });
+
+  for (const fixture of fixtures) {
+    it(`${fixture.id} — pipeline output matches snapshot`, () => {
+      const features = extractFeatures(fixture.input, { lang: fixture.lang });
+      const article5 = classifyArticle5(features);
+      const annexIII = classifyAnnexIII(features, article5);
+      const article10 = classifyArticle10(annexIII, article5);
+      const article13 = classifyArticle13(annexIII, article5);
+      const article14 = classifyArticle14(annexIII, article5);
+      const article15 = classifyArticle15(annexIII, article5);
+
+      expect({
+        id: fixture.id,
+        lang: fixture.lang,
+        input: fixture.input,
+        article5: {
+          prohibited: article5.prohibited,
+          hits: article5.hits.map((h) => ({
+            letter: h.letter,
+            category_key: h.category_key,
+            matched_phrases: h.matched_phrases,
+            source: h.source,
+          })),
+          reasoning_count: article5.reasoning.length,
+        },
+        annexIII: {
+          high_risk: annexIII.high_risk,
+          suppressed_by_article_5: annexIII.suppressed_by_article_5,
+          domains: annexIII.domains.map((d) => ({
+            annex_iii_number: d.annex_iii_number,
+            key: d.key,
+            sub_letters: d.sub_letters,
+            matched_phrases: d.matched_phrases,
+            source: d.source,
+          })),
+          reasoning_count: annexIII.reasoning.length,
+        },
+        article10: {
+          applicable: article10.applicable,
+          triggered_by: article10.triggered_by,
+          source: article10.source,
+        },
+        article13: {
+          applicable: article13.applicable,
+          triggered_by: article13.triggered_by,
+          source: article13.source,
+        },
+        article14: {
+          applicable: article14.applicable,
+          triggered_by: article14.triggered_by,
+          source: article14.source,
+        },
+        article15: {
+          applicable: article15.applicable,
+          triggered_by: article15.triggered_by,
+          source: article15.source,
+        },
+      }).toMatchSnapshot();
+    });
+
+    it(`${fixture.id} — non-high-risk path: all Day-4 articles return applicable === false`, () => {
+      const features = extractFeatures(fixture.input, { lang: fixture.lang });
+      const article5 = classifyArticle5(features);
+      const annexIII = classifyAnnexIII(features, article5);
+
+      expect(article5.prohibited).toBe(fixture.expected.article_5_prohibited);
+      expect(annexIII.high_risk).toBe(fixture.expected.annex_iii_high_risk);
+      expect(annexIII.suppressed_by_article_5).toBe(fixture.expected.suppressed_by_article_5);
+
+      const a10 = classifyArticle10(annexIII, article5);
+      const a13 = classifyArticle13(annexIII, article5);
+      const a14 = classifyArticle14(annexIII, article5);
+      const a15 = classifyArticle15(annexIII, article5);
+
+      for (const r of [a10, a13, a14, a15]) {
+        expect(r.applicable).toBe(false);
+        expect(r.triggered_by.article_5).toBe(false);
+        expect(r.triggered_by.annex_iii_domains).toEqual([]);
       }
     });
   }
