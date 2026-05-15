@@ -9,6 +9,11 @@
     "annex_iii_domains": [
       3
     ],
+    "annex_iii_sub_letters": {
+      "3": [
+        "a"
+      ]
+    },
     "suppressed_by_article_5": false,
     "article_10_applicable": true,
     "article_12_applicable": true,
@@ -21,7 +26,7 @@
       3
     ],
     "annex_iv_required": true,
-    "notes": "Annex III paragraph 3(a) — determining access, admission or assignment to educational and vocational training institutions. Lexicon hit: 'student admission'. Cite: EUR-Lex Regulation (EU) 2024/1689, Annex III paragraph 3(a)."
+    "notes": "Annex III paragraph 3(a) — determining access, admission or assignment to educational and vocational training institutions. Lexicon hit: 'student admission'. Day-8 G-1 backfill: ¶3 sub-letter narrowing now implemented (admission→a; outcome evaluation→b; education-level determination→c; exam monitoring→d). Cite: EUR-Lex Regulation (EU) 2024/1689, Annex III paragraph 3(a)."
   },
   "bucket": "annex_iii",
   "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689"

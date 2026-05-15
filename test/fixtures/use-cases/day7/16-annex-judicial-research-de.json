@@ -9,6 +9,11 @@
     "annex_iii_domains": [
       8
     ],
+    "annex_iii_sub_letters": {
+      "8": [
+        "a"
+      ]
+    },
     "suppressed_by_article_5": false,
     "article_10_applicable": true,
     "article_12_applicable": true,
@@ -21,7 +26,7 @@
       3
     ],
     "annex_iv_required": true,
-    "notes": "Anhang III Nr. 8(a) — KI-Systeme zur Unterstützung einer Justizbehörde bei der Recherche und Auslegung von Sachverhalten und Rechtsvorschriften und der Anwendung des Rechts auf einen konkreten Sachverhalt. Lexikon-Treffer: 'richterliche unterstützung', 'rechtsauslegung'. Cite: EUR-Lex Regulation (EU) 2024/1689, Anhang III Nr. 8(a)."
+    "notes": "Anhang III Nr. 8(a) — KI-Systeme zur Unterstützung einer Justizbehörde bei der Recherche und Auslegung von Sachverhalten und Rechtsvorschriften und der Anwendung des Rechts auf einen konkreten Sachverhalt. Lexikon-Treffer: 'richterliche unterstützung', 'rechtsauslegung'. Day-8 G-1 backfill: ¶8 sub-letter narrowing nun implementiert (Justiz-Recherche→a; Wahleinflussung→b). Cite: EUR-Lex Regulation (EU) 2024/1689, Anhang III Nr. 8(a)."
   },
   "bucket": "annex_iii",
   "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689"

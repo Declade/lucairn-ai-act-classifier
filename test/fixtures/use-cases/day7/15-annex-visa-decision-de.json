@@ -9,6 +9,11 @@
     "annex_iii_domains": [
       7
     ],
+    "annex_iii_sub_letters": {
+      "7": [
+        "c"
+      ]
+    },
     "suppressed_by_article_5": false,
     "article_10_applicable": true,
     "article_12_applicable": true,
@@ -21,7 +26,7 @@
       3
     ],
     "annex_iv_required": true,
-    "notes": "Anhang III Nr. 7(c) — KI-Systeme zur Unterstützung der zuständigen Behörden bei der Prüfung von Anträgen auf Asyl, Visa oder Aufenthaltstitel und bei damit zusammenhängenden Beschwerden in Bezug auf die Berechtigung der natürlichen Personen. Lexikon-Treffer: 'visumantrag', 'aufenthaltstitel'. Buchstaben-Eingrenzung für Anhang III Nr. 7 ist in narrowSubLetters() noch nicht implementiert — vgl. KNOWN-MISCLASSIFICATIONS G-1; expected.annex_iii_sub_letters bewusst weggelassen. Cite: EUR-Lex Regulation (EU) 2024/1689, Anhang III Nr. 7(c)."
+    "notes": "Anhang III Nr. 7(c) — KI-Systeme zur Unterstützung der zuständigen Behörden bei der Prüfung von Anträgen auf Asyl, Visa oder Aufenthaltstitel und bei damit zusammenhängenden Beschwerden in Bezug auf die Berechtigung der natürlichen Personen. Lexikon-Treffer: 'visumantrag', 'aufenthaltstitel'. Day-8 G-1 backfill: ¶7 sub-letter narrowing nun implementiert (Polygraph+Grenzkontext→a; Migrationsrisiko→b; Antragsprüfung→c; Grenzüberwachung→d). Cite: EUR-Lex Regulation (EU) 2024/1689, Anhang III Nr. 7(c)."
   },
   "bucket": "annex_iii",
   "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689"

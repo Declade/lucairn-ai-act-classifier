@@ -9,6 +9,11 @@
     "annex_iii_domains": [
       7
     ],
+    "annex_iii_sub_letters": {
+      "7": [
+        "c"
+      ]
+    },
     "suppressed_by_article_5": false,
     "article_10_applicable": true,
     "article_12_applicable": true,
@@ -21,7 +26,7 @@
       3
     ],
     "annex_iv_required": true,
-    "notes": "Annex III paragraph 7(c) — AI systems intended to assist competent public authorities for the examination of applications for asylum, visa or residence permits and for associated complaints with regard to the eligibility of the natural persons applying for a status, including related assessments of the reliability of evidence. (7(c) covers BOTH the application examination AND the associated evidence-reliability assessment — they are NOT separate sub-letters.) Lexicon hit: 'asylum application'. Sub-letter narrowing for Annex III paragraph 7 is not yet implemented in narrowSubLetters() — see KNOWN-MISCLASSIFICATIONS G-1; expected.annex_iii_sub_letters intentionally omitted. Cite: EUR-Lex Regulation (EU) 2024/1689, Annex III paragraph 7(c)."
+    "notes": "Annex III paragraph 7(c) — AI systems intended to assist competent public authorities for the examination of applications for asylum, visa or residence permits and for associated complaints with regard to the eligibility of the natural persons applying for a status, including related assessments of the reliability of evidence. (7(c) covers BOTH the application examination AND the associated evidence-reliability assessment — they are NOT separate sub-letters.) Lexicon hit: 'asylum application'. Day-8 G-1 backfill: ¶7 sub-letter narrowing now implemented (polygraph+border→a; migration risk→b; application examination→c; border surveillance→d). Cite: EUR-Lex Regulation (EU) 2024/1689, Annex III paragraph 7(c)."
   },
   "bucket": "annex_iii",
   "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689"
