@@ -1,0 +1,301 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`formatJson() — output shape > snapshot — high-risk fixture (pretty=true, includeFeatures=false) 1`] = `
+"{
+  "input_text": "We use AI for CV screening and applicant tracking.",
+  "detected_lang": "en",
+  "lang_confident": true,
+  "rules_version": "v0.1.0",
+  "rules_hash": "3b3e3d37",
+  "rules_hash_full": "3b3e3d370d5d9d2ed351fc0b4aba42fa0f324b826c63b73c3af9343e18fb9bf1",
+  "mode": "deterministic",
+  "confidence": 0.56,
+  "article_5": {
+    "prohibited": false,
+    "hits": [],
+    "reasoning": [
+      "No Article 5 prohibited-practice phrases matched in the input. No prohibition triggered."
+    ]
+  },
+  "annex_iii": {
+    "high_risk": true,
+    "domains": [
+      {
+        "annex_iii_number": 4,
+        "key": "employment",
+        "sub_letters": [
+          "a"
+        ],
+        "matched_phrases": [
+          "cv screening",
+          "applicant tracking"
+        ],
+        "title_en": "Employment, workers' management and access to self-employment",
+        "title_de": "Beschäftigung, Personalmanagement und Zugang zur Selbstständigkeit",
+        "source": "EUR-Lex Regulation (EU) 2024/1689 — Annex III paragraph 4"
+      }
+    ],
+    "reasoning": [
+      "Annex III.4 (employment) (sub-letters: a) fires from lexicon category \\"4_employment\\". Matched phrases: \\"cv screening\\", \\"applicant tracking\\"."
+    ],
+    "suppressed_by_article_5": false
+  },
+  "article_10": {
+    "applicable": true,
+    "triggered_by": {
+      "article_5": false,
+      "annex_iii_domains": [
+        4
+      ]
+    },
+    "summary_en": "High-risk AI systems which make use of techniques involving the training of AI models with data shall be developed on the basis of training, validation and testing data sets that meet the quality criteria referred to in paragraphs 2 to 5 whenever such data sets are used. (Art 10(1))",
+    "summary_de": "Hochrisiko-KI-Systeme, in denen Techniken eingesetzt werden, bei denen KI-Modelle mit Daten trainiert werden, müssen mit Trainings-, Validierungs- und Testdatensätzen entwickelt werden, die den in den Absätzen 2 bis 5 genannten Qualitätskriterien entsprechen, wenn solche Datensätze verwendet werden. (Art. 10 Abs. 1)",
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689"
+  },
+  "article_12": {
+    "applicable": true,
+    "triggered_by": {
+      "article_5": false,
+      "annex_iii_domains": [
+        4
+      ]
+    },
+    "summary_en": "High-risk AI systems shall technically allow for the automatic recording of events (logs) over the lifetime of the system. (Art 12(1))",
+    "summary_de": "Die Technik der Hochrisiko-KI-Systeme muss die automatische Aufzeichnung von Ereignissen (im Folgenden „Protokollierung“) während des Lebenszyklus des Systems ermöglichen. (Art. 12 Abs. 1)",
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689"
+  },
+  "article_13": {
+    "applicable": true,
+    "triggered_by": {
+      "article_5": false,
+      "annex_iii_domains": [
+        4
+      ]
+    },
+    "summary_en": "High-risk AI systems shall be designed and developed in such a way as to ensure that their operation is sufficiently transparent to enable deployers to interpret a system's output and use it appropriately. An appropriate type and degree of transparency shall be ensured with a view to achieving compliance with the relevant obligations of the provider and deployer set out in Section 3. (Art 13(1))",
+    "summary_de": "Hochrisiko-KI-Systeme werden so konzipiert und entwickelt, dass ihr Betrieb hinreichend transparent ist, damit die Betreiber die Ausgaben eines Systems angemessen interpretieren und verwenden können. Die Transparenz wird auf eine geeignete Art und in einem angemessenen Maß gewährleistet, damit die Anbieter und Betreiber ihre in Abschnitt 3 festgelegten einschlägigen Pflichten erfüllen können. (Art. 13 Abs. 1)",
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689"
+  },
+  "article_14": {
+    "applicable": true,
+    "triggered_by": {
+      "article_5": false,
+      "annex_iii_domains": [
+        4
+      ]
+    },
+    "summary_en": "High-risk AI systems shall be designed and developed in such a way, including with appropriate human-machine interface tools, that they can be effectively overseen by natural persons during the period in which they are in use. (Art 14(1))",
+    "summary_de": "Hochrisiko-KI-Systeme werden so konzipiert und entwickelt, dass sie während der Dauer ihrer Verwendung — auch mit geeigneten Instrumenten einer Mensch-Maschine-Schnittstelle — von natürlichen Personen wirksam beaufsichtigt werden können. (Art. 14 Abs. 1)",
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689"
+  },
+  "article_15": {
+    "applicable": true,
+    "triggered_by": {
+      "article_5": false,
+      "annex_iii_domains": [
+        4
+      ]
+    },
+    "summary_en": "High-risk AI systems shall be designed and developed in such a way that they achieve an appropriate level of accuracy, robustness, and cybersecurity, and that they perform consistently in those respects throughout their lifecycle. (Art 15(1))",
+    "summary_de": "Hochrisiko-KI-Systeme werden so konzipiert und entwickelt, dass sie ein angemessenes Maß an Genauigkeit, Robustheit und Cybersicherheit erreichen und in dieser Hinsicht während ihres gesamten Lebenszyklus beständig funktionieren. (Art. 15 Abs. 1)",
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689"
+  },
+  "article_50": {
+    "applicable": false,
+    "triggered_by": {
+      "paragraph_1_interaction": false,
+      "paragraph_2_synthetic_content": false,
+      "paragraph_3_emotion_or_biometric_categorisation": false,
+      "paragraph_4_deepfake": false,
+      "paragraph_4_public_interest_text": false
+    },
+    "summary_en": "Providers shall ensure that AI systems intended to interact directly with natural persons are designed and developed in such a way that the natural persons concerned are informed that they are interacting with an AI system, unless this is obvious from the point of view of a natural person who is reasonably well-informed, observant and circumspect, taking into account the circumstances and the context of use. This obligation shall not apply to AI systems authorised by law to detect, prevent, investigate or prosecute criminal offences, subject to appropriate safeguards for the rights and freedoms of third parties, unless those systems are available for the public to report a criminal offence. (Art 50(1))",
+    "summary_de": "Die Anbieter stellen sicher, dass KI-Systeme, die für die direkte Interaktion mit natürlichen Personen bestimmt sind, so konzipiert und entwickelt werden, dass die betreffenden natürlichen Personen informiert werden, dass sie mit einem KI-System interagieren, es sei denn, dies ist aus Sicht einer angemessen informierten, aufmerksamen und verständigen natürlichen Person aufgrund der Umstände und des Kontexts der Nutzung offensichtlich. Diese Pflicht gilt nicht für gesetzlich zur Aufdeckung, Verhütung, Ermittlung oder Verfolgung von Straftaten zugelassene KI-Systeme, wenn geeignete Schutzvorkehrungen für die Rechte und Freiheiten Dritter bestehen, es sei denn, diese Systeme stehen der Öffentlichkeit zur Anzeige einer Straftat zur Verfügung. (Art. 50 Abs. 1)",
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689"
+  },
+  "three_category": {
+    "categories": {
+      "1": {
+        "key": "1",
+        "applicable": true,
+        "triggered_articles": [
+          10,
+          15
+        ],
+        "required_articles": [
+          10,
+          15
+        ],
+        "title_en": "Category 1: Sanitizer — PII detection & identity separation (Art. 10 + 15)",
+        "title_de": "Kategorie 1: Sanitizer — PII-Erkennung & Identitätstrennung (Art. 10 + 15)",
+        "items": [
+          {
+            "number": 1,
+            "text_en": "PII is detected before AI processing (automated, not manual)",
+            "text_de": "Personenbezogene Daten werden vor der KI-Verarbeitung erkannt (automatisiert, nicht manuell)"
+          },
+          {
+            "number": 2,
+            "text_en": "Identity data is separated from AI inference at infrastructure level",
+            "text_de": "Identitätsdaten werden auf Infrastrukturebene von der KI-Inferenz getrennt"
+          },
+          {
+            "number": 3,
+            "text_en": "AI models cannot access identity data (network-enforced, not policy-enforced)",
+            "text_de": "KI-Modelle können nicht auf Identitätsdaten zugreifen (netzwerktechnisch durchgesetzt, nicht richtlinienbasiert)"
+          },
+          {
+            "number": 4,
+            "text_en": "Pseudonymous tokens replace identity in AI processing",
+            "text_de": "Pseudonyme Token ersetzen Identitätsdaten in der KI-Verarbeitung"
+          },
+          {
+            "number": 5,
+            "text_en": "Re-linkage requires explicit authorisation workflow",
+            "text_de": "Rückverknüpfung erfordert einen expliziten Autorisierungs-Workflow"
+          },
+          {
+            "number": 6,
+            "text_en": "Sanitizer pipeline is tested against an evaluation dataset and accuracy is measured",
+            "text_de": "Die Sanitizer-Pipeline wird gegen einen Evaluationsdatensatz getestet und Genauigkeit gemessen"
+          },
+          {
+            "number": 7,
+            "text_en": "Compliance can be verified independently (not self-reported)",
+            "text_de": "Compliance kann unabhängig verifiziert werden (nicht selbst gemeldet)"
+          },
+          {
+            "number": 8,
+            "text_en": "Certificates or attestations are available for auditors",
+            "text_de": "Zertifikate oder Attestierungen stehen Prüfer:innen zur Verfügung"
+          },
+          {
+            "number": 9,
+            "text_en": "Regular compliance testing is automated (not annual manual review)",
+            "text_de": "Regelmäßige Compliance-Tests sind automatisiert (nicht jährliche manuelle Überprüfung)"
+          }
+        ]
+      },
+      "2": {
+        "key": "2",
+        "applicable": true,
+        "triggered_articles": [
+          12,
+          14
+        ],
+        "required_articles": [
+          12,
+          14
+        ],
+        "title_en": "Category 2: Evidence — decision logging & human oversight (Art. 12 + 14)",
+        "title_de": "Kategorie 2: Nachweis — Entscheidungsprotokollierung & menschliche Aufsicht (Art. 12 + 14)",
+        "items": [
+          {
+            "number": 10,
+            "text_en": "AI decisions are recorded with structured metadata (model, inputs, outputs, confidence)",
+            "text_de": "KI-Entscheidungen werden mit strukturierten Metadaten erfasst (Modell, Eingaben, Ausgaben, Konfidenz)"
+          },
+          {
+            "number": 11,
+            "text_en": "Decision records are cryptographically signed (Ed25519 or equivalent)",
+            "text_de": "Entscheidungsaufzeichnungen sind kryptographisch signiert (Ed25519 oder äquivalent)"
+          },
+          {
+            "number": 12,
+            "text_en": "Records are chained (hash chain) to prevent tampering",
+            "text_de": "Aufzeichnungen sind verkettet (Hash-Kette), um Manipulation zu verhindern"
+          },
+          {
+            "number": 13,
+            "text_en": "Independent timestamps from external TSA (RFC 3161)",
+            "text_de": "Unabhängige Zeitstempel von externer TSA (RFC 3161)"
+          },
+          {
+            "number": 14,
+            "text_en": "Decision records are retained for the system’s regulatory minimum lifetime",
+            "text_de": "Entscheidungsaufzeichnungen werden für die regulatorische Mindestaufbewahrungsdauer des Systems aufbewahrt"
+          },
+          {
+            "number": 15,
+            "text_en": "Authorised personnel can access decision records on demand",
+            "text_de": "Autorisiertes Personal kann Entscheidungsaufzeichnungen auf Anforderung einsehen"
+          },
+          {
+            "number": 16,
+            "text_en": "Decision records include sufficient context to understand the AI’s reasoning",
+            "text_de": "Entscheidungsaufzeichnungen enthalten ausreichend Kontext, um die Entscheidungsfindung der KI nachzuvollziehen"
+          },
+          {
+            "number": 17,
+            "text_en": "Human override mechanisms exist for high-risk decisions",
+            "text_de": "Mechanismen zur menschlichen Übersteuerung existieren für Hochrisiko-Entscheidungen"
+          },
+          {
+            "number": 18,
+            "text_en": "Oversight interfaces are available for DPOs (not just engineers)",
+            "text_de": "Überwachungsschnittstellen stehen Datenschutzbeauftragten zur Verfügung (nicht nur Entwicklern)"
+          },
+          {
+            "number": 19,
+            "text_en": "Audit trail links decisions to the humans who reviewed them",
+            "text_de": "Der Prüfpfad verknüpft Entscheidungen mit den Personen, die sie überprüft haben"
+          }
+        ]
+      },
+      "3": {
+        "key": "3",
+        "applicable": true,
+        "triggered_articles": [
+          10,
+          12,
+          14,
+          15
+        ],
+        "required_articles": [
+          10,
+          12,
+          14,
+          15
+        ],
+        "title_en": "Category 3: Inventory — data governance across the system (Art. 10 + 12 + 14 + 15)",
+        "title_de": "Kategorie 3: Inventar — Datengovernance über das Gesamtsystem (Art. 10 + 12 + 14 + 15)",
+        "items": [
+          {
+            "number": 20,
+            "text_en": "AI training data is inventoried and documented",
+            "text_de": "KI-Trainingsdaten sind inventarisiert und dokumentiert"
+          },
+          {
+            "number": 21,
+            "text_en": "Operational data flows are mapped and classified",
+            "text_de": "Operative Datenflüsse sind kartiert und klassifiziert"
+          },
+          {
+            "number": 22,
+            "text_en": "Data retention and deletion policies are technically enforced (including cross-border transfer tracking)",
+            "text_de": "Datenaufbewahrungs- und Löschrichtlinien werden technisch durchgesetzt (einschließlich Nachverfolgung grenzüberschreitender Übertragungen)"
+          },
+          {
+            "number": 23,
+            "text_en": "Data quality checks run before AI processing",
+            "text_de": "Datenqualitätsprüfungen werden vor der KI-Verarbeitung durchgeführt"
+          }
+        ]
+      }
+    },
+    "applicable_categories": [
+      "1",
+      "2",
+      "3"
+    ],
+    "disclaimer_en": "This checklist is based on Lucairn platform’s interpretation of EU AI Act requirements for high-risk AI systems. It is not legal advice. Consult your legal team for jurisdiction-specific guidance.",
+    "disclaimer_de": "Diese Checkliste basiert auf der Interpretation der KI-Verordnungs-Anforderungen für Hochrisiko-KI-Systeme durch die Plattform Lucairn. Sie stellt keine Rechtsberatung dar. Konsultieren Sie Ihr Rechtsteam für jurisdiktionsspezifische Hinweise.",
+    "source": {
+      "generated_file": "src/data/three-category.gen.json",
+      "source_file": "lucairn-website/compliance/checklist-content.ts",
+      "version": "v0.1.0-gen"
+    }
+  },
+  "annex_iv_required": true
+}"
+`;

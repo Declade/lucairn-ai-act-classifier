@@ -1,0 +1,61 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`formatMarkdown() — output shape > DE snapshot — high-risk fixture, cite: false 1`] = `
+"## EU-KI-VO-Zuordnung
+
+| Artikel | Status | Hinweise |
+| --- | --- | --- |
+| Artikel 5  (verboten) | ✅ nicht ausgelöst |  |
+| Artikel 6  + Anhang III | ⚠️ HOCHRISIKO | Annex III.4(a) — Beschäftigung, Personalmanagement und Zugang zur Selbstständigkeit |
+| Artikel 10 (Daten-Governance) | ✅ anwendbar |  |
+| Artikel 12 (Protokollierung/Aufzeichnungen) | ✅ anwendbar |  |
+| Artikel 13 (Betreiber-Transparenz) | ✅ anwendbar |  |
+| Artikel 14 (menschliche Aufsicht) | ✅ anwendbar |  |
+| Artikel 15 (Genauigkeit/Robustheit/Cybersicherheit) | ✅ anwendbar |  |
+| Artikel 50 (GPAI/Betreiber) | ⬜ nicht ausgelöst |  |
+| Anhang IV  (technische Dokumentation) | 📄 ERFORDERLICH |  |
+
+## Lucairn-Pflichten-Overlay
+
+| Kategorie | Erforderliche Artikel | Status |
+| --- | --- | --- |
+| Kat 1 Sanitizer  (Art. 10+15) | 10 + 15 | 🔴 ERFORDERLICH |
+| Kat 2 Evidence   (Art. 12+14) | 12 + 14 | 🔴 ERFORDERLICH |
+| Kat 3 Inventory  (Art. 10+12+14+15) | 10 + 12 + 14 + 15 | 🔴 ERFORDERLICH |
+
+**Konfidenz:** 0.44 · **Modus:** deterministic · **Regeln:** v0.1.0 (sha256:3b3e3d37…)
+
+---
+
+> ⚠ Informationelles Werkzeug — keine Rechtsberatung. Siehe README §Disclaimer."
+`;
+
+exports[`formatMarkdown() — output shape > EN snapshot — high-risk fixture, cite: false 1`] = `
+"## EU AI Act mapping
+
+| Article | Status | Notes |
+| --- | --- | --- |
+| Article 5  (prohibited) | ✅ not triggered |  |
+| Article 6  + Annex III | ⚠️ HIGH-RISK | Annex III.4(a) — Employment, workers' management and access to self-employment |
+| Article 10 (data governance) | ✅ applies |  |
+| Article 12 (logging/record-keeping) | ✅ applies |  |
+| Article 13 (deployer transparency) | ✅ applies |  |
+| Article 14 (human oversight) | ✅ applies |  |
+| Article 15 (accuracy/robustness/cybersecurity) | ✅ applies |  |
+| Article 50 (GPAI/deployer) | ⬜ not triggered |  |
+| Annex IV  (technical docs) | 📄 REQUIRED |  |
+
+## Lucairn obligation overlay
+
+| Category | Required articles | Status |
+| --- | --- | --- |
+| Cat 1 Sanitizer  (Art 10+15) | 10 + 15 | 🔴 REQUIRED |
+| Cat 2 Evidence   (Art 12+14) | 12 + 14 | 🔴 REQUIRED |
+| Cat 3 Inventory  (Art 10+12+14+15) | 10 + 12 + 14 + 15 | 🔴 REQUIRED |
+
+**Confidence:** 0.56 · **Mode:** deterministic · **Rules:** v0.1.0 (sha256:3b3e3d37…)
+
+---
+
+> ⚠ Informational tool — not legal advice. See README §Disclaimer."
+`;
