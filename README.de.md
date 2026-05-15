@@ -22,37 +22,56 @@ npx @lucairn/ai-act-classifier "KI-System, das Lebensläufe bewertet und Einstel
 
 Keine Konfiguration. Keine Netzwerkverbindung. Kein API-Key erforderlich für den deterministischen Modus.
 
-Optionale LLM-gestützte Feature-Extraktion (verwendet Ihren eigenen API-Key; wird ausschließlich an den gewählten Anbieter gesendet):
+Optionale LLM-gestützte Feature-Extraktion mit einem von drei Anbietern (verwendet Ihren eigenen API-Key; wird ausschließlich an den gewählten Anbieter gesendet):
 
 ```bash
-ANTHROPIC_API_KEY="<ihr-anthropic-key>" npx @lucairn/ai-act-classifier --llm anthropic "..."
+ANTHROPIC_API_KEY="<ihr-key>" npx @lucairn/ai-act-classifier --llm anthropic "..."
+OPENAI_API_KEY="<ihr-key>"    npx @lucairn/ai-act-classifier --llm openai    "..."
+GROQ_API_KEY="<ihr-key>"      npx @lucairn/ai-act-classifier --llm groq      "..."
 ```
 
-## `--llm anthropic` Modus (optional)
+## `--llm` Modus (optional, 3 Anbieter)
 
 Der Standardmodus ist deterministisch: ein Stichwort- und Phrasen-Matcher in DE+EN gegen das kuratierte Lexikon. Kein Netzwerk, kein API-Key, keine Kosten. Dies ist der empfohlene Modus für die meisten Anwendungsfälle — die deterministische Genauigkeit liegt auf dem kuratierten 50-Fall-Korpus über der LLM-Genauigkeit.
 
-Der optionale `--llm anthropic` Modus ersetzt den Stichwort-Extraktor durch [Claude Haiku 4.5](https://docs.anthropic.com/) für semantische Feature-Extraktion. Die Regel-Engine, die die Artikel auswählt, ist **unverändert** — nur die Feature-Extraktion wird ersetzt. Das LLM ist darauf beschränkt, Phrasen aus dem kuratierten Lexikon zu zitieren; jede halluzinierte Phrase wird verworfen, bevor die Regel-Engine sie sieht.
+Der optionale `--llm <provider>` Modus ersetzt den Stichwort-Extraktor durch ein LLM für semantische Feature-Extraktion. Die Regel-Engine, die die Artikel auswählt, ist **unverändert** — nur die Feature-Extraktion wird ersetzt. Das LLM ist darauf beschränkt, Phrasen aus dem kuratierten Lexikon zu zitieren; jede halluzinierte Phrase wird verworfen, bevor die Regel-Engine sie sieht.
+
+**Unterstützte Anbieter und Standard-Modelle:**
+
+| Anbieter | Standard-Modell | Kosten pro Aufruf (ca.) | Kosten pro 50-Fixture-Lauf (ca.) |
+|---|---|---|---|
+| `anthropic` | Claude Haiku 4.5 | \$0,003 | \$0,13 |
+| `openai` | GPT-4o-mini | \$0,0005 | \$0,025 |
+| `groq` | Llama 3.3 70B Versatile | \$0,0001 | \$0,005 |
+
+(Preise zum Versanddatum 2026-05-16. Modell pro Aufruf via SDK-Parameter `model` überschreibbar; die CLI verwendet derzeit die Standardwerte.)
 
 **Einrichtung:**
 
 ```bash
-# Optionale Abhängigkeit — nur für den --llm anthropic Modus benötigt.
-pnpm add @anthropic-ai/sdk
+# Optionale Abhängigkeiten — installieren Sie nur die SDKs, die Sie nutzen werden.
+pnpm add @anthropic-ai/sdk      # für --llm anthropic
+pnpm add openai                 # für --llm openai UND --llm groq (Groq nutzt das OpenAI-SDK)
 
 export ANTHROPIC_API_KEY="<ihr-anthropic-key>"
 ai-act-classify --llm anthropic "KI-System, das Bewerber nach Lebenslauf bewertet"
+
+export OPENAI_API_KEY="<ihr-openai-key>"
+ai-act-classify --llm openai "KI-System, das Bewerber nach Lebenslauf bewertet"
+
+export GROQ_API_KEY="<ihr-groq-key>"
+ai-act-classify --llm groq "KI-System, das Bewerber nach Lebenslauf bewertet"
 ```
 
-**Kosten:** etwa \$0,003 pro Aufruf auf Haiku 4.5 (~\$0,13 für einen vollständigen 50-Fixture-Genauigkeits-Harness-Lauf).
+> ⚠️ **Hinweis zum LLM-Modus-Nicht-Determinismus.** LLMs sind probabilistisch; ein erneuter
+> Aufruf auf derselben Eingabe kann unterschiedliche (korrelierte aber nicht identische)
+> Merkmale zurückliefern. Tag 9 maß Anthropic Haiku 4.5 bei **93,5 %–97,6 %**
+> Gesamtgenauigkeit über zwei unabhängige Läufe auf dem 50-Fall-Korpus. Die Cache-Schicht
+> (nächster Abschnitt) mildert dies, indem sie das Ergebnis des ersten Aufrufs speichert
+> — Wiederholungen auf identischen Eingaben sind byte-stabil. Für reproduzierbare
+> Klassifizierung auf neuen Eingaben empfehlen wir den deterministischen Standardmodus.
 
-**Tag-9 Genauigkeits-Delta gegenüber dem deterministischen Basiswert (50-Fall-Korpus):**
-
-> ⚠️ **Hinweis zur LLM-Modus-Nicht-Determinismus.** Bei zwei unabhängigen Harness-Läufen
-> während des Tag-9-Builds schwankte die LLM-Modus-Gesamtgenauigkeit zwischen **93,5 %
-> und 97,6 %**. Haiku ist probabilistisch; ein erneuter Lauf erzeugt unterschiedliche
-> (korrelierte aber nicht identische) Werte. Für reproduzierbare Klassifizierung
-> empfehlen wir den deterministischen Modus.
+**Tag-9 Genauigkeits-Delta (Anthropic) gegenüber dem deterministischen Basiswert (50-Fall-Korpus):**
 
 | Metrik | Deterministisch (Standard) | `--llm anthropic` (Tag 9) |
 |---|---|---|
@@ -60,9 +79,23 @@ ai-act-classify --llm anthropic "KI-System, das Bewerber nach Lebenslauf bewerte
 | Art. 5 Verbots-Erkennung | 100,0% | 100,0% |
 | Binäre Hochrisiko-Klassifikation | 98,0% | 98,0% |
 
+OpenAI- + Groq-Genauigkeitszahlen werden ergänzt, sobald der Harness gegen diese Anbieter ausgeführt wurde. Marc kann jeden Bericht bei Bedarf mit `<PROVIDER>_API_KEY=... pnpm accuracy:llm-<provider>` neu erzeugen.
+
 Der deterministische Modus ist auf dem kuratierten Korpus in der Regel zuverlässiger, weil der Korpus so geformt wurde, dass er den kanonischen Phrasen des Lexikons entspricht. Der LLM-Modus tauscht Reproduzierbarkeit gegen eine bessere Abdeckung von semantisch ähnlichen Paraphrasen ein, die nicht im Lexikon erscheinen (z. B. deutsche Komposita wie `Emotionserkennungssystems`, die der deterministische n-Gramm-Extraktor verfehlt). Wählen Sie den Modus, der zu Ihrer Eingabe-Verteilung passt.
 
-Berichte: [accuracy/REPORT.md](./accuracy/REPORT.md) (deterministisch) und [accuracy/REPORT.llm-anthropic.md](./accuracy/REPORT.llm-anthropic.md) (LLM-Modus).
+Berichte: [accuracy/REPORT.md](./accuracy/REPORT.md) (deterministisch, CI-überwacht), [accuracy/REPORT.llm-anthropic.md](./accuracy/REPORT.llm-anthropic.md), [accuracy/REPORT.llm-openai.md](./accuracy/REPORT.llm-openai.md) und [accuracy/REPORT.llm-groq.md](./accuracy/REPORT.llm-groq.md).
+
+## Cache-Schicht
+
+Die Ergebnisse des LLM-Modus werden auf der Festplatte unter `~/.cache/lucairn-ai-act-classifier/llm/` zwischengespeichert (respektiert `XDG_CACHE_HOME`). Der Cache-Schlüssel ist `sha256(provider + model + lexikon-version + lang + normalisierte-eingabe)`, sodass dieselbe Eingabe auf derselben Lexikon-Version ein byte-stabiles Ergebnis liefert, ohne die API zu belasten.
+
+- **Cache-Hit:** typischerweise <100 ms (kein Netzwerk) gegenüber ~1–5 s für einen frischen API-Aufruf — über 10-facher Speedup bei jeder Wiederholung.
+- **Cache-Miss:** der Provider wird aufgerufen, das Ergebnis in den Cache geschrieben, und die zwischengespeicherten Merkmale bedienen jeden weiteren Aufruf, bis sich die Lexikon-Version ändert.
+- **Umgehung:** mit `--no-cache` einen frischen API-Aufruf erzwingen (für diesen Aufruf wird der Cache weder gelesen noch geschrieben).
+- **Invalidierung:** automatisch bei Lexikon-Version-Bump (z. B. v0.1.1 → v0.2.0); die Lexikon-Version ist Teil des Cache-Schlüssels, sodass alte Einträge nach einem Upgrade einfach nicht mehr referenziert werden.
+- **Fehlgeschlagene Aufrufe werden nicht zwischengespeichert.** Nur erfolgreiche Provider-Ergebnisse landen im Cache.
+
+Cache manuell löschen: `rm -rf ~/.cache/lucairn-ai-act-classifier`.
 
 ## Architektur (in einem Absatz)
 
