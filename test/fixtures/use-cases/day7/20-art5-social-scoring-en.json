@@ -1,0 +1,22 @@
+{
+  "id": "fixture-day7-20-art5-social-scoring-en",
+  "lang": "en",
+  "input": "We build an AI system that performs social scoring of citizens across multiple unrelated life domains and feeds a trustworthiness score into housing and benefit allocation decisions.",
+  "expected": {
+    "article_5_prohibited": true,
+    "article_5_letters": ["c"],
+    "annex_iii_high_risk": false,
+    "annex_iii_domains": [5],
+    "suppressed_by_article_5": true,
+    "article_10_applicable": false,
+    "article_12_applicable": false,
+    "article_13_applicable": false,
+    "article_14_applicable": false,
+    "article_15_applicable": false,
+    "three_category_applicable": [],
+    "annex_iv_required": false,
+    "bucket": "article_5",
+    "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "notes": "Article 5(1)(c) — evaluating or classifying natural persons based on their social behaviour or known/predicted personal characteristics leading to detrimental or unfavourable treatment in social contexts unrelated to the original collection context, or unjustified/disproportionate to the gravity of the conduct. Lexicon hits: 'social scoring', 'trustworthiness score'. The 'benefit eligibility' phrasing also lexically matches Annex III.5 essential services (which would otherwise be high-risk), but Article 5 prohibition supersedes the high-risk classification — the domain hit is retained for transparency, high_risk computed false. Cite: EUR-Lex Regulation (EU) 2024/1689, Article 5(1)(c)."
+  }
+}
