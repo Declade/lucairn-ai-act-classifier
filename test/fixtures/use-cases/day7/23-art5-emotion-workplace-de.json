@@ -1,7 +1,7 @@
 {
   "id": "fixture-day7-23-art5-emotion-workplace-de",
   "lang": "de",
-  "input": "Wir bieten Arbeitgebern ein KI-System für emotionserkennung arbeitsplatz an, das die stimmungserkennung mitarbeiter im Kundenservice-Call-Center auswertet.",
+  "input": "Ein KI-System zur Emotionserkennung am Arbeitsplatz überwacht Stimmungen der Mitarbeiter während Videokonferenzen, um Burnout-Risiken zu erkennen.",
   "expected": {
     "article_5_prohibited": true,
     "article_5_letters": [
@@ -19,7 +19,7 @@
     "article_15_applicable": false,
     "three_category_applicable": [],
     "annex_iv_required": false,
-    "notes": "Art. 5 Abs. 1 Buchst. f — Ableitung von Emotionen einer natürlichen Person am Arbeitsplatz oder in Bildungseinrichtungen (außer aus medizinischen oder Sicherheitsgründen). Lexikon-Treffer: 'emotionserkennung arbeitsplatz', 'stimmungserkennung mitarbeiter'. Das Lexikon-Phrasen-Set löst Anhang III Nr. 1 (Emotionserkennung) lexikalisch aus; das Anhang-III-Domain wird trotz Art-5-Suppression im Result erhalten (transparenter Hinweis). Anhang III Nr. 4 würde 'mitarbeiterüberwachung' als ganze Phrase erfordern, was im Input nicht vorkommt. Cite: EUR-Lex Regulation (EU) 2024/1689, Art. 5 Abs. 1 Buchst. f."
+    "notes": "Art. 5 Abs. 1 Buchst. f — Ableitung von Emotionen einer natürlichen Person am Arbeitsplatz oder in Bildungseinrichtungen (außer aus medizinischen oder Sicherheitsgründen). Lexikon-Treffer: 'emotionserkennung am arbeitsplatz', 'stimmungen der mitarbeiter erkennen' (Day-8 G-4 natural-German variants — fixture rewritten for natural German per consultant judgment). Das Lexikon-Phrasen-Set löst Anhang III Nr. 1 (Emotionserkennung) lexikalisch aus; das Anhang-III-Domain wird trotz Art-5-Suppression im Result erhalten (transparenter Hinweis). Anhang III Nr. 4 würde 'mitarbeiterüberwachung' als ganze Phrase erfordern, was im Input nicht vorkommt. Cite: EUR-Lex Regulation (EU) 2024/1689, Art. 5 Abs. 1 Buchst. f."
   },
   "bucket": "article_5",
   "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689"

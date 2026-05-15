@@ -2,7 +2,7 @@
 
 - **Rules version:** `v0.1.0`
 - **Rules hash:** `4a8a49ba` (full: `4a8a49bae4d52c6b7a8b466308a8113e2661833f18909758aa0a788141bb9b61`)
-- **Last run:** 2026-05-15T20:55:51.600Z
+- **Last run:** 2026-05-15T20:58:16.360Z
 - **Fixture corpus:** 50 cases
 
 > **What this report measures:** internal consistency between the curated 50-case fixture corpus and the v0.1.0 lexicon. The headline numbers below are **not** a measure of arbitrary real-world accuracy — the corpus was shaped during the Day-7 build to match the lexicon's canonical phrases. Per-fixture accuracy uses set-equality on Day-7 fixtures and subset-containment on the 11 legacy day3/4/5 fixtures pending Day-8 backfill. See [METHODOLOGY.md §"Honest limitations"](./METHODOLOGY.md#honest-limitations) for the Day-8 polish backlog. The CI floor is 80% overall + 100% Article 5; current numbers exceed both.
@@ -11,9 +11,9 @@
 
 | Metric | Score |
 |---|---|
-| **Overall accuracy** (granular per-field pass rate) | **100.0%** |
+| **Overall accuracy** (granular per-field pass rate) | **98.2%** |
 | **Article 5 prohibition detection** (safety-critical) | **100.0%** |
-| **Binary high-risk classification** (Annex III + Article 6) | **100.0%** |
+| **Binary high-risk classification** (Annex III + Article 6) | **98.0%** |
 
 ## Per-bucket accuracy (pass-all-asserted-fields)
 
@@ -21,7 +21,7 @@
 |---|---|---|---|
 | annex_iii | 17 | 17 | 100.0% |
 | article_5 | 7 | 7 | 100.0% |
-| article_50 | 6 | 6 | 100.0% |
+| article_50 | 6 | 5 | 83.3% |
 | negative | 9 | 9 | 100.0% |
 | legacy | 11 | 11 | 100.0% |
 
@@ -29,9 +29,9 @@
 
 | | v1.0 release target | CI floor (Day 7) | Current |
 |---|---|---|---|
-| Overall | ≥85% | ≥80% | **100.0%** |
+| Overall | ≥85% | ≥80% | **98.2%** |
 | Article 5 | 100% | 100% | **100.0%** |
-| Binary high-risk | ≥90% | (informational) | **100.0%** |
+| Binary high-risk | ≥90% | (informational) | **98.0%** |
 
 ## Per-fixture results
 
@@ -75,7 +75,7 @@
 | `fixture-day7-25-art50-customer-service-bot-de` | de | article_50 | PASS | — |
 | `fixture-day7-26-art50-synthetic-marketing-image-en` | en | article_50 | PASS | — |
 | `fixture-day7-27-art50-generated-music-track-de` | de | article_50 | PASS | — |
-| `fixture-day7-28-art50-emotion-marketing-de` | de | article_50 | PASS | — |
+| `fixture-day7-28-art50-emotion-marketing-de` | de | article_50 | FAIL | annex_iii.high_risk, annex_iii.domains, annex_iii.sub_letters, three_category.applicable_categories, annex_iv_required, article_10.applicable, article_12.applicable, article_13.applicable, article_14.applicable, article_15.applicable |
 | `fixture-day7-29-art50-political-deepfake-en` | en | article_50 | PASS | — |
 | `fixture-day7-30-art50-news-summarization-de` | de | article_50 | PASS | — |
 | `fixture-day7-31-neg-image-denoising-de` | de | negative | PASS | — |
@@ -87,6 +87,24 @@
 | `fixture-day7-37-neg-ad-optim-en` | en | negative | PASS | — |
 | `fixture-day7-38-neg-factory-qc-de` | de | negative | PASS | — |
 | `fixture-day7-39-neg-search-ranking-de` | de | negative | PASS | — |
+
+## Misclassification details
+
+### `fixture-day7-28-art50-emotion-marketing-de` (de, bucket: article_50)
+
+| Field | Expected | Actual |
+|---|---|---|
+| `annex_iii.high_risk` | `true` | `false` |
+| `annex_iii.domains` | `[1]` | `[]` |
+| `annex_iii.sub_letters` | `{"1":["c"]}` | `{"1":[]}` |
+| `three_category.applicable_categories` | `[1,2,3]` | `[]` |
+| `annex_iv_required` | `true` | `false` |
+| `article_10.applicable` | `true` | `false` |
+| `article_12.applicable` | `true` | `false` |
+| `article_13.applicable` | `true` | `false` |
+| `article_14.applicable` | `true` | `false` |
+| `article_15.applicable` | `true` | `false` |
+
 ## Methodology
 
 See [METHODOLOGY.md](./METHODOLOGY.md) for the coverage matrix, source allowlist, formulas, and "absent field = skip" semantics.
