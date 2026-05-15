@@ -159,6 +159,19 @@ describe('syncThreeCategory() — error paths', () => {
       /exactly 3 categories/,
     );
   });
+
+  it('missing source file → exits non-zero (Codex r1 C37 closure)', () => {
+    // The script's source-resolution chain (CLI > env > relative fallback)
+    // exits non-zero when none of the candidate paths resolve to a readable
+    // file. Implementation calls process.exit(2); vitest intercepts this and
+    // surfaces it as a throwable error containing "process.exit". Either an
+    // ENOENT-style throw or the exit-2 surface counts as PASS here — both
+    // represent the same failure mode (clean non-zero exit, no silent return).
+    const missing = join(tmpRoot, 'definitely-does-not-exist.ts');
+    expect(() => syncThreeCategory({ sourcePath: missing, outputPath })).toThrow(
+      /ENOENT|no such file|not found|process\.exit/i,
+    );
+  });
 });
 
 describe('syncThreeCategory() — SHA-based drift signal', () => {
