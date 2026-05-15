@@ -79,7 +79,10 @@
         { "phrase": "polygraph" },
         { "phrase": "lie detector" },
         { "phrase": "evidence reliability" },
-        { "phrase": "crime profiling" }
+        { "phrase": "crime profiling" },
+        { "phrase": "victim-risk assessment" },
+        { "phrase": "risk of becoming victim" },
+        { "phrase": "assess the risk of victim" }
       ]
     },
     "7_migration_border": {

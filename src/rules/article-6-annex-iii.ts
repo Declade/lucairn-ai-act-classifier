@@ -402,6 +402,22 @@ function narrowSubLetters(
   if (domain.annex_iii_number === 6) {
     // Polygraph → 6(b); evidence reliability → 6(c); recidivism / crime profiling → 6(d) or 6(e).
     const hits = new Set<string>();
+    // ¶6(a) — risk of a natural person BECOMING victim of a criminal offence.
+    if (
+      matchedLower.some((p) =>
+        [
+          'victim-risk assessment',
+          'risk of becoming victim',
+          'assess the risk of victim',
+          'opfer-risiko-bewertung',
+          'risikobewertung opfer',
+          'risiko opfer einer straftat',
+          'bewertung opfer straftat',
+        ].includes(p),
+      )
+    ) {
+      hits.add('a');
+    }
     if (
       matchedLower.some((p) =>
         ['polygraph', 'lie detector', 'lügendetektor'].includes(p),

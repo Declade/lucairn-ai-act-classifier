@@ -373,6 +373,27 @@ describe('classifyAnnexIII() — Annex III.7 sub-letter narrowing', () => {
   });
 });
 
+describe('classifyAnnexIII() — Annex III.6(a) victim-risk narrowing', () => {
+  it('Annex III.6(a) — recidivism + victim-risk (DE) → narrows to ["a", "d"]', () => {
+    const result = classify(
+      'Eine Polizeibehörde nutzt unser KI-System zur Einschätzung von Rückfallrisiko bei verurteilten Straftätern UND zur Risikobewertung Opfer einer Straftat im selben Stadtteil.',
+      'de',
+    );
+    const dom = result.annexIII.domains.find((d) => d.annex_iii_number === 6);
+    expect(dom).toBeDefined();
+    expect(dom!.sub_letters).toEqual(['a', 'd']);
+  });
+
+  it('Annex III.6(a) — pure victim-risk (EN) → narrows to ["a"]', () => {
+    const result = classify(
+      'A police precinct deploys an AI tool that performs victim-risk assessment to flag residents at elevated risk of becoming victim of property crime.',
+    );
+    const dom = result.annexIII.domains.find((d) => d.annex_iii_number === 6);
+    expect(dom).toBeDefined();
+    expect(dom!.sub_letters).toContain('a');
+  });
+});
+
 describe('classifyAnnexIII() — Annex III.8 sub-letter narrowing', () => {
   it('Annex III.8 election influence → narrows to ["b"]', () => {
     const result = classify(
