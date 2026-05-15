@@ -1,0 +1,22 @@
+{
+  "id": "fixture-day7-38-neg-factory-qc-de",
+  "lang": "de",
+  "input": "Eine Qualitätskontroll-Kamera in der Fertigungslinie erkennt mit KI-Bildverarbeitung Defekte an gefertigten Bauteilen und sortiert fehlerhafte Teile aus.",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": false,
+    "annex_iii_domains": [],
+    "suppressed_by_article_5": false,
+    "article_10_applicable": false,
+    "article_12_applicable": false,
+    "article_13_applicable": false,
+    "article_14_applicable": false,
+    "article_15_applicable": false,
+    "three_category_applicable": [],
+    "annex_iv_required": false,
+    "bucket": "negative",
+    "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
+    "notes": "Defekterkennung an Bauteilen in der Fertigung berührt KEINE Anhang-III-Domäne. Insbesondere ist dies KEIN Beschäftigungs-Bezug nach Anhang III Nr. 4 — die Kamera bewertet PRODUKTE, nicht Arbeitnehmer. Es handelt sich auch NICHT um eine Sicherheitskomponente kritischer Infrastruktur nach Anhang III Nr. 2 (Fertigung von Konsumgütern ist keine kritische Infrastruktur im Sinne der Verordnung). Art. 5 greift nicht. Art. 50 greift nicht. Cite: EUR-Lex Regulation (EU) 2024/1689, Art. 6 Abs. 3."
+  }
+}

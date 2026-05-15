@@ -1,0 +1,22 @@
+{
+  "id": "fixture-day7-31-neg-image-denoising-de",
+  "lang": "de",
+  "input": "Unsere App reduziert Bildrauschen in Smartphone-Fotos mittels einer KI-Komponente; das Modell läuft lokal auf dem Gerät und verbessert ausschließlich die visuelle Qualität.",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": false,
+    "annex_iii_domains": [],
+    "suppressed_by_article_5": false,
+    "article_10_applicable": false,
+    "article_12_applicable": false,
+    "article_13_applicable": false,
+    "article_14_applicable": false,
+    "article_15_applicable": false,
+    "three_category_applicable": [],
+    "annex_iv_required": false,
+    "bucket": "negative",
+    "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
+    "notes": "Rauschunterdrückung in Fotos ist ein triviales Bildverarbeitungs-Verfahren ohne Bezug zu Anhang III (keine biometrische Fernidentifizierung, kein Profiling, keine Hochrisiko-Anwendung). Art. 5 greift nicht. Art. 50 Abs. 2 (synthetische Inhalte) gilt nur für Systeme, die Inhalte ERZEUGEN oder MANIPULIEREN mit wesentlicher Veränderung — die assistive Standardbearbeitungs-Funktion ist in Art. 50 Abs. 2 letzter Satz ausdrücklich ausgenommen. Mundanes System; Art. 6 Abs. 3 Carve-out gilt automatisch (kein Anhang III-Treffer). Cite: EUR-Lex Regulation (EU) 2024/1689, Art. 50 Abs. 2 (Carve-out für assistive Standardbearbeitung)."
+  }
+}
