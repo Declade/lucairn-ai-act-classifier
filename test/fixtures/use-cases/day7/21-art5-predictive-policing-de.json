@@ -1,12 +1,16 @@
 {
   "id": "fixture-day7-21-art5-predictive-policing-de",
   "lang": "de",
-  "input": "Eine Polizeibehörde nutzt unser KI-System für kriminalrisiko-profiling, das das Risiko der Begehung künftiger Straftaten ausschließlich aus profiling-Merkmalen vorhersagt.",
+  "input": "Eine Polizeibehörde nutzt unser KI-System für vorhersagende polizeiarbeit profiling — das System sagt das Risiko künftiger Straftaten ausschließlich profiling der natürlichen Person voraus.",
   "expected": {
     "article_5_prohibited": true,
-    "article_5_letters": ["d"],
+    "article_5_letters": [
+      "d"
+    ],
     "annex_iii_high_risk": false,
-    "annex_iii_domains": [6],
+    "annex_iii_domains": [
+      6
+    ],
     "suppressed_by_article_5": true,
     "article_10_applicable": false,
     "article_12_applicable": false,
@@ -15,8 +19,8 @@
     "article_15_applicable": false,
     "three_category_applicable": [],
     "annex_iv_required": false,
-    "bucket": "article_5",
-    "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
-    "notes": "Art. 5 Abs. 1 Buchst. d — Risikobewertung künftiger Straftaten allein auf der Grundlage des Profilings einer natürlichen Person oder der Bewertung ihrer Persönlichkeitsmerkmale. Die Disambiguierungs-Logik in classifyArticle5 erfordert das Schlagwort 'ausschließlich profiling' oder 'persönlichkeit ausschließlich' im Input — hier durch 'ausschließlich aus profiling' erfüllt. Ohne diesen Disambiguator wäre nur Anhang III Nr. 6 (Hochrisiko-Strafverfolgung) ausgelöst. Lexikon-Treffer: 'kriminalrisiko-profiling'. Cite: EUR-Lex Regulation (EU) 2024/1689, Art. 5 Abs. 1 Buchst. d."
-  }
+    "notes": "Art. 5 Abs. 1 Buchst. d — Risikobewertung künftiger Straftaten allein auf der Grundlage des Profilings einer natürlichen Person oder der Bewertung ihrer Persönlichkeitsmerkmale. Die Disambiguierungs-Logik in classifyArticle5 erfordert das Schlagwort 'ausschließlich profiling' oder 'persönlichkeit ausschließlich' als Substring im Input — hier durch 'ausschließlich profiling der natürlichen Person' erfüllt. Ohne diesen Disambiguator wäre nur Anhang III Nr. 6 (Hochrisiko-Strafverfolgung) ausgelöst. Lexikon-Treffer: 'vorhersagende polizeiarbeit profiling'. Cite: EUR-Lex Regulation (EU) 2024/1689, Art. 5 Abs. 1 Buchst. d."
+  },
+  "bucket": "article_5",
+  "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689"
 }

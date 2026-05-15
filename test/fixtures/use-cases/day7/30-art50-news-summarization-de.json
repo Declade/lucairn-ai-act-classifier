@@ -13,11 +13,13 @@
     "article_13_applicable": false,
     "article_14_applicable": false,
     "article_15_applicable": false,
-    "article_50_paragraphs": ["50(4)_sub2"],
+    "article_50_paragraphs": [
+      "50(4)_sub2"
+    ],
     "three_category_applicable": [],
     "annex_iv_required": false,
-    "bucket": "article_50",
-    "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
     "notes": "Art. 50 Abs. 4 Unterabsatz 2 — Betreiber von KI-Systemen, die Text erzeugen oder manipulieren, der veröffentlicht wird, um die Öffentlichkeit über Angelegenheiten von öffentlichem Interesse zu informieren, müssen die künstliche Erzeugung offenlegen. Die Carve-out für redaktionelle Kontrolle gilt NUR, wenn eine natürliche oder juristische Person die redaktionelle Verantwortung trägt — der Input erwähnt KEINE redaktionelle Kontrolle, daher greift die Offenlegungspflicht. Lexikon-Treffer: 'automatisierter journalismus', 'ki-generierte nachrichten', 'berichterstattung öffentliches interesse'. Cite: EUR-Lex Regulation (EU) 2024/1689, Art. 50 Abs. 4 Unterabsatz 2."
-  }
+  },
+  "bucket": "article_50",
+  "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689"
 }

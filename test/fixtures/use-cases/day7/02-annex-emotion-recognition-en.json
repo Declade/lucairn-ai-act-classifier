@@ -6,19 +6,31 @@
     "article_5_prohibited": false,
     "article_5_letters": [],
     "annex_iii_high_risk": true,
-    "annex_iii_domains": [1],
-    "annex_iii_sub_letters": { "1": ["c"] },
+    "annex_iii_domains": [
+      1
+    ],
+    "annex_iii_sub_letters": {
+      "1": [
+        "c"
+      ]
+    },
     "suppressed_by_article_5": false,
     "article_10_applicable": true,
     "article_12_applicable": true,
     "article_13_applicable": true,
     "article_14_applicable": true,
     "article_15_applicable": true,
-    "article_50_paragraphs": ["50(3)"],
-    "three_category_applicable": [1, 2, 3],
+    "article_50_paragraphs": [
+      "50(3)"
+    ],
+    "three_category_applicable": [
+      1,
+      2,
+      3
+    ],
     "annex_iv_required": true,
-    "bucket": "annex_iii",
-    "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
     "notes": "Annex III paragraph 1(c) — emotion recognition. The deployment is in retail (NOT in workplace or educational institutions), so Article 5(1)(f) prohibition does NOT fire. Lexicon hit: 'emotion recognition'. Article 50(3) transparency obligation also fires via the Annex-III-style fallback in classifyArticle50 (paragraph 1 with sub-letter c). Cite: EUR-Lex Regulation (EU) 2024/1689, Annex III paragraph 1(c)."
-  }
+  },
+  "bucket": "annex_iii",
+  "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689"
 }

@@ -7,3 +7,6 @@ coverage/
 .env
 .env.local
 *.log
+
+# Accuracy harness machine-readable artifact (only the .md is committed).
+accuracy/REPORT.json

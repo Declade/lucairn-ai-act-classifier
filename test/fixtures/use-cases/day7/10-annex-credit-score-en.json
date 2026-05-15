@@ -6,18 +6,28 @@
     "article_5_prohibited": false,
     "article_5_letters": [],
     "annex_iii_high_risk": true,
-    "annex_iii_domains": [5],
-    "annex_iii_sub_letters": { "5": ["b"] },
+    "annex_iii_domains": [
+      5
+    ],
+    "annex_iii_sub_letters": {
+      "5": [
+        "b"
+      ]
+    },
     "suppressed_by_article_5": false,
     "article_10_applicable": true,
     "article_12_applicable": true,
     "article_13_applicable": true,
     "article_14_applicable": true,
     "article_15_applicable": true,
-    "three_category_applicable": [1, 2, 3],
+    "three_category_applicable": [
+      1,
+      2,
+      3
+    ],
     "annex_iv_required": true,
-    "bucket": "annex_iii",
-    "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
     "notes": "Annex III paragraph 5(b) — evaluating creditworthiness or establishing credit score of natural persons (excluding fraud-detection use). Lexicon hits: 'credit scoring', 'creditworthiness'. Cite: EUR-Lex Regulation (EU) 2024/1689, Annex III paragraph 5(b)."
-  }
+  },
+  "bucket": "annex_iii",
+  "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689"
 }

@@ -15,8 +15,8 @@
     "article_15_applicable": false,
     "three_category_applicable": [],
     "annex_iv_required": false,
-    "bucket": "negative",
-    "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
     "notes": "Produktsuche-Sortierung auf einem E-Commerce-Katalog berührt keine Anhang-III-Domäne. Die Sortierung bewertet PRODUKTE, nicht natürliche Personen. Art. 5 Abs. 1 Buchst. c (Social Scoring) greift nicht, weil keine Bewertung oder Klassifizierung natürlicher Personen auf Grundlage des sozialen Verhaltens stattfindet. Art. 50 greift nicht (keine direkte Interaktion / kein generativer Output / keine Emotionserkennung / kein Deepfake / kein Text mit öffentlich-interessanter Veröffentlichung). Mundane Konsumenten-Such-KI. Cite: EUR-Lex Regulation (EU) 2024/1689, Art. 6 Abs. 3."
-  }
+  },
+  "bucket": "negative",
+  "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689"
 }

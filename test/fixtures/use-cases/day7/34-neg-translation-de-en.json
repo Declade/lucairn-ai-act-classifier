@@ -15,8 +15,8 @@
     "article_15_applicable": false,
     "three_category_applicable": [],
     "annex_iv_required": false,
-    "bucket": "negative",
-    "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
     "notes": "Passive language translation of user-supplied text does NOT trigger Annex III (no biometrics, no critical infrastructure, etc.) and does NOT trigger Article 50(2) because Article 50(2)'s last sentence excludes systems that 'perform an assistive function for standard editing or do not substantially alter the input data provided by the deployer or the semantics thereof' — translation preserves semantics, not substantial alteration. Mundane B2B / B2C utility AI. Cite: EUR-Lex Regulation (EU) 2024/1689, Article 50(2) carve-out + Article 6(3)."
-  }
+  },
+  "bucket": "negative",
+  "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689"
 }
