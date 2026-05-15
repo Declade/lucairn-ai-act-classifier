@@ -9,6 +9,8 @@
 
 > **What this report measures:** internal consistency between the curated 50-case fixture corpus and the v0.1.0 lexicon. The headline numbers below are **not** a measure of arbitrary real-world accuracy — the corpus was shaped during the Day-7 build to match the lexicon's canonical phrases. Per-fixture accuracy uses set-equality on Day-7 fixtures and subset-containment on the 11 legacy day3/4/5 fixtures pending Day-8 backfill. See [METHODOLOGY.md §"Honest limitations"](./METHODOLOGY.md#honest-limitations) for the Day-8 polish backlog. The CI floor is 80% overall + 100% Article 5; current numbers exceed both.
 
+**Non-determinism note:** LLM-mode results vary across runs (Haiku is probabilistic). Across two independent harness runs during the Day-9 build, overall accuracy fluctuated between **93.5%** and **97.6%**. The headline numbers below are from a single representative run; rerunning the harness will produce different (correlated but not identical) numbers. For reproducible classification, use deterministic mode (see `accuracy/REPORT.md`).
+
 ## Headline numbers
 
 | Metric | Score |
