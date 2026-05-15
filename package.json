@@ -52,6 +52,7 @@
     "sync:three-category": "node --import tsx scripts/sync-three-category.ts",
     "sync:three-category:check": "node --import tsx scripts/sync-three-category.ts --check",
     "accuracy": "node --import tsx scripts/accuracy.ts",
+    "accuracy:llm-anthropic": "node --import tsx scripts/accuracy.ts --llm anthropic",
     "accuracy:check": "vitest run test/accuracy"
   },
   "dependencies": {
@@ -74,5 +75,8 @@
       "esbuild"
     ]
   },
-  "private": false
+  "private": false,
+  "optionalDependencies": {
+    "@anthropic-ai/sdk": "^0.30.1"
+  }
 }
