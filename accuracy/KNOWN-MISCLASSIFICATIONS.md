@@ -1,0 +1,116 @@
+# Known misclassifications & v0.2 polish backlog
+
+This document lists known classifier limitations surfaced during the Day-7 build of the 50-case fixture corpus + accuracy harness. As of v0.1.0 the harness reports 0 fixture-level misclassifications on the 50-case corpus (overall 100.0%, Art 5 100.0%, binary high-risk 100.0%), but the harness only checks what the fixtures pin. The items below are real limitations the harness does NOT currently catch — every entry should be revisited in v0.2.
+
+The full discussion of why the 100% headline is a fixture-engineering metric rather than a real-world-accuracy metric lives in [`METHODOLOGY.md`](./METHODOLOGY.md) §"Honest limitations". The entries below are the concrete, actionable items.
+
+## High-priority gaps (v0.2 target)
+
+### G-1. Annex III sub-letter narrowing for paragraphs 2, 3, 7, 8
+
+**Status:** documented, not yet fixed.
+**Affected fixtures:** `fixture-day7-04` (water), `fixture-day7-05` (electricity), `fixture-day7-06` (admission), `fixture-day7-07` (grading), `fixture-day7-14` (asylum), `fixture-day7-15` (visa), `fixture-day7-16` (judicial), `fixture-day7-17` (election).
+**Where:** `src/rules/article-6-annex-iii.ts:285-468` `narrowSubLetters()`.
+
+The function only implements narrowing for Annex III paragraphs 1, 4, 5, 6. For paragraphs 2 (critical infrastructure), 3 (education), 7 (migration/border), 8 (justice/democracy), the result emits `sub_letters: []` — a "domain X applies, sub-letter unspecified" outcome. Day-7 fixtures for those domains correspondingly omit `expected.annex_iii_sub_letters` rather than pin a sub-letter expectation that the harness would fail.
+
+**v0.2 fix:** extend `narrowSubLetters()` with case branches for paragraphs 2, 3, 7, 8. Then backfill `expected.annex_iii_sub_letters` on the 8 Day-7 fixtures listed above.
+
+### G-2. Annex III.6(a) victim-risk lexicon coverage gap
+
+**Status:** documented in fixture-day7-12 notes; not yet fixed.
+**Affected fixtures:** `fixture-day7-12` (recidivism-DE).
+**Where:** `src/data/patterns.{en,de}.json` `annex_iii.6_law_enforcement`.
+
+The fixture covers a hybrid case where a recidivism-assessment system also assesses the risk of a natural person becoming a victim of crime (Annex III.6(a)). The lexicon currently only has `rückfallrisiko` mapping to sub-letter `d`. The fixture's `expected.annex_iii_sub_letters` was narrowed to `[d]` only — the (a) coverage gap is documented in the fixture's `notes` field.
+
+**v0.2 fix:** add EN+DE lexicon phrases for Annex III.6(a) "risk of becoming victim of a criminal offence" (e.g. `victim-risk assessment`, `opfer-risiko-bewertung`, `risikobewertung opfer`). Add sub-letter narrowing in `narrowSubLetters()` paragraph 6 branch. Update fixture expectation back to `[a, d]`.
+
+### G-3. Plurals + German morphology not normalised
+
+**Status:** known limitation; fixture inputs rewritten to use singular canonical forms.
+**Affected fixtures:** `fixture-day7-14` (asylum-EN — was `asylum applications`, now `each asylum application`), `fixture-day7-15` (visa-DE — was `Visumantragen`, now `jedes Visumantrag`), `fixture-day7-12` (recidivism-DE — was `des Rückfallrisikos`, now `von Rückfallrisiko bei`).
+**Where:** `src/extract/normalize.ts` + `src/extract/keyword.ts`.
+
+The keyword extractor matches n-grams against the lexicon verbatim after NFKC normalization, lowercasing, punctuation stripping, and tokenization — but no stemming or lemmatization. English plurals (`-s`, `-es`, `-ies`) and German morphological inflections (genitive `-s`, accusative `-en`, dative `-em`, irregular plurals) are NOT collapsed to canonical forms.
+
+**v0.2 fix:** add a simple stemming pass for English (`-s`, `-es`, `-ies` → singular) and a lemma-lookup table for German irregular morphology. Alternatively, expand the lexicon to include morphological variants. The stemming path is cheaper to maintain.
+
+### G-4. Article 5(1)(d) disambiguator is substring-match, not n-gram-match
+
+**Status:** documented; fixture rewritten to expose the literal substring.
+**Affected fixtures:** `fixture-day7-21` (predictive-policing-DE — input rewritten to include `ausschließlich profiling der natürlichen Person` as a literal substring).
+**Where:** `src/rules/article-5.ts` (the disambiguator phrase table).
+
+The Art 5(1)(d) "solely on profiling" disambiguator is implemented as `String.prototype.includes` against the raw lower-cased input, not n-gram match against the tokenized form. Inputs that EXPRESS the disambiguator semantically but don't contain the exact substring (`ausschließlich profiling`, `solely on profiling`, `persönlichkeit ausschließlich`) will NOT trigger the prohibition — even if a real consultant would read the input as describing prohibited predictive policing.
+
+**v0.2 fix:** either (a) loosen the disambiguator to accept paraphrased forms (e.g. add `ausschließlich auf profiling`, `nur profiling`, `solely based on profiling` as accepted substrings), or (b) move the disambiguator to n-gram match against a curated lexicon group `article_5_d_disambiguator`, or (c) document the strict-substring requirement loudly in the public CLI's `--explain` output (Day 9 work) so a consultant whose input doesn't trigger 5(1)(d) sees WHY and can rephrase.
+
+## Medium-priority gaps (v0.2 nice-to-have)
+
+### M-1. Annex III.4 worker-monitoring phrase coverage
+
+**Status:** lexicon-completeness gap.
+**Affected fixtures:** `fixture-day7-23` (emotion-workplace-DE — expected annex_iii_domains adjusted from `[1, 4]` to `[1]` because `mitarbeiterüberwachung` requires the literal compound, not "Mitarbeiter" + "auswertet" separately).
+
+The `4_employment` DE lexicon includes `mitarbeiterüberwachung` as a single compound, but the fixture-23 input uses `mitarbeiter` separately. Real consultant descriptions of workplace emotion-tracking would routinely separate the words; the lexicon's monolithic compound misses them.
+
+**v0.2 fix:** add a 2-gram pattern like `mitarbeiter überwachen`, `mitarbeiter auswerten`, `arbeitnehmer beobachten` to the lexicon, OR add a normalization pass that merges compound-collocation pairs into compound-noun candidates before lexicon lookup.
+
+### M-2. Annex III set-equality vs subset asymmetry
+
+**Status:** documented; intentional for v0.1 to preserve legacy semantics.
+**Where:** `scripts/accuracy.ts` `checkFixture()`.
+
+The harness uses set-equality for Day-7 fixtures (where `bucket` is present) and subset-containment for legacy day3/4/5 fixtures (matching the existing snapshot-spec semantics at `test/rules/snapshots.spec.ts:205-207`). This means a Day-7 fixture asserting `[5]` fails if the classifier also fires `[7]`; a legacy fixture would not.
+
+**v0.2 fix:** after backfilling Day-7 fields onto the 11 legacy fixtures, unify on set-equality. The legacy subset-containment will be removed.
+
+### M-3. No `article_50_paragraphs` on legacy day5 fixtures
+
+**Status:** additive-schema; legacy fixtures untouched per dispatch spec.
+**Affected fixtures:** `day5/01-art50-chatbot-en.json`, `day5/02-art50-deepfake-de.json`.
+
+The 2 existing day5 fixtures cover Art 50 paragraph paths but don't carry the new `expected.article_50_paragraphs` field. The harness silently skips that check on them, so an unintended over-firing of (e.g.) 50(3) on the chatbot fixture would NOT be caught.
+
+**v0.2 fix:** backfill `expected.article_50_paragraphs: ['50(1)']` on day5/01 and `expected.article_50_paragraphs: ['50(4)_sub1']` on day5/02. (Also backfill `bucket`, `source_url`.)
+
+### M-4. No adversarial / out-of-distribution cases
+
+**Status:** documented in METHODOLOGY.md §"Honest limitations" #8.
+
+The corpus is curated and friendly. v0.2 should add 5-10 "adversarial" cases per bucket: semantically AI-Act-relevant but lexically distant; deliberate paraphrase to evade lexicon; code-switched EN/DE; consultant-jargon vs reg-text vs everyday-language variants.
+
+**v0.2 fix:** add `test/fixtures/use-cases/day7-adversarial/` directory; expand harness to a 100+ case corpus.
+
+### M-5. No LLM-extractor harness pass
+
+**Status:** the `--llm` flag is reserved for Day 9; the harness only runs deterministic mode.
+
+**v0.2 fix:** after Day 9 lands `--llm anthropic` LLM-feature-extraction, add a `pnpm accuracy:llm` variant that runs the harness with `opts.llm = 'anthropic'` and compares the two accuracy numbers. The delta measures whether LLM extraction lifts accuracy on adversarial inputs.
+
+## Low-priority items
+
+### L-1. The 11 legacy fixtures lack `source_url`
+
+**Status:** additive-schema; backfilled in v0.2.
+
+### L-2. `legacy` bucket is a catch-all
+
+The harness lumps the 11 day3/4/5 fixtures into a single `legacy` bucket. v0.2 should re-tag them with the correct corpus bucket (annex_iii / article_5 / article_50 / negative).
+
+### L-3. EN Article 5(1)(d) disambiguator coverage parity
+
+The EN lexicon's Art 5(1)(d) disambiguator (`solely on profiling`, `personality only`) is symmetric to DE (`ausschließlich profiling`, `persönlichkeit ausschließlich`). When v0.2 loosens the disambiguator (G-4 above), maintain EN/DE parity in both substring sets.
+
+## How to add an entry to this file
+
+When the accuracy harness reveals a fixture failure that is NOT closed by re-shaping the fixture or fixing the lexicon, add an entry here with:
+
+1. **G-N / M-N / L-N tag** — priority (G = high, M = medium, L = low).
+2. **Fixture ID + URL of source.**
+3. **Expected vs actual** — paste the field check that failed.
+4. **Hypothesis** — fixture-side bug, lexicon-coverage gap, rule-engine narrowing gap, or genuine consultant-judgment disagreement.
+5. **Pointer to the fix-up workstream** — v0.2 backlog, Day-8 lexicon-tuning, or explicit consultant-input-needed flag.
+
+This is the public-disclosure record. Better to ship "we score 100% on this corpus + these 5 known limitations" honestly than to ship a fake "100% accurate".

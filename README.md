@@ -32,6 +32,22 @@ ANTHROPIC_API_KEY="<your-anthropic-key>" npx @lucairn/ai-act-classifier --llm an
 
 Rules-first hybrid. A deterministic TypeScript rules engine evaluates Article 5, 6+Annex III, 10, 13, 14, 15, 50 against features extracted from your input. Default extraction is a keyword + phrase pattern matcher in EN+DE — works offline, no API key. The optional `--llm` mode uses your own API key to do better feature extraction; the rules engine still picks the articles deterministically. Every output cites its rule version (SHA-pinned) so the same input always produces the same classification.
 
+## Accuracy
+
+The classifier is benchmarked against a 50-case bilingual fixture corpus (CC-BY-4.0): 24 Annex III high-risk + 8 Article 5 prohibited + 8 Article 50 transparency + 10 negative cases; 21 EN + 29 DE. Current numbers on the v0.1.0 rule-set:
+
+- **Overall:** 100.0% (granular per-field pass rate)
+- **Article 5 prohibition** (safety-critical): 100.0%
+- **Binary high-risk classification:** 100.0%
+
+CI floor (locked): ≥80% overall + 100% Article 5. v1.0 release target: ≥85% overall + 100% Article 5 + ≥90% binary high-risk.
+
+The 100% headline reflects internal consistency between curated fixtures and curated lexicon — not arbitrary real-world accuracy. See [accuracy/METHODOLOGY.md](./accuracy/METHODOLOGY.md) §"Honest limitations" and [accuracy/KNOWN-MISCLASSIFICATIONS.md](./accuracy/KNOWN-MISCLASSIFICATIONS.md) for the v0.2 polish backlog.
+
+Reports: [accuracy/REPORT.md](./accuracy/REPORT.md).
+
+Found a misclassification? Open a GitHub issue with the use-case description, your expected classification, your reasoning (cite EUR-Lex Regulation (EU) 2024/1689 paragraph numbers), and the current classifier output.
+
 ## License
 
 Code: MIT (see [LICENSE](./LICENSE)).
