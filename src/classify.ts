@@ -1,46 +1,221 @@
-// Public API stub. Implementation lands across Day 2-10 per the build plan.
+// Public API — orchestrates the 9-stage classification pipeline.
+//
+// Pure-function. No I/O at runtime — all JSON loads happen at module init in
+// the rules modules (extract/keyword.ts loads patterns.{en,de}.json,
+// rules/article-6-annex-iii.ts loads annex-iii.json, rules/three-category.ts
+// loads three-category.gen.json, util/rules-hash.ts loads all 4 + package.json).
+//
+// Pipeline (DO NOT REORDER — Day-4/5 cascade modules depend on the prior outputs):
+//   1. extractFeatures(text, {lang})        — Day 2 keyword extractor
+//   2. classifyArticle5(features)           — Day 3 prohibited practices
+//   3. classifyAnnexIII(features, art5)     — Day 3 high-risk classification
+//   4. classifyArticle10(annex, art5)       — Day 4 data governance
+//   5. classifyArticle12(annex, art5)       — Day 5 record-keeping
+//   6. classifyArticle13(annex, art5)       — Day 4 deployer transparency
+//   7. classifyArticle14(annex, art5)       — Day 4 human oversight
+//   8. classifyArticle15(annex, art5)       — Day 4 accuracy/robustness/cybersecurity
+//   9. classifyArticle50(features, art5, annex) — Day 5 GPAI/deployer transparency
+//  10. classifyThreeCategory(annex, art5, art10, art12, art14, art15) — Day 5 overlay
+//  11. annex_iv_required derived from annex.high_risk && !suppressed_by_article_5
+//  12. confidence computed via v0.1 placeholder formula
+//
+// Forward-compat: `mode` is `'deterministic' | \`llm-${string}\`` so the Day-9
+// LLM path lands without a breaking signature change. `opts.llm` is accepted +
+// ignored in Day 6 to keep the CLI shape stable across days.
+
+import { extractFeatures } from './extract/keyword.js';
+import type { ExtractedFeatures } from './extract/keyword.js';
+import { classifyArticle5 } from './rules/article-5.js';
+import { classifyAnnexIII } from './rules/article-6-annex-iii.js';
+import { classifyArticle10 } from './rules/article-10.js';
+import { classifyArticle12 } from './rules/article-12.js';
+import { classifyArticle13 } from './rules/article-13.js';
+import { classifyArticle14 } from './rules/article-14.js';
+import { classifyArticle15 } from './rules/article-15.js';
+import { classifyArticle50 } from './rules/article-50.js';
+import { classifyThreeCategory } from './rules/three-category.js';
+import type {
+  Article5Result,
+  AnnexIIIResult,
+  Article10Result,
+  Article12Result,
+  Article13Result,
+  Article14Result,
+  Article15Result,
+  Article50Result,
+  ThreeCategoryResult,
+} from './rules/index.js';
+import { RULES_VERSION, RULES_HASH, RULES_HASH_FULL_HEX } from './util/rules-hash.js';
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
 
 export interface ClassifyOptions {
+  /** Force locale (default: auto-detect from input). */
   lang?: 'en' | 'de';
+  /** v0.1 placeholder — when set, signals the Day-9 LLM extractor would replace the keyword extractor. Day-6 ignores it. */
   llm?: 'anthropic' | 'openai' | 'groq';
+  /** When false, the three-category overlay is omitted (returns null). Default: true. */
   threeCategory?: boolean;
+  /** Display-pass-through; mismatched value vs current rules version throws Error (CLI maps to exit 2). Default: undefined. */
   rulesVersion?: string;
 }
 
-export interface ArticleMapping {
-  article: string;
-  applies: boolean;
-  annexReference?: string;
-  rationale?: string;
-}
-
-export interface ThreeCategoryMapping {
-  category: '1' | '2' | '3';
-  label: 'Sanitizer' | 'Evidence' | 'Inventory';
-  articles: string[];
-  required: boolean;
-}
-
 export interface ClassifyResult {
-  inputText: string;
-  detectedLang: 'en' | 'de';
-  articles: ArticleMapping[];
-  threeCategory: ThreeCategoryMapping[];
-  prohibited: boolean;
-  highRisk: boolean;
-  annexIVRequired: boolean;
-  confidence: number;
+  /** Raw input text (unmodified). */
+  input_text: string;
+  /** Detected (or overridden) locale used for extraction. */
+  detected_lang: 'en' | 'de';
+  /** Day-2 lang detector's confidence flag. */
+  lang_confident: boolean;
+  /** package.json `version` field with `v` prefix; e.g. 'v0.1.0'. */
+  rules_version: string;
+  /** First 8 hex chars of `rules_hash_full` for display. */
+  rules_hash: string;
+  /** Full 64-char SHA-256 of the loaded JSON rule data. */
+  rules_hash_full: string;
+  /** Always 'deterministic' in Day 6; reserves space for `llm-anthropic` etc. in Day 9. */
   mode: 'deterministic' | `llm-${string}`;
-  rulesVersion: string;
-  rulesHash: string;
-  citations: string[];
+  /** v0.1 placeholder confidence in [0.20, 0.99]; refined in Day 8. */
+  confidence: number;
+  /** Day-2 extractor output. Surfaced for debugging + downstream introspection. */
+  features: ExtractedFeatures;
+  /** Article 5 prohibited practices check. */
+  article_5: Article5Result;
+  /** Article 6 + Annex III high-risk classification. */
+  annex_iii: AnnexIIIResult;
+  /** Article 10 — data governance cascade. */
+  article_10: Article10Result;
+  /** Article 12 — record-keeping cascade. */
+  article_12: Article12Result;
+  /** Article 13 — transparency to deployers cascade. */
+  article_13: Article13Result;
+  /** Article 14 — human oversight cascade. */
+  article_14: Article14Result;
+  /** Article 15 — accuracy/robustness/cybersecurity cascade. */
+  article_15: Article15Result;
+  /** Article 50 — GPAI/deployer transparency (non-cascade root). */
+  article_50: Article50Result;
+  /** Lucairn opinionated overlay; null iff `opts.threeCategory === false`. */
+  three_category: ThreeCategoryResult | null;
+  /** True iff annex_iii.high_risk && !annex_iii.suppressed_by_article_5. */
+  annex_iv_required: boolean;
 }
 
-export function classify(text: string, _opts: ClassifyOptions = {}): ClassifyResult {
+// ---------------------------------------------------------------------------
+// Confidence (v0.1 placeholder)
+// ---------------------------------------------------------------------------
+
+/**
+ * v0.1 placeholder confidence formula.
+ *
+ * Designed to land at sensible numbers across the 11 existing fixtures:
+ *   - Day-4 low-risk fixture (1 hit) ≈ 0.40
+ *   - Day-3 fixtures (5-15 hits) ≈ 0.80-0.95
+ *
+ * Day 8 will measure accuracy against the 50-case fixture corpus and tune.
+ * The formula is intentionally simple — clamp(0.20, 0.99) bounds + linear
+ * per-hit slope + a small bonus when the lang detector was confident.
+ *
+ * @internal
+ */
+function computeConfidence(features: ExtractedFeatures): number {
+  const baseline = 0.4;
+  const perHit = 0.04;
+  const langBonus = features.langConfident ? 0.08 : 0;
+  const raw = baseline + perHit * features.hits.length + langBonus;
+  const clamped = Math.min(0.99, Math.max(0.2, raw));
+  return Number(clamped.toFixed(2));
+}
+
+// ---------------------------------------------------------------------------
+// Public API
+// ---------------------------------------------------------------------------
+
+/**
+ * Orchestrate the 9-stage AI-Act classification pipeline.
+ *
+ * Workflow:
+ *   1. Validate `text` is a non-empty string after `.trim()`. Throw `TypeError`
+ *      if not.
+ *   2. Validate `opts.rulesVersion` (if set) against current `RULES_VERSION`.
+ *      Throw `Error('classify(): rules_version mismatch — ...')` on mismatch.
+ *      The CLI converts this to exit code 2 + a helpful stderr message.
+ *   3. Run the 9 pipeline stages in order. Each stage type-guards its own
+ *      inputs (TypeError if upstream contract violated).
+ *   4. Derive `annex_iv_required` + `confidence`.
+ *   5. Return a structured ClassifyResult.
+ *
+ * @throws TypeError if `text` is not a non-empty string after trim, or if any
+ *   pipeline stage's input fails its own type-guard.
+ * @throws Error if `opts.rulesVersion` is set and does not match the current
+ *   rules version.
+ */
+export function classify(text: string, opts: ClassifyOptions = {}): ClassifyResult {
   if (typeof text !== 'string' || text.trim().length === 0) {
-    throw new Error('classify(): input text must be a non-empty string.');
+    throw new TypeError('classify(): input text must be a non-empty string.');
   }
-  throw new Error(
-    'classify(): not yet implemented (Day 1 scaffold). Implementation lands across Day 2-10.',
-  );
+  if (opts.rulesVersion !== undefined && opts.rulesVersion !== RULES_VERSION) {
+    throw new Error(
+      `classify(): rules_version mismatch — requested "${opts.rulesVersion}", current "${RULES_VERSION}".`,
+    );
+  }
+
+  // 1. Feature extraction. extractFeatures validates `text` again (defense in
+  //    depth) and normalizes the `lang` option.
+  const features = extractFeatures(text, opts.lang !== undefined ? { lang: opts.lang } : {});
+
+  // 2. Article 5 prohibited practices — must run BEFORE classifyAnnexIII (which
+  //    consumes its `prohibited` flag).
+  const article_5 = classifyArticle5(features);
+
+  // 3. Article 6 + Annex III high-risk classification.
+  const annex_iii = classifyAnnexIII(features, article_5);
+
+  // 4-8. Day-4/5 cascade modules. All consume `(annex, article5)` and project
+  //      the high-risk-cascade decision into article-level applicability.
+  const article_10 = classifyArticle10(annex_iii, article_5);
+  const article_12 = classifyArticle12(annex_iii, article_5);
+  const article_13 = classifyArticle13(annex_iii, article_5);
+  const article_14 = classifyArticle14(annex_iii, article_5);
+  const article_15 = classifyArticle15(annex_iii, article_5);
+
+  // 9. Article 50 — independent non-cascade root. Consumes features + art5 +
+  //    optional annex (for the 50(3) Annex-III-style fallback).
+  const article_50 = classifyArticle50(features, article_5, annex_iii);
+
+  // 10. Three-category overlay (Cat 1/2/3). Omitted when opts.threeCategory === false.
+  const three_category =
+    opts.threeCategory === false
+      ? null
+      : classifyThreeCategory(annex_iii, article_5, article_10, article_12, article_14, article_15);
+
+  // 11. Annex IV technical-documentation required iff high-risk AND not suppressed.
+  const annex_iv_required = annex_iii.high_risk && !annex_iii.suppressed_by_article_5;
+
+  // 12. v0.1 placeholder confidence.
+  const confidence = computeConfidence(features);
+
+  return {
+    input_text: text,
+    detected_lang: features.lang,
+    lang_confident: features.langConfident,
+    rules_version: RULES_VERSION,
+    rules_hash: RULES_HASH,
+    rules_hash_full: RULES_HASH_FULL_HEX,
+    mode: 'deterministic',
+    confidence,
+    features,
+    article_5,
+    annex_iii,
+    article_10,
+    article_12,
+    article_13,
+    article_14,
+    article_15,
+    article_50,
+    three_category,
+    annex_iv_required,
+  };
 }
