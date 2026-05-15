@@ -54,7 +54,9 @@
         { "phrase": "bewerber-ranking" },
         { "phrase": "personalauswahl" },
         { "phrase": "einstellungsentscheidung" },
+        { "phrase": "einstellungsentscheidungen" },
         { "phrase": "leistungsbewertung" },
+        { "phrase": "leistungsbewertungen" },
         { "phrase": "mitarbeiterüberwachung" }
       ]
     },
@@ -78,6 +80,7 @@
       "entries": [
         { "phrase": "vorhersagende polizeiarbeit" },
         { "phrase": "rückfallrisiko" },
+        { "phrase": "rückfallrisikos" },
         { "phrase": "polygraph" },
         { "phrase": "lügendetektor" },
         { "phrase": "beweismittelzuverlässigkeit" },
@@ -93,8 +96,13 @@
       "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
       "entries": [
         { "phrase": "visumantrag" },
+        { "phrase": "visumanträge" },
+        { "phrase": "visumanträgen" },
         { "phrase": "asylantrag" },
+        { "phrase": "asylanträge" },
+        { "phrase": "asylanträgen" },
         { "phrase": "grenzkontrolle" },
+        { "phrase": "grenzkontrollen" },
         { "phrase": "aufenthaltstitel" },
         { "phrase": "migrationsrisiko" },
         { "phrase": "grenzüberwachung" },
