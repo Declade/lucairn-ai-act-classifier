@@ -9,6 +9,11 @@
     "annex_iii_domains": [
       3
     ],
+    "annex_iii_sub_letters": {
+      "3": [
+        "b"
+      ]
+    },
     "suppressed_by_article_5": false,
     "article_10_applicable": true,
     "article_12_applicable": true,
@@ -21,7 +26,7 @@
       3
     ],
     "annex_iv_required": true,
-    "notes": "Annex III paragraph 3(b) — evaluating learning outcomes, including those used to steer the learning process. Lexicon hits: 'automated grading', 'exam scoring'. Cite: EUR-Lex Regulation (EU) 2024/1689, Annex III paragraph 3(b)."
+    "notes": "Annex III paragraph 3(b) — evaluating learning outcomes, including those used to steer the learning process. Lexicon hits: 'automated grading', 'exam scoring'. Day-8 G-1 backfill: ¶3 sub-letter narrowing now implemented (these phrases narrow to b). Cite: EUR-Lex Regulation (EU) 2024/1689, Annex III paragraph 3(b)."
   },
   "bucket": "annex_iii",
   "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689"

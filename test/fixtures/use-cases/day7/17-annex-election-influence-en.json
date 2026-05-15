@@ -9,6 +9,11 @@
     "annex_iii_domains": [
       8
     ],
+    "annex_iii_sub_letters": {
+      "8": [
+        "b"
+      ]
+    },
     "suppressed_by_article_5": false,
     "article_10_applicable": true,
     "article_12_applicable": true,
@@ -21,7 +26,7 @@
       3
     ],
     "annex_iv_required": true,
-    "notes": "Annex III paragraph 8(b) — AI systems intended to be used for influencing the outcome of an election or referendum, or the voting behaviour of natural persons (excluding systems whose output natural persons are not directly exposed to, such as tools used to organise / optimise / structure political campaigns from an administrative or logistical perspective). Lexicon hits: 'election influencing', 'voter targeting'. Cite: EUR-Lex Regulation (EU) 2024/1689, Annex III paragraph 8(b)."
+    "notes": "Annex III paragraph 8(b) — AI systems intended to be used for influencing the outcome of an election or referendum, or the voting behaviour of natural persons (excluding systems whose output natural persons are not directly exposed to, such as tools used to organise / optimise / structure political campaigns from an administrative or logistical perspective). Lexicon hits: 'election influencing', 'voter targeting'. Day-8 G-1 backfill: ¶8 sub-letter narrowing now implemented (election/voter influence→b). Cite: EUR-Lex Regulation (EU) 2024/1689, Annex III paragraph 8(b)."
   },
   "bucket": "annex_iii",
   "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689"

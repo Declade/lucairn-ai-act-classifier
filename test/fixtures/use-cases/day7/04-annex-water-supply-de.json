@@ -9,6 +9,11 @@
     "annex_iii_domains": [
       2
     ],
+    "annex_iii_sub_letters": {
+      "2": [
+        "a"
+      ]
+    },
     "suppressed_by_article_5": false,
     "article_10_applicable": true,
     "article_12_applicable": true,
@@ -21,7 +26,7 @@
       3
     ],
     "annex_iv_required": true,
-    "notes": "Anhang III Nr. 2(a) — kritische Infrastruktur. Wasserversorgung als Sicherheitskomponente erfüllt 'kritische infrastruktur', 'wasserversorgung' und 'sicherheitskomponente' im Lexikon. sub_letters wird leer emittiert (narrowSubLetters in src/rules/article-6-annex-iii.ts implementiert die Buchstaben-Eingrenzung derzeit nur für Anhang III Nr. 1, 4, 5, 6 — Domains 2/3/7/8 sind v0.2 polish-Backlog). Cite: EUR-Lex Regulation (EU) 2024/1689, Anhang III Nr. 2(a)."
+    "notes": "Anhang III Nr. 2(a) — kritische Infrastruktur. Wasserversorgung als Sicherheitskomponente erfüllt 'kritische infrastruktur', 'wasserversorgung' und 'sicherheitskomponente' im Lexikon. Sub-letter narrowing für ¶2 (Day-8 G-1) bindet jeden Lexicon-Treffer im critical_infrastructure-Domain an Sub-letter (a) (¶2 hat nur einen einzigen Buchstaben). Cite: EUR-Lex Regulation (EU) 2024/1689, Anhang III Nr. 2(a)."
   },
   "bucket": "annex_iii",
   "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689"
