@@ -56,10 +56,10 @@ const EUR_LEX_SOURCE =
 // Article 13(1) chapeau — verbatim from EUR-Lex EN/DE via EU AI Office Service Desk
 // (Tier-2 secondary citation per regulator-validator escalation ladder Day-3 lesson 4).
 const SUMMARY_EN =
-  "High-risk AI systems shall be designed and developed in such a way as to ensure that their operation is sufficiently transparent to enable deployers to interpret a system's output and use it appropriately. (Art 13(1))";
+  "High-risk AI systems shall be designed and developed in such a way as to ensure that their operation is sufficiently transparent to enable deployers to interpret a system's output and use it appropriately. An appropriate type and degree of transparency shall be ensured with a view to achieving compliance with the relevant obligations of the provider and deployer set out in Section 3. (Art 13(1))";
 
 const SUMMARY_DE =
-  'Hochrisiko-KI-Systeme werden so konzipiert und entwickelt, dass ihr Betrieb hinreichend transparent ist, damit die Betreiber die Ausgaben eines Systems angemessen interpretieren und verwenden können. (Art. 13 Abs. 1)';
+  'Hochrisiko-KI-Systeme werden so konzipiert und entwickelt, dass ihr Betrieb hinreichend transparent ist, damit die Betreiber die Ausgaben eines Systems angemessen interpretieren und verwenden können. Die Transparenz wird auf eine geeignete Art und in einem angemessenen Maß gewährleistet, damit die Anbieter und Betreiber ihre in Abschnitt 3 festgelegten einschlägigen Pflichten erfüllen können. (Art. 13 Abs. 1)';
 
 // ---------------------------------------------------------------------------
 // Public API
@@ -77,9 +77,9 @@ export function classifyArticle13(
   annex: AnnexIIIResult,
   article5: Article5Result,
 ): Article13Result {
-  if (annex === null || typeof annex !== 'object') {
+  if (annex === null || typeof annex !== 'object' || !Array.isArray((annex as AnnexIIIResult).domains)) {
     throw new TypeError(
-      'classifyArticle13(): annex must be an AnnexIIIResult object (call classifyAnnexIII() first).',
+      'classifyArticle13(): annex must be an AnnexIIIResult object with a domains array (call classifyAnnexIII() first).',
     );
   }
   if (article5 === null || typeof article5 !== 'object') {

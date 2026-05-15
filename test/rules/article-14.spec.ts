@@ -46,6 +46,16 @@ describe('classifyArticle14() — pure-function determinism', () => {
     expect(() => classifyArticle14(null, makeArt5(false))).toThrow(TypeError);
   });
 
+  it('throws TypeError on annex shapes missing the domains array (e.g. {}, [])', () => {
+    // Defensive guard locks: bare {} and [] pass `typeof === 'object'` but
+    // lack the required `domains` array. The guard short-circuits with a
+    // documented friendly error rather than crashing on `.map()` of undefined.
+    // @ts-expect-error: deliberately invalid
+    expect(() => classifyArticle14({}, makeArt5(false))).toThrow(TypeError);
+    // @ts-expect-error: deliberately invalid
+    expect(() => classifyArticle14([], makeArt5(false))).toThrow(TypeError);
+  });
+
   it('throws TypeError on non-object article5', () => {
     // @ts-expect-error: deliberately invalid
     expect(() => classifyArticle14(makeAnnex({ high_risk: false, domains: [], suppressed_by_article_5: false }), null)).toThrow(TypeError);
@@ -89,6 +99,19 @@ describe('classifyArticle14() — applicable: false when not high-risk', () => {
 describe('classifyArticle14() — applicable: false when suppressed by Article 5', () => {
   it('suppressed_by_article_5 === true → applicable === false; triggered_by.article_5 === true', () => {
     const annex = makeAnnex({ high_risk: false, domains: [1], suppressed_by_article_5: true });
+    const result = classifyArticle14(annex, makeArt5(true));
+    expect(result.applicable).toBe(false);
+    expect(result.triggered_by.article_5).toBe(true);
+    expect(result.triggered_by.annex_iii_domains).toEqual([]);
+  });
+
+  it('inconsistent upstream state (high_risk === true AND suppressed_by_article_5 === true) → suppression wins', () => {
+    // Defensive invariant lock. In normal upstream flow, classifyAnnexIII()
+    // sets high_risk: false whenever suppression fires, so this cell should
+    // never occur in practice. We test it anyway to pin the cascade behavior
+    // in case the upstream invariant ever drifts: suppression is the
+    // operative signal regardless of high_risk.
+    const annex = makeAnnex({ high_risk: true, domains: [1], suppressed_by_article_5: true });
     const result = classifyArticle14(annex, makeArt5(true));
     expect(result.applicable).toBe(false);
     expect(result.triggered_by.article_5).toBe(true);
