@@ -1,0 +1,81 @@
+{
+  "language": "de",
+  "version": "v0.1.0",
+  "labels": {
+    "section_title": "EU-KI-VO-Zuordnung",
+    "section_overlay": "Lucairn-Pflichten-Overlay",
+    "overlay_suppressed_note": "Lucairn-Pflichten-Overlay unterdrückt via --no-three-category.",
+    "article_5": "Artikel 5  (verboten)",
+    "article_6_annex_iii": "Artikel 6  + Anhang III",
+    "article_10": "Artikel 10 (Daten-Governance)",
+    "article_12": "Artikel 12 (Protokollierung/Aufzeichnungen)",
+    "article_13": "Artikel 13 (Betreiber-Transparenz)",
+    "article_14": "Artikel 14 (menschliche Aufsicht)",
+    "article_15": "Artikel 15 (Genauigkeit/Robustheit/Cybersicherheit)",
+    "article_50": "Artikel 50 (GPAI/Betreiber)",
+    "annex_iv": "Anhang IV  (technische Dokumentation)",
+    "cat_1": "Kat 1 Sanitizer  (Art. 10+15)",
+    "cat_2": "Kat 2 Evidence   (Art. 12+14)",
+    "cat_3": "Kat 3 Inventory  (Art. 10+12+14+15)",
+    "status_prohibited": "VERBOTEN",
+    "status_high_risk": "HOCHRISIKO",
+    "status_applies": "anwendbar",
+    "status_required": "ERFORDERLICH",
+    "status_not_triggered": "nicht ausgelöst",
+    "status_not_applicable": "nicht anwendbar",
+    "status_suppressed_by_art_5": "durch Art. 5 unterdrückt",
+    "label_confidence": "Konfidenz",
+    "label_mode": "Modus",
+    "label_rules": "Regeln",
+    "label_cite": "Zitate",
+    "label_commentary": "(Kommentar)",
+    "label_primary_eur_lex": "Primärquelle (EUR-Lex):",
+    "label_commentary_block": "Kommentar (Lucairn):",
+    "disclaimer_footer": "⚠ Informationelles Werkzeug — keine Rechtsberatung. Siehe README §Disclaimer.",
+    "warning_both_stdin_and_text": "Sowohl stdin als auch Positionstext angegeben; verwende Positionstext.",
+    "error_empty_input": "Fehler: keine Eingabe vorhanden (Anwendungsfall als Argument oder via stdin übergeben).",
+    "error_invalid_lang": "Fehler: --lang muss 'en' oder 'de' sein. Erhalten: ",
+    "error_rules_version_mismatch": "Fehler: rules-version-Konflikt — angefordert \"{requested}\", aktuell \"{current}\". Verfügbar: \"{current}\".",
+    "error_annex_invalid": "Fehler: --annex unterstützt nur 'iv' (Anhang IV technische Dokumentation). Erhalten: ",
+    "annex_iv_reference_title": "Anhang IV — Technische Dokumentation (Verordnung (EU) 2024/1689)",
+    "annex_iv_reference_source": "Quelle: EUR-Lex Verordnung (EU) 2024/1689, Anhang IV"
+  },
+  "annex_iv_reference": [
+    {
+      "number": "1.",
+      "title": "Eine allgemeine Beschreibung des KI-Systems."
+    },
+    {
+      "number": "2.",
+      "title": "Eine ausführliche Beschreibung der Elemente des KI-Systems und des Prozesses für seine Entwicklung."
+    },
+    {
+      "number": "3.",
+      "title": "Ausführliche Informationen über die Überwachung, die Funktionsweise und die Kontrolle des KI-Systems."
+    },
+    {
+      "number": "4.",
+      "title": "Eine Beschreibung der Eignung der Leistungsmetriken für das spezifische KI-System."
+    },
+    {
+      "number": "5.",
+      "title": "Eine ausführliche Beschreibung des Risikomanagementsystems gemäß Artikel 9."
+    },
+    {
+      "number": "6.",
+      "title": "Eine Beschreibung der relevanten Änderungen, die der Anbieter über den Lebenszyklus des Systems hinweg vorgenommen hat."
+    },
+    {
+      "number": "7.",
+      "title": "Eine Liste der ganz oder teilweise angewandten harmonisierten Normen, deren Fundstellen im Amtsblatt der Europäischen Union veröffentlicht wurden."
+    },
+    {
+      "number": "8.",
+      "title": "Eine Kopie der EU-Konformitätserklärung gemäß Artikel 47."
+    },
+    {
+      "number": "9.",
+      "title": "Eine ausführliche Beschreibung des Systems zur Bewertung der Leistung des KI-Systems in der Phase nach dem Inverkehrbringen gemäß Artikel 72."
+    }
+  ]
+}

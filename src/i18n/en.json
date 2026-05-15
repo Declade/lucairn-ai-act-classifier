@@ -1,0 +1,81 @@
+{
+  "language": "en",
+  "version": "v0.1.0",
+  "labels": {
+    "section_title": "EU AI Act mapping",
+    "section_overlay": "Lucairn obligation overlay",
+    "overlay_suppressed_note": "Lucairn obligation overlay suppressed via --no-three-category.",
+    "article_5": "Article 5  (prohibited)",
+    "article_6_annex_iii": "Article 6  + Annex III",
+    "article_10": "Article 10 (data governance)",
+    "article_12": "Article 12 (logging/record-keeping)",
+    "article_13": "Article 13 (deployer transparency)",
+    "article_14": "Article 14 (human oversight)",
+    "article_15": "Article 15 (accuracy/robustness/cybersecurity)",
+    "article_50": "Article 50 (GPAI/deployer)",
+    "annex_iv": "Annex IV  (technical docs)",
+    "cat_1": "Cat 1 Sanitizer  (Art 10+15)",
+    "cat_2": "Cat 2 Evidence   (Art 12+14)",
+    "cat_3": "Cat 3 Inventory  (Art 10+12+14+15)",
+    "status_prohibited": "PROHIBITED",
+    "status_high_risk": "HIGH-RISK",
+    "status_applies": "applies",
+    "status_required": "REQUIRED",
+    "status_not_triggered": "not triggered",
+    "status_not_applicable": "not applicable",
+    "status_suppressed_by_art_5": "suppressed by Art 5",
+    "label_confidence": "Confidence",
+    "label_mode": "Mode",
+    "label_rules": "Rules",
+    "label_cite": "Cite",
+    "label_commentary": "(commentary)",
+    "label_primary_eur_lex": "Primary (EUR-Lex):",
+    "label_commentary_block": "Commentary (Lucairn):",
+    "disclaimer_footer": "⚠ Informational tool — not legal advice. See README §Disclaimer.",
+    "warning_both_stdin_and_text": "Both stdin and positional text provided; using positional text.",
+    "error_empty_input": "Error: no input provided (pass a use-case description as argument or via stdin).",
+    "error_invalid_lang": "Error: --lang must be 'en' or 'de'. Got: ",
+    "error_rules_version_mismatch": "Error: rules-version mismatch — requested \"{requested}\", current \"{current}\". Available: \"{current}\".",
+    "error_annex_invalid": "Error: --annex only supports 'iv' (Annex IV technical-documentation reference). Got: ",
+    "annex_iv_reference_title": "Annex IV — Technical documentation (Regulation (EU) 2024/1689)",
+    "annex_iv_reference_source": "Source: EUR-Lex Regulation (EU) 2024/1689, Annex IV"
+  },
+  "annex_iv_reference": [
+    {
+      "number": "1.",
+      "title": "A general description of the AI system."
+    },
+    {
+      "number": "2.",
+      "title": "A detailed description of the elements of the AI system and of the process for its development."
+    },
+    {
+      "number": "3.",
+      "title": "Detailed information about the monitoring, functioning and control of the AI system."
+    },
+    {
+      "number": "4.",
+      "title": "A description of the appropriateness of the performance metrics for the specific AI system."
+    },
+    {
+      "number": "5.",
+      "title": "A detailed description of the risk management system in accordance with Article 9."
+    },
+    {
+      "number": "6.",
+      "title": "A description of relevant changes made by the provider to the system through its lifecycle."
+    },
+    {
+      "number": "7.",
+      "title": "A list of the harmonised standards applied in full or in part, the references of which have been published in the Official Journal of the European Union."
+    },
+    {
+      "number": "8.",
+      "title": "A copy of the EU declaration of conformity referred to in Article 47."
+    },
+    {
+      "number": "9.",
+      "title": "A detailed description of the system in place to evaluate the AI system performance in the post-market phase in accordance with Article 72."
+    }
+  ]
+}
