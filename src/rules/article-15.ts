@@ -78,9 +78,9 @@ export function classifyArticle15(
   annex: AnnexIIIResult,
   article5: Article5Result,
 ): Article15Result {
-  if (annex === null || typeof annex !== 'object') {
+  if (annex === null || typeof annex !== 'object' || !Array.isArray((annex as AnnexIIIResult).domains)) {
     throw new TypeError(
-      'classifyArticle15(): annex must be an AnnexIIIResult object (call classifyAnnexIII() first).',
+      'classifyArticle15(): annex must be an AnnexIIIResult object with a domains array (call classifyAnnexIII() first).',
     );
   }
   if (article5 === null || typeof article5 !== 'object') {
