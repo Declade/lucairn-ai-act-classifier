@@ -137,7 +137,11 @@
       "entries": [
         { "phrase": "ausnutzung schutzbedürftigkeit" },
         { "phrase": "kinder ausnutzen" },
-        { "phrase": "ältere ausnutzen" }
+        { "phrase": "ältere ausnutzen" },
+        { "phrase": "schutzbedürftigkeit ausnutzen" },
+        { "phrase": "schutzbedürftigkeit von kindern" },
+        { "phrase": "vulnerabilität ausnutzen" },
+        { "phrase": "schutzbedürftige gruppen ausnutzen" }
       ]
     },
     "c_social_scoring": {
@@ -154,7 +158,11 @@
       "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
       "entries": [
         { "phrase": "vorhersagende polizeiarbeit profiling" },
-        { "phrase": "kriminalrisiko-profiling" }
+        { "phrase": "kriminalrisiko-profiling" },
+        { "phrase": "vorhersagende polizeiarbeit" },
+        { "phrase": "predictive policing" },
+        { "phrase": "straftaten vorhersagen profiling" },
+        { "phrase": "vorhersagende kriminalanalyse" }
       ]
     },
     "e_facial_scraping": {
@@ -171,7 +179,13 @@
       "entries": [
         { "phrase": "emotionserkennung arbeitsplatz" },
         { "phrase": "emotionserkennung schule" },
-        { "phrase": "stimmungserkennung mitarbeiter" }
+        { "phrase": "stimmungserkennung mitarbeiter" },
+        { "phrase": "emotionserkennung am arbeitsplatz" },
+        { "phrase": "emotionserkennung in schulen" },
+        { "phrase": "emotionen am arbeitsplatz" },
+        { "phrase": "stimmungen der mitarbeiter erkennen" },
+        { "phrase": "stimmungserkennung der mitarbeiter" },
+        { "phrase": "emotionen von mitarbeitern erkennen" }
       ]
     },
     "g_biometric_categorisation_sensitive": {
@@ -218,7 +232,11 @@
       "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
       "entries": [
         { "phrase": "emotionserkennung betreiber" },
-        { "phrase": "biometrische kategorisierung betreiber" }
+        { "phrase": "biometrische kategorisierung betreiber" },
+        { "phrase": "betreiber eines emotionserkennungssystems" },
+        { "phrase": "betreiber von emotionserkennung" },
+        { "phrase": "als betreiber emotionserkennung" },
+        { "phrase": "betreiber biometrischer kategorisierung" }
       ]
     },
     "4_deepfake_labeling": {
@@ -239,7 +257,11 @@
         { "phrase": "nachrichtengenerierung" },
         { "phrase": "redaktions-ki" },
         { "phrase": "berichterstattung öffentliches interesse" },
-        { "phrase": "ki-generierter artikel" }
+        { "phrase": "ki-generierter artikel" },
+        { "phrase": "berichterstattung über angelegenheiten von öffentlichem interesse" },
+        { "phrase": "angelegenheiten von öffentlichem interesse" },
+        { "phrase": "text über öffentliches interesse" },
+        { "phrase": "nachrichten über öffentliches interesse" }
       ]
     }
   },
