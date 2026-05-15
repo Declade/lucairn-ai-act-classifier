@@ -1,0 +1,59 @@
+{
+  "name": "@lucairn/ai-act-classifier",
+  "version": "0.1.0",
+  "description": "Free CLI that maps EU AI Act articles to your AI use case",
+  "license": "MIT",
+  "author": "Declade",
+  "homepage": "https://lucairn.eu/tools/ai-act-classifier",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Declade/lucairn-ai-act-classifier.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Declade/lucairn-ai-act-classifier/issues"
+  },
+  "keywords": [
+    "eu-ai-act",
+    "ai-act",
+    "compliance",
+    "classifier",
+    "regulation",
+    "annex-iii",
+    "annex-iv",
+    "gpai",
+    "high-risk",
+    "lucairn"
+  ],
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "ai-act-classify": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "README.de.md",
+    "LICENSE",
+    "DATASET-LICENSE",
+    "CHANGELOG.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.6.0"
+  },
+  "engines": {
+    "node": ">=18.17"
+  },
+  "private": false
+}
