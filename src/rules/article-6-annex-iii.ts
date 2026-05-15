@@ -296,7 +296,40 @@ function narrowSubLetters(
   // empty than to over-claim.
 
   if (domain.annex_iii_number === 5) {
-    // Insurance pricing → 5(c) iff life/health context present.
+    // EUR-Lex Annex III paragraph 5 sub-letters (verbatim scope):
+    //   (a) public assistance benefits / healthcare-service access eligibility
+    //   (b) creditworthiness / credit-scoring (excluding fraud detection)
+    //   (c) life and health insurance risk-assessment and pricing
+    //   (d) emergency-call classification / dispatch / triage
+    // Each sub-letter check is independent: if the input matches multiple
+    // sub-areas (e.g. life-insurance pricing AND credit scoring) ALL of them
+    // must be returned. This mirrors the accumulator pattern used for
+    // domains 1, 4, 6 above.
+    const hits = new Set<string>();
+
+    // 5(a) — public benefits / healthcare-access eligibility.
+    if (
+      matchedLower.some((p) =>
+        ['benefit eligibility', 'sozialleistung'].includes(p),
+      )
+    ) {
+      hits.add('a');
+    }
+
+    // 5(b) — creditworthiness / credit scoring.
+    if (
+      matchedLower.some((p) =>
+        ['credit scoring', 'creditworthiness', 'bonitätsprüfung', 'kreditwürdigkeit', 'scoring'].includes(p),
+      )
+    ) {
+      hits.add('b');
+    }
+
+    // 5(c) — life/health insurance pricing. Only fires when an
+    // insurance-pricing phrase is present AND the input has explicit
+    // life/health framing (paragraph 5(c) scopes to life and health only;
+    // P&C/motor is OUT). Without explicit life/health framing we leave it
+    // unnarrowed even if the insurance-pricing phrase matched.
     const hasInsurancePricing = matchedLower.some((p) =>
       INSURANCE_PRICING_PHRASES.includes(p),
     );
@@ -304,39 +337,19 @@ function narrowSubLetters(
       const isLifeHealth =
         inputContainsAny(rawInput, LIFE_HEALTH_INSURANCE_PHRASES_EN) ||
         inputContainsAny(rawInput, LIFE_HEALTH_INSURANCE_PHRASES_DE);
-      if (isLifeHealth) return ['c'];
-      // Without explicit life/health framing we cannot confidently narrow.
-      return [];
+      if (isLifeHealth) hits.add('c');
     }
 
-    // Credit scoring / creditworthiness → 5(b)
-    if (
-      matchedLower.some((p) =>
-        ['credit scoring', 'creditworthiness', 'bonitätsprüfung', 'kreditwürdigkeit', 'scoring'].includes(p),
-      )
-    ) {
-      return ['b'];
-    }
-
-    // Public benefits eligibility → 5(a)
-    if (
-      matchedLower.some((p) =>
-        ['benefit eligibility', 'sozialleistung'].includes(p),
-      )
-    ) {
-      return ['a'];
-    }
-
-    // Emergency dispatch / triage → 5(d)
+    // 5(d) — emergency dispatch / triage.
     if (
       matchedLower.some((p) =>
         ['emergency dispatch', 'triage', 'notrufdisposition'].includes(p),
       )
     ) {
-      return ['d'];
+      hits.add('d');
     }
 
-    return [];
+    return [...hits].sort();
   }
 
   if (domain.annex_iii_number === 1) {

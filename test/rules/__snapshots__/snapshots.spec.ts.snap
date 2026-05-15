@@ -149,6 +149,7 @@ exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-05-ess
         ],
         "source": "EUR-Lex Regulation (EU) 2024/1689 — Annex III paragraph 5",
         "sub_letters": [
+          "b",
           "c",
         ],
       },

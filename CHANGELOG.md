@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Fixed
+
+- Day 3 fix-up: closed reviewer-chain HIGH × 2 (Annex III.5 multi-sub-letter accumulation; DE Art 5(1)(d) disambiguator preposition-order coverage) + 1 MEDIUM (annex-iii.json _meta.notice truth-in-claim) + 1 WARN (paragraph-3 title_de matches Tier-3 DE mirrors). Deferred to v0.2 polish: paragraph-4 / paragraph-7 title_de pending Tier-1 EUR-Lex DE PDF confirm, and 4 reasoning-trace polish items (insurance mixed-line, raw-input normalization, 6(d)/6(e) default disambiguation, narrowSubLetters / annex-iii reload coupling).
+
 ### Added
 
 - **Day 3 — Article 5 prohibited-practices + Article 6 / Annex III high-risk classification rule modules with EN+DE disambiguation, scope-qualifier handling, and 8-fixture snapshot test suite.** New `src/rules/article-5.ts` (8 letters a-h with the Art 5(1)(d) "solely on profiling" disambiguator), `src/rules/article-6-annex-iii.ts` (8 high-risk domains with sub-letter narrowing for domains 1, 4, 5, 6 and Annex III.5(c) life/health insurance scope rule), `src/rules/index.ts` barrel, and `src/data/annex-iii.json` (EUR-Lex-cited Annex III data for all 8 domains with EN+DE summaries). Article 5 prohibition supersedes Annex III high-risk in `classifyAnnexIII()`. `internal_use` scope qualifier never suppresses; `research_only` Art 2(8) carve-out is blocked when "real-world conditions" / "Realbedingungen" phrasing is present. 8 bilingual test fixtures at `test/fixtures/use-cases/day3/` (5 EN + 3 DE), 32 unit tests in `test/rules/article-5.spec.ts` + `test/rules/article-6-annex-iii.spec.ts`, plus 16 snapshot assertions in `test/rules/snapshots.spec.ts`.
