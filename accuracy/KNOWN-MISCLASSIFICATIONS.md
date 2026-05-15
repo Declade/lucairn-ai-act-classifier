@@ -36,15 +36,33 @@ The keyword extractor matches n-grams against the lexicon verbatim after NFKC no
 
 **v0.2 fix:** add a simple stemming pass for English (`-s`, `-es`, `-ies` → singular) and a lemma-lookup table for German irregular morphology. Alternatively, expand the lexicon to include morphological variants. The stemming path is cheaper to maintain.
 
-### G-4. Article 5(1)(d) disambiguator is substring-match, not n-gram-match
+### G-4. DE fixture-engineering contamination — lexicon-aligned phrasings that an EU/DE consultant would spot as unnatural
 
-**Status:** documented; fixture rewritten to expose the literal substring.
-**Affected fixtures:** `fixture-day7-21` (predictive-policing-DE — input rewritten to include `ausschließlich profiling der natürlichen Person` as a literal substring).
-**Where:** `src/rules/article-5.ts` (the disambiguator phrase table).
+**Status:** documented in this entry; fixtures NOT rewritten (rewriting requires lexicon edits, forbidden by Day-7 dispatch §1.9).
+**Where:** `src/data/patterns.de.json` lexicon + 5 DE fixtures listed below.
+**Surfaced by:** Day-7 PR #7 reviewer chain (bug-hunter M1; regulator-validator W-4/5/6).
 
-The Art 5(1)(d) "solely on profiling" disambiguator is implemented as `String.prototype.includes` against the raw lower-cased input, not n-gram match against the tokenized form. Inputs that EXPRESS the disambiguator semantically but don't contain the exact substring (`ausschließlich profiling`, `solely on profiling`, `persönlichkeit ausschließlich`) will NOT trigger the prohibition — even if a real consultant would read the input as describing prohibited predictive policing.
+Two related issues land under G-4:
 
-**v0.2 fix:** either (a) loosen the disambiguator to accept paraphrased forms (e.g. add `ausschließlich auf profiling`, `nur profiling`, `solely based on profiling` as accepted substrings), or (b) move the disambiguator to n-gram match against a curated lexicon group `article_5_d_disambiguator`, or (c) document the strict-substring requirement loudly in the public CLI's `--explain` output (Day 9 work) so a consultant whose input doesn't trigger 5(1)(d) sees WHY and can rephrase.
+**(a) Art 5(1)(d) "solely on profiling" disambiguator is substring-match, not n-gram-match.** Implemented in `src/rules/article-5.ts` as `String.prototype.includes` against the raw lower-cased input, not n-gram match against the tokenized form. Inputs that EXPRESS the disambiguator semantically but don't contain the exact substring (`ausschließlich profiling`, `solely on profiling`, `persönlichkeit ausschließlich`) will NOT trigger the prohibition — even if a real consultant would read the input as describing prohibited predictive policing. `fixture-day7-21` (predictive-policing-DE) was rewritten during Day-7 to include `ausschließlich profiling der natürlichen Person` as a literal substring.
+
+**(b) Five DE fixtures contain phrasings shaped to match the lexicon's canonical phrases rather than natural German.** An EU/DE consultant reading them would flag the wording as wooden / lowercase compound nouns / spliced lexicon objects:
+
+1. **`fixture-day7-19-art5-vulnerability-de.json`** — input contains `gezielt eine ausnutzung schutzbedürftigkeit von Kindern ein`. Natural German would be `nutzt gezielt die Schutzbedürftigkeit von Kindern aus`. The fixture is shaped this way because the lexicon's `b_exploitation_vulnerability` group expects the canonical compound `ausnutzung schutzbedürftigkeit` as adjacent tokens.
+
+2. **`fixture-day7-21-art5-predictive-policing-de.json`** — input contains `vorhersagende polizeiarbeit profiling` and `ausschließlich profiling der natürlichen Person`. Natural German would be `vorhersagende Polizeiarbeit, die ausschließlich auf Profiling der natürlichen Person basiert`. The fixture is shaped this way because (a) the lexicon's `d_predictive_policing_individual` requires the 3-gram `vorhersagende polizeiarbeit profiling` and (b) Art 5(1)(d)'s `solely on profiling` disambiguator (issue G-4(a) above) requires the literal substring.
+
+3. **`fixture-day7-23-art5-emotion-workplace-de.json`** — input contains lowercase compound nouns `emotionserkennung arbeitsplatz` and `stimmungserkennung mitarbeiter`. Natural German would be `Emotionserkennung am Arbeitsplatz` and `Stimmungserkennung der Mitarbeiter` (with proper capitalisation and prepositions). The lexicon's `f_emotion_in_workplace_education` group stores these as lowercase 2-grams without prepositions.
+
+4. **`fixture-day7-28-art50-emotion-marketing-de.json`** — input contains `Als Emotionserkennung Betreiber`. Natural German would be `Als Betreiber eines Emotionserkennungssystems`. The lexicon's `3_emotion_biometric_categorisation_disclosure` group stores `emotionserkennung betreiber` as a single 2-gram for matching efficiency.
+
+5. **`fixture-day7-30-art50-news-summarization-de.json`** — input contains `berichterstattung öffentliches interesse` (missing preposition). Natural German would be `Berichterstattung über Angelegenheiten von öffentlichem Interesse`. The lexicon's `4_sub2_public_interest_text` group stores `berichterstattung öffentliches interesse` as a 3-gram.
+
+**Day-8 fix (pre-launch path):**
+- For each of the 5 fixtures, expand `src/data/patterns.de.json` with natural-German variants (e.g. add `Schutzbedürftigkeit ausnutzen`, `Stimmungen der Mitarbeiter erkennen`, `Berichterstattung über Angelegenheiten von öffentlichem Interesse`) alongside the existing lexicon-canonical phrases. Then rewrite each fixture INPUT to natural German.
+- For G-4(a), either (a) loosen the disambiguator to accept paraphrased forms (e.g. add `ausschließlich auf profiling`, `nur profiling`, `solely based on profiling` as accepted substrings), or (b) move the disambiguator to n-gram match against a curated lexicon group `article_5_d_disambiguator`, or (c) document the strict-substring requirement loudly in the public CLI's `--explain` output (Day 9 work) so a consultant whose input doesn't trigger 5(1)(d) sees WHY and can rephrase.
+
+**Why this matters for credibility:** Marc's launch audience is EU/DE consultants. The "every case has REAL German phrasing — no Google-Translate" credibility moat is undercut whenever a fixture reads as wooden lexicon-aligned text. The Day-8 lexicon expansion is the single highest-leverage polish item before the 2026-05-29 public launch.
 
 ## Medium-priority gaps (v0.2 nice-to-have)
 
