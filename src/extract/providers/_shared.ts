@@ -26,6 +26,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { createHash } from 'node:crypto';
 import type { ExtractedFeatures, ExtractedHit, Lexicon } from '../keyword.js';
 
 // ---------------------------------------------------------------------------
@@ -382,6 +383,30 @@ Rules:
 3. The lexicon phrases are in lowercase. Cite them in lowercase.
 4. If no categories fire, return an object with empty objects for each group.
 5. Be precise: only fire a category when the input clearly describes the regulated practice (not a generic mention or a denial).`;
+
+/**
+ * Stable hash of the prompt + tool-schema. Any edit to either constant
+ * rolls this hash, invalidating cache entries that were emitted under the
+ * older prompt. Cache must include this in its key (see cache.ts +
+ * llm.ts's cacheKey() construction site).
+ *
+ * Computed once at module-init; pure function of the source code. The slice
+ * to 16 hex chars (64 bits) is a deliberate trade-off — sufficient
+ * invalidation signal without inflating the cache-key inputs unnecessarily.
+ *
+ * Architectural rationale: SYSTEM_PROMPT + EMIT_FEATURES_PARAMETERS_SCHEMA
+ * are LLM-affecting inputs that change the model's output distribution. If
+ * either is edited without a corresponding lexicon-version bump, the cache
+ * key would otherwise collide — serving features produced under the OLD
+ * prompt to callers expecting the new prompt's behavior. Including this
+ * checksum closes that silent-regression vector (bug-hunter M1).
+ */
+export const PROMPT_CHECKSUM: string = createHash('sha256')
+  .update(SYSTEM_PROMPT)
+  .update('\n---\n')
+  .update(JSON.stringify(EMIT_FEATURES_PARAMETERS_SCHEMA))
+  .digest('hex')
+  .slice(0, 16);
 
 export function buildUserMessage(
   text: string,
