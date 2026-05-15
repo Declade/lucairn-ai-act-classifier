@@ -1,0 +1,250 @@
+{
+  "language": "de",
+  "version": "v0.1.0-seed",
+  "_meta": {
+    "notice": "Saat-Lexikon für Tag 2 des v0.1.0-Builds. Jeder Eintrag `source` MUSS gegen das deutsche EUR-Lex-Body durch den regulator-validator-Agenten verifiziert werden, bevor Tag-3-Regel-Module diese Trigger konsumieren. NO_DIRECT_SOURCE oder FAIL Findings blockieren Tag-3-Arbeit.",
+    "primary_source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
+    "regulator_validator": "~/.claude/agents/regulator-validator.md",
+    "translation_policy": "Phrases are German EUR-Lex / BSI / BfDI terminology, NOT machine-translated from EN. The regulator-validator must verify against the German body, not the English."
+  },
+  "annex_iii": {
+    "1_biometrics": {
+      "description": "Anhang III.1 — biometrische Fernidentifizierung, biometrische Kategorisierung nach geschützten Merkmalen, Emotionserkennung.",
+      "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "biometrische fernidentifizierung" },
+        { "phrase": "gesichtserkennung" },
+        { "phrase": "biometrische kategorisierung" },
+        { "phrase": "emotionserkennung" },
+        { "phrase": "fingerabdruckerkennung" }
+      ]
+    },
+    "2_critical_infrastructure": {
+      "description": "Anhang III.2 — Sicherheitskomponenten kritischer digitaler Infrastruktur, Straßenverkehr, Wasser-, Gas-, Wärme-, Stromversorgung.",
+      "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "kritische infrastruktur" },
+        { "phrase": "verkehrssteuerung" },
+        { "phrase": "stromnetz" },
+        { "phrase": "wasserversorgung" },
+        { "phrase": "gasversorgung" },
+        { "phrase": "sicherheitskomponente" }
+      ]
+    },
+    "3_education": {
+      "description": "Anhang III.3 — Zugang zu Bildungseinrichtungen, Bewertung von Lernergebnissen, Bestimmung des Bildungsniveaus, Überwachung verbotenen Verhaltens bei Prüfungen.",
+      "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "schüleraufnahme" },
+        { "phrase": "prüfungsbewertung" },
+        { "phrase": "automatisierte benotung" },
+        { "phrase": "lernbewertung" },
+        { "phrase": "prüfungsüberwachung" },
+        { "phrase": "betrugserkennung prüfung" }
+      ]
+    },
+    "4_employment": {
+      "description": "Anhang III.4 — Einstellung, Auswahl, Entscheidungen über Arbeitsbedingungen, Beförderung, Kündigung, Aufgabenverteilung, Überwachung/Bewertung der Leistung.",
+      "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "lebenslauf-screening" },
+        { "phrase": "bewerberauswahl" },
+        { "phrase": "bewerber-ranking" },
+        { "phrase": "personalauswahl" },
+        { "phrase": "einstellungsentscheidung" },
+        { "phrase": "leistungsbewertung" },
+        { "phrase": "mitarbeiterüberwachung" }
+      ]
+    },
+    "5_essential_services": {
+      "description": "Anhang III.5 — Anspruch auf öffentliche Leistungen, Kreditwürdigkeit/Bonitätsprüfung, Risikobewertung/Tarifierung von Lebens-/Krankenversicherung, Notrufdisposition.",
+      "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "bonitätsprüfung" },
+        { "phrase": "kreditwürdigkeit" },
+        { "phrase": "scoring" },
+        { "phrase": "versicherungstarifierung" },
+        { "phrase": "versicherungsrisiko" },
+        { "phrase": "sozialleistung" },
+        { "phrase": "notrufdisposition" },
+        { "phrase": "triage" }
+      ]
+    },
+    "6_law_enforcement": {
+      "description": "Anhang III.6 — Risikobewertung, Polygraphen, Beweismittelzuverlässigkeit, Profiling natürlicher Personen, Tiefenanalyse von Kriminalitätsdaten.",
+      "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "vorhersagende polizeiarbeit" },
+        { "phrase": "rückfallrisiko" },
+        { "phrase": "polygraph" },
+        { "phrase": "lügendetektor" },
+        { "phrase": "beweismittelzuverlässigkeit" },
+        { "phrase": "kriminalprofiling" }
+      ]
+    },
+    "7_migration_border": {
+      "description": "Anhang III.7 — Migration, Asyl, Grenzkontrolle: Risikobewertung, Polygraphen, Prüfung von Visum-/Asyl-/Aufenthalts-Anträgen, Erkennung/Identifizierung an Grenzen.",
+      "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "visumantrag" },
+        { "phrase": "asylantrag" },
+        { "phrase": "grenzkontrolle" },
+        { "phrase": "aufenthaltstitel" },
+        { "phrase": "migrationsrisiko" },
+        { "phrase": "grenzüberwachung" }
+      ]
+    },
+    "8_justice_democracy": {
+      "description": "Anhang III.8 — Rechtspflege (Sachverhaltsermittlung/Rechtsauslegung, Subsumtion), Beeinflussung von Wahlen/Referenden/Wählerverhalten.",
+      "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "gerichtliche entscheidung" },
+        { "phrase": "richterliche unterstützung" },
+        { "phrase": "rechtsauslegung" },
+        { "phrase": "wahlbeeinflussung" },
+        { "phrase": "wählerzielgruppe" }
+      ]
+    }
+  },
+  "article_5_prohibited": {
+    "a_subliminal_manipulative": {
+      "description": "Art. 5 Abs. 1 Buchst. a — unterschwellige Techniken jenseits des Bewusstseins oder absichtlich manipulative/täuschende Techniken zur wesentlichen Verhaltensbeeinflussung.",
+      "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "unterschwellige technik" },
+        { "phrase": "manipulative technik" },
+        { "phrase": "täuschende technik" }
+      ]
+    },
+    "b_exploit_vulnerabilities": {
+      "description": "Art. 5 Abs. 1 Buchst. b — Ausnutzung von Schwächen aufgrund von Alter, Behinderung oder besonderer sozialer/wirtschaftlicher Situation.",
+      "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "ausnutzung schutzbedürftigkeit" },
+        { "phrase": "kinder ausnutzen" },
+        { "phrase": "ältere ausnutzen" }
+      ]
+    },
+    "c_social_scoring": {
+      "description": "Art. 5 Abs. 1 Buchst. c — Bewertung oder Klassifizierung natürlicher Personen über einen Zeitraum aufgrund sozialen Verhaltens oder Persönlichkeitsmerkmalen (Sozialbewertung).",
+      "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "sozialbewertung" },
+        { "phrase": "social credit" },
+        { "phrase": "vertrauenswürdigkeitsbewertung" }
+      ]
+    },
+    "d_predictive_policing": {
+      "description": "Art. 5 Abs. 1 Buchst. d — Risikobewertung zur Vorhersage von Straftaten allein auf Profiling oder Persönlichkeitsmerkmalen basierend.",
+      "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "vorhersagende polizeiarbeit profiling" },
+        { "phrase": "kriminalrisiko-profiling" }
+      ]
+    },
+    "e_facial_scraping": {
+      "description": "Art. 5 Abs. 1 Buchst. e — ungezieltes Scraping von Gesichtsbildern aus dem Internet oder von CCTV-Aufnahmen.",
+      "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "gesichtsbilder scraping" },
+        { "phrase": "gesichts-scraping" }
+      ]
+    },
+    "f_emotion_in_workplace_education": {
+      "description": "Art. 5 Abs. 1 Buchst. f — Schlussfolgerungen auf Emotionen am Arbeitsplatz oder in Bildungseinrichtungen (mit medizinischen/Sicherheits-Ausnahmen).",
+      "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "emotionserkennung arbeitsplatz" },
+        { "phrase": "emotionserkennung schule" },
+        { "phrase": "stimmungserkennung mitarbeiter" }
+      ]
+    },
+    "g_biometric_categorisation_sensitive": {
+      "description": "Art. 5 Abs. 1 Buchst. g — biometrische Kategorisierung zur Ableitung von Rasse, politischer Meinung, Gewerkschaftszugehörigkeit, religiösen/weltanschaulichen Überzeugungen, Sexualleben oder sexueller Orientierung.",
+      "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "politische meinung ableiten" },
+        { "phrase": "sexuelle orientierung ableiten" },
+        { "phrase": "religion ableiten" },
+        { "phrase": "ethnische herkunft ableiten" }
+      ]
+    },
+    "h_realtime_remote_biometric_le": {
+      "description": "Art. 5 Abs. 1 Buchst. h — biometrische Echtzeit-Fernidentifizierung in öffentlich zugänglichen Räumen zu Strafverfolgungszwecken (nur enge Ausnahmen).",
+      "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "biometrische echtzeit-identifizierung" },
+        { "phrase": "echtzeit-gesichtserkennung" },
+        { "phrase": "live-gesichtserkennung" }
+      ]
+    }
+  },
+  "article_50_gpai": {
+    "1_interaction_disclosure": {
+      "description": "Art. 50 Abs. 1 — Anbieter von KI-Systemen zur direkten Interaktion mit natürlichen Personen müssen die KI-Natur offenlegen.",
+      "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "chatbot" },
+        { "phrase": "ki-assistent" },
+        { "phrase": "dialogsystem" }
+      ]
+    },
+    "2_synthetic_content_marking": {
+      "description": "Art. 50 Abs. 2 — Ausgaben generativer KI sind in maschinenlesbarer Form als künstlich erzeugt zu markieren.",
+      "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "synthetische inhalte" },
+        { "phrase": "ki-generierte inhalte" },
+        { "phrase": "generative ki" }
+      ]
+    },
+    "3_emotion_categorisation_disclosure": {
+      "description": "Art. 50 Abs. 3 — Betreiber von Emotionserkennungs- oder biometrischen Kategorisierungssystemen müssen betroffene Personen informieren.",
+      "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "emotionserkennung betreiber" },
+        { "phrase": "biometrische kategorisierung betreiber" }
+      ]
+    },
+    "4_deepfake_labeling": {
+      "description": "Art. 50 Abs. 4 — Betreiber, die Bild-/Audio-/Videoinhalte erzeugen oder manipulieren, die einen Deepfake darstellen, müssen die künstliche Erzeugung offenlegen.",
+      "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "deepfake" },
+        { "phrase": "deep fake" },
+        { "phrase": "gesichtstausch" }
+      ]
+    }
+  },
+  "scope_qualifiers": {
+    "research_only": {
+      "description": "Art. 2 Abs. 8 — Forschungs-, Test- und Entwicklungstätigkeit Geltungsausschluss (vor dem Inverkehrbringen).",
+      "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "nur forschung" },
+        { "phrase": "experimentell" },
+        { "phrase": "forschungszwecke" },
+        { "phrase": "forschung und entwicklung" },
+        { "phrase": "tests vor markteinführung" }
+      ]
+    },
+    "open_source_exemption": {
+      "description": "Erwägungsgrund 102-104 / Art. 2 Abs. 12 — freie/Open-Source-KI-Komponenten haben eine enge Ausnahme (gilt NICHT für GPAI-Modelle mit systemischem Risiko oder für Hochrisikosysteme).",
+      "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "open-source" },
+        { "phrase": "quelloffen" },
+        { "phrase": "permissive lizenz" }
+      ]
+    },
+    "internal_use": {
+      "description": "Hinweis auf nicht-öffentliche Bereitstellung, der die Pflichten des Betreibers nach Art. 50 beeinflussen kann.",
+      "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "nur interne nutzung" },
+        { "phrase": "internes werkzeug" },
+        { "phrase": "entwicklertest" }
+      ]
+    }
+  }
+}
