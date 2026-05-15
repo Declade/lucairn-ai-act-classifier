@@ -226,11 +226,18 @@ const PREDICTIVE_POLICING_DISAMBIGUATORS_DE: readonly string[] = [
   'allein auf der grundlage des profilings',
   'persönlichkeit ausschließlich',
   'persönlichkeitsmerkmale ausschließlich',
-  // Canonical EUR-Lex DE Art 5(1)(d) phrasings where the qualifier
-  // ("ausschließlich" / "allein") precedes the noun. The literal EUR-Lex DE
-  // body reads "allein auf der Grundlage des Profilings ... oder der
-  // Bewertung von Persönlichkeitsmerkmalen". These substrings catch
-  // Persönlichkeit / Persönlichkeitsmerkmal / Persönlichkeitsmerkmalen.
+  // Canonical EUR-Lex DE Art 5(1)(d) verbatim qualifier is
+  // "ausschließlich auf der Grundlage des Profiling" (Tier-1 EU AI Office
+  // Service Desk DE: https://ai-act-service-desk.ec.europa.eu/de/ai-act/article-5).
+  // The disambiguator substrings below INCLUDE that verbatim phrase AND
+  // loosen "ausschließlich" to the colloquial synonyms "allein" and "nur",
+  // AND accept both "Profiling" and the genitive "Profilings". This is
+  // documented colloquial-paraphrase coverage per Day-8 G-4(a); see the
+  // §"Colloquial-paraphrase architecture" block above for the governance
+  // rationale. Reviewer-chain regulator-validator (PR #8 7th run + PR #9
+  // 8th run) confirmed these as defensible synonyms in German legal-prose.
+  // The remaining substrings catch the Persönlichkeit / Persönlichkeitsmerkmal /
+  // Persönlichkeitsmerkmalen branch of the same EUR-Lex sentence.
   'ausschließlich auf persönlichkeit',
   'allein auf persönlichkeit',
   // Day-8 G-4(a) additive paraphrase variants. "nur" as a colloquial
