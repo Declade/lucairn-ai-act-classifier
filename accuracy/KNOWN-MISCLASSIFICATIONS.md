@@ -1,16 +1,17 @@
-# Known misclassifications & Day-8 / v0.2 polish backlog
+# Known misclassifications & v0.2 polish backlog
 
-This document lists known classifier limitations surfaced during the Day-7 build of the 50-case fixture corpus + accuracy harness. As of v0.1.0 the harness reports 0 fixture-level misclassifications on the 50-case corpus (overall 100.0%, Art 5 100.0%, binary high-risk 100.0%), but the harness only checks what the fixtures pin. The items below are real limitations the harness does NOT currently catch. Pre-launch items are flagged `Day-8 fix`; genuinely-post-launch items are flagged `v0.2 fix`.
+This document lists known classifier limitations surfaced during the Day-7+8 build of the 50-case fixture corpus + accuracy harness. As of v0.1.1 (Day 8) the harness reports 1 fixture-level misclassification on the 50-case corpus (overall 98.2%, Art 5 100.0%, binary high-risk 98.0%). The harness only checks what the fixtures pin; the items below are limitations either caught by the harness (G-5) or not currently caught. Pre-launch items closed by Day-8 are marked with closure SHAs; post-launch items remain `v0.2 fix`.
 
-The full discussion of why the 100% headline is a fixture-engineering metric rather than a real-world-accuracy metric lives in [`METHODOLOGY.md`](./METHODOLOGY.md) §"Honest limitations". The entries below are the concrete, actionable items.
+The full discussion of why the headline is a fixture-engineering metric rather than a real-world-accuracy metric lives in [`METHODOLOGY.md`](./METHODOLOGY.md) §"Honest limitations". The entries below are the concrete, actionable items.
 
 ## High-priority gaps (Day-8 / pre-launch target)
 
 ### G-1. Annex III sub-letter narrowing for paragraphs 2, 3, 7, 8
 
-**Status:** documented, not yet fixed.
+**Status: closed Day-8** (rule extension in commit `c29ac1e`; fixture backfill in commit `94be382`).
+
 **Affected fixtures:** `fixture-day7-04` (water), `fixture-day7-05` (electricity), `fixture-day7-06` (admission), `fixture-day7-07` (grading), `fixture-day7-14` (asylum), `fixture-day7-15` (visa), `fixture-day7-16` (judicial), `fixture-day7-17` (election).
-**Where:** `src/rules/article-6-annex-iii.ts:285-445` `narrowSubLetters()`.
+**Where:** `src/rules/article-6-annex-iii.ts` `narrowSubLetters()`.
 
 The function only implements narrowing for Annex III paragraphs 1, 4, 5, 6. For paragraphs 2 (critical infrastructure), 3 (education), 7 (migration/border), 8 (justice/democracy), the result emits `sub_letters: []` — a "domain X applies, sub-letter unspecified" outcome. Day-7 fixtures for those domains correspondingly omit `expected.annex_iii_sub_letters` rather than pin a sub-letter expectation that the harness would fail.
 
@@ -18,7 +19,8 @@ The function only implements narrowing for Annex III paragraphs 1, 4, 5, 6. For 
 
 ### G-2. Annex III.6(a) victim-risk lexicon coverage gap
 
-**Status:** documented in fixture-day7-12 notes; not yet fixed.
+**Status: closed Day-8** (lexicon + rule extension in commit `c185a44`; fixture-12 Path A extension in commit `87f8f4e`).
+
 **Affected fixtures:** `fixture-day7-12` (recidivism-DE).
 **Where:** `src/data/patterns.{en,de}.json` `annex_iii.6_law_enforcement`.
 
@@ -28,7 +30,8 @@ The fixture covers a hybrid case where a recidivism-assessment system also asses
 
 ### G-3. Plurals + German morphology not normalised
 
-**Status:** known limitation; fixture inputs rewritten to use singular canonical forms.
+**Status: closed Day-8** (additive lexicon expansion in commit `bbd158c`; no stemmer / lemmatizer introduced per the Day-2 normalize.ts lock).
+
 **Affected fixtures:** `fixture-day7-14` (asylum-EN — was `asylum applications`, now `each asylum application`), `fixture-day7-15` (visa-DE — was `Visumantragen`, now `jedes Visumantrag`), `fixture-day7-12` (recidivism-DE — was `des Rückfallrisikos`, now `von Rückfallrisiko bei`).
 **Where:** `src/extract/normalize.ts` + `src/extract/keyword.ts`.
 
@@ -38,7 +41,8 @@ The keyword extractor matches n-grams against the lexicon verbatim after NFKC no
 
 ### G-4. DE fixture-engineering contamination — lexicon-aligned phrasings that an EU/DE consultant would spot as unnatural
 
-**Status:** documented in this entry; fixtures NOT rewritten (rewriting requires lexicon edits, forbidden by Day-7 dispatch §1.9).
+**Status: closed Day-8** (G-4(a) paraphrase variants in commit `ddf394a`; G-4(b) natural-German lexicon expansion in commit `541d94c`; fixture rewrites in commit `a6f7a1b`).
+
 **Where:** `src/data/patterns.de.json` lexicon + 5 DE fixtures listed below.
 **Surfaced by:** Day-7 PR #7 reviewer chain (bug-hunter M1; regulator-validator W-4/5/6).
 
@@ -64,6 +68,29 @@ Two related issues land under G-4:
 
 **Why this matters for credibility:** Marc's launch audience is EU/DE consultants. The "every case has REAL German phrasing — no Google-Translate" credibility moat is undercut whenever a fixture reads as wooden lexicon-aligned text. The Day-8 lexicon expansion is the single highest-leverage polish item before the 2026-05-29 public launch.
 
+### G-5. DE compound-noun tokenization — lexicon 1-grams don't fire inside German compounds
+
+**Status:** documented as a real residual classified miss surfaced by Day-8 G-4 fixture rewrite.
+**Affected fixtures:** `fixture-day7-28` (art50-emotion-marketing-de).
+**Where:** `src/extract/normalize.ts` + `src/extract/keyword.ts` n-gram tokenization.
+
+The Day-8 G-4 rewrite of fixture-28 changed the input from "Als Emotionserkennung Betreiber..." (lexicon-aligned compound noun) to "Als Betreiber eines Emotionserkennungssystems im Customer-Marketing-Kontext..." (natural German). The lexicon hit `betreiber eines emotionserkennungssystems` (Day-8 G-4 added entry) fires Art 50(3) correctly. BUT the lexicon 1-gram `emotionserkennung` does NOT fire on the compound noun `Emotionserkennungssystems` because the extractor tokenizes on whitespace + punctuation, not compound-noun-internal-roots. Hence Annex III.1(c) high-risk emotion-recognition does NOT fire.
+
+An EU/DE consultant reading the fixture would mark this as BOTH Annex III.1(c) high-risk (because the system IS an emotion-recognition system) AND Art 50(3) deployer (because the deployer's disclosure obligation IS triggered). The classifier currently reads it as Art 50(3) only.
+
+**Expected vs actual:**
+- expected: `annex_iii_high_risk: true, annex_iii_domains: [1], annex_iii_sub_letters: {"1": ["c"]}, article_50_paragraphs: ["50(3)"]`
+- actual: `annex_iii_high_risk: false, annex_iii_domains: [], annex_iii_sub_letters: {}, article_50_paragraphs: ["50(3)"]`
+
+**Hypothesis:** lexicon-coverage gap (no compound-noun-decomposing tokenizer for DE). The compound noun `Emotionserkennungssystems` contains `Emotionserkennung` as a morphological constituent; an extractor that did naive substring matching against the raw lower-cased input (mirroring the Art 5(1)(d) disambiguator architecture) would catch it. Or: a DE compound-noun decomposer (e.g. a hand-curated split table) would split `Emotionserkennungssystem → Emotionserkennung + System`.
+
+**v0.2 fix candidates (rank-ordered by leverage):**
+1. **Hand-curated compound-noun splits.** Add a small table (~20 entries) of DE compounds that include lexicon 1-grams: `emotionserkennungssystem → emotionserkennung`, `kreditwürdigkeitsprüfung → kreditwürdigkeit`, etc. Apply BEFORE n-gram tokenization. Low risk; predictable behavior.
+2. **Naive substring fallback for high-risk Annex III categories.** When a lexicon n-gram fails to fire AND the input contains the lexicon phrase as a substring of a longer token, surface the hit with a "compound-noun fallback" reasoning tag. Higher risk (false positives on partial-word matches like `traffic` in `pacific`).
+3. **Full DE compound-noun decomposer** (e.g. `compound-splitter` npm package or a hand-rolled `CharLM`-style splitter). Highest leverage; biggest engineering cost; orthogonal to the Day-2 normalize.ts lock.
+
+**Why this is shipped honestly rather than engineered away:** Day-7 lesson logged in CLAUDE.md and Day-8 dispatch §0 — write fixtures per consultant judgment, observe misclassifications, document them. DO NOT engineer fixtures back to fit the lexicon. The 98.2% honest-with-disclosure number beats a fake 100%.
+
 ## Medium-priority gaps (Day-8 nice-to-have / v0.2 hardening)
 
 ### M-1. Annex III.4 worker-monitoring phrase coverage
@@ -86,7 +113,8 @@ The harness uses set-equality for Day-7 fixtures (where `bucket` is present) and
 
 ### M-3. No `article_50_paragraphs` on legacy day5 fixtures
 
-**Status:** additive-schema; legacy fixtures untouched per dispatch spec.
+**Status: closed Day-8** (backfill in commit `87f8f4e`). Both day5/01 + day5/02 now carry `bucket: "article_50"` + `source_url` + `article_50_paragraphs`. They shifted from "legacy" per-bucket counter (subset-containment) to "article_50" (set-equality); per-bucket counts in REPORT.md and the vitest spec updated accordingly.
+
 **Affected fixtures:** `day5/01-art50-chatbot-en.json`, `day5/02-art50-deepfake-de.json`.
 
 The 2 existing day5 fixtures cover Art 50 paragraph paths but don't carry the new `expected.article_50_paragraphs` field. The harness silently skips that check on them, so an unintended over-firing of (e.g.) 50(3) on the chatbot fixture would NOT be caught.

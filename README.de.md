@@ -34,15 +34,15 @@ Regelwerk-zuerst-Hybrid. Eine deterministische Regel-Engine in TypeScript wertet
 
 ## Genauigkeit (Accuracy)
 
-Der Klassifizierer wird gegen einen 50-Fall-zweisprachigen Fixture-Korpus (CC-BY-4.0) gebenchmarkt: 24 Anhang III Hochrisiko + 8 Art. 5 verboten + 8 Art. 50 Transparenz + 10 Negativfälle; 21 EN + 29 DE. Aktuelle Zahlen auf dem v0.1.0-Regelsatz:
+Der Klassifizierer wird gegen einen 50-Fall-zweisprachigen Fixture-Korpus (CC-BY-4.0) gebenchmarkt: 24 Anhang III Hochrisiko + 8 Art. 5 verboten + 8 Art. 50 Transparenz + 10 Negativfälle; 21 EN + 29 DE. Aktuelle Zahlen auf dem v0.1.1-Regelsatz:
 
-- **Gesamt:** 100,0% (granulare Feld-Trefferquote)
+- **Gesamt:** 98,2% (granulare Feld-Trefferquote)
 - **Art. 5 Verbots-Erkennung** (sicherheitskritisch): 100,0%
-- **Binäre Hochrisiko-Klassifikation:** 100,0%
+- **Binäre Hochrisiko-Klassifikation:** 98,0%
 
 CI-Untergrenze (festgelegt): ≥80% Gesamt + 100% Art. 5. v1.0-Release-Ziel: ≥85% Gesamt + 100% Art. 5 + ≥90% binäre Hochrisiko-Klassifikation.
 
-Die 100%-Schlagzeile spiegelt die interne Konsistenz zwischen kuratiertem Fixture-Korpus und kuratiertem Lexikon wider — nicht die Genauigkeit auf beliebigen realen Eingaben. Siehe [accuracy/METHODOLOGY.md](./accuracy/METHODOLOGY.md) §"Honest limitations" und [accuracy/KNOWN-MISCLASSIFICATIONS.md](./accuracy/KNOWN-MISCLASSIFICATIONS.md) für den v0.2-Polish-Backlog.
+Die Schlagzeile spiegelt die interne Konsistenz zwischen kuratiertem Fixture-Korpus und kuratiertem Lexikon wider — nicht die Genauigkeit auf beliebigen realen Eingaben. v0.1.1 (Tag 8) hat fünf Day-7-DE-Fixtures mit natürlichem Deutsch nach Berater-Urteil umgeschrieben und das Lexikon um natürlich-deutsche Varianten erweitert; eine verbleibende Lücke wurde aufgedeckt (Compound-Noun-Tokenisierung bei `Emotionserkennungssystems`) und in [accuracy/KNOWN-MISCLASSIFICATIONS.md](./accuracy/KNOWN-MISCLASSIFICATIONS.md) G-5 dokumentiert, statt sie wegzudesignen. Siehe [accuracy/METHODOLOGY.md](./accuracy/METHODOLOGY.md) §"Honest limitations" für die vollständige Offenlegung.
 
 Berichte: [accuracy/REPORT.md](./accuracy/REPORT.md).
 

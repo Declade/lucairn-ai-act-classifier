@@ -19,6 +19,8 @@ This document describes how the 50-case fixture corpus and accuracy harness work
 | Bucket D — Negatives (out-of-scope / minimal-risk / limited-risk) | 9 | 1 | 10 | 4 | 6 |
 | **TOTAL** | **39** | **11** | **50** | **21** | **29** |
 
+Day-8 M-3 backfill: the 2 day5 Article-50 fixtures (chatbot-en + deepfake-de) now carry `bucket: "article_50"` and the `article_50_paragraphs` expectation. They had previously loaded into the "legacy" per-bucket counter (with subset-containment semantics); they now load into the "article_50" counter (with set-equality semantics). The per-bucket count in REPORT.md reflects this shift: article_50 carries 8 fixtures and "legacy" now carries 9.
+
 The 58:42 DE:EN split is intentional. Lucairn's launch audience (EU/DE consultants) needs DE-native quality more than balanced bilinguality. Marc's launch plan explicitly calls out "every case has REAL German phrasing — no Google-Translate" as a credibility moat for the EU/DE consultant audience.
 
 Bucket A covers all 8 Annex III paragraphs with at least 2 cases per paragraph (3 for paragraph 1 because the Day-3 fixture in that domain is Article 5 prohibited).
@@ -91,15 +93,15 @@ The trade-off is acceptable for v0.1. v0.2 should backfill Day-7 fields onto the
 
 ## CI floor vs v1.0 release targets
 
-| Metric | v1.0 release target | Day-7 CI floor |
+| Metric | v1.0 release target | Day-7+8 CI floor |
 |---|---|---|
 | Overall accuracy | ≥85% | ≥80% |
 | Article 5 prohibition | 100% | 100% |
-| Binary high-risk | ≥90% | (informational only) |
+| Binary high-risk | ≥90% | ≥85% (sanity floor in `test/accuracy/accuracy.spec.ts`) |
 
-The CI floor (locked at 80% overall + 100% Art 5 for the Day-7 PR) gives margin while the Day-2 lexicon and Day-3/4/5 rules mature through Day 8's "patch where weak" work. The vitest spec at `test/accuracy/accuracy.spec.ts` fails `pnpm test` if either floor is missed.
+The CI floor (locked at 80% overall + 100% Art 5 + 85% binary high-risk for the Day-8 PR) gives margin while the Day-2 lexicon and Day-3/4/5 rules mature. The vitest spec at `test/accuracy/accuracy.spec.ts` fails `pnpm test` if any floor is missed.
 
-The CI floor is intentionally LOWER than the v1.0 release target so v0.1 can land. v1.0 launch (target: 2026-05-29) tightens the floor.
+The CI floor is intentionally LOWER than the v1.0 release target so v0.1 can land. v1.0 launch (target: 2026-05-29) tightens the floor; the informational `CI_OVERALL_FLOOR_V1_LAUNCH = 0.85` constant in `scripts/accuracy.ts` documents the target ratchet.
 
 ## Honest limitations
 
@@ -107,7 +109,7 @@ The CI floor is intentionally LOWER than the v1.0 release target so v0.1 can lan
 
 2. **Plurals and German morphology are not normalised.** The keyword extractor matches n-grams against the lexicon verbatim. Plurals (`asylum applications` vs `asylum application`), German inflections (`Visumantrag` vs `Visumantragen`, `Rückfallrisikos` vs `Rückfallrisiko`), and irregular compound nouns require the exact canonical phrase to fire. v0.2 polish should add stemming / lemmatisation or expand the lexicon with morphological variants.
 
-3. **Sub-letter narrowing is incomplete.** `narrowSubLetters()` at `src/rules/article-6-annex-iii.ts:285-468` only implements narrowing for Annex III paragraphs 1, 4, 5, 6. Paragraphs 2 (critical infrastructure), 3 (education), 7 (migration/border), 8 (justice/democracy) emit `sub_letters: []`. Fixtures for those paragraphs cannot pin sub-letter expectations. v0.2 should add sub-letter narrowing for the remaining 4 paragraphs.
+3. **Sub-letter narrowing is complete for all 8 Annex III paragraphs (as of Day-8 G-1).** `narrowSubLetters()` in `src/rules/article-6-annex-iii.ts` now implements narrowing for paragraphs 1, 2, 3, 4, 5, 6 (including 6(a) victim-risk per Day-8 G-2), 7, 8. The 8 Day-7 fixtures previously omitting `expected.annex_iii_sub_letters` have been backfilled. (Pre-Day-8 versions of this document noted paragraphs 2/3/7/8 were unsupported.)
 
 4. **One Article 5 disambiguator works on substring match, not n-gram.** `Article 5(1)(d) "solely on profiling"` requires the input to contain the literal substring `ausschließlich profiling` (or `solely on profiling` / `persönlichkeit ausschließlich` in DE). The disambiguator is `String.prototype.includes`-based, not n-gram. Fixture-21 was rewritten to make the substring appear literally; future fixtures should account for this.
 
@@ -118,6 +120,10 @@ The CI floor is intentionally LOWER than the v1.0 release target so v0.1 can lan
 7. **No LLM extractor coverage.** The harness runs the deterministic keyword extractor only. v0.2 should add an LLM-extractor harness pass (`opts.llm = 'anthropic'`) to measure whether LLM feature extraction lifts accuracy on adversarial / out-of-distribution inputs.
 
 8. **No "hard adversarial" cases.** The corpus is curated and friendly — it doesn't include intentionally tricky cases (semantically AI-Act-relevant but lexically distant, deliberate paraphrase to evade lexicon, code-switched EN/DE input). v0.2 should add an "adversarial" sub-bucket of 5-10 cases per bucket.
+
+9. **Day-8 rewrote 5 DE fixtures with natural German per consultant judgment.** Fixtures 19/21/23/28/30 carried lexicon-aligned contamination in v0.1.0 (lowercase compound nouns, missing prepositions, spliced lexicon objects). Day-8 G-4 rewrote them with natural German and additively extended `src/data/patterns.de.json` so the rewrites still classify correctly. The honest-disclosure framing (every fixture readable as natural German that an EU/DE consultant would write spontaneously) is now the credibility moat.
+
+10. **Day-8 surfaced one new visible-residual misclassification.** Fixture-28 (`28-art50-emotion-marketing-de`) was rewritten as "Als Betreiber eines Emotionserkennungssystems im Customer-Marketing-Kontext informieren wir Verbraucher über die Emotionsanalyse". The classifier fires Art 50(3) correctly (deployer disclosure) but does NOT fire Annex III.1(c) high-risk emotion-recognition because the lexicon 1-gram `emotionserkennung` is embedded inside the compound noun `Emotionserkennungssystems` and the n-gram extractor doesn't tokenize inside German compounds. An EU consultant would read this as both Annex III.1(c) high-risk AND Art 50(3) deployer; we read it as Art 50(3) only. Tracked as G-5 in [KNOWN-MISCLASSIFICATIONS.md](./KNOWN-MISCLASSIFICATIONS.md). NOT engineered away — the honest 98.2% is the credibility moat.
 
 ## Reproducing the report
 

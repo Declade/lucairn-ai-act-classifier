@@ -573,6 +573,14 @@ function parseArgv(argv: ReadonlyArray<string>): ParsedArgv {
 const CI_OVERALL_FLOOR = 0.8;
 const CI_ARTICLE_5_FLOOR = 1.0;
 
+/**
+ * v1.0 launch target — ratchet `CI_OVERALL_FLOOR` to this value on v1.0 launch.
+ * Currently informational; the CI gate above stays at 0.80 to give Day-8/Day-9
+ * lexicon expansion margin. Day-13 / pre-launch session updates this to active.
+ */
+const CI_OVERALL_FLOOR_V1_LAUNCH = 0.85;
+void CI_OVERALL_FLOOR_V1_LAUNCH; // intentionally unused; kept visible in source
+
 function meetsCIFloor(report: AccuracyReport): boolean {
   return report.overall_accuracy >= CI_OVERALL_FLOOR && report.article_5_accuracy >= CI_ARTICLE_5_FLOOR;
 }
