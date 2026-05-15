@@ -1,7 +1,7 @@
 // scripts/accuracy.ts — Accuracy harness for the 50-case bilingual fixture corpus.
 //
 // CLI:
-//   pnpm accuracy [--verbose] [--format json|markdown|both]
+//   pnpm accuracy [--verbose] [--format json|markdown|both] [--llm <provider>] [--cache]
 //
 // Loads every JSON fixture under test/fixtures/use-cases/day{3,4,5,7}/, runs
 // each through `classify(fixture.input, { lang: fixture.lang })`, compares the
@@ -9,6 +9,13 @@
 // computes per-bucket + per-target-metric accuracy, and emits:
 //   - accuracy/REPORT.md     — Markdown report committed to git.
 //   - accuracy/REPORT.json   — machine-readable; gitignored.
+//
+// Flags:
+//   --cache  Opt-in to the LLM-mode filesystem cache for the harness run.
+//            DEFAULT is to disable the cache so re-runs after a prompt or
+//            lexicon edit always exercise the live provider (bug-hunter M2
+//            closure — stale-cached features would otherwise hide regressions
+//            in the harness report).
 //
 // Exit code:
 //   0 — all CI thresholds met (overall ≥0.80 AND Article-5 = 1.00).
@@ -653,14 +660,31 @@ interface ParsedArgv {
   verbose: boolean;
   format: 'json' | 'markdown' | 'both';
   llm?: LLMProvider;
+  /**
+   * Opt-in to the LLM-mode filesystem cache for the harness run. Default false
+   * — re-runs after a prompt or lexicon edit should always exercise the live
+   * provider so the report reflects the current code (bug-hunter M2 closure).
+   * Pass `--cache` to override.
+   */
+  useCache: boolean;
 }
 
-function parseArgv(argv: ReadonlyArray<string>): ParsedArgv {
-  const out: ParsedArgv = { verbose: false, format: 'both' };
+/**
+ * Parse the accuracy-harness argv vector. Exported for tests so the
+ * default-disable-cache invariant can be locked without spawning the CLI.
+ *
+ * @internal — public only for vitest specs.
+ */
+export function parseAccuracyArgv(argv: ReadonlyArray<string>): ParsedArgv {
+  const out: ParsedArgv = { verbose: false, format: 'both', useCache: false };
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
     if (arg === '--verbose') {
       out.verbose = true;
+      continue;
+    }
+    if (arg === '--cache') {
+      out.useCache = true;
       continue;
     }
     if (arg === '--format') {
@@ -687,11 +711,16 @@ function parseArgv(argv: ReadonlyArray<string>): ParsedArgv {
       continue;
     }
     if (arg !== undefined && arg.length > 0) {
-      process.stderr.write(`accuracy: unknown argument "${arg}". Usage: --verbose | --format json|markdown|both | --llm anthropic|openai|groq\n`);
+      process.stderr.write(`accuracy: unknown argument "${arg}". Usage: --verbose | --format json|markdown|both | --llm anthropic|openai|groq | --cache\n`);
       process.exit(2);
     }
   }
   return out;
+}
+
+/** Backward-compat alias kept for the existing in-module call site. */
+function parseArgv(argv: ReadonlyArray<string>): ParsedArgv {
+  return parseAccuracyArgv(argv);
 }
 
 // ---------------------------------------------------------------------------
@@ -788,6 +817,14 @@ async function runCli(argv: ReadonlyArray<string> = process.argv.slice(2)): Prom
   try {
     const runOpts: RunAccuracyOptions = {};
     if (parsed.llm !== undefined) runOpts.llm = parsed.llm;
+    // bug-hunter M2 closure: LLM mode default-disables the cache so re-runs
+    // after a prompt or lexicon edit always exercise the live provider. Pass
+    // `--cache` to opt back in (rare; useful only when re-running on
+    // byte-identical inputs and you specifically want to spend zero API
+    // budget).
+    if (parsed.llm !== undefined && !parsed.useCache) {
+      runOpts.cache = { disabled: true };
+    }
     report = await runAccuracy(runOpts);
   } catch (err) {
     process.stderr.write(`accuracy: harness error — ${(err as Error).message}\n`);

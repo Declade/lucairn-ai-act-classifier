@@ -56,7 +56,7 @@ vi.mock('@anthropic-ai/sdk', () => {
 });
 
 // Import AFTER vi.mock.
-import { runAccuracy } from '../../scripts/accuracy.js';
+import { runAccuracy, parseAccuracyArgv } from '../../scripts/accuracy.js';
 
 beforeEach(() => {
   mockCallCount = 0;
@@ -136,5 +136,31 @@ describe('runAccuracy({ llm: "anthropic" }) — offline (mocked SDK)', () => {
     const negativeFixtures = report.fixtures.filter((f) => f.bucket === 'negative');
     expect(negativeFixtures.length).toBe(9);
     expect(negativeFixtures.every((f) => f.article_5_check_pass === true)).toBe(true);
+  });
+});
+
+describe('accuracy harness CLI argv — default-disable LLM cache (bug-hunter M2 closure)', () => {
+  it('default (no --cache flag) → useCache === false', () => {
+    const opts = parseAccuracyArgv(['--llm', 'anthropic']);
+    expect(opts.useCache).toBe(false);
+    expect(opts.llm).toBe('anthropic');
+  });
+
+  it('explicit --cache flag → useCache === true', () => {
+    const opts = parseAccuracyArgv(['--llm', 'anthropic', '--cache']);
+    expect(opts.useCache).toBe(true);
+    expect(opts.llm).toBe('anthropic');
+  });
+
+  it('deterministic-mode default (no --llm) also exposes useCache=false (cache only consulted when --llm is set; flag is inert otherwise)', () => {
+    const opts = parseAccuracyArgv([]);
+    expect(opts.useCache).toBe(false);
+    expect(opts.llm).toBeUndefined();
+  });
+
+  it('--cache before --llm parses identically', () => {
+    const opts = parseAccuracyArgv(['--cache', '--llm', 'groq']);
+    expect(opts.useCache).toBe(true);
+    expect(opts.llm).toBe('groq');
   });
 });
