@@ -1,0 +1,13 @@
+{
+  "id": "fixture-day5-02-art50-deepfake-de",
+  "lang": "de",
+  "input": "Unsere KI-Plattform erzeugt Deepfake-Videos für satirische Kunstprojekte und politische Kommentare.",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": false,
+    "annex_iii_domains": [],
+    "suppressed_by_article_5": false,
+    "notes": "Article 50(4) first sub-paragraph (deepfake) transparency path in German. The lexicon term 'deepfake' (article_50_gpai.4_deepfake_labeling DE) fires paragraph_4_deepfake. This is a function-shape transparency obligation, NOT a high-risk classification — the system is not in any Annex III paragraph (it generates image/video content; not deployed in employment / essential-services / law-enforcement / etc.). Article 5 prohibitions do not fire (Art 5(1)(h) targets real-time biometric identification in public spaces; deepfake content generation is a different practice). The verbatim 50(4) sub-paragraph 1 carve-out language preserves the statutory artistic-work limitation. All Day-3/4 cascade modules return applicable=false. Three-category overlay therefore has applicable_categories=[]. EUR-Lex grounding: Art 50(4) first sub-paragraph + Annex III + Art 6(3) limitations."
+  }
+}

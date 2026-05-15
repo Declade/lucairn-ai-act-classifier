@@ -40,6 +40,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const FIXTURES_BASE = join(__dirname, '..', 'fixtures', 'use-cases');
 const DAY3_DIR = join(FIXTURES_BASE, 'day3');
 const DAY4_DIR = join(FIXTURES_BASE, 'day4');
+const DAY5_DIR = join(FIXTURES_BASE, 'day5');
 
 interface Fixture {
   id: string;
@@ -420,6 +421,146 @@ describe('snapshot — Day 4 fixtures (low-risk non-applicable path)', () => {
       expect(tc.categories['1'].applicable).toBe(false);
       expect(tc.categories['2'].applicable).toBe(false);
       expect(tc.categories['3'].applicable).toBe(false);
+      expect(tc.applicable_categories).toEqual([]);
+    });
+  }
+});
+
+describe('snapshot — Day 5 fixtures (Article 50 non-high-risk paths)', () => {
+  const fixtures = loadFixturesFrom(DAY5_DIR);
+
+  it('loaded at least 2 fixtures (Art 50 chatbot EN + deepfake DE)', () => {
+    expect(fixtures.length).toBeGreaterThanOrEqual(2);
+  });
+
+  for (const fixture of fixtures) {
+    it(`${fixture.id} — pipeline output matches snapshot`, () => {
+      const features = extractFeatures(fixture.input, { lang: fixture.lang });
+      const article5 = classifyArticle5(features);
+      const annexIII = classifyAnnexIII(features, article5);
+      const article10 = classifyArticle10(annexIII, article5);
+      const article12 = classifyArticle12(annexIII, article5);
+      const article13 = classifyArticle13(annexIII, article5);
+      const article14 = classifyArticle14(annexIII, article5);
+      const article15 = classifyArticle15(annexIII, article5);
+      const article50 = classifyArticle50(features, article5, annexIII);
+      const threeCategory = classifyThreeCategory(
+        annexIII,
+        article5,
+        article10,
+        article12,
+        article14,
+        article15,
+      );
+
+      expect({
+        id: fixture.id,
+        lang: fixture.lang,
+        input: fixture.input,
+        article5: {
+          prohibited: article5.prohibited,
+          hits: article5.hits.map((h) => ({
+            letter: h.letter,
+            category_key: h.category_key,
+            matched_phrases: h.matched_phrases,
+            source: h.source,
+          })),
+          reasoning_count: article5.reasoning.length,
+        },
+        annexIII: {
+          high_risk: annexIII.high_risk,
+          suppressed_by_article_5: annexIII.suppressed_by_article_5,
+          domains: annexIII.domains.map((d) => ({
+            annex_iii_number: d.annex_iii_number,
+            key: d.key,
+            sub_letters: d.sub_letters,
+            matched_phrases: d.matched_phrases,
+            source: d.source,
+          })),
+          reasoning_count: annexIII.reasoning.length,
+        },
+        article10: {
+          applicable: article10.applicable,
+          triggered_by: article10.triggered_by,
+          source: article10.source,
+        },
+        article12: {
+          applicable: article12.applicable,
+          triggered_by: article12.triggered_by,
+          source: article12.source,
+        },
+        article13: {
+          applicable: article13.applicable,
+          triggered_by: article13.triggered_by,
+          source: article13.source,
+        },
+        article14: {
+          applicable: article14.applicable,
+          triggered_by: article14.triggered_by,
+          source: article14.source,
+        },
+        article15: {
+          applicable: article15.applicable,
+          triggered_by: article15.triggered_by,
+          source: article15.source,
+        },
+        article50: {
+          applicable: article50.applicable,
+          triggered_by: article50.triggered_by,
+          source: article50.source,
+        },
+        threeCategory: {
+          categories: {
+            '1': {
+              key: threeCategory.categories['1'].key,
+              applicable: threeCategory.categories['1'].applicable,
+              required_articles: threeCategory.categories['1'].required_articles,
+              triggered_articles: threeCategory.categories['1'].triggered_articles,
+            },
+            '2': {
+              key: threeCategory.categories['2'].key,
+              applicable: threeCategory.categories['2'].applicable,
+              required_articles: threeCategory.categories['2'].required_articles,
+              triggered_articles: threeCategory.categories['2'].triggered_articles,
+            },
+            '3': {
+              key: threeCategory.categories['3'].key,
+              applicable: threeCategory.categories['3'].applicable,
+              required_articles: threeCategory.categories['3'].required_articles,
+              triggered_articles: threeCategory.categories['3'].triggered_articles,
+            },
+          },
+          applicable_categories: threeCategory.applicable_categories,
+        },
+      }).toMatchSnapshot();
+    });
+
+    it(`${fixture.id} — Day-5 fixtures exercise Article 50 path; Day-3/4 cascade modules return applicable === false; three-category applicable_categories === []`, () => {
+      const features = extractFeatures(fixture.input, { lang: fixture.lang });
+      const article5 = classifyArticle5(features);
+      const annexIII = classifyAnnexIII(features, article5);
+
+      expect(article5.prohibited).toBe(fixture.expected.article_5_prohibited);
+      expect(annexIII.high_risk).toBe(fixture.expected.annex_iii_high_risk);
+
+      const a10 = classifyArticle10(annexIII, article5);
+      const a12 = classifyArticle12(annexIII, article5);
+      const a13 = classifyArticle13(annexIII, article5);
+      const a14 = classifyArticle14(annexIII, article5);
+      const a15 = classifyArticle15(annexIII, article5);
+      const a50 = classifyArticle50(features, article5, annexIII);
+
+      // Day-3/4 cascade modules → applicable === false (these fixtures are not
+      // high-risk under Annex III).
+      for (const r of [a10, a12, a13, a14, a15]) {
+        expect(r.applicable).toBe(false);
+      }
+
+      // Article 50 fires (whichever paragraph the fixture targets).
+      expect(a50.applicable).toBe(true);
+
+      // Three-category overlay therefore has applicable_categories === [].
+      const tc = classifyThreeCategory(annexIII, article5, a10, a12, a14, a15);
       expect(tc.applicable_categories).toEqual([]);
     });
   }
