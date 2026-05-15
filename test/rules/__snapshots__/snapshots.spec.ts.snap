@@ -1222,3 +1222,211 @@ exports[`snapshot — Day 4 fixtures (low-risk non-applicable path) > fixture-da
   },
 }
 `;
+
+exports[`snapshot — Day 5 fixtures (Article 50 non-high-risk paths) > fixture-day5-01-art50-chatbot-en — pipeline output matches snapshot 1`] = `
+{
+  "annexIII": {
+    "domains": [],
+    "high_risk": false,
+    "reasoning_count": 1,
+    "suppressed_by_article_5": false,
+  },
+  "article10": {
+    "applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [],
+      "article_5": false,
+    },
+  },
+  "article12": {
+    "applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [],
+      "article_5": false,
+    },
+  },
+  "article13": {
+    "applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [],
+      "article_5": false,
+    },
+  },
+  "article14": {
+    "applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [],
+      "article_5": false,
+    },
+  },
+  "article15": {
+    "applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [],
+      "article_5": false,
+    },
+  },
+  "article5": {
+    "hits": [],
+    "prohibited": false,
+    "reasoning_count": 1,
+  },
+  "article50": {
+    "applicable": true,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "paragraph_1_interaction": true,
+      "paragraph_2_synthetic_content": false,
+      "paragraph_3_emotion_or_biometric_categorisation": false,
+      "paragraph_4_deepfake": false,
+      "paragraph_4_public_interest_text": false,
+    },
+  },
+  "id": "fixture-day5-01-art50-chatbot-en",
+  "input": "We deploy a customer-service chatbot to help users navigate our public website FAQ.",
+  "lang": "en",
+  "threeCategory": {
+    "applicable_categories": [],
+    "categories": {
+      "1": {
+        "applicable": false,
+        "key": "1",
+        "required_articles": [
+          10,
+          15,
+        ],
+        "triggered_articles": [],
+      },
+      "2": {
+        "applicable": false,
+        "key": "2",
+        "required_articles": [
+          12,
+          14,
+        ],
+        "triggered_articles": [],
+      },
+      "3": {
+        "applicable": false,
+        "key": "3",
+        "required_articles": [
+          10,
+          12,
+          14,
+          15,
+        ],
+        "triggered_articles": [],
+      },
+    },
+  },
+}
+`;
+
+exports[`snapshot — Day 5 fixtures (Article 50 non-high-risk paths) > fixture-day5-02-art50-deepfake-de — pipeline output matches snapshot 1`] = `
+{
+  "annexIII": {
+    "domains": [],
+    "high_risk": false,
+    "reasoning_count": 1,
+    "suppressed_by_article_5": false,
+  },
+  "article10": {
+    "applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [],
+      "article_5": false,
+    },
+  },
+  "article12": {
+    "applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [],
+      "article_5": false,
+    },
+  },
+  "article13": {
+    "applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [],
+      "article_5": false,
+    },
+  },
+  "article14": {
+    "applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [],
+      "article_5": false,
+    },
+  },
+  "article15": {
+    "applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "annex_iii_domains": [],
+      "article_5": false,
+    },
+  },
+  "article5": {
+    "hits": [],
+    "prohibited": false,
+    "reasoning_count": 1,
+  },
+  "article50": {
+    "applicable": true,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "paragraph_1_interaction": false,
+      "paragraph_2_synthetic_content": false,
+      "paragraph_3_emotion_or_biometric_categorisation": false,
+      "paragraph_4_deepfake": true,
+      "paragraph_4_public_interest_text": false,
+    },
+  },
+  "id": "fixture-day5-02-art50-deepfake-de",
+  "input": "Unsere KI-Plattform erzeugt Deepfake-Videos für satirische Kunstprojekte und politische Kommentare.",
+  "lang": "de",
+  "threeCategory": {
+    "applicable_categories": [],
+    "categories": {
+      "1": {
+        "applicable": false,
+        "key": "1",
+        "required_articles": [
+          10,
+          15,
+        ],
+        "triggered_articles": [],
+      },
+      "2": {
+        "applicable": false,
+        "key": "2",
+        "required_articles": [
+          12,
+          14,
+        ],
+        "triggered_articles": [],
+      },
+      "3": {
+        "applicable": false,
+        "key": "3",
+        "required_articles": [
+          10,
+          12,
+          14,
+          15,
+        ],
+        "triggered_articles": [],
+      },
+    },
+  },
+}
+`;
