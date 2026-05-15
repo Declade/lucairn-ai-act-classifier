@@ -1,0 +1,155 @@
+{
+  "_source_sha256": "8264bbbfe361fb95c0db89e3c43b195ebd3e06a37fa6f05ce214539d54800b5f",
+  "_source_label": "theveil-website/src/lib/compliance/checklist-content.ts",
+  "categories": {
+    "1": {
+      "title_en": "Category 1: Sanitizer — PII detection & identity separation (Art. 10 + 15)",
+      "title_de": "Kategorie 1: Sanitizer — PII-Erkennung & Identitätstrennung (Art. 10 + 15)",
+      "articles": [
+        "10",
+        "15"
+      ],
+      "items": [
+        {
+          "number": 1,
+          "text_en": "PII is detected before AI processing (automated, not manual)",
+          "text_de": "Personenbezogene Daten werden vor der KI-Verarbeitung erkannt (automatisiert, nicht manuell)"
+        },
+        {
+          "number": 2,
+          "text_en": "Identity data is separated from AI inference at infrastructure level",
+          "text_de": "Identitätsdaten werden auf Infrastrukturebene von der KI-Inferenz getrennt"
+        },
+        {
+          "number": 3,
+          "text_en": "AI models cannot access identity data (network-enforced, not policy-enforced)",
+          "text_de": "KI-Modelle können nicht auf Identitätsdaten zugreifen (netzwerktechnisch durchgesetzt, nicht richtlinienbasiert)"
+        },
+        {
+          "number": 4,
+          "text_en": "Pseudonymous tokens replace identity in AI processing",
+          "text_de": "Pseudonyme Token ersetzen Identitätsdaten in der KI-Verarbeitung"
+        },
+        {
+          "number": 5,
+          "text_en": "Re-linkage requires explicit authorisation workflow",
+          "text_de": "Rückverknüpfung erfordert einen expliziten Autorisierungs-Workflow"
+        },
+        {
+          "number": 6,
+          "text_en": "Sanitizer pipeline is tested against an evaluation dataset and accuracy is measured",
+          "text_de": "Die Sanitizer-Pipeline wird gegen einen Evaluationsdatensatz getestet und Genauigkeit gemessen"
+        },
+        {
+          "number": 7,
+          "text_en": "Compliance can be verified independently (not self-reported)",
+          "text_de": "Compliance kann unabhängig verifiziert werden (nicht selbst gemeldet)"
+        },
+        {
+          "number": 8,
+          "text_en": "Certificates or attestations are available for auditors",
+          "text_de": "Zertifikate oder Attestierungen stehen Prüfer:innen zur Verfügung"
+        },
+        {
+          "number": 9,
+          "text_en": "Regular compliance testing is automated (not annual manual review)",
+          "text_de": "Regelmäßige Compliance-Tests sind automatisiert (nicht jährliche manuelle Überprüfung)"
+        }
+      ]
+    },
+    "2": {
+      "title_en": "Category 2: Evidence — decision logging & human oversight (Art. 12 + 14)",
+      "title_de": "Kategorie 2: Nachweis — Entscheidungsprotokollierung & menschliche Aufsicht (Art. 12 + 14)",
+      "articles": [
+        "12",
+        "14"
+      ],
+      "items": [
+        {
+          "number": 10,
+          "text_en": "AI decisions are recorded with structured metadata (model, inputs, outputs, confidence)",
+          "text_de": "KI-Entscheidungen werden mit strukturierten Metadaten erfasst (Modell, Eingaben, Ausgaben, Konfidenz)"
+        },
+        {
+          "number": 11,
+          "text_en": "Decision records are cryptographically signed (Ed25519 or equivalent)",
+          "text_de": "Entscheidungsaufzeichnungen sind kryptographisch signiert (Ed25519 oder äquivalent)"
+        },
+        {
+          "number": 12,
+          "text_en": "Records are chained (hash chain) to prevent tampering",
+          "text_de": "Aufzeichnungen sind verkettet (Hash-Kette), um Manipulation zu verhindern"
+        },
+        {
+          "number": 13,
+          "text_en": "Independent timestamps from external TSA (RFC 3161)",
+          "text_de": "Unabhängige Zeitstempel von externer TSA (RFC 3161)"
+        },
+        {
+          "number": 14,
+          "text_en": "Decision records are retained for the system’s regulatory minimum lifetime",
+          "text_de": "Entscheidungsaufzeichnungen werden für die regulatorische Mindestaufbewahrungsdauer des Systems aufbewahrt"
+        },
+        {
+          "number": 15,
+          "text_en": "Authorised personnel can access decision records on demand",
+          "text_de": "Autorisiertes Personal kann Entscheidungsaufzeichnungen auf Anforderung einsehen"
+        },
+        {
+          "number": 16,
+          "text_en": "Decision records include sufficient context to understand the AI’s reasoning",
+          "text_de": "Entscheidungsaufzeichnungen enthalten ausreichend Kontext, um die Entscheidungsfindung der KI nachzuvollziehen"
+        },
+        {
+          "number": 17,
+          "text_en": "Human override mechanisms exist for high-risk decisions",
+          "text_de": "Mechanismen zur menschlichen Übersteuerung existieren für Hochrisiko-Entscheidungen"
+        },
+        {
+          "number": 18,
+          "text_en": "Oversight interfaces are available for DPOs (not just engineers)",
+          "text_de": "Überwachungsschnittstellen stehen Datenschutzbeauftragten zur Verfügung (nicht nur Entwicklern)"
+        },
+        {
+          "number": 19,
+          "text_en": "Audit trail links decisions to the humans who reviewed them",
+          "text_de": "Der Prüfpfad verknüpft Entscheidungen mit den Personen, die sie überprüft haben"
+        }
+      ]
+    },
+    "3": {
+      "title_en": "Category 3: Inventory — data governance across the system (Art. 10 + 12 + 14 + 15)",
+      "title_de": "Kategorie 3: Inventar — Datengovernance über das Gesamtsystem (Art. 10 + 12 + 14 + 15)",
+      "articles": [
+        "10",
+        "12",
+        "14",
+        "15"
+      ],
+      "items": [
+        {
+          "number": 20,
+          "text_en": "AI training data is inventoried and documented",
+          "text_de": "KI-Trainingsdaten sind inventarisiert und dokumentiert"
+        },
+        {
+          "number": 21,
+          "text_en": "Operational data flows are mapped and classified",
+          "text_de": "Operative Datenflüsse sind kartiert und klassifiziert"
+        },
+        {
+          "number": 22,
+          "text_en": "Data retention and deletion policies are technically enforced (including cross-border transfer tracking)",
+          "text_de": "Datenaufbewahrungs- und Löschrichtlinien werden technisch durchgesetzt (einschließlich Nachverfolgung grenzüberschreitender Übertragungen)"
+        },
+        {
+          "number": 23,
+          "text_en": "Data quality checks run before AI processing",
+          "text_de": "Datenqualitätsprüfungen werden vor der KI-Verarbeitung durchgeführt"
+        }
+      ]
+    }
+  },
+  "disclaimer_en": "This checklist is based on Lucairn platform’s interpretation of EU AI Act requirements for high-risk AI systems. It is not legal advice. Consult your legal team for jurisdiction-specific guidance.",
+  "disclaimer_de": "Diese Checkliste basiert auf der Interpretation der KI-Verordnungs-Anforderungen für Hochrisiko-KI-Systeme durch die Plattform Lucairn. Sie stellt keine Rechtsberatung dar. Konsultieren Sie Ihr Rechtsteam für jurisdiktionsspezifische Hinweise."
+}

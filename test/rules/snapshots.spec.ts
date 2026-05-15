@@ -1,10 +1,11 @@
-// Snapshot tests for Day 3 + Day 4 rule modules.
+// Snapshot tests for Day 3 + Day 4 + Day 5 rule modules.
 //
 // Loads each fixture under test/fixtures/use-cases/day3/ and test/fixtures/
 // use-cases/day4/, runs it through the full pipeline (extractFeatures →
-// classifyArticle5 → classifyAnnexIII → classifyArticle10/13/14/15), and
-// snapshots the structural output. Snapshot files are committed to git; first
-// run via `pnpm test` writes them, subsequent runs compare.
+// classifyArticle5 → classifyAnnexIII → classifyArticle10/12/13/14/15/50 →
+// classifyThreeCategory), and snapshots the structural output. Snapshot
+// files are committed to git; first run via `pnpm test` writes them,
+// subsequent runs compare.
 //
 // Why snapshots: the per-rule spec files validate specific invariants
 // (sub-letter narrowing, suppression, scope qualifiers, applicability
@@ -14,10 +15,11 @@
 // Snapshot projection design choice (Day-3 lesson 2 carry-forward): the
 // projection captures load-bearing structural fields ONLY (booleans, letters,
 // matched_phrases, source URLs, applicable + triggered_by). It explicitly
-// OMITS prose summary fields (summary_en, summary_de) so that legitimate
-// summary-text edits (e.g. expanding a hand-wave to enumerate carve-outs)
-// don't flood snapshot diffs. The per-spec files have substring-match
-// assertions that pin the summary fields where their content is load-bearing.
+// OMITS prose summary fields (summary_en, summary_de) and three-category
+// `items[]` / `title_*` (which are synced website-managed copy, not classifier
+// behaviour) so that legitimate copy-text edits don't flood snapshot diffs.
+// The per-spec files have substring-match assertions that pin the summary
+// fields and three-category metadata where their content is load-bearing.
 
 import { describe, it, expect } from 'vitest';
 import { readdirSync, readFileSync } from 'node:fs';
@@ -27,9 +29,12 @@ import { extractFeatures } from '../../src/extract/keyword.js';
 import { classifyArticle5 } from '../../src/rules/article-5.js';
 import { classifyAnnexIII } from '../../src/rules/article-6-annex-iii.js';
 import { classifyArticle10 } from '../../src/rules/article-10.js';
+import { classifyArticle12 } from '../../src/rules/article-12.js';
 import { classifyArticle13 } from '../../src/rules/article-13.js';
 import { classifyArticle14 } from '../../src/rules/article-14.js';
 import { classifyArticle15 } from '../../src/rules/article-15.js';
+import { classifyArticle50 } from '../../src/rules/article-50.js';
+import { classifyThreeCategory } from '../../src/rules/three-category.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const FIXTURES_BASE = join(__dirname, '..', 'fixtures', 'use-cases');
@@ -74,15 +79,30 @@ describe('snapshot — Day 3 fixtures (8 Annex III domains)', () => {
       const article5 = classifyArticle5(features);
       const annexIII = classifyAnnexIII(features, article5);
       const article10 = classifyArticle10(annexIII, article5);
+      const article12 = classifyArticle12(annexIII, article5);
       const article13 = classifyArticle13(annexIII, article5);
       const article14 = classifyArticle14(annexIII, article5);
       const article15 = classifyArticle15(annexIII, article5);
+      const article50 = classifyArticle50(features, article5);
+      const threeCategory = classifyThreeCategory({
+        article5,
+        annex: annexIII,
+        article10,
+        article12,
+        article13,
+        article14,
+        article15,
+        article50,
+      });
 
       // Snapshot the load-bearing structural output (omits internal noise like
       // raw input, lang detection internals — those are covered by unit tests
-      // on the extractor itself). For Article 10/13/14/15 we project ONLY
-      // load-bearing fields (`applicable`, `triggered_by`, `source`) and NOT
-      // the prose summaries (Day-3 design choice — see file-header comment).
+      // on the extractor itself). For Article 10/12/13/14/15/50 we project
+      // ONLY load-bearing fields (`applicable`, `triggered_by`, `source`) and
+      // NOT the prose summaries (Day-3 design choice — see file-header
+      // comment). For three-category we project `required`, `articles`, and
+      // `contributing_articles` per category — NOT `items[]` / `title_*` /
+      // `disclaimer_*` which are synced website-managed copy.
       expect({
         id: fixture.id,
         lang: fixture.lang,
@@ -114,6 +134,11 @@ describe('snapshot — Day 3 fixtures (8 Annex III domains)', () => {
           triggered_by: article10.triggered_by,
           source: article10.source,
         },
+        article12: {
+          applicable: article12.applicable,
+          triggered_by: article12.triggered_by,
+          source: article12.source,
+        },
         article13: {
           applicable: article13.applicable,
           triggered_by: article13.triggered_by,
@@ -128,6 +153,29 @@ describe('snapshot — Day 3 fixtures (8 Annex III domains)', () => {
           applicable: article15.applicable,
           triggered_by: article15.triggered_by,
           source: article15.source,
+        },
+        article50: {
+          applicable: article50.applicable,
+          triggered_by: article50.triggered_by,
+          source: article50.source,
+        },
+        threeCategory: {
+          category_1_sanitizer: {
+            required: threeCategory.category_1_sanitizer.required,
+            articles: threeCategory.category_1_sanitizer.articles,
+            contributing_articles: threeCategory.category_1_sanitizer.contributing_articles,
+          },
+          category_2_evidence: {
+            required: threeCategory.category_2_evidence.required,
+            articles: threeCategory.category_2_evidence.articles,
+            contributing_articles: threeCategory.category_2_evidence.contributing_articles,
+          },
+          category_3_inventory: {
+            required: threeCategory.category_3_inventory.required,
+            articles: threeCategory.category_3_inventory.articles,
+            contributing_articles: threeCategory.category_3_inventory.contributing_articles,
+          },
+          source: threeCategory.source,
         },
       }).toMatchSnapshot();
     });
@@ -170,9 +218,9 @@ describe('snapshot — Day 3 fixtures (8 Annex III domains)', () => {
     });
   }
 
-  // Targeted Day-4 cascade invariants that the snapshot also pins but which
-  // deserve explicit assertions for traceability.
-  it('fixture-day3-01 (Art 5(1)(h) prohibition) → Article 10/13/14/15 all NOT applicable', () => {
+  // Targeted Day-4 + Day-5 cascade invariants that the snapshot also pins
+  // but which deserve explicit assertions for traceability.
+  it('fixture-day3-01 (Art 5(1)(h) prohibition) → Article 10/12/13/14/15 all NOT applicable; all 3 categories required: false', () => {
     const fixture = fixtures.find((f) => f.id === 'fixture-day3-01-biometrics-prohibited-en');
     expect(fixture).toBeDefined();
     const features = extractFeatures(fixture!.input, { lang: fixture!.lang });
@@ -180,20 +228,39 @@ describe('snapshot — Day 3 fixtures (8 Annex III domains)', () => {
     const annexIII = classifyAnnexIII(features, article5);
 
     const a10 = classifyArticle10(annexIII, article5);
+    const a12 = classifyArticle12(annexIII, article5);
     const a13 = classifyArticle13(annexIII, article5);
     const a14 = classifyArticle14(annexIII, article5);
     const a15 = classifyArticle15(annexIII, article5);
+    const a50 = classifyArticle50(features, article5);
 
-    for (const r of [a10, a13, a14, a15]) {
+    for (const r of [a10, a12, a13, a14, a15]) {
       expect(r.applicable).toBe(false);
       expect(r.triggered_by.article_5).toBe(true);
       // Sub-letter accumulator pattern (Day-3 lesson 1): sorted toEqual on
       // arrays, never toContain.
       expect(r.triggered_by.annex_iii_domains).toEqual([]);
     }
+
+    const tc = classifyThreeCategory({
+      article5,
+      annex: annexIII,
+      article10: a10,
+      article12: a12,
+      article13: a13,
+      article14: a14,
+      article15: a15,
+      article50: a50,
+    });
+    expect(tc.category_1_sanitizer.required).toBe(false);
+    expect(tc.category_2_evidence.required).toBe(false);
+    expect(tc.category_3_inventory.required).toBe(false);
+    expect(tc.category_1_sanitizer.contributing_articles).toEqual([]);
+    expect(tc.category_2_evidence.contributing_articles).toEqual([]);
+    expect(tc.category_3_inventory.contributing_articles).toEqual([]);
   });
 
-  it('fixture-day3-04 (Annex III.4 employment) → Article 10/13/14/15 all applicable with sorted domains', () => {
+  it('fixture-day3-04 (Annex III.4 employment) → Article 10/12/13/14/15 all applicable; all 3 categories required: true with sorted contributing_articles', () => {
     const fixture = fixtures.find((f) => f.id === 'fixture-day3-04-employment-en');
     expect(fixture).toBeDefined();
     const features = extractFeatures(fixture!.input, { lang: fixture!.lang });
@@ -201,15 +268,35 @@ describe('snapshot — Day 3 fixtures (8 Annex III domains)', () => {
     const annexIII = classifyAnnexIII(features, article5);
 
     const a10 = classifyArticle10(annexIII, article5);
+    const a12 = classifyArticle12(annexIII, article5);
     const a13 = classifyArticle13(annexIII, article5);
     const a14 = classifyArticle14(annexIII, article5);
     const a15 = classifyArticle15(annexIII, article5);
+    const a50 = classifyArticle50(features, article5);
 
-    for (const r of [a10, a13, a14, a15]) {
+    for (const r of [a10, a12, a13, a14, a15]) {
       expect(r.applicable).toBe(true);
       expect(r.triggered_by.article_5).toBe(false);
       expect(r.triggered_by.annex_iii_domains).toEqual([4]);
     }
+
+    const tc = classifyThreeCategory({
+      article5,
+      annex: annexIII,
+      article10: a10,
+      article12: a12,
+      article13: a13,
+      article14: a14,
+      article15: a15,
+      article50: a50,
+    });
+    expect(tc.category_1_sanitizer.required).toBe(true);
+    expect(tc.category_2_evidence.required).toBe(true);
+    expect(tc.category_3_inventory.required).toBe(true);
+    expect(tc.category_1_sanitizer.contributing_articles).toEqual(['10', '15']);
+    expect(tc.category_2_evidence.contributing_articles).toEqual(['12', '14']);
+    // ≥3 out-of-order sort exercise: Cat 3 has 4 contributing articles.
+    expect(tc.category_3_inventory.contributing_articles).toEqual(['10', '12', '14', '15']);
   });
 });
 
@@ -226,9 +313,21 @@ describe('snapshot — Day 4 fixtures (low-risk non-applicable path)', () => {
       const article5 = classifyArticle5(features);
       const annexIII = classifyAnnexIII(features, article5);
       const article10 = classifyArticle10(annexIII, article5);
+      const article12 = classifyArticle12(annexIII, article5);
       const article13 = classifyArticle13(annexIII, article5);
       const article14 = classifyArticle14(annexIII, article5);
       const article15 = classifyArticle15(annexIII, article5);
+      const article50 = classifyArticle50(features, article5);
+      const threeCategory = classifyThreeCategory({
+        article5,
+        annex: annexIII,
+        article10,
+        article12,
+        article13,
+        article14,
+        article15,
+        article50,
+      });
 
       expect({
         id: fixture.id,
@@ -261,6 +360,11 @@ describe('snapshot — Day 4 fixtures (low-risk non-applicable path)', () => {
           triggered_by: article10.triggered_by,
           source: article10.source,
         },
+        article12: {
+          applicable: article12.applicable,
+          triggered_by: article12.triggered_by,
+          source: article12.source,
+        },
         article13: {
           applicable: article13.applicable,
           triggered_by: article13.triggered_by,
@@ -276,10 +380,33 @@ describe('snapshot — Day 4 fixtures (low-risk non-applicable path)', () => {
           triggered_by: article15.triggered_by,
           source: article15.source,
         },
+        article50: {
+          applicable: article50.applicable,
+          triggered_by: article50.triggered_by,
+          source: article50.source,
+        },
+        threeCategory: {
+          category_1_sanitizer: {
+            required: threeCategory.category_1_sanitizer.required,
+            articles: threeCategory.category_1_sanitizer.articles,
+            contributing_articles: threeCategory.category_1_sanitizer.contributing_articles,
+          },
+          category_2_evidence: {
+            required: threeCategory.category_2_evidence.required,
+            articles: threeCategory.category_2_evidence.articles,
+            contributing_articles: threeCategory.category_2_evidence.contributing_articles,
+          },
+          category_3_inventory: {
+            required: threeCategory.category_3_inventory.required,
+            articles: threeCategory.category_3_inventory.articles,
+            contributing_articles: threeCategory.category_3_inventory.contributing_articles,
+          },
+          source: threeCategory.source,
+        },
       }).toMatchSnapshot();
     });
 
-    it(`${fixture.id} — non-high-risk path: all Day-4 articles return applicable === false`, () => {
+    it(`${fixture.id} — non-high-risk path: all Day-4 + Day-5 cascade articles return applicable === false; all 3 categories required: false`, () => {
       const features = extractFeatures(fixture.input, { lang: fixture.lang });
       const article5 = classifyArticle5(features);
       const annexIII = classifyAnnexIII(features, article5);
@@ -289,15 +416,31 @@ describe('snapshot — Day 4 fixtures (low-risk non-applicable path)', () => {
       expect(annexIII.suppressed_by_article_5).toBe(fixture.expected.suppressed_by_article_5);
 
       const a10 = classifyArticle10(annexIII, article5);
+      const a12 = classifyArticle12(annexIII, article5);
       const a13 = classifyArticle13(annexIII, article5);
       const a14 = classifyArticle14(annexIII, article5);
       const a15 = classifyArticle15(annexIII, article5);
+      const a50 = classifyArticle50(features, article5);
 
-      for (const r of [a10, a13, a14, a15]) {
+      for (const r of [a10, a12, a13, a14, a15]) {
         expect(r.applicable).toBe(false);
         expect(r.triggered_by.article_5).toBe(false);
         expect(r.triggered_by.annex_iii_domains).toEqual([]);
       }
+
+      const tc = classifyThreeCategory({
+        article5,
+        annex: annexIII,
+        article10: a10,
+        article12: a12,
+        article13: a13,
+        article14: a14,
+        article15: a15,
+        article50: a50,
+      });
+      expect(tc.category_1_sanitizer.required).toBe(false);
+      expect(tc.category_2_evidence.required).toBe(false);
+      expect(tc.category_3_inventory.required).toBe(false);
     });
   }
 });

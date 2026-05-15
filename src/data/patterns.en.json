@@ -214,6 +214,18 @@
         { "phrase": "deep fake" },
         { "phrase": "face swap" }
       ]
+    },
+    "5_public_interest_text": {
+      "description": "Art 50(4) second sub-paragraph — deployers of AI systems generating text published to inform the public on matters of public interest must disclose artificial generation/manipulation.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "ai-generated news" },
+        { "phrase": "automated journalism" },
+        { "phrase": "news generation" },
+        { "phrase": "newsroom ai" },
+        { "phrase": "public interest reporting" },
+        { "phrase": "ai-generated article" }
+      ]
     }
   },
   "scope_qualifiers": {
