@@ -21,7 +21,7 @@
       3
     ],
     "annex_iv_required": true,
-    "notes": "Anhang III Nr. 7(b) — Prüfung von Anträgen auf Asyl, Visum oder Aufenthaltstitel. Lexikon-Treffer: 'visumantrag', 'aufenthaltstitel'. Cite: EUR-Lex Regulation (EU) 2024/1689, Anhang III Nr. 7(b)."
+    "notes": "Anhang III Nr. 7(c) — KI-Systeme zur Unterstützung der zuständigen Behörden bei der Prüfung von Anträgen auf Asyl, Visa oder Aufenthaltstitel und bei damit zusammenhängenden Beschwerden in Bezug auf die Berechtigung der natürlichen Personen. Lexikon-Treffer: 'visumantrag', 'aufenthaltstitel'. Buchstaben-Eingrenzung für Anhang III Nr. 7 ist in narrowSubLetters() noch nicht implementiert — vgl. KNOWN-MISCLASSIFICATIONS G-1; expected.annex_iii_sub_letters bewusst weggelassen. Cite: EUR-Lex Regulation (EU) 2024/1689, Anhang III Nr. 7(c)."
   },
   "bucket": "annex_iii",
   "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689"
