@@ -79,10 +79,11 @@ describe('classifyArticle13() — applicable: true cascade (multiple Annex III d
   });
 
   it('multiple Annex III domains → triggered_by lists them sorted ascending', () => {
-    const annex = makeAnnex({ high_risk: true, domains: [6, 2], suppressed_by_article_5: false });
+    // 3+ out-of-order numbers exercise the sort (vs swap-of-two) defensively.
+    const annex = makeAnnex({ high_risk: true, domains: [6, 2, 8], suppressed_by_article_5: false });
     const result = classifyArticle13(annex, makeArt5(false));
     expect(result.applicable).toBe(true);
-    expect(result.triggered_by.annex_iii_domains).toEqual([2, 6]);
+    expect(result.triggered_by.annex_iii_domains).toEqual([2, 6, 8]);
   });
 });
 
