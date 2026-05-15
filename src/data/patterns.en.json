@@ -238,7 +238,7 @@
       ]
     },
     "internal_use": {
-      "description": "Hints at non-public deployment that may affect deployer obligations under Art 50 transparency.",
+      "description": "Operational scope hint (internal / non-public deployment). NOT a regulatory exemption. The rule engine may use this as a soft signal to inform downstream Art 50 transparency obligations, but internal use does NOT exempt a system from Annex III high-risk classification or Article 5 prohibitions if otherwise triggered.",
       "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
       "entries": [
         { "phrase": "internal use only" },

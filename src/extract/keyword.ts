@@ -42,18 +42,38 @@ export interface LexiconCategory {
   entries: LexiconEntry[];
 }
 
+/**
+ * Lexicon shape. Top-level group keys are open-ended: any key NOT in the
+ * reserved set ({language, version, keys starting with `_`}) is treated as a
+ * category group by the extractor. This lets v0.2+ lexicons add new groups
+ * (e.g. `article_53_gpai_systemic_risk`) without touching the extractor code.
+ */
 export interface Lexicon {
   language: 'en' | 'de';
   version: string;
+  /** opaque metadata (e.g. `_meta`); ignored by the extractor */
+  [reserved: `_${string}`]: unknown;
   annex_iii: Record<string, LexiconCategory>;
   article_5_prohibited: Record<string, LexiconCategory>;
   article_50_gpai: Record<string, LexiconCategory>;
   scope_qualifiers: Record<string, LexiconCategory>;
+  /** any additional group added in v0.2+ */
+  [group: string]: unknown;
+}
+
+/** Reserved (non-category) keys that the extractor must skip. */
+const RESERVED_KEYS: ReadonlySet<string> = new Set(['language', 'version']);
+
+/** Discover all category-group keys from a lexicon at runtime. */
+function discoverGroups(lexicon: Lexicon): string[] {
+  return Object.keys(lexicon).filter(
+    (k) => !RESERVED_KEYS.has(k) && !k.startsWith('_'),
+  );
 }
 
 export interface ExtractedHit {
-  /** lexicon group: annex_iii | article_5_prohibited | article_50_gpai | scope_qualifiers */
-  group: keyof Omit<Lexicon, 'language' | 'version'>;
+  /** lexicon group: annex_iii | article_5_prohibited | article_50_gpai | scope_qualifiers | future v0.2+ additions */
+  group: string;
   /** category key within the group (e.g. "1_biometrics", "social_scoring") */
   category: string;
   /** the exact phrase that matched */
@@ -167,22 +187,14 @@ export function extractFeatures(text: string, opts: ExtractOptions = {}): Extrac
   }
 
   const hits: ExtractedHit[] = [];
-  const byCategory: Record<string, Record<string, string[]>> = {
-    annex_iii: {},
-    article_5_prohibited: {},
-    article_50_gpai: {},
-    scope_qualifiers: {},
-  };
+  const byCategory: Record<string, Record<string, string[]>> = {};
+  const groups = discoverGroups(lexicon);
+  for (const group of groups) byCategory[group] = {};
 
-  const GROUPS: Array<keyof Omit<Lexicon, 'language' | 'version'>> = [
-    'annex_iii',
-    'article_5_prohibited',
-    'article_50_gpai',
-    'scope_qualifiers',
-  ];
-
-  for (const group of GROUPS) {
-    const categories = lexicon[group];
+  for (const group of groups) {
+    const raw = lexicon[group];
+    if (raw === undefined || raw === null || typeof raw !== 'object') continue;
+    const categories = raw as Record<string, LexiconCategory>;
     for (const [categoryKey, category] of Object.entries(categories)) {
       const matched: string[] = [];
       for (const entry of category.entries) {

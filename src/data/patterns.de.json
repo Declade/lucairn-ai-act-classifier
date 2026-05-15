@@ -238,7 +238,7 @@
       ]
     },
     "internal_use": {
-      "description": "Hinweis auf nicht-öffentliche Bereitstellung, der die Pflichten des Betreibers nach Art. 50 beeinflussen kann.",
+      "description": "Operativer Geltungshinweis (interne / nicht-öffentliche Bereitstellung). KEINE regulatorische Ausnahme. Die Regel-Engine kann dies als weiches Signal für nachgelagerte Art. 50 Transparenzpflichten verwenden, aber interne Nutzung befreit ein System NICHT von der Anhang-III-Hochrisiko-Einstufung oder von Art. 5 Verboten, wenn diese ansonsten erfüllt sind.",
       "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
       "entries": [
         { "phrase": "nur interne nutzung" },

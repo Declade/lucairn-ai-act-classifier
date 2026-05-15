@@ -42,8 +42,9 @@
     "access": "public"
   },
   "scripts": {
-    "prepack": "tsc && chmod +x dist/cli.js",
-    "build": "tsc",
+    "clean": "rm -rf dist",
+    "build": "pnpm run clean && tsc && cp -R src/data dist/data",
+    "prepack": "pnpm run build && chmod +x dist/cli.js",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
