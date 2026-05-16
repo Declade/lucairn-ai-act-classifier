@@ -241,7 +241,7 @@ Marc
 - **Decision rules:**
   - **Proceed:** ≥3 testers complete the feedback; no Q4 "legally wrong" flag on any of the 5 core cases.
   - **Partial-publish-with-disclosure:** 1 Q4 flag; document it in `accuracy/KNOWN-MISCLASSIFICATIONS.md` and proceed.
-  - **Hold:** ≥2 Q4 flags OR a single Q4 flag on Article 5 (the 100% accuracy bucket); hold launch until the regulator-validator review chain re-runs against the disputed case.
+  - **Hold:** ≥2 Q4 flags OR a single Q4 flag on Article 5 (the 100% accuracy bucket); hold launch until the automated citation-verification step re-runs against the disputed case.
 
 ### What this is NOT
 
