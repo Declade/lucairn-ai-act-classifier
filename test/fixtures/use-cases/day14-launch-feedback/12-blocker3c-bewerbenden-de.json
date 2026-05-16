@@ -1,0 +1,33 @@
+{
+  "id": "fixture-day14-12-blocker3c-bewerbenden-de",
+  "lang": "de",
+  "input": "Wir setzen ein KI-System zur Vorauswahl von Bewerbenden anhand des Lebenslaufs ein.",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": true,
+    "annex_iii_domains": [
+      4
+    ],
+    "annex_iii_sub_letters": {
+      "4": [
+        "a"
+      ]
+    },
+    "suppressed_by_article_5": false,
+    "article_10_applicable": true,
+    "article_12_applicable": true,
+    "article_13_applicable": true,
+    "article_14_applicable": true,
+    "article_15_applicable": true,
+    "three_category_applicable": [
+      1,
+      2,
+      3
+    ],
+    "annex_iv_required": true,
+    "notes": "v0.1.4 launch-feedback HIGH-1 carry-forward (Claude-Code reviewer). v0.1.3 closed the natural German recruiting paraphrase 'bewertet Bewerbungen ... um Kandidaten ... zu sortieren' but missed the participle 'Bewerbenden' form (gender-neutral German that a modern DE consultant or HR-tech buyer would type) and natural-language paraphrases of the regulator's verbatim 'Einstellung oder Auswahl natürlicher Personen' phrasing in Verordnung (EU) 2024/1689 Anhang III Nr. 4 Buchstabe a. v0.1.4 adds 'vorauswahl von bewerbenden', 'bewerbenden bewerten', 'anwerbung von natürlichen personen' (synonym paraphrase, NOT the regulator-verbatim text), 'recruiting-system', and 'personal-recruiting' to the annex_iii.4_employment DE lexicon. Cite: EUR-Lex Verordnung (EU) 2024/1689, Anhang III Nr. 4(a)."
+  },
+  "bucket": "annex_iii",
+  "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689"
+}

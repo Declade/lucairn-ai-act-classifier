@@ -57,7 +57,7 @@ The `--explain` output is designed to drop directly into a DPIA, an audit workin
 
 ## Modes — deterministic vs `--llm`
 
-Default mode is **deterministic**: a curated EN+DE keyword + phrase matcher against the lexicon at `src/data/patterns.{en,de}.json`. Zero network, zero API key, zero cost. On the curated 50-case test set, deterministic mode is more accurate than any LLM mode (the corpus was shaped to match the lexicon's canonical phrases). Recommended for most use cases.
+Default mode is **deterministic**: a curated EN+DE keyword + phrase matcher against the lexicon at `src/data/patterns.{en,de}.json`. Zero network, zero API key, zero cost. On the curated 62-case bilingual test set, deterministic mode is more accurate than any LLM mode (the corpus was shaped to match the lexicon's canonical phrases). Recommended for most use cases.
 
 Optional `--llm <provider>` mode replaces the keyword extractor with an LLM for semantic feature extraction. The downstream rules engine — which actually selects articles — is **unchanged**. The LLM is constrained to cite phrases from the curated lexicon; any hallucinated phrase is dropped before the rules engine sees it. Three providers supported, each using your own API key:
 
@@ -86,7 +86,7 @@ export GROQ_API_KEY="<your-groq-key>"
 ai-act-classify --llm groq "AI system that ranks job applicants by CV"
 ```
 
-> **LLM-mode non-determinism note.** LLMs are probabilistic; re-running on the same input may return different (correlated but not identical) features. Anthropic Haiku 4.5 was measured at 93.5–97.6 % overall accuracy across two independent runs on the 50-case corpus. The cache layer (next section) mitigates by storing first-call results — repeated runs on identical inputs are byte-stable. For reproducible classification on novel inputs, prefer deterministic mode.
+> **LLM-mode non-determinism note.** LLMs are probabilistic; re-running on the same input may return different (correlated but not identical) features. Anthropic Haiku 4.5 was measured at 93.5–97.6 % overall accuracy across two independent runs on the v0.1.0 50-case corpus (LLM-mode re-measurement against the v0.1.4 62-case corpus is deferred to v0.1.5). The cache layer (next section) mitigates by storing first-call results — repeated runs on identical inputs are byte-stable. For reproducible classification on novel inputs, prefer deterministic mode.
 
 ## Cache layer
 
@@ -108,11 +108,11 @@ Rules-first hybrid. A deterministic TypeScript rules engine evaluates Article 5,
 
 ## Accuracy
 
-The classifier is benchmarked against a 59-case bilingual fixture corpus (CC-BY-4.0): 50 day{3,4,5,7} fixtures + 9 v0.1.3 launch-feedback fixtures; ~30 EN + ~29 DE across 5 buckets (annex_iii / article_5 / article_50 / negative / legacy). Current numbers on the v0.1.3 rule-set:
+The classifier is benchmarked against a 62-case bilingual fixture corpus (CC-BY-4.0): 50 day{3,4,5,7} fixtures + 9 v0.1.3 launch-feedback fixtures + 3 v0.1.4 launch-feedback retest fixtures; ~30 EN + ~32 DE across 5 buckets (annex_iii / article_5 / article_50 / negative / legacy). Current numbers on the v0.1.4 rule-set:
 
-- **Overall accuracy:** 98.5 % (granular per-field pass rate; up from 98.2 % in v0.1.2)
+- **Overall accuracy:** 98.6 % (granular per-field pass rate; up from 98.5 % in v0.1.3 and 98.2 % in v0.1.2)
 - **Article 5 prohibition** (safety-critical): 100.0 %
-- **Binary high-risk classification:** 98.3 %
+- **Binary high-risk classification:** 98.4 %
 
 CI floor (locked): ≥ 80 % overall + 100 % Article 5. v1.0 release target: ≥ 85 % overall + 100 % Article 5 + ≥ 90 % binary high-risk.
 
