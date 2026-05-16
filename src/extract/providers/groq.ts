@@ -57,7 +57,7 @@ export async function extractWithGroq(
   const apiKey = opts.apiKey ?? process.env['GROQ_API_KEY'];
   if (typeof apiKey !== 'string' || apiKey.length === 0) {
     throw new Error(
-      'LLM_NO_API_KEY: GROQ_API_KEY env var not set. See README §--llm mode setup.',
+      'LLM_NO_API_KEY: GROQ_API_KEY env var not set. Set via: export GROQ_API_KEY=gsk_... (see README §--llm mode setup).',
     );
   }
 

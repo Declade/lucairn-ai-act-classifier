@@ -95,6 +95,21 @@ describe('CLI integration — happy paths', () => {
     expect(r.stdout).toContain('--rules-version');
     expect(r.stdout).toContain('--annex');
   });
+
+  // Day-13 polish: --help text MUST include both an Examples section and an
+  // Exit codes section so first-time users can copy-paste invocations and
+  // understand the exit code semantics without reading the README.
+  itDist('--help → contains Examples + Exit codes sections (Day-13 polish)', () => {
+    const r = runCli(['--help']);
+    expect(r.status).toBe(0);
+    expect(r.stdout).toContain('Examples:');
+    expect(r.stdout).toContain('Exit codes:');
+    // Exit code list must enumerate all 4 documented codes (0, 1, 2, 3).
+    expect(r.stdout).toMatch(/0\s+classification ok/);
+    expect(r.stdout).toMatch(/1\s+Article 5 prohibited/);
+    expect(r.stdout).toMatch(/2\s+parse error/);
+    expect(r.stdout).toMatch(/3\s+LLM error/);
+  });
 });
 
 describe('CLI integration — error + exit-code paths', () => {
@@ -193,9 +208,13 @@ describe('CLI integration — --llm flag (Day 10: anthropic + openai + groq)', (
     });
     expect(r.status).toBe(3);
     expect(r.stderr).toContain('ANTHROPIC_API_KEY');
+    // Day-13 polish: recovery hint with the exact export command MUST appear
+    // so users can copy-paste from the terminal without consulting the README.
+    expect(r.stderr).toContain('Set via:');
+    expect(r.stderr).toContain('export ANTHROPIC_API_KEY=');
   });
 
-  itDist('--llm openai without OPENAI_API_KEY → exit 3 + helpful stderr', () => {
+  itDist('--llm openai without OPENAI_API_KEY → exit 3 + helpful stderr + recovery hint', () => {
     const env = { ...process.env };
     delete env['OPENAI_API_KEY'];
     const r = spawnSync(process.execPath, [CLI_PATH, '--llm', 'openai', 'We use AI for CV screening.'], {
@@ -205,9 +224,11 @@ describe('CLI integration — --llm flag (Day 10: anthropic + openai + groq)', (
     });
     expect(r.status).toBe(3);
     expect(r.stderr).toContain('OPENAI_API_KEY');
+    // Day-13 polish: recovery hint with the exact export command.
+    expect(r.stderr).toContain('export OPENAI_API_KEY=');
   });
 
-  itDist('--llm groq without GROQ_API_KEY → exit 3 + helpful stderr', () => {
+  itDist('--llm groq without GROQ_API_KEY → exit 3 + helpful stderr + recovery hint', () => {
     const env = { ...process.env };
     delete env['GROQ_API_KEY'];
     const r = spawnSync(process.execPath, [CLI_PATH, '--llm', 'groq', 'We use AI for CV screening.'], {
@@ -217,6 +238,8 @@ describe('CLI integration — --llm flag (Day 10: anthropic + openai + groq)', (
     });
     expect(r.status).toBe(3);
     expect(r.stderr).toContain('GROQ_API_KEY');
+    // Day-13 polish: recovery hint with the exact export command.
+    expect(r.stderr).toContain('export GROQ_API_KEY=');
   });
 
   itDist('--llm mistral → exit 3 with "Supported: anthropic, openai, groq" hint', () => {
