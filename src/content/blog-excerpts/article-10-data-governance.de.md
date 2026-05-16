@@ -1,0 +1,7 @@
+# Artikel 10 — Daten und Daten-Governance
+
+Artikel 10 der Verordnung (EU) 2024/1689 gilt für jedes Hochrisiko-KI-System, „in dem Techniken eingesetzt werden, bei denen KI-Modelle mit Daten trainiert werden" ([EUR-Lex Art. 10 Abs. 1](https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=OJ:L_202401689)). Der Artikel grenzt nicht auf bestimmte Absätze des Anhangs III ein — wird ein System nach Artikel 6 als hochrisikoreich eingestuft und ist es nicht nach Artikel 5 verboten, greift Artikel 10.
+
+Die inhaltlichen Pflichten stehen in den Absätzen 2 bis 5: Designentscheidungen zur Datenerhebung, Datenaufbereitung (Annotation, Etikettierung, Bereinigung, Aggregation), Prüfung auf Verzerrungen, die geschützte Gruppen benachteiligen können, sowie statistische Eigenschaften wie Repräsentativität und Relevanz. Absatz 3 nennt die Datenqualitätskriterien; Absatz 4 erfasst kontextbezogene Merkmale; Absatz 5 erlaubt die begrenzte Verarbeitung besonderer Kategorien personenbezogener Daten zur Verzerrungs-Korrektur unter strengen Schutzmaßnahmen.
+
+Das [Service-Desk-Dokument des EU-AI-Office](https://artificialintelligenceact.eu/de/article/10/) stellt klar, dass die Artikel-10-Dokumentation die DSGVO-Pflichten (insbesondere Artikel 5 Rechtmäßigkeit der Verarbeitung) ergänzt, nicht ersetzt. Die [BfDI](https://www.bfdi.bund.de/) hat wiederholt darauf hingewiesen, dass die DSGVO neben der KI-Verordnung weiter gilt — der [Bitkom-Leitfaden zur KI-Verordnung](https://www.bitkom.org/) macht denselben Punkt für den Mittelstand.
