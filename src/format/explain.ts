@@ -52,8 +52,8 @@
 //   - This formatter is a presentation layer; the citation URLs and verbatim
 //     chapeau strings it renders come from upstream sources:
 //       * Article/Annex citation URLs come from `src/util/citations.ts::getCitation()`
-//         which reads `src/data/citations.json` (the EUR-Lex + Service Desk URL
-//         table).
+//         which reads `src/data/citations.json` (the EUR-Lex Tier-1 + Future of
+//         Life Institute Tier-3 regulation-text mirror URL table).
 //       * Verbatim chapeau strings come from `src/i18n/{en,de}.json` keys
 //         `annex_iii_chapeaux.<n>` (per-paragraph) and `annex_iv_chapeau`, or
 //         from each rule module's `summary_{en,de}` field for article-level fires.
