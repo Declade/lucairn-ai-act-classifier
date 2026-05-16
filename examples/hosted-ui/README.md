@@ -74,7 +74,23 @@ Total: ~140 lines of TypeScript across three files. No `ToolWorkspace` integrati
 - **LLM mode.** The hosted UI runs in deterministic mode only. LLM mode (`--llm anthropic` etc.) needs an `apiKey` parameter — exposing that surface in the hosted UI is a v0.2 feature; until then, point LLM-mode users at the CLI.
 - **Plausible:** `data-plausible-event="classify-submit"` is the wire-up surface; theveil-website's root layout's Plausible script propagates the event.
 - **TagPill rendering (v0.2).** The current implementation renders the markdown `--explain` output verbatim in a `<pre>` block. The Day-12 build plan row calls for reusing `theveil-website/src/components/blog/TagPill.tsx`; v0.2 polish replaces the `<pre>` block with structured tag pills per fired article.
-- **Input cap.** `server-action.ts` enforces `MAX_INPUT_BYTES = 8192`; mirror this in any API-route guard layer theveil-website wraps around the server action.
+- **Input cap.** `server-action.ts` enforces `MAX_INPUT_BYTES = 8192` measured in UTF-8 bytes (via `new TextEncoder().encode(text).byteLength`, not `text.length` which counts UTF-16 code units). Mirror the same UTF-8-byte unit in any API-route guard layer theveil-website wraps around the server action.
+
+### Production caveat — Next.js server-action error stripping
+
+In `next start` (production builds), Next.js strips thrown `Error` messages from server-actions for security reasons. The current template throws `Error` objects with user-facing strings (e.g. `"Input too long (max 8192 bytes)."`); these will surface as a generic "An error occurred" message in production rather than the intended user-facing copy.
+
+**For production hosting, refactor `server-action.ts` to return a discriminated-union shape:**
+
+```typescript
+type ClassifyResponse =
+  | { ok: true; result: ClassifyResult; explainMarkdown: string }
+  | { ok: false; error: 'input_too_long' | 'invalid_lang' | 'empty_input' };
+```
+
+`ClassifierClient.tsx` then handles the `{ ok: false }` branch and renders a locale-aware user-facing error string (looked up in `theveil-website`'s i18n bundles). This pattern survives `next start` correctly — error codes are values, not thrown exceptions, so Next.js does not strip them.
+
+The template ships the thrown-`Error` form for minimality; apply the discriminated-union refactor during the Part B integration into `theveil-website`.
 
 ## Validation
 
