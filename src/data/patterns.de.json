@@ -370,7 +370,22 @@
         { "phrase": "belegschaft nutzt" },
         { "phrase": "personal bedient" },
         { "phrase": "mitarbeitende verwenden" },
-        { "phrase": "team setzt ki ein" }
+        { "phrase": "team setzt ki ein" },
+        { "phrase": "beratungsteam nutzt" },
+        { "phrase": "unser beratungsteam nutzt" },
+        { "phrase": "unsere mitarbeiter schulen" },
+        { "phrase": "mitarbeiter schulen" },
+        { "phrase": "mitarbeitende schulen" },
+        { "phrase": "berater schulen" },
+        { "phrase": "team schulen" },
+        { "phrase": "personal schulen" },
+        { "phrase": "ki-kompetenz" },
+        { "phrase": "ki-kompetenz-schulung" },
+        { "phrase": "mitarbeiter ki-schulung" },
+        { "phrase": "damit unsere mitarbeiter" },
+        { "phrase": "damit mitarbeiter" },
+        { "phrase": "damit unser personal" },
+        { "phrase": "damit unser team" }
       ]
     }
   },

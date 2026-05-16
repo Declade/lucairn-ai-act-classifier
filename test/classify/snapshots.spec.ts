@@ -78,6 +78,15 @@ function project(r: ClassifyResult): Record<string, unknown> {
       applicable: r.article_50.applicable,
       triggered_by: r.article_50.triggered_by,
     },
+    article_4: {
+      applicable: r.article_4.applicable,
+      triggered_by: r.article_4.triggered_by,
+    },
+    gpai: {
+      article_53_applicable: r.gpai.article_53_applicable,
+      article_55_applicable: r.gpai.article_55_applicable,
+      triggered_by: r.gpai.triggered_by,
+    },
     three_category:
       r.three_category === null
         ? null

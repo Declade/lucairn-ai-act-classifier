@@ -435,7 +435,19 @@
         { "phrase": "operators rely on" },
         { "phrase": "our workers use ai" },
         { "phrase": "internal team operates" },
-        { "phrase": "company staff use" }
+        { "phrase": "company staff use" },
+        { "phrase": "consulting team uses" },
+        { "phrase": "consulting team operates" },
+        { "phrase": "our consulting team uses" },
+        { "phrase": "team uses an ai" },
+        { "phrase": "train our consultants" },
+        { "phrase": "train our staff" },
+        { "phrase": "train our employees" },
+        { "phrase": "train our team" },
+        { "phrase": "train our operators" },
+        { "phrase": "ai literacy" },
+        { "phrase": "ai-literacy training" },
+        { "phrase": "consultants on how to use" }
       ]
     }
   },

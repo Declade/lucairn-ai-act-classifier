@@ -1,4 +1,4 @@
-// Public API — orchestrates the 10-stage classification pipeline.
+// Public API — orchestrates the 12-stage classification pipeline.
 //
 // Async (since Day 9) because the LLM extraction path is asynchronous. The
 // deterministic mode `await` resolves immediately (no microtask delay beyond
@@ -15,6 +15,8 @@
 //   7.  classifyArticle14(annex, art5)           — Day 4 human oversight
 //   8.  classifyArticle15(annex, art5)           — Day 4 accuracy/robustness/cybersecurity
 //   9.  classifyArticle50(features, art5, annex) — Day 5 GPAI/deployer transparency
+//   9b. classifyArticle4(features)               — Day 15 (v0.3.0) AI literacy (non-cascade root)
+//   9c. classifyGPAI(features)                   — Day 15 (v0.3.0) Articles 53 + 55 (non-cascade root)
 //  10.  classifyThreeCategory(annex, art5, art10, art12, art14, art15) — Day 5 overlay
 //  11.  annex_iv_required derived from annex.high_risk && !suppressed_by_article_5
 //  12.  confidence computed via v0.1 placeholder formula
@@ -35,6 +37,8 @@ import { classifyArticle13 } from './rules/article-13.js';
 import { classifyArticle14 } from './rules/article-14.js';
 import { classifyArticle15 } from './rules/article-15.js';
 import { classifyArticle50 } from './rules/article-50.js';
+import { classifyArticle4 } from './rules/article-4.js';
+import { classifyGPAI } from './rules/article-53-gpai.js';
 import { classifyThreeCategory } from './rules/three-category.js';
 import type {
   Article5Result,
@@ -45,6 +49,8 @@ import type {
   Article14Result,
   Article15Result,
   Article50Result,
+  Article4Result,
+  GPAIResult,
   ThreeCategoryResult,
 } from './rules/index.js';
 import { RULES_VERSION, RULES_HASH, RULES_HASH_FULL_HEX } from './util/rules-hash.js';
@@ -110,6 +116,10 @@ export interface ClassifyResult {
   article_15: Article15Result;
   /** Article 50 — GPAI/deployer transparency (non-cascade root). */
   article_50: Article50Result;
+  /** Article 4 — AI literacy (non-cascade root). */
+  article_4: Article4Result;
+  /** GPAI Articles 53 + 55 — General-purpose AI obligations + systemic risk overlay. */
+  gpai: GPAIResult;
   /** Lucairn opinionated overlay; null iff `opts.threeCategory === false`. */
   three_category: ThreeCategoryResult | null;
   /** True iff annex_iii.high_risk && !annex_iii.suppressed_by_article_5. */
@@ -211,6 +221,14 @@ export async function classify(text: string, opts: ClassifyOptions = {}): Promis
   //    optional annex (for the 50(3) Annex-III-style fallback).
   const article_50 = classifyArticle50(features, article_5, annex_iii);
 
+  // 9b. Article 4 — AI literacy (non-cascade root; provider/deployer + staff
+  //     fires the horizontal obligation regardless of risk category).
+  const article_4 = classifyArticle4(features);
+
+  // 9c. GPAI Articles 53 + 55 — provider of foundation models / systemic-risk
+  //     markers (non-cascade root; independent obligation track).
+  const gpai = classifyGPAI(features);
+
   // 10. Three-category overlay (Cat 1/2/3). Omitted when opts.threeCategory === false.
   const three_category =
     opts.threeCategory === false
@@ -244,6 +262,8 @@ export async function classify(text: string, opts: ClassifyOptions = {}): Promis
     article_14,
     article_15,
     article_50,
+    article_4,
+    gpai,
     three_category,
     annex_iv_required,
   };

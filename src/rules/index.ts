@@ -28,6 +28,12 @@ export type { Article15Result, Article15TriggeredBy } from './article-15.js';
 export { classifyArticle50 } from './article-50.js';
 export type { Article50Result, Article50TriggeredBy } from './article-50.js';
 
+export { classifyArticle4 } from './article-4.js';
+export type { Article4Result, Article4TriggeredBy } from './article-4.js';
+
+export { classifyGPAI } from './article-53-gpai.js';
+export type { GPAIResult, GPAITriggeredBy } from './article-53-gpai.js';
+
 export { classifyThreeCategory } from './three-category.js';
 export type {
   ThreeCategoryResult,

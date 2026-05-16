@@ -44,6 +44,8 @@ const KEY_ORDER: ReadonlyArray<keyof ClassifyResult> = [
   'article_14',
   'article_15',
   'article_50',
+  'article_4',
+  'gpai',
   'three_category',
   'annex_iv_required',
   'features',
