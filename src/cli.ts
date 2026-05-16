@@ -248,7 +248,7 @@ async function main(): Promise<void> {
     )
     .option(
       '--wizard',
-      'Interactive guided mode (3-step Y/N prompts against regulator-verbatim Article 5 / Annex III / Article 50 descriptions). Bypasses free-text keyword extraction; the rule engine is unchanged. Use when you do not have a written system description.',
+      'Interactive guided mode (3-step Y/N prompts; each option carries a regulator-anchored short summary against Article 5 / Annex III / Article 50). Verbatim EUR-Lex chapeau text is emitted downstream in --explain output. Bypasses free-text keyword extraction; the rule engine is unchanged. Use when you do not have a written system description.',
     )
     .addHelpText(
       'after',
