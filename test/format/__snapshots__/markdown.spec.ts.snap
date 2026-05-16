@@ -13,6 +13,8 @@ exports[`formatMarkdown() — output shape > DE snapshot — high-risk fixture, 
 | Artikel 14 (menschliche Aufsicht) | ✅ anwendbar |  |
 | Artikel 15 (Genauigkeit/Robustheit/Cybersicherheit) | ✅ anwendbar |  |
 | Artikel 50 (GPAI/Betreiber) | ⬜ nicht ausgelöst |  |
+| Artikel 4  (KI-Kompetenz) | ⬜ nicht anwendbar |  |
+| Artikel 53+55 (GPAI) | ⬜ nicht anwendbar |  |
 | Anhang IV  (technische Dokumentation) | 📄 ERFORDERLICH |  |
 
 ## Lucairn-Pflichten-Overlay
@@ -43,6 +45,8 @@ exports[`formatMarkdown() — output shape > EN snapshot — high-risk fixture, 
 | Article 14 (human oversight) | ✅ applies |  |
 | Article 15 (accuracy/robustness/cybersecurity) | ✅ applies |  |
 | Article 50 (GPAI/deployer) | ⬜ not triggered |  |
+| Article 4  (AI literacy) | ⬜ not applicable |  |
+| Articles 53+55 (GPAI) | ⬜ not applicable |  |
 | Annex IV  (technical docs) | 📄 REQUIRED |  |
 
 ## Lucairn obligation overlay

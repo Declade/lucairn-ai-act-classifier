@@ -171,6 +171,89 @@ describe('formatExplain() — negative fixture', () => {
 });
 
 // ---------------------------------------------------------------------------
+// Article 4 + GPAI surfacing (B-1 closure) — verifies the fix to the bug
+// where Art 4 + GPAI fire internally but were silently dropped on the
+// markdown/text/explain code paths (Art 4/GPAI only appeared in `--format json`).
+// ---------------------------------------------------------------------------
+
+const INPUT_GPAI_AND_LITERACY_EN =
+  'We train a foundation model with 10^25 floating-point operations. Our employees use it.';
+const INPUT_GPAI_NO_SYSTEMIC_EN =
+  'We build a customer-facing chatbot on top of GPT-5 via the OpenAI API.';
+const INPUT_GPAI_AND_LITERACY_DE =
+  'Wir entwickeln ein großes Sprachmodell mit 10^25 Floating-Point-Operationen Rechenleistung. Damit unser Personal das Modell nutzen kann, schulen wir alle Mitarbeiter.';
+
+describe('formatExplain() — Article 4 + GPAI surfacing (B-1 closure)', () => {
+  it('json EN — fired array contains article_4 + articles_53_55 when both Art 4 and Art 55 fire', async () => {
+    const r = await classify(INPUT_GPAI_AND_LITERACY_EN, { lang: 'en' });
+    expect(r.article_4.applicable).toBe(true);
+    expect(r.gpai.article_53_applicable).toBe(true);
+    expect(r.gpai.article_55_applicable).toBe(true);
+    const out = formatExplain(r, { locale: 'en', format: 'json', withExcerpt: false });
+    const parsed = JSON.parse(out) as { fired: ReadonlyArray<{ id: string; chapeau: string; heading: string }> };
+    const firedIds = parsed.fired.map((f) => f.id);
+    expect(firedIds).toContain('article_4');
+    expect(firedIds).toContain('articles_53_55');
+    const a4 = parsed.fired.find((f) => f.id === 'article_4');
+    expect(a4?.chapeau).toMatch(/AI literacy/i);
+    expect(a4?.heading).toMatch(/Article 4/);
+    const gpai = parsed.fired.find((f) => f.id === 'articles_53_55');
+    expect(gpai?.heading).toMatch(/53 \+ 55/);
+    expect(gpai?.chapeau).toMatch(/Art 53\(1\)/);
+    expect(gpai?.chapeau).toMatch(/Art 55\(1\)/);
+  });
+
+  it('json EN — GPAI fire WITHOUT systemic-risk emits "article_53" id (not "articles_53_55")', async () => {
+    const r = await classify(INPUT_GPAI_NO_SYSTEMIC_EN, { lang: 'en' });
+    expect(r.gpai.article_53_applicable).toBe(true);
+    expect(r.gpai.article_55_applicable).toBe(false);
+    const out = formatExplain(r, { locale: 'en', format: 'json', withExcerpt: false });
+    const parsed = JSON.parse(out) as { fired: ReadonlyArray<{ id: string; chapeau: string }> };
+    const firedIds = parsed.fired.map((f) => f.id);
+    expect(firedIds).toContain('article_53');
+    expect(firedIds).not.toContain('articles_53_55');
+    const gpai = parsed.fired.find((f) => f.id === 'article_53');
+    expect(gpai?.chapeau).toMatch(/Art 53\(1\)/);
+    expect(gpai?.chapeau).not.toMatch(/Art 55\(1\)/);
+  });
+
+  it('markdown EN — Article 4 + GPAI sections render in the output', async () => {
+    const r = await classify(INPUT_GPAI_AND_LITERACY_EN, { lang: 'en' });
+    const out = formatExplain(r, { locale: 'en', format: 'markdown', withExcerpt: false });
+    expect(out).toContain('### Article 4 — AI literacy');
+    expect(out).toContain('### Articles 53 + 55');
+    // Sentinel string must NOT appear when fires are present.
+    expect(out).not.toContain('No prohibition, high-risk, or transparency obligation triggered.');
+  });
+
+  it('text EN — Article 4 + GPAI sections render as plain-text dashes', async () => {
+    const r = await classify(INPUT_GPAI_AND_LITERACY_EN, { lang: 'en' });
+    const out = formatExplain(r, { locale: 'en', format: 'text', withExcerpt: false });
+    expect(out).toMatch(/-- Article 4 — AI literacy --/);
+    expect(out).toMatch(/-- Articles 53 \+ 55/);
+  });
+
+  it('markdown DE — DE labels surface in the output', async () => {
+    const r = await classify(INPUT_GPAI_AND_LITERACY_DE, { lang: 'de' });
+    expect(r.article_4.applicable).toBe(true);
+    expect(r.gpai.article_53_applicable).toBe(true);
+    const out = formatExplain(r, { locale: 'de', format: 'markdown', withExcerpt: false });
+    expect(out).toContain('Artikel 4 — KI-Kompetenz');
+    // DE summary uses the Art. 53 Abs. 1 verbatim chapeau.
+    expect(out).toMatch(/Art\. 53 Abs\. 1/);
+  });
+
+  it('sentinel: "no obligation triggered" string still appears when NOTHING fires (Art 4 / GPAI also false)', async () => {
+    const r = await classify(INPUT_NEGATIVE_EN, { lang: 'en' });
+    expect(r.article_4.applicable).toBe(false);
+    expect(r.gpai.article_53_applicable).toBe(false);
+    const out = formatExplain(r, { locale: 'en', format: 'markdown', withExcerpt: false });
+    // The exact wizard-action.ts regex string must still be emitted byte-for-byte.
+    expect(out).toContain('No prohibition, high-risk, or transparency obligation triggered.');
+  });
+});
+
+// ---------------------------------------------------------------------------
 // Locale switching
 // ---------------------------------------------------------------------------
 

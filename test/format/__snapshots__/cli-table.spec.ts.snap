@@ -46,6 +46,8 @@ exports[`formatCliTable() — Article 5 prohibition fixture (EN) > matches snaps
   Article 14 (human oversight): not applicable
   Article 15 (accuracy/robustness/cybersecurity): not applicable
   Article 50 (GPAI/deployer):  not triggered
+  Article 4  (AI literacy): not applicable
+  Articles 53+55 (GPAI): not applicable
   Annex IV  (technical docs):  not applicable
 
   Lucairn obligation overlay
@@ -69,6 +71,8 @@ exports[`formatCliTable() — high-risk fixture (DE) > matches snapshot when use
   Artikel 14 (menschliche Aufsicht): anwendbar
   Artikel 15 (Genauigkeit/Robustheit/Cybersicherheit): anwendbar
   Artikel 50 (GPAI/Betreiber):  nicht ausgelöst
+  Artikel 4  (KI-Kompetenz): nicht anwendbar
+  Artikel 53+55 (GPAI): nicht anwendbar
   Anhang IV  (technische Dokumentation):  ERFORDERLICH
 
   Lucairn-Pflichten-Overlay
@@ -92,6 +96,8 @@ exports[`formatCliTable() — high-risk fixture (EN) > matches snapshot when cit
   Article 14 (human oversight): applies
   Article 15 (accuracy/robustness/cybersecurity): applies
   Article 50 (GPAI/deployer):  not triggered
+  Article 4  (AI literacy): not applicable
+  Articles 53+55 (GPAI): not applicable
   Annex IV  (technical docs):  REQUIRED
 
   Lucairn obligation overlay
@@ -124,6 +130,8 @@ exports[`formatCliTable() — high-risk fixture (EN) > matches snapshot when use
   Article 14 (human oversight): applies
   Article 15 (accuracy/robustness/cybersecurity): applies
   Article 50 (GPAI/deployer):  not triggered
+  Article 4  (AI literacy): not applicable
+  Articles 53+55 (GPAI): not applicable
   Annex IV  (technical docs):  REQUIRED
 
   Lucairn obligation overlay
@@ -147,6 +155,8 @@ exports[`formatCliTable() — high-risk fixture (EN) > matches snapshot with --n
   Article 14 (human oversight): applies
   Article 15 (accuracy/robustness/cybersecurity): applies
   Article 50 (GPAI/deployer):  not triggered
+  Article 4  (AI literacy): not applicable
+  Articles 53+55 (GPAI): not applicable
   Annex IV  (technical docs):  REQUIRED
 
   Lucairn obligation overlay

@@ -71,7 +71,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import type { ClassifyResult } from '../classify.js';
-import type { AnnexIIIResult, AnnexIIIDomainHit, Article5Result, Article5Hit, Article50Result } from '../rules/index.js';
+import type { AnnexIIIResult, AnnexIIIDomainHit, Article5Result, Article5Hit, Article50Result, Article4Result, GPAIResult } from '../rules/index.js';
 import { getCitation, type CitationArticleId } from '../util/citations.js';
 import { getLocale } from '../i18n/load.js';
 
@@ -386,6 +386,66 @@ function buildArticle50Fires(article50: Article50Result, locale: 'en' | 'de'): F
   return out;
 }
 
+function buildArticle4Fires(article4: Article4Result, locale: 'en' | 'de'): FiredArticle[] {
+  if (!article4.applicable) return [];
+  const heading =
+    locale === 'de'
+      ? 'Artikel 4 — KI-Kompetenz'
+      : 'Article 4 — AI literacy';
+  const rationale =
+    locale === 'de'
+      ? 'Lexikon-Treffer auf "article_4_ai_literacy.provider_or_deployer_with_staff" — Artikel 4 feuert (horizontale Pflicht; Anbieter/Betreiber + Personal).'
+      : 'Lexicon hit on "article_4_ai_literacy.provider_or_deployer_with_staff" — Article 4 fires (horizontal obligation; provider/deployer + staff).';
+  return [
+    {
+      id: 'article_4',
+      heading,
+      chapeau: locale === 'de' ? article4.summary_de : article4.summary_en,
+      matched_phrases: [],
+      sub_letter_rationale: null,
+      rationale,
+      citation_url: citationUrlForArticle('article_4', locale),
+      excerpt_key: null,
+    },
+  ];
+}
+
+function buildGPAIFires(gpai: GPAIResult, locale: 'en' | 'de'): FiredArticle[] {
+  if (!gpai.article_53_applicable) return [];
+  // The rule module concatenates Art 53(1) + Art 55(1) chapeaux into a single
+  // verbatim summary string when applicable. We surface a single "Article 53"
+  // entry that carries both chapeaux when both fire; the heading discriminates
+  // ("Article 53" vs "Articles 53 + 55"). This matches the spec's "render as
+  // Art 53+55" / "render as Art 53" dispatch.
+  const both = gpai.article_55_applicable;
+  const heading = both
+    ? locale === 'de'
+      ? 'Artikel 53 + 55 — GPAI-Anbieterpflichten (mit systemischem Risiko)'
+      : 'Articles 53 + 55 — GPAI provider obligations (with systemic risk)'
+    : locale === 'de'
+      ? 'Artikel 53 — Anbieterpflichten für KI-Modelle mit allgemeinem Verwendungszweck'
+      : 'Article 53 — General-purpose AI model provider obligations';
+  const rationale = both
+    ? locale === 'de'
+      ? 'Lexikon-Treffer auf "gpai_models.named_foundation_models" oder "generic_foundation_model_phrasing" — Artikel 53 feuert. "gpai_models.systemic_risk_markers" zusätzlich getroffen — Artikel 55 als "zusätzlich"-Überlagerung feuert.'
+      : 'Lexicon hit on "gpai_models.named_foundation_models" or "generic_foundation_model_phrasing" — Article 53 fires. "gpai_models.systemic_risk_markers" also matched — Article 55 fires as an "in addition to" overlay.'
+    : locale === 'de'
+      ? 'Lexikon-Treffer auf "gpai_models.named_foundation_models" oder "generic_foundation_model_phrasing" — Artikel 53 feuert. Artikel 55 wurde nicht ausgelöst (keine systemic-risk-Marker).'
+      : 'Lexicon hit on "gpai_models.named_foundation_models" or "generic_foundation_model_phrasing" — Article 53 fires. Article 55 not triggered (no systemic-risk markers).';
+  return [
+    {
+      id: both ? 'articles_53_55' : 'article_53',
+      heading,
+      chapeau: locale === 'de' ? gpai.summary_de : gpai.summary_en,
+      matched_phrases: [],
+      sub_letter_rationale: null,
+      rationale,
+      citation_url: citationUrlForArticle('gpai_articles_53_55', locale),
+      excerpt_key: null,
+    },
+  ];
+}
+
 function buildFiredArticles(result: ClassifyResult, locale: 'en' | 'de'): FiredArticle[] {
   const out: FiredArticle[] = [];
   // Article 5 first (prohibition wins).
@@ -450,6 +510,12 @@ function buildFiredArticles(result: ClassifyResult, locale: 'en' | 'de'): FiredA
   if (art15 !== null) out.push(art15);
   // Article 50 paragraphs (independent root).
   out.push(...buildArticle50Fires(result.article_50, locale));
+  // Article 4 (AI literacy) — horizontal obligation, independent root.
+  out.push(...buildArticle4Fires(result.article_4, locale));
+  // Articles 53 + 55 (GPAI) — separate obligation root for foundation-model
+  // providers. Single entry per fire (both Art 53 and Art 55 share one row
+  // when both fire; the heading + chapeau discriminate).
+  out.push(...buildGPAIFires(result.gpai, locale));
   // Annex IV — derived; emit a single fire when required.
   if (result.annex_iv_required) {
     // The chapeau slot must carry the VERBATIM EUR-Lex Annex IV preamble (the
