@@ -65,7 +65,7 @@ export const CANONICAL_PHRASES_EN: {
 } = {
   article_5: {
     a: 'subliminal technique that materially distorts behaviour',
-    b: 'exploitation of vulnerabilities of natural persons',
+    b: 'exploit vulnerability of natural persons',
     c: 'social scoring of natural persons',
     d: 'predictive policing based solely on profiling',
     e: 'untargeted facial scraping from the internet',
@@ -158,7 +158,7 @@ export const CANONICAL_PHRASES_EN: {
 export const CANONICAL_PHRASES_DE: typeof CANONICAL_PHRASES_EN = {
   article_5: {
     a: 'unterschwellige techniken',
-    b: 'ausnutzung der schutzbedürftigkeit',
+    b: 'ausnutzung schutzbedürftigkeit',
     c: 'soziale bewertung',
     d: 'vorhersagende polizeiarbeit ausschließlich auf profiling',
     e: 'ungezieltes auslesen von gesichtsbildern',

@@ -148,7 +148,12 @@
         { "phrase": "grenzüberwachung" },
         { "phrase": "sicherheitsrisiko grenze" },
         { "phrase": "risiko der irregulären einwanderung" },
-        { "phrase": "irreguläre einwanderung" }
+        { "phrase": "irreguläre einwanderung" },
+        { "phrase": "asyl-risikobewertung" },
+        { "phrase": "polygraph an der grenze" },
+        { "phrase": "polygraphen an der grenze" },
+        { "phrase": "polygraph an grenzen" },
+        { "phrase": "polygraphen an grenzen" }
       ]
     },
     "8_justice_democracy": {
@@ -169,6 +174,7 @@
       "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
       "entries": [
         { "phrase": "unterschwellige technik" },
+        { "phrase": "unterschwellige techniken" },
         { "phrase": "manipulative technik" },
         { "phrase": "täuschende technik" }
       ]
@@ -222,7 +228,8 @@
       "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
       "entries": [
         { "phrase": "gesichtsbilder scraping" },
-        { "phrase": "gesichts-scraping" }
+        { "phrase": "gesichts-scraping" },
+        { "phrase": "ungezieltes auslesen von gesichtsbildern" }
       ]
     },
     "f_emotion_in_workplace_education": {
@@ -350,7 +357,8 @@
         { "phrase": "berichterstattung über angelegenheiten von öffentlichem interesse" },
         { "phrase": "angelegenheiten von öffentlichem interesse" },
         { "phrase": "text über öffentliches interesse" },
-        { "phrase": "nachrichten über öffentliches interesse" }
+        { "phrase": "nachrichten über öffentliches interesse" },
+        { "phrase": "ki-generierte öffentliche texte" }
       ]
     }
   },
