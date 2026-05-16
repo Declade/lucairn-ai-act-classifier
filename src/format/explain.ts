@@ -48,6 +48,22 @@
 //
 // Disclaimer footer: always present (matches the other formatters).
 //
+// Citation discipline (cite-implicit disclosure):
+//   - This formatter is a presentation layer; the citation URLs and verbatim
+//     chapeau strings it renders come from upstream sources:
+//       * Article/Annex citation URLs come from `src/util/citations.ts::getCitation()`
+//         which reads `src/data/citations.json` (the EUR-Lex + Service Desk URL
+//         table).
+//       * Verbatim chapeau strings come from `src/i18n/{en,de}.json` keys
+//         `annex_iii_chapeaux.<n>` (per-paragraph) and `annex_iv_chapeau`, or
+//         from each rule module's `summary_{en,de}` field for article-level fires.
+//   - The formatter does NOT fabricate citations or chapeau text. If a fired
+//     article has no citation entry, the renderer emits the EUR-Lex regulation
+//     root URL as a safe fallback (never an empty `[ … ](url)` link).
+//   - When auditing or extending this module, sanity-check that every new
+//     emit path goes through `getCitation()` or the i18n chapeau tables;
+//     never inline a citation URL or verbatim regulator text.
+//
 // Locale-driven labels. Pure function — no I/O at module init. The excerpt
 // loader reads from disk only when `opts.withExcerpt === true`.
 
