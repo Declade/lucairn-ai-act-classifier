@@ -2,6 +2,8 @@
 
 Free CLI that maps any AI use case description to the EU AI Act articles it triggers. Zero network, zero config, zero API key in the default deterministic mode. MIT-licensed for the code; CC-BY-4.0 for the curated test corpus.
 
+> **About the publisher.** A free tool from the team building [Lucairn](https://lucairn.eu/en) — the AI evidence layer for EU regulated companies. Use this CLI to scope which AI Act Articles your system triggers; use Lucairn itself when you're ready to ship audit-grade signed receipts on every LLM call.
+
 ## Quick start
 
 ```bash
