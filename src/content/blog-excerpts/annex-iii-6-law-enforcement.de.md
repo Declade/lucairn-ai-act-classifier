@@ -1,0 +1,7 @@
+# Anhang III Absatz 6 — Strafverfolgung (mit Abgrenzung zum Polygraph-Einsatz nach Absatz 7)
+
+Anhang III Absatz 6 der Verordnung (EU) 2024/1689 erfasst KI-Systeme, die von oder für Strafverfolgungsbehörden verwendet werden. Die fünf Buchstaben decken (a) Opfer-Risiko-Bewertung, (b) Lügendetektoren und vergleichbare Werkzeuge zur Wahrheitsbewertung, (c) Bewertung der Zuverlässigkeit von Beweismitteln, (d) Kriminalprofiling oder Rückfallrisiko-Bewertung, soweit nicht von Artikel 5 Absatz 1 Buchstabe d erfasst, sowie (e) Kriminalitätsanalyse anhand kriminalrelevanter Daten ab ([EUR-Lex Anhang III ¶6](https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=OJ:L_202401689)).
+
+Eine häufige Verwechslung: Ein **Lügendetektor an einer Grenzkontrolle** fällt unter Anhang III Absatz 7 (Migration, Asyl, Grenzkontrolle), nicht unter Absatz 6. Der Classifier unterscheidet anhand des Grenz-/Migrations-/Asyl-Kontexts in der Eingabe; fehlt dieser, ordnet er den Lügendetektor ¶6 Buchstabe b zu. Auch das [Service-Desk-Dokument des EU-AI-Office](https://artificialintelligenceact.eu/de/annex/3/) erläutert diese Trennung.
+
+Beschreibt die Eingabe eine Risikobewertung künftiger Straftaten ohne das Qualifikationsmerkmal „ausschließlich auf Profiling" nach Art. 5 Abs. 1 Buchst. d, ordnet der Classifier den Fall ¶6 Buchst. d zu — hochrisikoreich, aber nicht verboten. Die [BSI-Veröffentlichungen zu KI-Sicherheit](https://www.bsi.bund.de/) sind hier eine nützliche Ergänzung.

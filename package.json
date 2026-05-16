@@ -32,6 +32,7 @@
   },
   "files": [
     "dist",
+    "src/content/blog-excerpts/**/*.md",
     "README.md",
     "README.de.md",
     "LICENSE",
@@ -43,7 +44,7 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "pnpm run clean && tsc && cp -R src/data dist/data && mkdir -p dist/i18n && cp src/i18n/*.json dist/i18n/ && chmod +x dist/cli.js",
+    "build": "pnpm run clean && tsc && cp -R src/data dist/data && mkdir -p dist/i18n && cp src/i18n/*.json dist/i18n/ && mkdir -p dist/content/blog-excerpts && cp src/content/blog-excerpts/*.md dist/content/blog-excerpts/ && chmod +x dist/cli.js",
     "prepack": "pnpm run build",
     "test": "vitest run",
     "test:watch": "vitest",
