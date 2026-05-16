@@ -1,0 +1,24 @@
+{
+  "id": "fixture-day14-13-blocker3d-webcam-emotion-surveillance-en",
+  "lang": "en",
+  "input": "Workplace surveillance system that detects employee emotions via webcam during meetings.",
+  "expected": {
+    "article_5_prohibited": true,
+    "article_5_letters": [
+      "f"
+    ],
+    "annex_iii_high_risk": false,
+    "annex_iii_domains": [],
+    "suppressed_by_article_5": true,
+    "article_10_applicable": false,
+    "article_12_applicable": false,
+    "article_13_applicable": false,
+    "article_14_applicable": false,
+    "article_15_applicable": false,
+    "three_category_applicable": [],
+    "annex_iv_required": false,
+    "notes": "v0.1.5 post-v0.1.4 reviewer feedback (Claude-Code retest). Adjacent gap in the same risk class as v0.1.4 BLOCKER 3b — textbook Art 5(1)(f) workplace-emotion-recognition prohibition was silently classified as 'nothing applies' on v0.1.4 because the lexicon covered verb-form paraphrases (`infers workers emotions`) but not noun-phrase paraphrases (`surveillance system that detects emotions via webcam`). v0.1.5 adds `detects employee emotions`, `surveillance system that detects emotions`, `webcam emotion detection`, `workplace emotional surveillance`, and ~5 other entries. Medical/safety carve-out invariant unchanged. Cite: EUR-Lex Regulation (EU) 2024/1689, Article 5(1)(f)."
+  },
+  "bucket": "article_5",
+  "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689"
+}

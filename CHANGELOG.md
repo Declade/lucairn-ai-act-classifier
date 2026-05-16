@@ -4,6 +4,36 @@ All notable changes to `@lucairn/ai-act-classifier` will be documented in this f
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] — 2026-05-16
+
+Guided-wizard mode + scope-honest UX + paraphrase tightening. Triggered by Marc's live-test of v0.1.4: a ServiceNow-consultant policy question returned a terse "No prohibition, high-risk, or transparency obligation triggered" with zero context — technically correct, useless to a real user. The classifier accepts free-form text but is ONLY equipped to handle ONE shape: AI system descriptions in regulator-adjacent vocabulary. Q&A questions return "nothing triggered" with no honest scope explanation.
+
+v0.2.0 ships the hybrid fix: keep free-text as the fast path, ADD a guided wizard for users without a system description, AND reframe the zero-result output to honestly state scope limits.
+
+### Added
+
+- **`--wizard` CLI flag.** Interactive 3-step Y/N prompt against regulator-verbatim Article 5(1) letters (a)–(h), Annex III paragraphs ¶1–¶8 with sub-letter narrowing, and Article 50 transparency paragraphs (1)–(5). Bypasses free-text keyword extraction; the rule engine is unchanged. New module `src/wizard/{answers,prompts,runner}.ts` + `synthesizeWizardText()` builds a canonical text from structured answers, then the existing classify() pipeline consumes it. Output shape byte-for-byte identical to free-text mode.
+- **Public exports** (`@lucairn/ai-act-classifier`): `synthesizeWizardText`, `PROMPTS_EN`, `PROMPTS_DE`, plus types `WizardAnswers`, `WizardArticle5Letter`, `AnnexIIIParagraph`, `AnnexIIISelection`, `Article50Path`, `WizardPrompts`, `PromptItem`. Library consumers (e.g., the hosted UI) can implement their own wizard surfaces against the same canonical-phrase vocabulary.
+
+### Fixed
+
+- **Art 5(1)(f) webcam-emotion paraphrase miss (post-v0.1.4 reviewer feedback).** Input `Workplace surveillance system that detects employee emotions via webcam during meetings` previously fired nothing. v0.2.0 adds 8 noun-phrase paraphrases to `prohibited_practices.f_emotion_in_workplace_education` plus DE equivalents.
+- **Art 5(1)(g) sensitive-category-inference natural paraphrases.** v0.1.x covered only bare verb form; v0.2.0 adds 11 EN + 6 DE paraphrases including `biometric categorization to infer political opinion` family.
+- **Art 50(4) deepfake-paraphrase miss.** Input `Tool that generates photorealistic synthetic videos of real people speaking words they never said` previously fired nothing. v0.2.0 adds 13 EN + 9 DE paraphrases including `synthetic video`, `photorealistic synthetic video`, `ai-generated video`, `synthetische Medien`, `KI-generierte Videos`.
+- **Art 50(3) deployer disclosure narrow expansion.** Added 4 narrow EN entries without over-firing alongside Art 5(1)(g).
+
+### Changed
+
+- **Lexicon version bump v0.1.4 → v0.2.0.** Rules hash rotated.
+- **Accuracy floor moved UP.** 66 fixtures total (was 62). Overall 98.6 % → 98.7 %, binary high-risk 98.4 % → 98.5 %, Article 5 100 % (unchanged).
+- **Hosted UI scope-honest framing.** Input placeholder + label rewritten to constrain shape (system description, NOT policy question). Zero-result output reframed to explain WHAT was checked + enumerate AI Act obligations NOT covered (Art 4 AI literacy, Articles 53/55 GPAI, AI Office governance Art 64–84, penalty regime). New "Walk me through it →" CTA + Free-text / Guided tab toggle.
+
+### Not in this release
+
+- **GPAI Article 53/55 detection.** Still deferred.
+- **Article 4 AI literacy classification.** Wizard output enumerates as out-of-scope.
+- **`fixture-day7-28-art50-emotion-marketing-de`** pre-existing misclassification — unchanged.
+
 ## [0.1.4] — 2026-05-16
 
 Launch-feedback retest fix-up. Same two adversarial reviewers (Claude Code + Codex CLI) retested v0.1.3 on its launch day. Both confirmed every v0.1.3 BLOCKER is closed and the accuracy floor holds (100 % Article 5 + ≥ 98 % overall). The Codex reviewer flagged two new paraphrase false-negatives that would burn trust with a first-contact EU/DE consultant typing realistic natural-language inputs, plus a static-copy letter-count inconsistency between the hosted UI and the README. v0.1.4 closes both paraphrase gaps + the static-copy inconsistency.

@@ -53,8 +53,8 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-01-bio
   "detected_lang": "en",
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "5a331907",
-  "rules_version": "v0.1.4",
+  "rules_hash": "0735fda2",
+  "rules_version": "v0.2.0",
   "three_category": {
     "applicable_categories": [],
     "cat_1_applicable": false,
@@ -112,8 +112,8 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-02-cri
   "detected_lang": "en",
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "5a331907",
-  "rules_version": "v0.1.4",
+  "rules_hash": "0735fda2",
+  "rules_version": "v0.2.0",
   "three_category": {
     "applicable_categories": [
       "1",
@@ -177,8 +177,8 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-03-edu
   "detected_lang": "de",
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "5a331907",
-  "rules_version": "v0.1.4",
+  "rules_hash": "0735fda2",
+  "rules_version": "v0.2.0",
   "three_category": {
     "applicable_categories": [
       "1",
@@ -240,8 +240,8 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-04-emp
   "detected_lang": "en",
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "5a331907",
-  "rules_version": "v0.1.4",
+  "rules_hash": "0735fda2",
+  "rules_version": "v0.2.0",
   "three_category": {
     "applicable_categories": [
       "1",
@@ -304,8 +304,8 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-05-ess
   "detected_lang": "de",
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "5a331907",
-  "rules_version": "v0.1.4",
+  "rules_hash": "0735fda2",
+  "rules_version": "v0.2.0",
   "three_category": {
     "applicable_categories": [
       "1",
@@ -367,8 +367,8 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-06-law
   "detected_lang": "en",
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "5a331907",
-  "rules_version": "v0.1.4",
+  "rules_hash": "0735fda2",
+  "rules_version": "v0.2.0",
   "three_category": {
     "applicable_categories": [
       "1",
@@ -432,8 +432,8 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-07-mig
   "detected_lang": "de",
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "5a331907",
-  "rules_version": "v0.1.4",
+  "rules_hash": "0735fda2",
+  "rules_version": "v0.2.0",
   "three_category": {
     "applicable_categories": [
       "1",
@@ -495,8 +495,8 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-08-jus
   "detected_lang": "en",
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "5a331907",
-  "rules_version": "v0.1.4",
+  "rules_hash": "0735fda2",
+  "rules_version": "v0.2.0",
   "three_category": {
     "applicable_categories": [
       "1",
@@ -551,8 +551,8 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day4-01-low
   "detected_lang": "en",
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "5a331907",
-  "rules_version": "v0.1.4",
+  "rules_hash": "0735fda2",
+  "rules_version": "v0.2.0",
   "three_category": {
     "applicable_categories": [],
     "cat_1_applicable": false,
@@ -603,8 +603,8 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day5-01-art
   "detected_lang": "en",
   "lang_confident": false,
   "mode": "deterministic",
-  "rules_hash": "5a331907",
-  "rules_version": "v0.1.4",
+  "rules_hash": "0735fda2",
+  "rules_version": "v0.2.0",
   "three_category": {
     "applicable_categories": [],
     "cat_1_applicable": false,
@@ -655,8 +655,8 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day5-02-art
   "detected_lang": "de",
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "5a331907",
-  "rules_version": "v0.1.4",
+  "rules_hash": "0735fda2",
+  "rules_version": "v0.2.0",
   "three_category": {
     "applicable_categories": [],
     "cat_1_applicable": false,

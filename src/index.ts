@@ -32,3 +32,17 @@ export type { ExtractedFeatures, ExtractedHit } from './extract/keyword.js';
 // classify() output without going through the CLI binary.
 export { formatExplain } from './format/explain.js';
 export type { ExplainFormatOptions } from './format/explain.js';
+
+// Wizard mode (v0.2.0+) — structured Y/N selections bypassing free-text
+// keyword extraction. Used by the hosted UI's guided mode to map regulator-
+// verbatim answers to a synthetic canonical text the rules engine consumes.
+export { synthesizeWizardText } from './wizard/answers.js';
+export type {
+  Article5Letter as WizardArticle5Letter,
+  AnnexIIIParagraph,
+  AnnexIIISelection,
+  Article50Path,
+  WizardAnswers,
+} from './wizard/answers.js';
+export { PROMPTS_EN, PROMPTS_DE } from './wizard/prompts.js';
+export type { WizardPrompts, PromptItem } from './wizard/prompts.js';
