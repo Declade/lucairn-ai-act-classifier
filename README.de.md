@@ -160,13 +160,13 @@ Testdatensatz und kuratierte Blog-Auszüge: CC-BY-4.0 (siehe [DATASET-LICENSE](.
 
 ## Haftungsausschluss
 
-Dieses Werkzeug dient ausschließlich der Information. Es stellt **keine Rechtsberatung** dar. Es begründet kein Mandatsverhältnis. Die Ausgabe ist vor jeder Compliance-Entscheidung durch qualifizierte Rechtsberatung zu überprüfen. Lucairn / Declade UG (i.G.) schließen jede Haftung aus. Siehe [LICENSE](./LICENSE) §AS-IS-Klausel.
+Dieses Werkzeug dient ausschließlich der Information. Es stellt **keine Rechtsberatung** dar. Es begründet kein Mandatsverhältnis. Die Ausgabe ist vor jeder Compliance-Entscheidung durch qualifizierte Rechtsberatung zu überprüfen. Lucairn UG (haftungsbeschränkt) i.Gr. — vor Inkorporation als natürliche Person betrieben durch Marc Schülke — schließt jede Haftung aus. Siehe [LICENSE](./LICENSE) §AS-IS-Klausel.
 
 Der Klassifizierer spiegelt eine Interpretation der EU-KI-Verordnung zum Stand der in jeder Ausgabe gedruckten Regelsatz-Version wider. Das EU-KI-Büro veröffentlicht laufend Leitlinien, die Interpretationen ändern können. Jede Ausgabe verweist auf die Regulator-Quelle zur direkten Verifikation.
 
 ## Über
 
-Entwickelt von [Lucairn](https://lucairn.eu) — der Compliance-Nachweis-Layer für die EU-KI-Verordnung. Betrieben durch Declade UG (i.G.).
+Entwickelt von [Lucairn](https://lucairn.eu) — der Compliance-Nachweis-Layer für die EU-KI-Verordnung. Vor Inkorporation betrieben als natürliche Person durch Marc Schülke; Lucairn UG (haftungsbeschränkt) i.Gr. (Gründung eingeleitet; vor Handelsregistereintrag).
 
 Hosted UI-Spiegel folgt an Tag 13: `https://lucairn.eu/tools/ai-act-classifier`.
 
