@@ -1,0 +1,22 @@
+{
+  "id": "fixture-day15-03-art53-gpt5-foundation-en",
+  "lang": "en",
+  "input": "We build a customer-facing chatbot on top of GPT-5 via the OpenAI API.",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": false,
+    "annex_iii_domains": [],
+    "article_50_paragraphs": [
+      "50(1)"
+    ],
+    "suppressed_by_article_5": false,
+    "article_4_applicable": false,
+    "gpai_article_53_applicable": true,
+    "gpai_article_55_applicable": false,
+    "annex_iv_required": false,
+    "notes": "Day-15 (v0.3.0) — Article 53 named-foundation-model positive case (EN). Customer-facing chatbot built on GPT-5 via OpenAI API. The named-model lexicon term 'gpt-5' fires Art 53; the user is also a CHATBOT, so Article 50(1) deployer transparency also fires. No systemic-risk markers — Art 55 not applicable. No Article 4 (no provider/deployer + staff phrasing in this fixture). No Annex III high-risk."
+  },
+  "bucket": "article_50",
+  "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689"
+}

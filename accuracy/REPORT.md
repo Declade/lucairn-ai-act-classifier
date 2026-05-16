@@ -1,9 +1,9 @@
 # Accuracy report — @lucairn/ai-act-classifier
 
 - **Rules version:** `v0.2.0`
-- **Rules hash:** `68cb8860` (full: `68cb88605603e209ee3d29fd56b4b2f6ad712699c27e689e1d378a23e12cfa9f`)
-- **Last run:** 2026-05-16T13:25:38.622Z
-- **Fixture corpus:** 66 cases
+- **Rules hash:** `3c507ccc` (full: `3c507cccedd96e4bb9d435cda4f89d549e2cad2b7d157773843497407ba0ea3a`)
+- **Last run:** 2026-05-16T15:25:37.160Z
+- **Fixture corpus:** 71 cases
 
 > **What this report measures:** internal consistency between the curated 50-case Day-7 fixture corpus + 9-case v0.1.3 + 3-case v0.1.4 launch-feedback fixtures and the v0.1.0+ lexicon. The headline numbers below are **not** a measure of arbitrary real-world accuracy — the Day-7 corpus was shaped to match the lexicon's canonical phrases. Per-fixture accuracy uses set-equality on Day-7 + day14-launch-feedback fixtures and subset-containment on the 11 legacy day3/4/5 fixtures pending Day-8 backfill. See [METHODOLOGY.md §"Honest limitations"](./METHODOLOGY.md#honest-limitations) for the Day-8 polish backlog. The CI floor is 80% overall + 100% Article 5; current numbers exceed both.
 
@@ -11,9 +11,9 @@
 
 | Metric | Score |
 |---|---|
-| **Overall accuracy** (granular per-field pass rate) | **98.7%** |
+| **Overall accuracy** (granular per-field pass rate) | **98.8%** |
 | **Article 5 prohibition detection** (safety-critical) | **100.0%** |
-| **Binary high-risk classification** (Annex III + Article 6) | **98.5%** |
+| **Binary high-risk classification** (Annex III + Article 6) | **98.6%** |
 
 ## Per-bucket accuracy (pass-all-asserted-fields)
 
@@ -21,17 +21,17 @@
 |---|---|---|---|
 | annex_iii | 22 | 22 | 100.0% |
 | article_5 | 16 | 16 | 100.0% |
-| article_50 | 10 | 9 | 90.0% |
-| negative | 9 | 9 | 100.0% |
+| article_50 | 11 | 10 | 90.9% |
+| negative | 13 | 13 | 100.0% |
 | legacy | 9 | 9 | 100.0% |
 
 ## Targets vs CI floor
 
 | | v1.0 release target | CI floor (Day 7) | Current |
 |---|---|---|---|
-| Overall | ≥85% | ≥80% | **98.7%** |
+| Overall | ≥85% | ≥80% | **98.8%** |
 | Article 5 | 100% | 100% | **100.0%** |
-| Binary high-risk | ≥90% | (informational) | **98.5%** |
+| Binary high-risk | ≥90% | (informational) | **98.6%** |
 
 ## Per-fixture results
 
@@ -103,6 +103,11 @@
 | `fixture-day14-14-blocker3e-photorealistic-deepfake-en` | en | article_50 | PASS | — |
 | `fixture-day14-15-blocker3f-biometric-categorisation-political-en` | en | article_5 | PASS | — |
 | `fixture-day14-16-blocker3d-de-webcam-emotion-de` | de | article_5 | PASS | — |
+| `fixture-day15-01-art4-staff-training-en` | en | negative | PASS | — |
+| `fixture-day15-02-art4-staff-training-de` | de | negative | PASS | — |
+| `fixture-day15-03-art53-gpt5-foundation-en` | en | article_50 | PASS | — |
+| `fixture-day15-04-art53-llama-deployer-de` | de | negative | PASS | — |
+| `fixture-day15-05-art55-systemic-risk-en` | en | negative | PASS | — |
 
 ## Misclassification details
 

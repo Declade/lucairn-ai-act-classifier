@@ -1,0 +1,19 @@
+{
+  "id": "fixture-day15-02-art4-staff-training-de",
+  "lang": "de",
+  "input": "Unser Beratungsteam nutzt einen KI-gestützten Code-Review-Assistenten in Kundenprojekten. Wir müssen unsere 30 Mitarbeiter im verantwortungsvollen Einsatz schulen.",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": false,
+    "annex_iii_domains": [],
+    "suppressed_by_article_5": false,
+    "article_4_applicable": true,
+    "gpai_article_53_applicable": false,
+    "gpai_article_55_applicable": false,
+    "annex_iv_required": false,
+    "notes": "Day-15 (v0.3.0) — Article 4 AI literacy positive case (DE). German equivalent of the EN staff-training fixture. The composite phrasing 'Beratungsteam nutzt' fires the `article_4_ai_literacy.provider_or_deployer_with_staff` trigger. No Annex III high-risk path. No GPAI. Article 4 surfaces independently as a non-cascade root."
+  },
+  "bucket": "negative",
+  "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689"
+}

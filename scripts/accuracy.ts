@@ -71,6 +71,10 @@ interface FixtureExpected {
   article_13_applicable?: boolean;
   article_14_applicable?: boolean;
   article_15_applicable?: boolean;
+  // Day-15 (v0.3.0) additive fields for the new non-cascade roots.
+  article_4_applicable?: boolean;
+  gpai_article_53_applicable?: boolean;
+  gpai_article_55_applicable?: boolean;
 }
 
 interface Fixture {
@@ -312,6 +316,37 @@ function checkFixture(fixture: Fixture, result: ClassifyResult): FixtureCheck {
     });
   }
 
+  // Day-15 non-cascade-root checks (optional, additive). Article 4 and the
+  // two GPAI flags ride alongside the cascade-flag pattern above; they live
+  // on their own ClassifyResult keys with non-uniform inner field names.
+  if (fixture.expected.article_4_applicable !== undefined) {
+    const a4Pass = result.article_4.applicable === fixture.expected.article_4_applicable;
+    checks.push({
+      field: 'article_4.applicable',
+      expected: fixture.expected.article_4_applicable,
+      actual: result.article_4.applicable,
+      pass: a4Pass,
+    });
+  }
+  if (fixture.expected.gpai_article_53_applicable !== undefined) {
+    const g53Pass = result.gpai.article_53_applicable === fixture.expected.gpai_article_53_applicable;
+    checks.push({
+      field: 'gpai.article_53_applicable',
+      expected: fixture.expected.gpai_article_53_applicable,
+      actual: result.gpai.article_53_applicable,
+      pass: g53Pass,
+    });
+  }
+  if (fixture.expected.gpai_article_55_applicable !== undefined) {
+    const g55Pass = result.gpai.article_55_applicable === fixture.expected.gpai_article_55_applicable;
+    checks.push({
+      field: 'gpai.article_55_applicable',
+      expected: fixture.expected.gpai_article_55_applicable,
+      actual: result.gpai.article_55_applicable,
+      pass: g55Pass,
+    });
+  }
+
   const allPass = checks.every((c) => c.pass);
   return {
     id: fixture.id,
@@ -338,7 +373,7 @@ function getRepoRoot(): string {
 
 function loadAllFixtures(): Fixture[] {
   const fixturesBase = join(getRepoRoot(), 'test', 'fixtures', 'use-cases');
-  const days = ['day3', 'day4', 'day5', 'day7', 'day14-launch-feedback'];
+  const days = ['day3', 'day4', 'day5', 'day7', 'day14-launch-feedback', 'day15-v0.3.0'];
   const fixtures: Fixture[] = [];
   for (const day of days) {
     const dir = join(fixturesBase, day);
