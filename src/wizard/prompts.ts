@@ -36,6 +36,15 @@ export interface WizardPrompts {
     step2: string;
     step3: string;
     submit: string;
+    /**
+     * Scope-note epilogue (M-1 closure, v0.3.0). Printed by the runner
+     * immediately BEFORE the submit step. Tells the user the 3-step wizard
+     * does NOT cover Article 4 (AI literacy) or Articles 53/55 (GPAI), and
+     * recommends re-running in free-text mode for full coverage when the
+     * described system uses a foundation model or has staff operating AI on
+     * the user's behalf.
+     */
+    scope_note: string;
   };
   yes_no: { yes: string; no: string; yes_short: string; no_short: string };
   article_5: Array<PromptItem<Article5Letter>>;
@@ -56,6 +65,11 @@ export const PROMPTS_EN: WizardPrompts = {
       'Step 3 of 3 — Article 50 transparency obligations. Answer Y/N for each.',
     submit:
       'All answers collected. Building classification…',
+    scope_note:
+      'Note: this wizard covers Article 5 (prohibited), Annex III (high-risk), and Article 50 (transparency).\n' +
+      '      It does NOT cover Article 4 (AI literacy) or Articles 53+55 (GPAI). If your system uses a\n' +
+      '      foundation model or your staff operates AI on your behalf, add a free-text description after\n' +
+      '      this wizard for full coverage.',
   },
   yes_no: { yes: 'yes', no: 'no', yes_short: 'y', no_short: 'n' },
   article_5: [
@@ -253,6 +267,11 @@ export const PROMPTS_DE: WizardPrompts = {
       'Schritt 3 von 3 — Artikel 50 Transparenzpflichten. Bitte je Ja/Nein antworten.',
     submit:
       'Alle Antworten erfasst. Klassifizierung wird erstellt…',
+    scope_note:
+      'Hinweis: Dieser Assistent prüft Artikel 5 (verboten), Anhang III (Hochrisiko) und Artikel 50\n' +
+      '         (Transparenz). Er deckt NICHT Artikel 4 (KI-Kompetenz) oder Artikel 53/55 (GPAI) ab.\n' +
+      '         Wenn Ihr System ein Basismodell verwendet oder Ihr Personal KI in Ihrem Auftrag bedient,\n' +
+      '         ergänzen Sie nach dem Assistenten eine Freitextbeschreibung für volle Abdeckung.',
   },
   yes_no: { yes: 'ja', no: 'nein', yes_short: 'j', no_short: 'n' },
   article_5: [
