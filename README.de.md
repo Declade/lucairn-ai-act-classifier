@@ -2,7 +2,7 @@
 
 Kostenloses CLI, das jede Beschreibung eines KI-Anwendungsfalls den auslösenden Artikeln der EU-KI-Verordnung zuordnet. Keine Netzwerkverbindung, keine Konfiguration, kein API-Key im deterministischen Standardmodus.
 
-> **Status: v0.1.1, Tag 12 eines 14-tägigen öffentlichen Builds.**
+> **Status: v0.1.1, Tag 13 eines 14-tägigen öffentlichen Builds.**
 > Build-Fenster 2026-05-16 → 2026-05-29. Launch-Ziel 2026-05-29. Das Repository ist während des Build-Fensters privat und wird am Launch-Tag öffentlich.
 
 ## Schnelleinstieg
