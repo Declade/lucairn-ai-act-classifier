@@ -32,7 +32,7 @@ ANTHROPIC_API_KEY="<ihr-key>" npx @lucairn/ai-act-classifier --llm anthropic \
   - **Artikel 50** Transparenzpflichten (vier Absatz-Pfade)
   - **Anhang IV** Pflicht zur technischen Dokumentation
 - Liefert Lucairns Drei-Kategorien-Pflichten-Overlay (Sanitizer / Nachweis / Inventar)
-- Verweist auf die EUR-Lex-Quelle pro ausgelöstem Artikel sowie auf die Service-Desk-Seite des EU-AI-Office und (optional) den Lucairn-Kommentar
+- Verweist auf die EUR-Lex-Quelle pro ausgelöstem Artikel sowie auf den Service Desk des EU-AI-Office und (optional) den Lucairn-Kommentar
 - Stempelt Regelsatz-Version und SHA in jede Ausgabe — dieselbe Eingabe auf demselben Regelsatz erzeugt eine byte-stabile Ausgabe
 - Verfügbar als CLI-Binary (dieses Paket) und als Bibliothek (`formatExplain` und `classify` exportiert aus `@lucairn/ai-act-classifier`)
 
@@ -127,18 +127,27 @@ Die Klassifizierungs-Methodik ist unter [accuracy/METHODOLOGY.md](./accuracy/MET
 
 - **Cite-and-Match-Disziplin.** Jeder ausgelöste Artikel trägt eine EUR-Lex-Zitations-URL im Ergebnisobjekt. Der interne `regulator-validator`-Agent überprüft jedes `source`- und `summary_*`-Feld vor jedem PR-Merge erneut gegen EUR-Lex EN+DE.
 - **Lexikon-zuerst Feature-Extraktion.** Der deterministische Extraktor matcht n-Gramme der Eingabe gegen ein kuratiertes Lexikon unter `src/data/patterns.{en,de}.json`. Der LLM-Modus nutzt dasselbe Lexikon als Halluzinations-Wächter — jede vom LLM gelieferte Phrase, die nicht im Lexikon steht, wird verworfen, bevor die Regel-Engine sie sieht.
-- **Tier-1-Quellen-Allowlist.** Fixture-Korpus-`source_url`-Felder sind auf EUR-Lex / EU-AI-Office Service Desk / BSI / BfDI / Bitkom beschränkt — dieselben Quellen, auf die unsere `--explain`-Ausgabe verweist.
+- **Tier-1-Quellen-Allowlist.** Fixture-Korpus-`source_url`-Felder sind auf EUR-Lex / Service Desk des EU-AI-Office / BSI / BfDI / Bitkom beschränkt — dieselben Quellen, auf die unsere `--explain`-Ausgabe verweist.
 - **Ehrliche Offenlegung.** Bekannte Lücken und das v0.2-Polish-Backlog sind öffentlich unter [accuracy/KNOWN-MISCLASSIFICATIONS.md](./accuracy/KNOWN-MISCLASSIFICATIONS.md).
 
 ## Zitate
 
-Der Klassifizierer verweist auf folgende Regulator-Quellen:
+Der Klassifizierer verweist auf folgende Quellen, geordnet nach Regulator-Autoritäts-Stufe:
 
-- **EUR-Lex Verordnung (EU) 2024/1689:** [DE HTML](https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=OJ:L_202401689) · [EN HTML](https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=OJ:L_202401689) · [DE PDF](https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689) · [EN PDF](https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689) — die Tier-1-Quelle.
-- **EU-AI-Office Service Desk:** [artificialintelligenceact.eu/de](https://artificialintelligenceact.eu/de/) · [artificialintelligenceact.eu/en](https://artificialintelligenceact.eu/) — Tier-2-Landingpages pro Artikel und Anhang.
+**Tier 1 — Primäre Regulator-Oberflächen.**
+
+- **EUR-Lex Verordnung (EU) 2024/1689:** [DE HTML](https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=OJ:L_202401689) · [EN HTML](https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=OJ:L_202401689) · [DE PDF](https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689) · [EN PDF](https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689) — die kanonische Tier-1-Quelle.
+- **Service Desk des EU-AI-Office:** [ai-act-service-desk.ec.europa.eu/de](https://ai-act-service-desk.ec.europa.eu/) · [ai-act-service-desk.ec.europa.eu/en](https://ai-act-service-desk.ec.europa.eu/) — der offizielle Service Desk des EU-AI-Office auf der europa.eu-Domain.
+
+**Tier 2 — Veröffentlichungen mitgliedstaatlicher Aufsichtsbehörden.**
+
 - **BSI** (Bundesamt für Sicherheit in der Informationstechnik): [bsi.bund.de](https://www.bsi.bund.de/) — Leitlinien zur KI-Cybersicherheit und Artikel-15-Robustheit.
 - **BfDI** (Bundesbeauftragte für den Datenschutz und die Informationsfreiheit): [bfdi.bund.de](https://www.bfdi.bund.de/) — Zusammenspiel der KI-Verordnung mit der DSGVO.
-- **Bitkom**: [bitkom.org](https://www.bitkom.org/) — Branchenleitfaden für den deutschen Mittelstand zur Umsetzung der KI-Verordnung.
+- **Bitkom**-Arbeitsgruppen-Papiere zur KI-Verordnung: [bitkom.org](https://www.bitkom.org/) — Branchenleitfaden für den deutschen Mittelstand zur Umsetzung der KI-Verordnung.
+
+**Tier 3 — Regulierungstext-Spiegel.**
+
+- **Future of Life Institute** Regulierungstext-Spiegel: [artificialintelligenceact.eu/de](https://artificialintelligenceact.eu/de/) · [artificialintelligenceact.eu/en](https://artificialintelligenceact.eu/) · [ai-act-law.eu/de](https://www.ai-act-law.eu/) — Drittanbieter-Spiegel der Regulierungstexte. Der Blog-Excerpt-Korpus des Classifiers verlinkt hierhin für Absatz-spezifische Deep-Anchors, die das EUR-Lex HTML auslässt. NICHT regulator-autoritativ; immer gegen EUR-Lex oder den Service Desk des EU-AI-Office gegenprüfen.
 
 Lucairns Kommentar-Inhalte aus dem `--explain --with-excerpt`-Auszugs-Korpus sind handkuratierte Originaltexte und stehen wie der Quellcode unter MIT-Lizenz.
 

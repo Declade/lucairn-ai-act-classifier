@@ -32,7 +32,7 @@ ANTHROPIC_API_KEY="<your-key>" npx @lucairn/ai-act-classifier --llm anthropic \
   - **Article 50** transparency obligations (4 paragraph paths)
   - **Annex IV** technical-documentation requirement
 - Emits Lucairn's three-category obligation overlay (Sanitizer / Evidence / Inventory)
-- Cites the EUR-Lex source URL on every fired article + the EU AI Office service-desk page + optional Lucairn commentary
+- Cites the EUR-Lex source URL on every fired article + the EU AI Office Service Desk reference + optional Lucairn commentary
 - Stamps the rules version + SHA on every output so the same input on the same rule-set is byte-reproducible
 - Available as a CLI binary (this package) and as a library (`formatExplain` + `classify` exported from `@lucairn/ai-act-classifier`)
 
@@ -127,18 +127,27 @@ The classification methodology is documented at [accuracy/METHODOLOGY.md](./accu
 
 - **Cite-and-match discipline.** Every fired article carries an EUR-Lex citation URL on the result object. The internal `regulator-validator` agent re-runs every `source` and `summary_*` field against EUR-Lex EN+DE before every PR merge.
 - **Lexicon-first feature extraction.** The deterministic extractor matches input n-grams against a curated lexicon at `src/data/patterns.{en,de}.json`. The LLM mode uses the same lexicon as a hallucination guard — any phrase the LLM emits that is not in the lexicon is dropped before the rules engine sees it.
-- **Tier-1 source allowlist.** Fixture-corpus `source_url` fields are restricted to EUR-Lex / EU AI Office service desk / BSI / BfDI / Bitkom — the same hosts cited in our `--explain` output.
+- **Tier-1 source allowlist.** Fixture-corpus `source_url` fields are restricted to EUR-Lex / EU AI Office Service Desk / BSI / BfDI / Bitkom — the same hosts cited in our `--explain` output.
 - **Honest disclosure.** Known limitations + the v0.2 polish backlog are public at [accuracy/KNOWN-MISCLASSIFICATIONS.md](./accuracy/KNOWN-MISCLASSIFICATIONS.md).
 
 ## Citations
 
-The classifier cites these regulator-authoritative sources:
+The classifier cites these sources, organised by regulator authority tier:
 
-- **EUR-Lex Regulation (EU) 2024/1689:** [EN HTML](https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=OJ:L_202401689) · [DE HTML](https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=OJ:L_202401689) · [EN PDF](https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689) · [DE PDF](https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689) — the Tier-1 canonical source.
-- **EU AI Office service desk:** [artificialintelligenceact.eu/en](https://artificialintelligenceact.eu/) · [artificialintelligenceact.eu/de](https://artificialintelligenceact.eu/de/) — Tier-2 per-article + per-annex landing pages.
+**Tier 1 — Primary regulator surfaces.**
+
+- **EUR-Lex Regulation (EU) 2024/1689:** [EN HTML](https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=OJ:L_202401689) · [DE HTML](https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=OJ:L_202401689) · [EN PDF](https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689) · [DE PDF](https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689) — the canonical Tier-1 source.
+- **EU AI Office Service Desk:** [ai-act-service-desk.ec.europa.eu/en](https://ai-act-service-desk.ec.europa.eu/) · [ai-act-service-desk.ec.europa.eu/de](https://ai-act-service-desk.ec.europa.eu/) — the EU AI Office's official Service Desk on the europa.eu domain.
+
+**Tier 2 — Member-state regulator publications.**
+
 - **BSI** (Bundesamt für Sicherheit in der Informationstechnik): [bsi.bund.de](https://www.bsi.bund.de/) — guidance on AI cybersecurity and Article 15 robustness.
 - **BfDI** (Bundesbeauftragte für den Datenschutz und die Informationsfreiheit): [bfdi.bund.de](https://www.bfdi.bund.de/) — interplay of the AI Act with the GDPR.
-- **Bitkom**: [bitkom.org](https://www.bitkom.org/) — industry guidance for the German Mittelstand on AI Act implementation.
+- **Bitkom** AI Act working-group papers: [bitkom.org](https://www.bitkom.org/) — industry guidance for the German Mittelstand on AI Act implementation.
+
+**Tier 3 — Regulation-text mirrors.**
+
+- **Future of Life Institute** regulation-text mirror: [artificialintelligenceact.eu/en](https://artificialintelligenceact.eu/) · [artificialintelligenceact.eu/de](https://artificialintelligenceact.eu/de/) · [ai-act-law.eu/de](https://www.ai-act-law.eu/) — third-party regulation-text mirrors. The classifier's blog-excerpt corpus links here for paragraph-level deep-anchors that the EUR-Lex HTML omits. NOT regulator-authoritative; always cross-reference against EUR-Lex or the EU AI Office Service Desk.
 
 Lucairn's commentary content cited from the `--explain --with-excerpt` blog-excerpt corpus is hand-curated original prose, MIT-licensed alongside the source code.
 
