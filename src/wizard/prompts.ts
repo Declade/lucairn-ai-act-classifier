@@ -5,8 +5,11 @@
 //   Step 2: 8 Annex III high-risk paragraph Y/N prompts (¶1-8) with optional sub-letter follow-ups
 //   Step 3: 5 Article 50 transparency Y/N prompts (paragraphs 1, 2, 3, 4-sub1 deepfake, 4-sub2 public-interest)
 //
-// Each prompt carries a regulator-verbatim short description from EUR-Lex /
-// EU AI Office Service Desk. The user reads the description and answers Y/N.
+// Each prompt carries a regulator-anchored short summary (paragraph-level
+// paraphrase faithful to the EUR-Lex / EU AI Office Service Desk text).
+// Verbatim EUR-Lex chapeau text is emitted downstream by the rules engine in
+// `--explain` output after the wizard collects answers; the prompt summaries
+// are deliberately compressed so the wizard fits inside one terminal screen.
 //
 // Pure-data module: no I/O, no runtime side effects.
 
@@ -17,7 +20,13 @@ export interface PromptItem<T> {
   key: T;
   /** Short label shown in the prompt (≤ 50 chars). */
   label: string;
-  /** Regulator-verbatim short description shown to the user. */
+  /**
+   * Regulator-anchored short summary shown to the user. Paragraph-level
+   * paraphrase faithful to the EUR-Lex / EU AI Office Service Desk text,
+   * deliberately compressed for a one-screen wizard prompt. The verbatim
+   * EUR-Lex chapeau text is emitted downstream by the rules engine in
+   * `--explain` output after the wizard collects answers.
+   */
   description: string;
 }
 

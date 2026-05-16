@@ -42,7 +42,7 @@ v0.2.0 ships the hybrid fix: keep free-text as the fast path, ADD a guided wizar
 
 ### Added
 
-- **`--wizard` CLI flag.** Interactive 3-step Y/N prompt against regulator-verbatim Article 5(1) letters (a)–(h), Annex III paragraphs ¶1–¶8 with sub-letter narrowing, and Article 50 transparency paragraphs (1)–(5). Bypasses free-text keyword extraction; the rule engine is unchanged. New module `src/wizard/{answers,prompts,runner}.ts` + `synthesizeWizardText()` builds a canonical text from structured answers, then the existing classify() pipeline consumes it. Output shape byte-for-byte identical to free-text mode.
+- **`--wizard` CLI flag.** Interactive 3-step Y/N prompt against Article 5(1) letters (a)–(h), Annex III paragraphs ¶1–¶8 with sub-letter narrowing, and Article 50 transparency paragraphs (1)–(5), each shown with a regulator-anchored UX summary (paragraph-level paraphrase faithful to the EUR-Lex / EU AI Office Service Desk text). Verbatim EUR-Lex chapeau text is emitted downstream by the rules engine in `--explain` output after the wizard collects answers. Bypasses free-text keyword extraction; the rule engine is unchanged. New module `src/wizard/{answers,prompts,runner}.ts` + `synthesizeWizardText()` builds a canonical text from structured answers, then the existing classify() pipeline consumes it. Output shape byte-for-byte identical to free-text mode.
 - **Public exports** (`@lucairn/ai-act-classifier`): `synthesizeWizardText`, `PROMPTS_EN`, `PROMPTS_DE`, plus types `WizardAnswers`, `WizardArticle5Letter`, `AnnexIIIParagraph`, `AnnexIIISelection`, `Article50Path`, `WizardPrompts`, `PromptItem`. Library consumers (e.g., the hosted UI) can implement their own wizard surfaces against the same canonical-phrase vocabulary.
 
 ### Fixed

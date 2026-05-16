@@ -1,11 +1,13 @@
 // Wizard mode — structured answer types.
 //
 // The wizard bypasses the free-text → keyword-extraction → rules-engine pipeline
-// by collecting structured Y/N selections from the user against regulator-verbatim
-// short descriptions. From those selections, it builds a synthetic canonical-phrase
-// text that the existing extractFeatures() + classify() pipeline can consume,
-// guaranteeing the rule engine fires exactly what the user selected (no paraphrase
-// ambiguity).
+// by collecting structured Y/N selections from the user against regulator-anchored
+// short summaries (paragraph-level paraphrases faithful to the EUR-Lex / EU AI
+// Office Service Desk text). From those selections, it builds a synthetic
+// canonical-phrase text that the existing extractFeatures() + classify()
+// pipeline can consume, guaranteeing the rule engine fires exactly what the
+// user selected (no paraphrase ambiguity). Verbatim EUR-Lex chapeau text is
+// emitted downstream by the rules engine in `--explain` output.
 //
 // Design rationale:
 //   - Reuses 100% of the rules engine (no duplicated logic).
