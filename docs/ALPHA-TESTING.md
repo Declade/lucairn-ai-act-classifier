@@ -97,7 +97,7 @@ The CLI deterministic accuracy on the 50-case fixture corpus is 98.2% overall / 
 
 ---
 
-### Case 4 — Deepfake-generation deployer (EN — Article 50(4) sub-1)
+### Case 4 — Deepfake-generation deployer (EN — Article 50(4) sub-paragraph 1)
 
 **Input (EN):**
 > Our AI platform generates synthetic deepfake video content for news articles on matters of public interest, including political reporting on national elections.
@@ -107,16 +107,18 @@ The CLI deterministic accuracy on the 50-case fixture corpus is 98.2% overall / 
 
 **Expected classification:**
 
-| Field | Value |
+| Field | Classifier output |
 |---|---|
 | Article 5 prohibited | No |
 | Annex III high-risk | No |
 | Articles 10/12/13/14/15 | All not applicable |
-| Article 50 | Applicable — paragraph 50(4) sub-1 (public-interest text exception NOT met because content is artificially generated) |
+| Article 50 | Applicable — paragraph 50(4) sub-paragraph 1 fires on the `deepfake` lexicon hit (image/audio/video deep fake disclosure obligation) |
 | Annex IV | Not required |
-| Three-category | Limited risk (Cat 2 evidence may still be advisable for transparency record-keeping) |
+| Three-category | All three categories not applicable |
 
-**Why this case:** Article 50(4) has a sub-clause for content that is "part of an evidently artistic, creative, satirical, fictional or analogous work or programme" — and a separate sub-clause for content that has "undergone a process of human review or editorial control" with a public-interest justification. Distinguishing 50(4) sub-1 (generator-side obligation) from 50(4) sub-2 (deployer-side public-interest exception) is the hardest Article 50 distinction in the regulation. The classifier should clearly route to 50(4) sub-1, NOT the sub-2 exception.
+**Best-practice consideration (NOT classifier output):** Cat 2 (Art. 12 + 14 evidence) evidence may still be advisable for transparency record-keeping when the deployer publishes deepfake content. This is a Lucairn opinion, not a regulatory requirement, and is intentionally separated from the classifier-output row so testers do not flag this as a classifier disagreement.
+
+**Why this case:** Article 50(4) sub-paragraph 1 covers AI-generated image, audio, or video content constituting a deep fake; its only carve-out is the artistic/creative/satirical/fictional-work narrowing of the disclosure form. Article 50(4) sub-paragraph 2 is a separate trigger covering AI-generated TEXT published to inform the public on matters of public interest; its editorial-review carve-out applies to the accompanying news article text, not to the deepfake video itself. The classifier should route this video-deepfake input to sub-paragraph 1 alone, NOT to sub-paragraph 2.
 
 **Citation:** EUR-Lex Regulation (EU) 2024/1689, Article 50(4).
 
