@@ -7,7 +7,7 @@ describe('extractFeatures() — EN inputs', () => {
       'An AI system that performs CV screening and applicant tracking for the hiring decision.',
     );
     expect(result.lang).toBe('en');
-    expect(result.lexiconVersion).toBe('v0.2.0');
+    expect(result.lexiconVersion).toBe('v0.3.0');
 
     // At minimum: cv screening + applicant tracking + hiring decision
     const employmentMatches = result.byCategory.annex_iii?.['4_employment'] ?? [];
