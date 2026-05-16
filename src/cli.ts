@@ -25,6 +25,7 @@ import type { LLMProvider } from './extract/llm.js';
 import { formatCliTable, formatAnnexIVReference } from './format/cli-table.js';
 import { formatJson, formatAnnexIVReferenceJson } from './format/json.js';
 import { formatMarkdown, formatAnnexIVReferenceMarkdown } from './format/markdown.js';
+import { formatExplain } from './format/explain.js';
 import { RULES_VERSION } from './util/rules-hash.js';
 import { getLocale } from './i18n/load.js';
 
@@ -117,6 +118,16 @@ interface RawOptions {
   annex?: string;
   llm?: string;
   cache?: boolean;
+  explain?: boolean;
+  explainFormat?: string;
+  withExcerpt?: boolean;
+}
+
+function resolveExplainFormat(rawOpts: RawOptions): 'markdown' | 'json' | 'text' {
+  const fmt = rawOpts.explainFormat;
+  if (fmt === undefined) return 'markdown';
+  if (fmt === 'markdown' || fmt === 'json' || fmt === 'text') return fmt;
+  return 'markdown';
 }
 
 function resolveFormat(rawOpts: RawOptions): 'cli' | 'json' | 'markdown' {
@@ -216,6 +227,19 @@ async function main(): Promise<void> {
       '--no-cache',
       'Disable the LLM-mode filesystem cache (forces a fresh API call on every run; results are NOT written to ~/.cache/lucairn-ai-act-classifier).',
     )
+    .option(
+      '--explain',
+      'Emit a reasoning trace + EUR-Lex citations per fired article. Defaults to markdown output (consultant-paste-friendly); change with --explain-format.',
+    )
+    .addOption(
+      new Option('--explain-format <fmt>', 'Output format for --explain')
+        .choices(['markdown', 'json', 'text'])
+        .default('markdown'),
+    )
+    .option(
+      '--with-excerpt',
+      'When used with --explain, append hand-curated regulator-explainer excerpts where available.',
+    )
     .addHelpText(
       'after',
       `
@@ -224,6 +248,8 @@ Examples:
   cat use-case.txt | ai-act-classify --format json
   ai-act-classify "..." --cite --lang de
   ai-act-classify --annex iv
+  ai-act-classify --explain "AI system that ranks job applicants by CV"
+  ai-act-classify --explain --with-excerpt "AI-generated election advertising content"
   ANTHROPIC_API_KEY="<your-key>" ai-act-classify --llm anthropic "..."
   OPENAI_API_KEY="<your-key>" ai-act-classify --llm openai "..."
   GROQ_API_KEY="<your-key>" ai-act-classify --llm groq "..."
@@ -361,24 +387,36 @@ Exit codes:
   const format = resolveFormat(rawOpts);
   const locale = langOverride ?? errLocale;
   let rendered: string;
-  switch (format) {
-    case 'json':
-      rendered = formatJson(result, {
-        pretty: true,
-        includeFeatures: process.env['AI_ACT_CLASSIFY_INCLUDE_FEATURES'] === '1',
-      });
-      break;
-    case 'markdown':
-      rendered = formatMarkdown(result, { locale, cite: rawOpts.cite === true });
-      break;
-    case 'cli':
-    default:
-      rendered = formatCliTable(result, {
-        locale,
-        cite: rawOpts.cite === true,
-        useColor: shouldUseColor(),
-      });
-      break;
+  if (rawOpts.explain === true) {
+    // --explain overrides --format/--json. Use the dedicated reasoning-trace
+    // formatter with its own format flag (--explain-format). This is the
+    // consultant-paste-friendly surface; for a structured JSON payload, the
+    // caller uses --explain-format json.
+    rendered = formatExplain(result, {
+      locale,
+      format: resolveExplainFormat(rawOpts),
+      withExcerpt: rawOpts.withExcerpt === true,
+    });
+  } else {
+    switch (format) {
+      case 'json':
+        rendered = formatJson(result, {
+          pretty: true,
+          includeFeatures: process.env['AI_ACT_CLASSIFY_INCLUDE_FEATURES'] === '1',
+        });
+        break;
+      case 'markdown':
+        rendered = formatMarkdown(result, { locale, cite: rawOpts.cite === true });
+        break;
+      case 'cli':
+      default:
+        rendered = formatCliTable(result, {
+          locale,
+          cite: rawOpts.cite === true,
+          useColor: shouldUseColor(),
+        });
+        break;
+    }
   }
   out(rendered);
 
