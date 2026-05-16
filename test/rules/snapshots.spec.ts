@@ -34,6 +34,8 @@ import { classifyArticle13 } from '../../src/rules/article-13.js';
 import { classifyArticle14 } from '../../src/rules/article-14.js';
 import { classifyArticle15 } from '../../src/rules/article-15.js';
 import { classifyArticle50 } from '../../src/rules/article-50.js';
+import { classifyArticle4 } from '../../src/rules/article-4.js';
+import { classifyGPAI } from '../../src/rules/article-53-gpai.js';
 import { classifyThreeCategory } from '../../src/rules/three-category.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -85,6 +87,8 @@ describe('snapshot — Day 3 fixtures (8 Annex III domains)', () => {
       const article14 = classifyArticle14(annexIII, article5);
       const article15 = classifyArticle15(annexIII, article5);
       const article50 = classifyArticle50(features, article5);
+      const article4 = classifyArticle4(features);
+      const gpai = classifyGPAI(features);
       const threeCategory = classifyThreeCategory(
         annexIII,
         article5,
@@ -158,6 +162,17 @@ describe('snapshot — Day 3 fixtures (8 Annex III domains)', () => {
           applicable: article50.applicable,
           triggered_by: article50.triggered_by,
           source: article50.source,
+        },
+        article4: {
+          applicable: article4.applicable,
+          triggered_by: article4.triggered_by,
+          source: article4.source,
+        },
+        gpai: {
+          article_53_applicable: gpai.article_53_applicable,
+          article_55_applicable: gpai.article_55_applicable,
+          triggered_by: gpai.triggered_by,
+          source: gpai.source,
         },
         threeCategory: {
           categories: {
@@ -305,6 +320,8 @@ describe('snapshot — Day 4 fixtures (low-risk non-applicable path)', () => {
       const article14 = classifyArticle14(annexIII, article5);
       const article15 = classifyArticle15(annexIII, article5);
       const article50 = classifyArticle50(features, article5);
+      const article4 = classifyArticle4(features);
+      const gpai = classifyGPAI(features);
       const threeCategory = classifyThreeCategory(
         annexIII,
         article5,
@@ -369,6 +386,17 @@ describe('snapshot — Day 4 fixtures (low-risk non-applicable path)', () => {
           applicable: article50.applicable,
           triggered_by: article50.triggered_by,
           source: article50.source,
+        },
+        article4: {
+          applicable: article4.applicable,
+          triggered_by: article4.triggered_by,
+          source: article4.source,
+        },
+        gpai: {
+          article_53_applicable: gpai.article_53_applicable,
+          article_55_applicable: gpai.article_55_applicable,
+          triggered_by: gpai.triggered_by,
+          source: gpai.source,
         },
         threeCategory: {
           categories: {
@@ -444,6 +472,8 @@ describe('snapshot — Day 5 fixtures (Article 50 non-high-risk paths)', () => {
       const article14 = classifyArticle14(annexIII, article5);
       const article15 = classifyArticle15(annexIII, article5);
       const article50 = classifyArticle50(features, article5, annexIII);
+      const article4 = classifyArticle4(features);
+      const gpai = classifyGPAI(features);
       const threeCategory = classifyThreeCategory(
         annexIII,
         article5,
@@ -508,6 +538,17 @@ describe('snapshot — Day 5 fixtures (Article 50 non-high-risk paths)', () => {
           applicable: article50.applicable,
           triggered_by: article50.triggered_by,
           source: article50.source,
+        },
+        article4: {
+          applicable: article4.applicable,
+          triggered_by: article4.triggered_by,
+          source: article4.source,
+        },
+        gpai: {
+          article_53_applicable: gpai.article_53_applicable,
+          article_55_applicable: gpai.article_55_applicable,
+          triggered_by: gpai.triggered_by,
+          source: gpai.source,
         },
         threeCategory: {
           categories: {

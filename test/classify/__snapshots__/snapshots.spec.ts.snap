@@ -30,6 +30,12 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-01-bio
   "article_15": {
     "applicable": false,
   },
+  "article_4": {
+    "applicable": false,
+    "triggered_by": {
+      "provider_or_deployer_with_staff": false,
+    },
+  },
   "article_5": {
     "hits": [
       {
@@ -51,9 +57,18 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-01-bio
   },
   "confidence": 0.56,
   "detected_lang": "en",
+  "gpai": {
+    "article_53_applicable": false,
+    "article_55_applicable": false,
+    "triggered_by": {
+      "generic_foundation_model_phrasing": false,
+      "named_foundation_model": false,
+      "systemic_risk_markers": false,
+    },
+  },
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "0735fda2",
+  "rules_hash": "3c507ccc",
   "rules_version": "v0.2.0",
   "three_category": {
     "applicable_categories": [],
@@ -94,6 +109,12 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-02-cri
   "article_15": {
     "applicable": true,
   },
+  "article_4": {
+    "applicable": false,
+    "triggered_by": {
+      "provider_or_deployer_with_staff": false,
+    },
+  },
   "article_5": {
     "hits": [],
     "prohibited": false,
@@ -110,9 +131,18 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-02-cri
   },
   "confidence": 0.6,
   "detected_lang": "en",
+  "gpai": {
+    "article_53_applicable": false,
+    "article_55_applicable": false,
+    "triggered_by": {
+      "generic_foundation_model_phrasing": false,
+      "named_foundation_model": false,
+      "systemic_risk_markers": false,
+    },
+  },
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "0735fda2",
+  "rules_hash": "3c507ccc",
   "rules_version": "v0.2.0",
   "three_category": {
     "applicable_categories": [
@@ -159,6 +189,12 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-03-edu
   "article_15": {
     "applicable": true,
   },
+  "article_4": {
+    "applicable": false,
+    "triggered_by": {
+      "provider_or_deployer_with_staff": false,
+    },
+  },
   "article_5": {
     "hits": [],
     "prohibited": false,
@@ -175,9 +211,18 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-03-edu
   },
   "confidence": 0.64,
   "detected_lang": "de",
+  "gpai": {
+    "article_53_applicable": false,
+    "article_55_applicable": false,
+    "triggered_by": {
+      "generic_foundation_model_phrasing": false,
+      "named_foundation_model": false,
+      "systemic_risk_markers": false,
+    },
+  },
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "0735fda2",
+  "rules_hash": "3c507ccc",
   "rules_version": "v0.2.0",
   "three_category": {
     "applicable_categories": [
@@ -222,6 +267,12 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-04-emp
   "article_15": {
     "applicable": true,
   },
+  "article_4": {
+    "applicable": false,
+    "triggered_by": {
+      "provider_or_deployer_with_staff": false,
+    },
+  },
   "article_5": {
     "hits": [],
     "prohibited": false,
@@ -238,9 +289,18 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-04-emp
   },
   "confidence": 0.64,
   "detected_lang": "en",
+  "gpai": {
+    "article_53_applicable": false,
+    "article_55_applicable": false,
+    "triggered_by": {
+      "generic_foundation_model_phrasing": false,
+      "named_foundation_model": false,
+      "systemic_risk_markers": false,
+    },
+  },
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "0735fda2",
+  "rules_hash": "3c507ccc",
   "rules_version": "v0.2.0",
   "three_category": {
     "applicable_categories": [
@@ -286,6 +346,12 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-05-ess
   "article_15": {
     "applicable": true,
   },
+  "article_4": {
+    "applicable": false,
+    "triggered_by": {
+      "provider_or_deployer_with_staff": false,
+    },
+  },
   "article_5": {
     "hits": [],
     "prohibited": false,
@@ -302,9 +368,18 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-05-ess
   },
   "confidence": 0.56,
   "detected_lang": "de",
+  "gpai": {
+    "article_53_applicable": false,
+    "article_55_applicable": false,
+    "triggered_by": {
+      "generic_foundation_model_phrasing": false,
+      "named_foundation_model": false,
+      "systemic_risk_markers": false,
+    },
+  },
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "0735fda2",
+  "rules_hash": "3c507ccc",
   "rules_version": "v0.2.0",
   "three_category": {
     "applicable_categories": [
@@ -349,6 +424,12 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-06-law
   "article_15": {
     "applicable": true,
   },
+  "article_4": {
+    "applicable": false,
+    "triggered_by": {
+      "provider_or_deployer_with_staff": false,
+    },
+  },
   "article_5": {
     "hits": [],
     "prohibited": false,
@@ -365,9 +446,18 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-06-law
   },
   "confidence": 0.6,
   "detected_lang": "en",
+  "gpai": {
+    "article_53_applicable": false,
+    "article_55_applicable": false,
+    "triggered_by": {
+      "generic_foundation_model_phrasing": false,
+      "named_foundation_model": false,
+      "systemic_risk_markers": false,
+    },
+  },
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "0735fda2",
+  "rules_hash": "3c507ccc",
   "rules_version": "v0.2.0",
   "three_category": {
     "applicable_categories": [
@@ -414,6 +504,12 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-07-mig
   "article_15": {
     "applicable": true,
   },
+  "article_4": {
+    "applicable": false,
+    "triggered_by": {
+      "provider_or_deployer_with_staff": false,
+    },
+  },
   "article_5": {
     "hits": [],
     "prohibited": false,
@@ -430,9 +526,18 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-07-mig
   },
   "confidence": 0.64,
   "detected_lang": "de",
+  "gpai": {
+    "article_53_applicable": false,
+    "article_55_applicable": false,
+    "triggered_by": {
+      "generic_foundation_model_phrasing": false,
+      "named_foundation_model": false,
+      "systemic_risk_markers": false,
+    },
+  },
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "0735fda2",
+  "rules_hash": "3c507ccc",
   "rules_version": "v0.2.0",
   "three_category": {
     "applicable_categories": [
@@ -477,6 +582,12 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-08-jus
   "article_15": {
     "applicable": true,
   },
+  "article_4": {
+    "applicable": false,
+    "triggered_by": {
+      "provider_or_deployer_with_staff": false,
+    },
+  },
   "article_5": {
     "hits": [],
     "prohibited": false,
@@ -493,9 +604,18 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-08-jus
   },
   "confidence": 0.6,
   "detected_lang": "en",
+  "gpai": {
+    "article_53_applicable": false,
+    "article_55_applicable": false,
+    "triggered_by": {
+      "generic_foundation_model_phrasing": false,
+      "named_foundation_model": false,
+      "systemic_risk_markers": false,
+    },
+  },
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "0735fda2",
+  "rules_hash": "3c507ccc",
   "rules_version": "v0.2.0",
   "three_category": {
     "applicable_categories": [
@@ -533,6 +653,12 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day4-01-low
   "article_15": {
     "applicable": false,
   },
+  "article_4": {
+    "applicable": false,
+    "triggered_by": {
+      "provider_or_deployer_with_staff": false,
+    },
+  },
   "article_5": {
     "hits": [],
     "prohibited": false,
@@ -549,9 +675,18 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day4-01-low
   },
   "confidence": 0.48,
   "detected_lang": "en",
+  "gpai": {
+    "article_53_applicable": false,
+    "article_55_applicable": false,
+    "triggered_by": {
+      "generic_foundation_model_phrasing": false,
+      "named_foundation_model": false,
+      "systemic_risk_markers": false,
+    },
+  },
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "0735fda2",
+  "rules_hash": "3c507ccc",
   "rules_version": "v0.2.0",
   "three_category": {
     "applicable_categories": [],
@@ -585,6 +720,12 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day5-01-art
   "article_15": {
     "applicable": false,
   },
+  "article_4": {
+    "applicable": false,
+    "triggered_by": {
+      "provider_or_deployer_with_staff": false,
+    },
+  },
   "article_5": {
     "hits": [],
     "prohibited": false,
@@ -601,9 +742,18 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day5-01-art
   },
   "confidence": 0.44,
   "detected_lang": "en",
+  "gpai": {
+    "article_53_applicable": false,
+    "article_55_applicable": false,
+    "triggered_by": {
+      "generic_foundation_model_phrasing": false,
+      "named_foundation_model": false,
+      "systemic_risk_markers": false,
+    },
+  },
   "lang_confident": false,
   "mode": "deterministic",
-  "rules_hash": "0735fda2",
+  "rules_hash": "3c507ccc",
   "rules_version": "v0.2.0",
   "three_category": {
     "applicable_categories": [],
@@ -637,6 +787,12 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day5-02-art
   "article_15": {
     "applicable": false,
   },
+  "article_4": {
+    "applicable": false,
+    "triggered_by": {
+      "provider_or_deployer_with_staff": false,
+    },
+  },
   "article_5": {
     "hits": [],
     "prohibited": false,
@@ -653,9 +809,18 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day5-02-art
   },
   "confidence": 0.52,
   "detected_lang": "de",
+  "gpai": {
+    "article_53_applicable": false,
+    "article_55_applicable": false,
+    "triggered_by": {
+      "generic_foundation_model_phrasing": false,
+      "named_foundation_model": false,
+      "systemic_risk_markers": false,
+    },
+  },
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "0735fda2",
+  "rules_hash": "3c507ccc",
   "rules_version": "v0.2.0",
   "three_category": {
     "applicable_categories": [],

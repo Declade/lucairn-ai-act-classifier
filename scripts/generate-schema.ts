@@ -305,6 +305,104 @@ const article50Result = {
   required: ['applicable', 'triggered_by', 'summary_en', 'summary_de', 'source'],
 };
 
+const article4Result = {
+  type: 'object',
+  description:
+    'Article 4 AI literacy obligation (non-cascade root). Horizontal duty on every provider and deployer of an AI system, regardless of risk category. Single paragraph; no sub-letters.',
+  additionalProperties: false,
+  properties: {
+    applicable: {
+      type: 'boolean',
+      description:
+        'True iff the lexicon `article_4_ai_literacy.provider_or_deployer_with_staff` matched.',
+    },
+    triggered_by: {
+      type: 'object',
+      additionalProperties: false,
+      description: 'Single-trigger flag.',
+      properties: {
+        provider_or_deployer_with_staff: {
+          type: 'boolean',
+          description:
+            'Whether the composite provider-or-deployer + staff/operator phrase fired.',
+        },
+      },
+      required: ['provider_or_deployer_with_staff'],
+    },
+    summary_en: {
+      type: 'string',
+      description:
+        'Verbatim Tier-1 EN chapeau for Article 4 with citation marker (Art 4). Always surfaced (applicable or not).',
+    },
+    summary_de: {
+      type: 'string',
+      description: 'Verbatim Tier-1 DE chapeau for Artikel 4 with citation marker (Art. 4). Always surfaced.',
+    },
+    source: { type: 'string', description: 'EUR-Lex citation URL (Tier-1 canonical).' },
+  },
+  required: ['applicable', 'triggered_by', 'summary_en', 'summary_de', 'source'],
+};
+
+const gpaiResult = {
+  type: 'object',
+  description:
+    'Articles 53 + 55 GPAI provider obligations (non-cascade root). Article 53 fires on a named foundation model OR generic foundation-model phrasing. Article 55 fires iff Article 53 fired AND systemic-risk markers are detected (overlay).',
+  additionalProperties: false,
+  properties: {
+    article_53_applicable: {
+      type: 'boolean',
+      description:
+        'True iff named foundation model OR generic foundation-model phrasing matched.',
+    },
+    article_55_applicable: {
+      type: 'boolean',
+      description:
+        'True iff article_53_applicable AND systemic-risk markers matched.',
+    },
+    triggered_by: {
+      type: 'object',
+      additionalProperties: false,
+      description: 'Per-sub-category trigger flags from the gpai_models lexicon group.',
+      properties: {
+        named_foundation_model: {
+          type: 'boolean',
+          description:
+            'Whether `gpai_models.named_foundation_models` matched (closed list of GPAI model names).',
+        },
+        generic_foundation_model_phrasing: {
+          type: 'boolean',
+          description:
+            'Whether `gpai_models.generic_foundation_model_phrasing` matched (e.g. "foundation model", "large language model").',
+        },
+        systemic_risk_markers: {
+          type: 'boolean',
+          description:
+            'Whether `gpai_models.systemic_risk_markers` matched (e.g. "10^25 FLOP", "systemic risk").',
+        },
+      },
+      required: ['named_foundation_model', 'generic_foundation_model_phrasing', 'systemic_risk_markers'],
+    },
+    summary_en: {
+      type: 'string',
+      description:
+        'Verbatim Tier-1 EN chapeau for Art 53(1) (always present). Art 55(1) chapeau appended iff article_55_applicable.',
+    },
+    summary_de: {
+      type: 'string',
+      description: 'Verbatim Tier-1 DE chapeau; same surfacing rule.',
+    },
+    source: { type: 'string', description: 'EUR-Lex citation URL (Tier-1 canonical).' },
+  },
+  required: [
+    'article_53_applicable',
+    'article_55_applicable',
+    'triggered_by',
+    'summary_en',
+    'summary_de',
+    'source',
+  ],
+};
+
 const threeCategoryItem = {
   type: 'object',
   description: 'One item in a Lucairn three-category checklist.',
@@ -432,6 +530,8 @@ const schema = {
     article_14: articleCascadeResult,
     article_15: articleCascadeResult,
     article_50: article50Result,
+    article_4: article4Result,
+    gpai: gpaiResult,
     three_category: threeCategoryResult,
     annex_iv_required: {
       type: 'boolean',
@@ -456,6 +556,8 @@ const schema = {
     'article_14',
     'article_15',
     'article_50',
+    'article_4',
+    'gpai',
     'three_category',
     'annex_iv_required',
   ],

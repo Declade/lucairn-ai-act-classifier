@@ -60,6 +60,13 @@ exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-01-bio
       "article_5": true,
     },
   },
+  "article4": {
+    "applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "provider_or_deployer_with_staff": false,
+    },
+  },
   "article5": {
     "hits": [
       {
@@ -83,6 +90,16 @@ exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-01-bio
       "paragraph_3_emotion_or_biometric_categorisation": false,
       "paragraph_4_deepfake": false,
       "paragraph_4_public_interest_text": false,
+    },
+  },
+  "gpai": {
+    "article_53_applicable": false,
+    "article_55_applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "generic_foundation_model_phrasing": false,
+      "named_foundation_model": false,
+      "systemic_risk_markers": false,
     },
   },
   "id": "fixture-day3-01-biometrics-prohibited-en",
@@ -197,6 +214,13 @@ exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-02-cri
       "article_5": false,
     },
   },
+  "article4": {
+    "applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "provider_or_deployer_with_staff": false,
+    },
+  },
   "article5": {
     "hits": [],
     "prohibited": false,
@@ -211,6 +235,16 @@ exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-02-cri
       "paragraph_3_emotion_or_biometric_categorisation": false,
       "paragraph_4_deepfake": false,
       "paragraph_4_public_interest_text": false,
+    },
+  },
+  "gpai": {
+    "article_53_applicable": false,
+    "article_55_applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "generic_foundation_model_phrasing": false,
+      "named_foundation_model": false,
+      "systemic_risk_markers": false,
     },
   },
   "id": "fixture-day3-02-critical-infrastructure-en",
@@ -343,6 +377,13 @@ exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-03-edu
       "article_5": false,
     },
   },
+  "article4": {
+    "applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "provider_or_deployer_with_staff": false,
+    },
+  },
   "article5": {
     "hits": [],
     "prohibited": false,
@@ -357,6 +398,16 @@ exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-03-edu
       "paragraph_3_emotion_or_biometric_categorisation": false,
       "paragraph_4_deepfake": false,
       "paragraph_4_public_interest_text": false,
+    },
+  },
+  "gpai": {
+    "article_53_applicable": false,
+    "article_55_applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "generic_foundation_model_phrasing": false,
+      "named_foundation_model": false,
+      "systemic_risk_markers": false,
     },
   },
   "id": "fixture-day3-03-education-de",
@@ -487,6 +538,13 @@ exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-04-emp
       "article_5": false,
     },
   },
+  "article4": {
+    "applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "provider_or_deployer_with_staff": false,
+    },
+  },
   "article5": {
     "hits": [],
     "prohibited": false,
@@ -501,6 +559,16 @@ exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-04-emp
       "paragraph_3_emotion_or_biometric_categorisation": false,
       "paragraph_4_deepfake": false,
       "paragraph_4_public_interest_text": false,
+    },
+  },
+  "gpai": {
+    "article_53_applicable": false,
+    "article_55_applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "generic_foundation_model_phrasing": false,
+      "named_foundation_model": false,
+      "systemic_risk_markers": false,
     },
   },
   "id": "fixture-day3-04-employment-en",
@@ -630,6 +698,13 @@ exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-05-ess
       "article_5": false,
     },
   },
+  "article4": {
+    "applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "provider_or_deployer_with_staff": false,
+    },
+  },
   "article5": {
     "hits": [],
     "prohibited": false,
@@ -644,6 +719,16 @@ exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-05-ess
       "paragraph_3_emotion_or_biometric_categorisation": false,
       "paragraph_4_deepfake": false,
       "paragraph_4_public_interest_text": false,
+    },
+  },
+  "gpai": {
+    "article_53_applicable": false,
+    "article_55_applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "generic_foundation_model_phrasing": false,
+      "named_foundation_model": false,
+      "systemic_risk_markers": false,
     },
   },
   "id": "fixture-day3-05-essential-services-life-insurance-de",
@@ -772,6 +857,13 @@ exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-06-law
       "article_5": false,
     },
   },
+  "article4": {
+    "applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "provider_or_deployer_with_staff": false,
+    },
+  },
   "article5": {
     "hits": [],
     "prohibited": false,
@@ -786,6 +878,16 @@ exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-06-law
       "paragraph_3_emotion_or_biometric_categorisation": false,
       "paragraph_4_deepfake": false,
       "paragraph_4_public_interest_text": false,
+    },
+  },
+  "gpai": {
+    "article_53_applicable": false,
+    "article_55_applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "generic_foundation_model_phrasing": false,
+      "named_foundation_model": false,
+      "systemic_risk_markers": false,
     },
   },
   "id": "fixture-day3-06-law-enforcement-broad-en",
@@ -918,6 +1020,13 @@ exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-07-mig
       "article_5": false,
     },
   },
+  "article4": {
+    "applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "provider_or_deployer_with_staff": false,
+    },
+  },
   "article5": {
     "hits": [],
     "prohibited": false,
@@ -932,6 +1041,16 @@ exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-07-mig
       "paragraph_3_emotion_or_biometric_categorisation": false,
       "paragraph_4_deepfake": false,
       "paragraph_4_public_interest_text": false,
+    },
+  },
+  "gpai": {
+    "article_53_applicable": false,
+    "article_55_applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "generic_foundation_model_phrasing": false,
+      "named_foundation_model": false,
+      "systemic_risk_markers": false,
     },
   },
   "id": "fixture-day3-07-migration-border-de",
@@ -1061,6 +1180,13 @@ exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-08-jus
       "article_5": false,
     },
   },
+  "article4": {
+    "applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "provider_or_deployer_with_staff": false,
+    },
+  },
   "article5": {
     "hits": [],
     "prohibited": false,
@@ -1075,6 +1201,16 @@ exports[`snapshot — Day 3 fixtures (8 Annex III domains) > fixture-day3-08-jus
       "paragraph_3_emotion_or_biometric_categorisation": false,
       "paragraph_4_deepfake": false,
       "paragraph_4_public_interest_text": false,
+    },
+  },
+  "gpai": {
+    "article_53_applicable": false,
+    "article_55_applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "generic_foundation_model_phrasing": false,
+      "named_foundation_model": false,
+      "systemic_risk_markers": false,
     },
   },
   "id": "fixture-day3-08-justice-democracy-en",
@@ -1180,6 +1316,13 @@ exports[`snapshot — Day 4 fixtures (low-risk non-applicable path) > fixture-da
       "article_5": false,
     },
   },
+  "article4": {
+    "applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "provider_or_deployer_with_staff": false,
+    },
+  },
   "article5": {
     "hits": [],
     "prohibited": false,
@@ -1194,6 +1337,16 @@ exports[`snapshot — Day 4 fixtures (low-risk non-applicable path) > fixture-da
       "paragraph_3_emotion_or_biometric_categorisation": false,
       "paragraph_4_deepfake": false,
       "paragraph_4_public_interest_text": false,
+    },
+  },
+  "gpai": {
+    "article_53_applicable": false,
+    "article_55_applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "generic_foundation_model_phrasing": false,
+      "named_foundation_model": false,
+      "systemic_risk_markers": false,
     },
   },
   "id": "fixture-day4-01-low-risk-en",
@@ -1284,6 +1437,13 @@ exports[`snapshot — Day 5 fixtures (Article 50 non-high-risk paths) > fixture-
       "article_5": false,
     },
   },
+  "article4": {
+    "applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "provider_or_deployer_with_staff": false,
+    },
+  },
   "article5": {
     "hits": [],
     "prohibited": false,
@@ -1298,6 +1458,16 @@ exports[`snapshot — Day 5 fixtures (Article 50 non-high-risk paths) > fixture-
       "paragraph_3_emotion_or_biometric_categorisation": false,
       "paragraph_4_deepfake": false,
       "paragraph_4_public_interest_text": false,
+    },
+  },
+  "gpai": {
+    "article_53_applicable": false,
+    "article_55_applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "generic_foundation_model_phrasing": false,
+      "named_foundation_model": false,
+      "systemic_risk_markers": false,
     },
   },
   "id": "fixture-day5-01-art50-chatbot-en",
@@ -1388,6 +1558,13 @@ exports[`snapshot — Day 5 fixtures (Article 50 non-high-risk paths) > fixture-
       "article_5": false,
     },
   },
+  "article4": {
+    "applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "provider_or_deployer_with_staff": false,
+    },
+  },
   "article5": {
     "hits": [],
     "prohibited": false,
@@ -1402,6 +1579,16 @@ exports[`snapshot — Day 5 fixtures (Article 50 non-high-risk paths) > fixture-
       "paragraph_3_emotion_or_biometric_categorisation": false,
       "paragraph_4_deepfake": true,
       "paragraph_4_public_interest_text": false,
+    },
+  },
+  "gpai": {
+    "article_53_applicable": false,
+    "article_55_applicable": false,
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
+    "triggered_by": {
+      "generic_foundation_model_phrasing": false,
+      "named_foundation_model": false,
+      "systemic_risk_markers": false,
     },
   },
   "id": "fixture-day5-02-art50-deepfake-de",

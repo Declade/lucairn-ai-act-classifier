@@ -6,8 +6,8 @@ exports[`formatJson() — output shape > snapshot — high-risk fixture (pretty=
   "detected_lang": "en",
   "lang_confident": true,
   "rules_version": "v0.2.0",
-  "rules_hash": "0735fda2",
-  "rules_hash_full": "0735fda2ad3c83c0e161703d02c696ee3b46f225dc724c7ceef285449654657e",
+  "rules_hash": "3c507ccc",
+  "rules_hash_full": "3c507cccedd96e4bb9d435cda4f89d549e2cad2b7d157773843497407ba0ea3a",
   "mode": "deterministic",
   "confidence": 0.56,
   "article_5": {
@@ -111,6 +111,27 @@ exports[`formatJson() — output shape > snapshot — high-risk fixture (pretty=
     },
     "summary_en": "Providers shall ensure that AI systems intended to interact directly with natural persons are designed and developed in such a way that the natural persons concerned are informed that they are interacting with an AI system, unless this is obvious from the point of view of a natural person who is reasonably well-informed, observant and circumspect, taking into account the circumstances and the context of use. This obligation shall not apply to AI systems authorised by law to detect, prevent, investigate or prosecute criminal offences, subject to appropriate safeguards for the rights and freedoms of third parties, unless those systems are available for the public to report a criminal offence. (Art 50(1))",
     "summary_de": "Die Anbieter stellen sicher, dass KI-Systeme, die für die direkte Interaktion mit natürlichen Personen bestimmt sind, so konzipiert und entwickelt werden, dass die betreffenden natürlichen Personen informiert werden, dass sie mit einem KI-System interagieren, es sei denn, dies ist aus Sicht einer angemessen informierten, aufmerksamen und verständigen natürlichen Person aufgrund der Umstände und des Kontexts der Nutzung offensichtlich. Diese Pflicht gilt nicht für gesetzlich zur Aufdeckung, Verhütung, Ermittlung oder Verfolgung von Straftaten zugelassene KI-Systeme, wenn geeignete Schutzvorkehrungen für die Rechte und Freiheiten Dritter bestehen, es sei denn, diese Systeme stehen der Öffentlichkeit zur Anzeige einer Straftat zur Verfügung. (Art. 50 Abs. 1)",
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689"
+  },
+  "article_4": {
+    "applicable": false,
+    "triggered_by": {
+      "provider_or_deployer_with_staff": false
+    },
+    "summary_en": "Providers and deployers of AI systems shall take measures to ensure, to their best extent, a sufficient level of AI literacy of their staff and other persons dealing with the operation and use of AI systems on their behalf, taking into account their technical knowledge, experience, education and training and the context the AI systems are to be used in, and considering the persons or groups of persons on whom the AI systems are to be used. (Art 4)",
+    "summary_de": "Die Anbieter und Betreiber von KI-Systemen ergreifen Maßnahmen, um nach besten Kräften sicherzustellen, dass ihr Personal und andere Personen, die in ihrem Auftrag mit dem Betrieb und der Nutzung von KI-Systemen befasst sind, über ein ausreichendes Maß an KI-Kompetenz verfügen, wobei ihre technischen Kenntnisse, ihre Erfahrung, ihre Ausbildung und Schulung und der Kontext, in dem die KI-Systeme eingesetzt werden sollen, sowie die Personen oder Personengruppen, bei denen die KI-Systeme eingesetzt werden sollen, zu berücksichtigen sind. (Art. 4)",
+    "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689"
+  },
+  "gpai": {
+    "article_53_applicable": false,
+    "article_55_applicable": false,
+    "triggered_by": {
+      "named_foundation_model": false,
+      "generic_foundation_model_phrasing": false,
+      "systemic_risk_markers": false
+    },
+    "summary_en": "Providers of general-purpose AI models shall: (Art 53(1))",
+    "summary_de": "Anbieter von KI-Modellen mit allgemeinem Verwendungszweck (Art. 53 Abs. 1)",
     "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689"
   },
   "three_category": {
