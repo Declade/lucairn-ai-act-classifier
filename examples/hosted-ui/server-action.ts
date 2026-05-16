@@ -16,6 +16,10 @@ import type { ClassifyResult } from '@lucairn/ai-act-classifier';
 // itself has no hard upper limit, but rendering a 10 MB paste in a server action
 // would block the worker for too long. v0.2 polish: surface this limit via the
 // theveil-website API-route guard layer.
+//
+// IMPORTANT: this cap is in UTF-8 bytes, NOT JavaScript string length (which
+// counts UTF-16 code units). German umlauts (ä/ö/ü/ß) take 2 UTF-8 bytes each;
+// a `text.length`-based check would let a 16 KiB DE payload through unnoticed.
 const MAX_INPUT_BYTES = 8 * 1024; // 8 KiB
 
 export async function classifyAction(
@@ -25,7 +29,8 @@ export async function classifyAction(
   if (typeof text !== 'string' || text.trim().length === 0) {
     throw new Error('Input must be a non-empty string.');
   }
-  if (text.length > MAX_INPUT_BYTES) {
+  const byteLength = new TextEncoder().encode(text).byteLength;
+  if (byteLength > MAX_INPUT_BYTES) {
     throw new Error(
       `Input too long (max ${MAX_INPUT_BYTES} bytes). Trim the description and retry.`,
     );
