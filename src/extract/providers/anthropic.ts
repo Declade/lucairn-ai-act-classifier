@@ -118,7 +118,7 @@ export async function extractWithAnthropic(
   const apiKey = process.env['ANTHROPIC_API_KEY'];
   if (typeof apiKey !== 'string' || apiKey.length === 0) {
     throw new Error(
-      'LLM_NO_API_KEY: ANTHROPIC_API_KEY env var not set. Set via: export ANTHROPIC_API_KEY=sk-ant-... (see README §--llm mode setup).',
+      'LLM_NO_API_KEY: ANTHROPIC_API_KEY env var not set. Set via: export ANTHROPIC_API_KEY=sk-ant-... (see README "Setup for --llm mode").',
     );
   }
 

@@ -71,7 +71,10 @@ describe('Workspace import smoke (Day-12 Part A)', () => {
       mod = await import(/* @vite-ignore */ distUrl);
     }
     // Phrasing matched against the canonical EN lexicon entries for Annex III ¶4
-    // (`cv screening`, `applicant tracking`, `candidate ranking`, `hiring decision`).
+    // that actually substring-match this input: `cv screening`, `applicant
+    // tracking`, `hiring decision`. The phrase "ranks candidates" does NOT
+    // match the `candidate ranking` lexicon entry (different word order); the
+    // input is high-risk on the other three matches alone.
     // Identical to fixture-day3-04 input at test/fixtures/use-cases/day3/04-employment-en.json:4.
     const result: ClassifyResult = await mod.classify(
       'Our AI tool performs CV screening and applicant tracking, ranks candidates, and supports the hiring decision for our enterprise customers.'

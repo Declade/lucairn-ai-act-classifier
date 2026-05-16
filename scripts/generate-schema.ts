@@ -392,6 +392,12 @@ const threeCategoryResult = {
 
 const schema = {
   $schema: 'http://json-schema.org/draft-07/schema#',
+  // $id is a stable versioning marker so consumers can detect schema drift
+  // across releases. It is NOT currently a fetchable URL — the schema ships
+  // inside the npm tarball at dist/classify-result.schema.json; downstream
+  // consumers load it from disk via require/readFileSync, not over HTTPS. A
+  // future v0.2 may publish the schema at this URL; until then the path
+  // serves only as a unique identifier.
   $id: `https://lucairn.eu/tools/ai-act-classifier/schemas/classify-result-${pkg.version}.json`,
   title: 'ClassifyResult',
   description:

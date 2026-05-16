@@ -39,8 +39,6 @@
   },
   "files": [
     "dist",
-    "dist/classify-result.schema.json",
-    "src/content/blog-excerpts/**/*.md",
     "README.md",
     "README.de.md",
     "LICENSE",

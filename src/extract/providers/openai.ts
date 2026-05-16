@@ -161,7 +161,7 @@ export async function extractWithOpenAI(
   const apiKey = opts.apiKey ?? process.env['OPENAI_API_KEY'];
   if (typeof apiKey !== 'string' || apiKey.length === 0) {
     throw new Error(
-      'LLM_NO_API_KEY: OPENAI_API_KEY env var not set. Set via: export OPENAI_API_KEY=sk-... (see README §--llm mode setup).',
+      'LLM_NO_API_KEY: OPENAI_API_KEY env var not set. Set via: export OPENAI_API_KEY=sk-... (see README "Setup for --llm mode").',
     );
   }
 
