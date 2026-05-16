@@ -320,7 +320,7 @@ const threeCategoryItem = {
 const threeCategoryAggregate = {
   type: 'object',
   description:
-    'One Lucairn category aggregate (Cat 1 sanitizer, Cat 2 evidence, Cat 3 inventory). Locked per CLAUDE.md three-category scheme.',
+    'One Lucairn category aggregate (Cat 1 sanitizer Art 10+15, Cat 2 evidence Art 12+14, Cat 3 inventory Art 10+12+14+15). The three-category scheme is a locked Lucairn opinion (see project README + EUR-Lex citations on each per-Article module).',
   additionalProperties: false,
   properties: {
     key: { type: 'string', enum: ['1', '2', '3'], description: 'Category key.' },
@@ -333,7 +333,7 @@ const threeCategoryAggregate = {
     required_articles: {
       type: 'array',
       items: { type: 'integer' },
-      description: 'Locked per CLAUDE.md. Sorted ascending.',
+      description: 'Articles required for this category to be applicable. Locked per the three-category scheme. Sorted ascending.',
     },
     title_en: { type: 'string', description: 'EN category title.' },
     title_de: { type: 'string', description: 'DE category title.' },
