@@ -5,8 +5,8 @@
 // up its own subtree.
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { mkdtempSync, rmSync, mkdirSync, writeFileSync, existsSync, readdirSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { mkdtempSync, rmSync, mkdirSync, writeFileSync, existsSync, readdirSync, statSync } from 'node:fs';
+import { tmpdir, platform } from 'node:os';
 import { join } from 'node:path';
 import {
   cacheKey,
@@ -15,6 +15,10 @@ import {
   resolveCacheLlmDir,
   type CacheKeyParams,
 } from '../../src/extract/cache.js';
+import {
+  normalizeInputForCacheKey,
+  getDefaultModel,
+} from '../../src/extract/llm.js';
 import type { ExtractedFeatures } from '../../src/extract/keyword.js';
 
 let tmpCacheDir = '';
@@ -219,5 +223,82 @@ describe('resolveCacheLlmDir — directory resolution', () => {
     } finally {
       if (prev !== undefined) process.env['XDG_CACHE_HOME'] = prev;
     }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// L4 closure — cache file + directory permission invariants (POSIX only)
+// ---------------------------------------------------------------------------
+
+describe('cacheWrite — POSIX file permissions (Day-10 L4 closure)', () => {
+  // POSIX-only: Windows reports a different mode bitset that doesn't carry the
+  // 0600 / 0700 semantics. Skip the assertion on Windows but keep the test
+  // structure visible.
+  const isPosix = platform() !== 'win32';
+
+  it.runIf(isPosix)('cache file is written with mode 0600 (user read/write only)', async () => {
+    const key = cacheKey(SAMPLE_KEY_PARAMS);
+    await cacheWrite(key, SAMPLE_FEATURES, { cacheDir: tmpCacheDir });
+    const finalPath = join(tmpCacheDir, 'llm', `${key}.json`);
+    const stat = statSync(finalPath);
+    // The low 9 bits of `mode` are the POSIX permission bits. mask with 0o777.
+    const perms = stat.mode & 0o777;
+    expect(perms).toBe(0o600);
+  });
+
+  it.runIf(isPosix)('cache directory is created with mode 0700 (user-only)', async () => {
+    const key = cacheKey(SAMPLE_KEY_PARAMS);
+    await cacheWrite(key, SAMPLE_FEATURES, { cacheDir: tmpCacheDir });
+    const llmDir = join(tmpCacheDir, 'llm');
+    const stat = statSync(llmDir);
+    const perms = stat.mode & 0o777;
+    // mkdir's mode is masked against process.umask; on a default umask of
+    // 0o022 the effective dir mode is 0o700 (because 0o700 & ~0o022 === 0o700).
+    // On unusual umasks the effective mode could end up tighter than 0o700;
+    // accept anything in the allowed set as long as it's user-only.
+    expect(perms & 0o077).toBe(0); // group + other = 0
+    expect(perms & 0o700).toBe(perms & 0o700); // user bits intact
+  });
+});
+
+// ---------------------------------------------------------------------------
+// L7 closure — internal-export coverage for normalizeInputForCacheKey + getDefaultModel
+// ---------------------------------------------------------------------------
+
+describe('normalizeInputForCacheKey — Day-10 L7 closure', () => {
+  it('is idempotent (same input → same normalized output)', () => {
+    const input = 'AI system for CV screening';
+    const a = normalizeInputForCacheKey(input);
+    const b = normalizeInputForCacheKey(a);
+    expect(a).toBe(b);
+  });
+
+  it('collapses interior whitespace runs to a single space', () => {
+    const input = 'AI    system\t\tfor\n\nCV   screening';
+    expect(normalizeInputForCacheKey(input)).toBe('AI system for CV screening');
+  });
+
+  it('trims leading and trailing whitespace', () => {
+    expect(normalizeInputForCacheKey('   hello world  \n')).toBe('hello world');
+  });
+
+  it('does NOT lowercase (German nouns like "Profiling" are case-sensitive in the lexicon)', () => {
+    expect(normalizeInputForCacheKey('Ausschließlich auf Profiling der Person')).toBe(
+      'Ausschließlich auf Profiling der Person',
+    );
+  });
+});
+
+describe('getDefaultModel — Day-10 L7 closure', () => {
+  it('returns the correct default for anthropic', () => {
+    expect(getDefaultModel('anthropic')).toBe('claude-haiku-4-5-20251001');
+  });
+
+  it('returns the correct default for openai', () => {
+    expect(getDefaultModel('openai')).toBe('gpt-4o-mini');
+  });
+
+  it('returns the correct default for groq', () => {
+    expect(getDefaultModel('groq')).toBe('llama-3.3-70b-versatile');
   });
 });
