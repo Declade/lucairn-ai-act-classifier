@@ -105,15 +105,17 @@ const CHAPEAU_55_EN =
 
 // Verbatim Tier-1 DE chapeaux — Verordnung (EU) 2024/1689.
 // Verified 2026-05-16 via Tier-2 EU AI Office Service Desk DE.
-// Unlike the EN chapeaux, the official DE Tier-1 text does NOT terminate
-// with a colon — the obligations a-d flow as separate sentences with their
-// own verb forms (a) erstellen ..., b) erstellen ..., c) bringen ...,
-// d) erstellen ...). We preserve the Tier-1 shape verbatim; do not add a
-// trailing colon to align with EN.
+// Art 53(1) DE: the official Tier-1 text does NOT terminate with a colon —
+// the obligations a-d flow as separate sentences with their own verb forms
+// (a) erstellen ..., b) erstellen ..., c) bringen ..., d) erstellen ...).
+// Art 55(1) DE: Tier-2 confirms the chapeau DOES end with a colon (the "in
+// addition to" overlay sentence carries the verb "müssen" and a colon
+// before the sub-letter list). We preserve each Tier-1 shape verbatim per
+// article and do NOT cross-align them.
 const CHAPEAU_53_DE =
   'Anbieter von KI-Modellen mit allgemeinem Verwendungszweck (Art. 53 Abs. 1)';
 const CHAPEAU_55_DE =
-  'Zusätzlich zu den in den Artikeln 53 und 54 aufgeführten Pflichten müssen Anbieter von KI-Modellen mit allgemeinem Verwendungszweck mit systemischem Risiko (Art. 55 Abs. 1)';
+  'Zusätzlich zu den in den Artikeln 53 und 54 aufgeführten Pflichten müssen Anbieter von KI-Modellen mit allgemeinem Verwendungszweck mit systemischem Risiko: (Art. 55 Abs. 1)';
 
 // ---------------------------------------------------------------------------
 // Lexicon → trigger mapping (consumes Day-15 lexicon `gpai_models` group)
