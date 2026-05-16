@@ -20,6 +20,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
   **Banner v0.1.1 / Day 12 in both locales.**
 
+  **Fix-up round 1 bundled.** Closes personal-info W-1 + W-2 (canonical-plan path + `deploy@` script-path leak in `examples/hosted-ui/README.md`) + claim-enforce M-1 (same finding) + 3 bug-hunter MEDIUMs: (a) `server-action.ts` `text.length` byte cap was UTF-16-counted, now `new TextEncoder().encode(text).byteLength` for accurate UTF-8 enforcement (German umlauts would have let ~16 KiB DE payloads through an "8 KiB" cap unnoticed); (b) production-caveat sub-section added to the architecture notes documenting Next.js's `next start` server-action error-stripping behaviour + the recommended discriminated-union return-shape refactor for Part B integration; (c) `src/data/citations.json` `service_desk_*` field rename to `regulation_text_mirror_*` to match Day-11 FX6 12-surface Tier-3 relabel pattern (URLs unchanged — the field name implied Tier-1 sourcing but the URL set was always the FLI Tier-3 mirror). Plus one L1 polish at `src/format/explain.ts:55-56` aligning the upstream-source comment with the post-FX4 Tier naming. URLs are byte-identical so all explain / cli-table / markdown snapshots pass without regen. citations.json is NOT in the rules-hash set so RULES_HASH stays at `12eafb8a`.
+
   Tests: 646 → 650 (+4 workspace-import). Deterministic accuracy unchanged (98.2% overall / 100.0% Art 5 / 98.0% binary high-risk). RULES_HASH unchanged (`12eafb8a` — no rule or lexicon JSON edits).
 
   **What this PR does NOT do.**
