@@ -95,7 +95,7 @@ const lexiconHit = {
 
 const extractedFeatures = {
   type: 'object',
-  description: 'Output of the keyword extractor (Day 2). Surfaced for debugging and explain-mode rendering.',
+  description: 'Output of the keyword extractor. Surfaced for debugging and explain-mode rendering.',
   additionalProperties: false,
   properties: {
     input: { type: 'string', description: 'Raw input text passed to classify().' },

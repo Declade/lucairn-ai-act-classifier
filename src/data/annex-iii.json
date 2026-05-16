@@ -1,11 +1,10 @@
 {
   "version": "v0.1.0-seed",
   "_meta": {
-    "notice": "Annex III of Regulation (EU) 2024/1689 — high-risk AI systems referred to in Article 6(2). Each domain entry carries `title_en` + `title_de` and cites its EUR-Lex paragraph in `source`. Sub-letters reproduce the legislative breakdown VERBATIM from EUR-Lex; where the legislative text fuses multiple obligations into a single sub-letter we have NOT decomposed it. Every sub-letter ships an EN summary cited to EUR-Lex EN + the EU AI Office Service Desk, plus a DE summary verified against EUR-Lex DE wording wherever the EUR-Lex DE body was reachable. Tier-3 DE mirror cross-checks (ai-act-law.eu/de, artificialintelligenceact.eu/de) for any DE wording discrepancy are recorded in CHANGELOG.md, not inline in this file. The regulator-validator agent (~/.claude/agents/regulator-validator.md) re-runs every `source` and `summary_*` line against EUR-Lex EN+DE before each merge.",
+    "notice": "Annex III of Regulation (EU) 2024/1689 — high-risk AI systems referred to in Article 6(2). Each domain entry carries `title_en` + `title_de` and cites its EUR-Lex paragraph in `source`. Sub-letters reproduce the legislative breakdown VERBATIM from EUR-Lex; where the legislative text fuses multiple obligations into a single sub-letter we have NOT decomposed it. Every sub-letter ships an EN summary cited to EUR-Lex EN + the EU AI Office Service Desk, plus a DE summary verified against EUR-Lex DE wording wherever the EUR-Lex DE body was reachable. Every `source` and `summary_*` line is verified verbatim against EUR-Lex EN+DE before any release.",
     "primary_source_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
     "primary_source_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
-    "secondary_source": "https://ai-act-service-desk.ec.europa.eu/en/ai-act/annex-3",
-    "regulator_validator": "~/.claude/agents/regulator-validator.md"
+    "secondary_source": "https://ai-act-service-desk.ec.europa.eu/en/ai-act/annex-3"
   },
   "source_primary": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
   "source_secondary": "https://ai-act-service-desk.ec.europa.eu/en/ai-act/annex-3",

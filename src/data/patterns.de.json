@@ -2,10 +2,9 @@
   "language": "de",
   "version": "v0.1.1",
   "_meta": {
-    "notice": "Saat-Lexikon für Tag 2 des v0.1.0-Builds. Jeder Eintrag `source` MUSS gegen das deutsche EUR-Lex-Body durch den regulator-validator-Agenten verifiziert werden, bevor Tag-3-Regel-Module diese Trigger konsumieren. NO_DIRECT_SOURCE oder FAIL Findings blockieren Tag-3-Arbeit.",
+    "notice": "Saat-Lexikon für v0.1.x. Jeder Eintrag `source` MUSS verbatim gegen das deutsche EUR-Lex-Body verifiziert werden, bevor Regel-Module den Trigger konsumieren. Einträge ohne direkte EUR-Lex-Quelle werden ausgeschlossen.",
     "primary_source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
-    "regulator_validator": "~/.claude/agents/regulator-validator.md",
-    "translation_policy": "Phrases are German EUR-Lex / BSI / BfDI terminology, NOT machine-translated from EN. The regulator-validator must verify against the German body, not the English."
+    "translation_policy": "Phrasen entstammen deutscher EUR-Lex / BSI / BfDI-Terminologie und sind NICHT maschinell aus dem Englischen übersetzt. Die Verifikation erfolgt gegen das deutsche Regelungstext-Body, nicht gegen das englische."
   },
   "annex_iii": {
     "1_biometrics": {
