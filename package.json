@@ -3,7 +3,7 @@
   "version": "0.1.1",
   "description": "Free CLI that maps EU AI Act articles to your AI use case",
   "license": "MIT",
-  "author": "Declade",
+  "author": "Marc Schülke <marc@lucairn.eu> (https://lucairn.eu)",
   "homepage": "https://lucairn.eu/tools/ai-act-classifier",
   "repository": {
     "type": "git",
