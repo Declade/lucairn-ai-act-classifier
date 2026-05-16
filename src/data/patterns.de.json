@@ -354,6 +354,26 @@
       ]
     }
   },
+  "article_4_ai_literacy": {
+    "provider_or_deployer_with_staff": {
+      "description": "Art. 4 — Anbieter und Betreiber von KI-Systemen müssen sicherstellen, dass ihr Personal und andere Personen, die in ihrem Auftrag mit dem Betrieb und der Nutzung von KI-Systemen befasst sind, über ein ausreichendes Maß an KI-Kompetenz verfügen. Zusammengesetzte Phrasen, die die Kombination Anbieter-oder-Betreiber + Personal/Bediener kodieren; Art. 4 hat keine Unterbuchstaben und ein Trigger löst die gesamte Pflicht aus.",
+      "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "unsere mitarbeiter nutzen" },
+        { "phrase": "unsere mitarbeiter verwenden" },
+        { "phrase": "unser team nutzt" },
+        { "phrase": "unser personal nutzt" },
+        { "phrase": "unsere berater nutzen" },
+        { "phrase": "mitarbeiter setzen ein" },
+        { "phrase": "beschäftigte verwenden" },
+        { "phrase": "interne nutzer bedienen" },
+        { "phrase": "belegschaft nutzt" },
+        { "phrase": "personal bedient" },
+        { "phrase": "mitarbeitende verwenden" },
+        { "phrase": "team setzt ki ein" }
+      ]
+    }
+  },
   "scope_qualifiers": {
     "research_only": {
       "description": "Art. 2 Abs. 8 — Forschungs-, Test- und Entwicklungstätigkeit Geltungsausschluss (vor dem Inverkehrbringen).",
