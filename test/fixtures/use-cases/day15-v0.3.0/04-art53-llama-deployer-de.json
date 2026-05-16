@@ -1,0 +1,19 @@
+{
+  "id": "fixture-day15-04-art53-llama-deployer-de",
+  "lang": "de",
+  "input": "Wir integrieren Llama 3 in unsere interne Dokumenten-Suche, damit unsere Mitarbeiter schneller Informationen finden.",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": false,
+    "annex_iii_domains": [],
+    "suppressed_by_article_5": false,
+    "article_4_applicable": true,
+    "gpai_article_53_applicable": true,
+    "gpai_article_55_applicable": false,
+    "annex_iv_required": false,
+    "notes": "Day-15 (v0.3.0) — Article 53 + Article 4 dual-applicability case (DE). Llama 3 integrated into an internal document-search system used by employees. The named-model lexicon term 'llama 3' fires Art 53; the composite phrase 'damit unsere mitarbeiter' fires Article 4 (deployer + staff). No systemic-risk markers — Art 55 not applicable. No Annex III high-risk path."
+  },
+  "bucket": "negative",
+  "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689"
+}

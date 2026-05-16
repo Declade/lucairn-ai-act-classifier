@@ -1,0 +1,19 @@
+{
+  "id": "fixture-day15-05-art55-systemic-risk-en",
+  "lang": "en",
+  "input": "We're training a frontier model with 10^25 floating-point operations of compute for general-purpose use. It's a foundation model with presumed systemic risk.",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": false,
+    "annex_iii_domains": [],
+    "suppressed_by_article_5": false,
+    "article_4_applicable": false,
+    "gpai_article_53_applicable": true,
+    "gpai_article_55_applicable": true,
+    "annex_iv_required": false,
+    "notes": "Day-15 (v0.3.0) — Article 55 systemic-risk overlay positive case (EN). Frontier model trained with 10^25 FLOP for general-purpose use, explicitly described as a foundation model with presumed systemic risk. The generic phrasing 'foundation model' + 'frontier model' fires Art 53; the systemic-risk markers '10^25 floating-point operations' + 'systemic risk' + 'presumed systemic risk' fire the Art 55 overlay. No Annex III high-risk path (no Annex III domain match). No Article 4 (no provider/deployer + staff phrasing in this fixture)."
+  },
+  "bucket": "negative",
+  "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689"
+}
