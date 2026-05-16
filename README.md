@@ -2,7 +2,7 @@
 
 Free CLI that maps any AI use case description to the EU AI Act articles it triggers. Zero network, zero config, zero API key in the default deterministic mode.
 
-> **Status: v0.1.1, Day 11 of a 14-day public build.**
+> **Status: v0.1.1, Day 12 of a 14-day public build.**
 > Build window 2026-05-16 → 2026-05-29. Public-launch target 2026-05-29. The repository is private during the build window and flips public on the launch day.
 
 ## Quick start
