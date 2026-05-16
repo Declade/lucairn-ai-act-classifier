@@ -42,6 +42,17 @@
     "annex_iii_prefix": "Annex III",
     "annex_iv_prefix": "Annex IV"
   },
+  "annex_iii_chapeaux": {
+    "1": "Biometrics, in so far as their use is permitted under relevant Union or national law:",
+    "2": "Critical infrastructure: AI systems intended to be used as safety components in the management and operation of critical digital infrastructure, road traffic, or in the supply of water, gas, heating or electricity.",
+    "3": "Education and vocational training:",
+    "4": "Employment, workers' management and access to self-employment:",
+    "5": "Access to and enjoyment of essential private services and essential public services and benefits:",
+    "6": "Law enforcement, in so far as their use is permitted under relevant Union or national law:",
+    "7": "Migration, asylum and border control management, in so far as their use is permitted under relevant Union or national law:",
+    "8": "Administration of justice and democratic processes:"
+  },
+  "annex_iv_chapeau": "The technical documentation referred to in Article 11(1) shall contain at least the following information, as applicable to the relevant AI system:",
   "annex_iv_reference": [
     {
       "number": "1.",

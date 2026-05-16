@@ -15,8 +15,14 @@
 //     `less` or pasting into a plain-text issue tracker.
 //
 // What gets emitted per fired article:
-//   - Verbatim EUR-Lex chapeau text from i18n/{en,de}.json (Annex IV) or from
-//     each rule module's `summary_{en,de}` (the other articles).
+//   - Verbatim EUR-Lex chapeau text. For Annex IV the chapeau is the regulation
+//     preamble at `i18n/{en,de}.json::annex_iv_chapeau`. For Annex III the
+//     chapeau is the per-paragraph lead-in at
+//     `i18n/{en,de}.json::annex_iii_chapeaux.<n>` (NOT the paragraph title; the
+//     title omits the "in so far as their use is permitted under relevant Union
+//     or national law" carve-out wording carried by ¶¶1/6/7's chapeaux).
+//     Article-level fires (5/10/12/13/14/15/50) use the rule module's
+//     `summary_{en,de}` field (this is the article's operative-clause verbatim).
 //   - Which lexicon phrases triggered the hit (from `matched_phrases`).
 //   - Which sub-letter narrowed (when applicable) + the narrowing branch's
 //     deterministic rationale.
@@ -210,6 +216,7 @@ function buildArticle5Fires(article5: Article5Result, locale: 'en' | 'de'): Fire
 
 function buildAnnexIIIFires(annex: AnnexIIIResult, locale: 'en' | 'de'): FiredArticle[] {
   if (!annex.high_risk || annex.suppressed_by_article_5) return [];
+  const localeBundle = getLocale(locale);
   return [...annex.domains]
     .sort((a, b) => a.annex_iii_number - b.annex_iii_number)
     .map((d: AnnexIIIDomainHit): FiredArticle => {
@@ -220,9 +227,16 @@ function buildAnnexIIIFires(annex: AnnexIIIResult, locale: 'en' | 'de'): FiredAr
           ? `(${[...d.sub_letters].sort().join(', ')})`
           : '';
       const heading = `${prefix} ¶${d.annex_iii_number}${subLetterDisplay} — ${title}`;
-      // The "chapeau" for Annex III is the Annex III paragraph's title (no
-      // separate full-chapeau text per paragraph in the existing data).
-      const chapeau = title;
+      // The chapeau for Annex III is the verbatim EUR-Lex paragraph lead-in,
+      // sourced from i18n/{en,de}.json::annex_iii_chapeaux. The title alone
+      // omits the "in so far as their use is permitted under relevant Union or
+      // national law" carve-out wording that lives in ¶¶1/6/7 chapeaux —
+      // DPIA evidence reviewers need the full verbatim. Defensive fallback to
+      // the title for any paragraph number outside 1-8 (data files only carry
+      // 1-8 today; the fallback prevents an i18n drift from crashing
+      // --explain).
+      const chapeauKey = String(d.annex_iii_number) as keyof typeof localeBundle.annex_iii_chapeaux;
+      const chapeau = localeBundle.annex_iii_chapeaux[chapeauKey] ?? title;
       const phraseList = d.matched_phrases.map((p) => `"${p}"`).join(', ');
       let subLetterRationale: string | null = null;
       if (d.sub_letters.length > 0) {
@@ -411,22 +425,29 @@ function buildFiredArticles(result: ClassifyResult, locale: 'en' | 'de'): FiredA
   out.push(...buildArticle50Fires(result.article_50, locale));
   // Annex IV — derived; emit a single fire when required.
   if (result.annex_iv_required) {
+    // The chapeau slot must carry the VERBATIM EUR-Lex Annex IV preamble (the
+    // "shall contain at least the following information" lead-in sentence)
+    // — that's the audit-evidence-grade quote a DPIA reviewer expects to see
+    // beneath the "Annex IV" heading. The rationale slot carries the
+    // classifier-internal reason ("this fires because the system is
+    // high-risk"). Before Day-11 fix-up these two were swapped: the chapeau
+    // slot rendered the cascade-rationale, and the rationale slot rendered the
+    // Article 11(1) reference — which made the markdown output unusable for
+    // pasting into DPIA evidence sections.
+    const av = getLocale(locale);
     out.push({
       id: 'annex_iv',
       heading:
         locale === 'de'
           ? 'Anhang IV — Technische Dokumentation'
           : 'Annex IV — Technical documentation',
-      chapeau:
-        locale === 'de'
-          ? 'Hochrisiko-Kaskade: feuert weil Annex III hochrisikoreich UND Artikel 5 nicht verboten.'
-          : 'High-risk cascade: fires because Annex III high-risk AND Article 5 not prohibited.',
+      chapeau: av.annex_iv_chapeau,
       matched_phrases: [],
       sub_letter_rationale: null,
       rationale:
         locale === 'de'
-          ? 'Annex IV technische Dokumentation ist gemäß Artikel 11 Abs. 1 für jedes als Hochrisiko klassifizierte System erforderlich.'
-          : 'Annex IV technical documentation is required for every system classified as high-risk under Article 11(1).',
+          ? 'Hochrisiko-Kaskade: Anhang IV technische Dokumentation ist gemäß Artikel 11 Abs. 1 für jedes als Hochrisiko klassifizierte System erforderlich.'
+          : 'High-risk cascade: Annex IV technical documentation is required for every system classified as high-risk under Article 11(1).',
       citation_url: citationUrlForArticle('annex_iv', locale),
       excerpt_key: null,
     });
