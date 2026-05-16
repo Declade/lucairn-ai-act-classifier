@@ -23,6 +23,35 @@
 //   5. **Version pinning.** The schema's `$id` includes the package version so
 //      consumers can detect schema drift across `@lucairn/ai-act-classifier`
 //      versions.
+//   6. **Day-13 fix-up note (B1 closure).** The previous schema version was
+//      empirically broken: an Ajv-validated `classify()` output produced 382
+//      errors. The shapes below have been corrected to match the actual public
+//      output of `classify()` as of v0.1.1, sub-shape by sub-shape:
+//        - `features.byCategory` is a 2-level nested object
+//          (`Record<group, Record<category, phrase[]>>`).
+//        - `features.hits[]` entries carry `{group, category, phrase, source}`
+//          only — no `article`, no `start`, no `end`.
+//        - `article_5.hits[]` entries carry `{letter, category_key,
+//          matched_phrases, summary_en, summary_de, source}` and the result
+//          carries optional `reasoning: string[]`.
+//        - `annex_iii` carries `{high_risk, domains, reasoning,
+//          suppressed_by_article_5}`; each domain has
+//          `{annex_iii_number, key, sub_letters, matched_phrases, title_en,
+//          title_de, source}`.
+//        - Articles 10/12/13/14/15 each return
+//          `{applicable, triggered_by: {article_5, annex_iii_domains}, summary_en,
+//          summary_de, source}`. No `rationale`.
+//        - Article 50 returns `{applicable, triggered_by (5 booleans),
+//          summary_en, summary_de, source}`. No `paragraphs` field.
+//        - `three_category` is either `null` or
+//          `{categories: {'1', '2', '3'}, applicable_categories: ('1'|'2'|'3')[],
+//          disclaimer_en, disclaimer_de, source}`. Each category aggregate
+//          carries `{key, applicable, triggered_articles, required_articles,
+//          title_en, title_de, items}`. `applicable_categories` items are
+//          strings, NOT integers.
+//      The Ajv-validation test in `test/scripts/generate-schema.spec.ts` is
+//      the load-bearing invariant lock — it asserts the schema accepts real
+//      `classify()` output across multiple input fixtures.
 
 import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
@@ -44,20 +73,24 @@ const pkg = JSON.parse(readFileSync(PACKAGE_JSON_PATH, 'utf8')) as PackageJson;
 // Reusable sub-schemas
 // ---------------------------------------------------------------------------
 
+// Real lexicon hit shape (from src/extract/keyword.ts::ExtractedHit) is just
+// {group, category, phrase, source} — no article identifier, no offsets.
 const lexiconHit = {
   type: 'object',
   description:
-    'A single matched lexicon entry surfaced during keyword extraction; identifies the article group + category + canonical phrase + position in the input text.',
+    'A single matched lexicon entry surfaced during keyword extraction. Carries the lexicon group (e.g. "annex_iii"), the sub-category key (e.g. "4_employment"), the canonical phrase that matched, and the regulator source URL the category cites.',
   additionalProperties: false,
   properties: {
-    article: { type: 'string', description: 'EU AI Act article identifier, e.g. "5(1)(d)" or "annex-iii/4".' },
-    group: { type: 'string', description: 'Lexicon group name as stored in src/data/patterns.{en,de}.json.' },
-    category: { type: 'string', description: 'Sub-category within the group, e.g. "a_subliminal".' },
+    group: {
+      type: 'string',
+      description:
+        'Lexicon group: "annex_iii", "article_5_prohibited", "article_50_gpai", "scope_qualifiers", or a future v0.2+ addition.',
+    },
+    category: { type: 'string', description: 'Sub-category within the group, e.g. "4_employment", "c_social_scoring".' },
     phrase: { type: 'string', description: 'Canonical lexicon phrase that matched in the normalised input.' },
-    start: { type: 'integer', minimum: 0, description: 'UTF-16 code-unit start offset in the original input.' },
-    end: { type: 'integer', minimum: 0, description: 'UTF-16 code-unit end offset in the original input.' },
+    source: { type: 'string', description: 'Regulator-source URL the category cites (typically EUR-Lex).' },
   },
-  required: ['article', 'group', 'category', 'phrase', 'start', 'end'],
+  required: ['group', 'category', 'phrase', 'source'],
 };
 
 const extractedFeatures = {
@@ -72,36 +105,48 @@ const extractedFeatures = {
     hits: { type: 'array', items: lexiconHit, description: 'Lexicon-phrase hits surfaced from the input.' },
     byCategory: {
       type: 'object',
-      additionalProperties: { type: 'array', items: { type: 'string' } },
-      description: 'Map from "<group>.<category>" to the array of canonical lexicon phrases that fired.',
+      // 2-level nested: Record<group, Record<category, phrase[]>>. The outer
+      // keys are lexicon groups ("annex_iii", "article_5_prohibited", ...);
+      // each value is a map from sub-category key to the array of canonical
+      // phrases that fired.
+      additionalProperties: {
+        type: 'object',
+        additionalProperties: {
+          type: 'array',
+          items: { type: 'string' },
+        },
+      },
+      description: 'Map from lexicon group → sub-category → matched canonical phrases. 2-level nested object.',
     },
   },
   required: ['input', 'lang', 'langConfident', 'lexiconVersion', 'hits', 'byCategory'],
 };
 
+// Real Article5Hit shape from src/rules/article-5.ts.
 const article5Hit = {
   type: 'object',
-  description: 'A single Article 5 paragraph that fired for the input.',
+  description: 'A single Article 5(1) sub-letter that fired for the input.',
   additionalProperties: false,
   properties: {
     letter: {
       type: 'string',
-      enum: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'],
-      description: 'Sub-letter of Article 5(1). See Regulation (EU) 2024/1689 Art. 5(1)(a-i).',
+      enum: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
+      description: 'Sub-letter of Article 5(1). See Regulation (EU) 2024/1689 Art. 5(1)(a-h).',
     },
-    title: { type: 'string', description: 'Human-readable label for the prohibited practice.' },
-    triggered_by: {
+    category_key: {
+      type: 'string',
+      description: 'Lexicon category key (e.g. "c_social_scoring", "d_predictive_policing").',
+    },
+    matched_phrases: {
       type: 'array',
       items: { type: 'string' },
-      description: 'Lexicon phrases that triggered the rule.',
+      description: 'Raw phrases from the input (verbatim from the lexicon) that triggered this hit.',
     },
-    disambiguator_state: {
-      type: 'string',
-      enum: ['present', 'absent', 'not_applicable'],
-      description: 'For Art 5(1)(d): whether the "solely on profiling" disambiguator was present in the input.',
-    },
+    summary_en: { type: 'string', description: 'Short EN summary of the prohibition (paraphrased from EUR-Lex).' },
+    summary_de: { type: 'string', description: 'Short DE summary of the prohibition (paraphrased from EUR-Lex).' },
+    source: { type: 'string', description: 'EUR-Lex citation URL.' },
   },
-  required: ['letter', 'title', 'triggered_by'],
+  required: ['letter', 'category_key', 'matched_phrases', 'summary_en', 'summary_de', 'source'],
 };
 
 const article5Result = {
@@ -111,11 +156,17 @@ const article5Result = {
   additionalProperties: false,
   properties: {
     prohibited: { type: 'boolean', description: 'True if at least one Article 5(1) letter fired.' },
-    hits: { type: 'array', items: article5Hit, description: 'Per-letter prohibition hits.' },
+    hits: { type: 'array', items: article5Hit, description: 'Per-letter prohibition hits, sorted by letter.' },
+    reasoning: {
+      type: 'array',
+      items: { type: 'string' },
+      description: 'Human-readable reasoning steps for transparency / --explain output.',
+    },
   },
-  required: ['prohibited', 'hits'],
+  required: ['prohibited', 'hits', 'reasoning'],
 };
 
+// Real AnnexIIIDomainHit shape from src/rules/article-6-annex-iii.ts.
 const annexIIIDomainHit = {
   type: 'object',
   description:
@@ -123,15 +174,30 @@ const annexIIIDomainHit = {
   additionalProperties: false,
   properties: {
     annex_iii_number: { type: 'integer', minimum: 1, maximum: 8, description: 'Annex III paragraph number 1–8.' },
-    title: { type: 'string', description: 'Verbatim Annex III paragraph title from EUR-Lex.' },
+    key: { type: 'string', description: 'Domain key from annex-iii.json (e.g. "employment", "law_enforcement").' },
     sub_letters: {
       type: 'array',
       items: { type: 'string' },
-      description: 'Narrowed sub-letters within the paragraph, e.g. ["a", "c"] for Annex III ¶4(a)+(c).',
+      description: 'Narrowed sub-letters within the paragraph, e.g. ["a", "c"] for Annex III ¶4(a)+(c). Empty array when the lexicon hit is too general to disambiguate.',
     },
-    triggered_by: { type: 'array', items: { type: 'string' }, description: 'Lexicon phrases that triggered the rule.' },
+    matched_phrases: {
+      type: 'array',
+      items: { type: 'string' },
+      description: 'Phrases from the input that triggered this domain.',
+    },
+    title_en: { type: 'string', description: 'Verbatim Annex III paragraph title (EN).' },
+    title_de: { type: 'string', description: 'Verbatim Annex III paragraph title (DE).' },
+    source: { type: 'string', description: 'Citation source for the domain (EUR-Lex Annex III paragraph reference).' },
   },
-  required: ['annex_iii_number', 'title', 'sub_letters', 'triggered_by'],
+  required: [
+    'annex_iii_number',
+    'key',
+    'sub_letters',
+    'matched_phrases',
+    'title_en',
+    'title_de',
+    'source',
+  ],
 };
 
 const annexIIIResult = {
@@ -142,43 +208,138 @@ const annexIIIResult = {
   properties: {
     high_risk: { type: 'boolean', description: 'True if any Annex III domain fired and Article 5 did not suppress.' },
     suppressed_by_article_5: { type: 'boolean', description: 'True when Article 5 prohibition suppresses the high-risk classification.' },
-    domains: { type: 'array', items: annexIIIDomainHit, description: 'Annex III domains that fired.' },
+    domains: { type: 'array', items: annexIIIDomainHit, description: 'Annex III domains that fired, sorted by paragraph number.' },
+    reasoning: {
+      type: 'array',
+      items: { type: 'string' },
+      description: 'Human-readable reasoning steps for transparency / --explain output.',
+    },
   },
-  required: ['high_risk', 'suppressed_by_article_5', 'domains'],
+  required: ['high_risk', 'suppressed_by_article_5', 'domains', 'reasoning'],
 };
 
+// Real cascade shape from src/rules/article-10.ts (and identical structure in
+// 12/13/14/15). The `triggered_by` is an OBJECT not a string array.
 const articleCascadeResult = {
   type: 'object',
   description:
-    'Article cascade module result (Articles 10/12/13/14/15). Each module projects the high-risk classification into per-article applicability.',
+    'Article cascade module result (Articles 10/12/13/14/15). Each module projects the high-risk classification into per-article applicability and carries the verbatim EUR-Lex chapeau as a summary.',
   additionalProperties: false,
   properties: {
     applicable: { type: 'boolean', description: 'True when the article applies to this use case.' },
     triggered_by: {
-      type: 'array',
-      items: { type: 'string' },
-      description: 'Stable trigger codes describing why the article applies (e.g. "annex_iii", "suppressed_by_article_5").',
+      type: 'object',
+      additionalProperties: false,
+      description: 'Trace of WHY the article was (or was not) triggered.',
+      properties: {
+        article_5: {
+          type: 'boolean',
+          description: 'Mirror of annex_iii.suppressed_by_article_5 — true iff an Article 5 prohibition fired.',
+        },
+        annex_iii_domains: {
+          type: 'array',
+          items: { type: 'integer', minimum: 1, maximum: 8 },
+          description: 'Annex III paragraph numbers that fired (empty when not high-risk). Sorted ascending.',
+        },
+      },
+      required: ['article_5', 'annex_iii_domains'],
     },
-    rationale: { type: 'string', description: 'Plain-language rationale string for explain-mode rendering.' },
+    summary_en: { type: 'string', description: 'Verbatim EUR-Lex EN chapeau text for the article.' },
+    summary_de: { type: 'string', description: 'Verbatim EUR-Lex DE chapeau text for the article.' },
+    source: { type: 'string', description: 'EUR-Lex citation URL.' },
   },
-  required: ['applicable', 'triggered_by', 'rationale'],
+  required: ['applicable', 'triggered_by', 'summary_en', 'summary_de', 'source'],
 };
 
+// Real Article50Result shape from src/rules/article-50.ts. NO `paragraphs`
+// field — `triggered_by` is an OBJECT with 5 boolean trigger flags.
 const article50Result = {
   type: 'object',
   description:
     'Article 50 transparency obligations (GPAI + deployer). Independent root — Annex III high-risk does NOT imply Article 50 applies, and vice versa.',
   additionalProperties: false,
   properties: {
-    applicable: { type: 'boolean', description: 'True if any Article 50 paragraph fired.' },
-    paragraphs: {
-      type: 'array',
-      items: { type: 'string' },
-      description: 'Specific Article 50 paragraphs that fired, e.g. ["50(1)", "50(4)_sub1"].',
+    applicable: { type: 'boolean', description: 'True iff any of the 5 paragraph triggers fired.' },
+    triggered_by: {
+      type: 'object',
+      additionalProperties: false,
+      description: 'Per-paragraph trigger flags.',
+      properties: {
+        paragraph_1_interaction: {
+          type: 'boolean',
+          description: 'Art 50(1) — AI system intended to interact directly with natural persons.',
+        },
+        paragraph_2_synthetic_content: {
+          type: 'boolean',
+          description: 'Art 50(2) — Provider of GPAI / generative AI producing synthetic audio/image/video/text.',
+        },
+        paragraph_3_emotion_or_biometric_categorisation: {
+          type: 'boolean',
+          description: 'Art 50(3) — Deployer of emotion-recognition or biometric-categorisation system.',
+        },
+        paragraph_4_deepfake: {
+          type: 'boolean',
+          description: 'Art 50(4) first sub-paragraph — Deployer generating/manipulating image/audio/video deep fake.',
+        },
+        paragraph_4_public_interest_text: {
+          type: 'boolean',
+          description: 'Art 50(4) second sub-paragraph — Deployer generating text published to inform the public on matters of public interest.',
+        },
+      },
+      required: [
+        'paragraph_1_interaction',
+        'paragraph_2_synthetic_content',
+        'paragraph_3_emotion_or_biometric_categorisation',
+        'paragraph_4_deepfake',
+        'paragraph_4_public_interest_text',
+      ],
     },
-    triggered_by: { type: 'array', items: { type: 'string' }, description: 'Lexicon phrases that triggered the rule.' },
+    summary_en: {
+      type: 'string',
+      description:
+        'Verbatim EUR-Lex EN chapeau text for the fired paragraph(s), concatenated in paragraph order. When applicable === false, the 50(1) chapeau is returned alone.',
+    },
+    summary_de: { type: 'string', description: 'Verbatim DE; same concatenation rule.' },
+    source: { type: 'string', description: 'EUR-Lex citation URL (Tier-1 canonical).' },
   },
-  required: ['applicable', 'paragraphs', 'triggered_by'],
+  required: ['applicable', 'triggered_by', 'summary_en', 'summary_de', 'source'],
+};
+
+const threeCategoryItem = {
+  type: 'object',
+  description: 'One item in a Lucairn three-category checklist.',
+  additionalProperties: false,
+  properties: {
+    number: { type: 'integer', minimum: 1, description: 'Item ordinal within the category.' },
+    text_en: { type: 'string', description: 'EN item text.' },
+    text_de: { type: 'string', description: 'DE item text.' },
+  },
+  required: ['number', 'text_en', 'text_de'],
+};
+
+const threeCategoryAggregate = {
+  type: 'object',
+  description:
+    'One Lucairn category aggregate (Cat 1 sanitizer, Cat 2 evidence, Cat 3 inventory). Locked per CLAUDE.md three-category scheme.',
+  additionalProperties: false,
+  properties: {
+    key: { type: 'string', enum: ['1', '2', '3'], description: 'Category key.' },
+    applicable: { type: 'boolean', description: 'True iff all required_articles for this category are applicable.' },
+    triggered_articles: {
+      type: 'array',
+      items: { type: 'integer' },
+      description: 'Intersection of required_articles with currently-applicable. Sorted ascending.',
+    },
+    required_articles: {
+      type: 'array',
+      items: { type: 'integer' },
+      description: 'Locked per CLAUDE.md. Sorted ascending.',
+    },
+    title_en: { type: 'string', description: 'EN category title.' },
+    title_de: { type: 'string', description: 'DE category title.' },
+    items: { type: 'array', items: threeCategoryItem, description: 'Checklist items for the category.' },
+  },
+  required: ['key', 'applicable', 'triggered_articles', 'required_articles', 'title_en', 'title_de', 'items'],
 };
 
 const threeCategoryResult = {
@@ -186,19 +347,40 @@ const threeCategoryResult = {
     {
       type: 'object',
       description:
-        'Lucairn three-category obligation overlay (Cat 1 sanitizer, Cat 2 evidence, Cat 3 inventory). The categories partition the high-risk obligation surface into operational groupings.',
+        'Lucairn three-category obligation overlay (Cat 1 sanitizer Art 10+15, Cat 2 evidence Art 12+14, Cat 3 inventory Art 10+12+14+15). The categories partition the high-risk obligation surface into operational groupings.',
       additionalProperties: false,
       properties: {
+        categories: {
+          type: 'object',
+          additionalProperties: false,
+          description: 'Aggregate per Lucairn category, keyed by category number.',
+          properties: {
+            '1': threeCategoryAggregate,
+            '2': threeCategoryAggregate,
+            '3': threeCategoryAggregate,
+          },
+          required: ['1', '2', '3'],
+        },
         applicable_categories: {
           type: 'array',
-          items: { type: 'integer', minimum: 1, maximum: 3 },
-          description: 'Which Lucairn categories apply, e.g. [1, 2, 3].',
+          items: { type: 'string', enum: ['1', '2', '3'] },
+          description: 'Sorted ascending list of category keys that are applicable. Items are STRING keys, not integers.',
         },
-        category_1: { type: 'object', additionalProperties: true },
-        category_2: { type: 'object', additionalProperties: true },
-        category_3: { type: 'object', additionalProperties: true },
+        disclaimer_en: { type: 'string', description: 'EN disclaimer.' },
+        disclaimer_de: { type: 'string', description: 'DE disclaimer.' },
+        source: {
+          type: 'object',
+          additionalProperties: false,
+          description: 'Provenance: what generated file was loaded and which source-of-truth it was synced from.',
+          properties: {
+            generated_file: { type: 'string', description: 'Path to the generated artifact loaded at module init.' },
+            source_file: { type: 'string', description: 'Path to the website source-of-truth the generator read from.' },
+            version: { type: 'string', description: 'Version stamp from the generated JSON.' },
+          },
+          required: ['generated_file', 'source_file', 'version'],
+        },
       },
-      required: ['applicable_categories'],
+      required: ['categories', 'applicable_categories', 'disclaimer_en', 'disclaimer_de', 'source'],
     },
     { type: 'null', description: 'Returned when classify() was called with opts.threeCategory === false.' },
   ],
