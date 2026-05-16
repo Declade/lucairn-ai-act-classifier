@@ -61,7 +61,7 @@ exports[`formatExplain() — high-risk Annex III ¶4 single fixture > json EN sn
     {
       "id": "annex_iii_4",
       "heading": "Annex III ¶4(a) — Employment, workers' management and access to self-employment",
-      "chapeau": "Employment, workers' management and access to self-employment",
+      "chapeau": "Employment, workers' management and access to self-employment:",
       "matched_phrases": [
         "candidate ranking",
         "hiring decisions"
@@ -124,10 +124,10 @@ exports[`formatExplain() — high-risk Annex III ¶4 single fixture > json EN sn
     {
       "id": "annex_iv",
       "heading": "Annex IV — Technical documentation",
-      "chapeau": "High-risk cascade: fires because Annex III high-risk AND Article 5 not prohibited.",
+      "chapeau": "The technical documentation referred to in Article 11(1) shall contain at least the following information, as applicable to the relevant AI system:",
       "matched_phrases": [],
       "sub_letter_rationale": null,
-      "rationale": "Annex IV technical documentation is required for every system classified as high-risk under Article 11(1).",
+      "rationale": "High-risk cascade: Annex IV technical documentation is required for every system classified as high-risk under Article 11(1).",
       "citation_url": "https://artificialintelligenceact.eu/annex/4/",
       "excerpt_key": null
     }
@@ -147,7 +147,7 @@ exports[`formatExplain() — high-risk Annex III ¶4 single fixture > markdown E
 
 ### Annex III ¶4(a) — Employment, workers' management and access to self-employment
 
-> Employment, workers' management and access to self-employment
+> Employment, workers' management and access to self-employment:
 
 - Annex III ¶4 (employment) fires. Matched phrases: "candidate ranking", "hiring decisions".
 - Sub-letter(s) (a) narrowed from matched phrases (per narrowSubLetters() ¶4 branch).
@@ -190,9 +190,9 @@ exports[`formatExplain() — high-risk Annex III ¶4 single fixture > markdown E
 
 ### Annex IV — Technical documentation
 
-> High-risk cascade: fires because Annex III high-risk AND Article 5 not prohibited.
+> The technical documentation referred to in Article 11(1) shall contain at least the following information, as applicable to the relevant AI system:
 
-- Annex IV technical documentation is required for every system classified as high-risk under Article 11(1).
+- High-risk cascade: Annex IV technical documentation is required for every system classified as high-risk under Article 11(1).
 - **Citation:** https://artificialintelligenceact.eu/annex/4/
 
 ---
@@ -208,7 +208,7 @@ Input: Our AI tool screens CVs and ranks job applicants based on resume content 
 Language: en · Mode: deterministic · Rules: v0.1.1 (sha256:12eafb8a...) · Confidence: 0.56
 
 -- Annex III ¶4(a) — Employment, workers' management and access to self-employment --
-Employment, workers' management and access to self-employment
+Employment, workers' management and access to self-employment:
 * Annex III ¶4 (employment) fires. Matched phrases: "candidate ranking", "hiring decisions".
 * Sub-letter(s) (a) narrowed from matched phrases (per narrowSubLetters() ¶4 branch).
 * Citation: https://artificialintelligenceact.eu/article/6/
@@ -239,8 +239,8 @@ High-risk AI systems shall be designed and developed in such a way that they ach
 * Citation: https://artificialintelligenceact.eu/article/15/
 
 -- Annex IV — Technical documentation --
-High-risk cascade: fires because Annex III high-risk AND Article 5 not prohibited.
-* Annex IV technical documentation is required for every system classified as high-risk under Article 11(1).
+The technical documentation referred to in Article 11(1) shall contain at least the following information, as applicable to the relevant AI system:
+* High-risk cascade: Annex IV technical documentation is required for every system classified as high-risk under Article 11(1).
 * Citation: https://artificialintelligenceact.eu/annex/4/
 
 ⚠ Informational tool — not legal advice. See README §Disclaimer."

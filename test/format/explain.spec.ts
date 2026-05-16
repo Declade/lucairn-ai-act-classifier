@@ -380,3 +380,81 @@ describe('readExcerpt() — graceful behavior', () => {
     expect(result).toBeNull();
   });
 });
+
+// ---------------------------------------------------------------------------
+// FX4 chapeau correctness — closes bug-hunter M1 (Day-11 PR #11 fix-up r1)
+// ---------------------------------------------------------------------------
+
+describe('formatExplain() — Annex IV chapeau correctness (bug-hunter M1)', () => {
+  it('EN: Annex IV section renders verbatim EUR-Lex chapeau in the chapeau slot, not the cascade rationale', async () => {
+    const r = await classify(INPUT_ANNEX_III_EMPLOYMENT_EN, { lang: 'en' });
+    expect(r.annex_iv_required).toBe(true);
+    const out = formatExplain(r, { locale: 'en', format: 'json', withExcerpt: false });
+    const parsed = JSON.parse(out) as { fired: ReadonlyArray<{ id: string; chapeau: string; rationale: string }> };
+    const annexIv = parsed.fired.find((f) => f.id === 'annex_iv');
+    expect(annexIv).toBeDefined();
+    if (annexIv === undefined) throw new Error('annex_iv fire missing');
+    // Verbatim EUR-Lex Annex IV preamble must appear in the chapeau slot.
+    expect(annexIv.chapeau).toMatch(/technical documentation referred to in Article 11\(1\) shall contain/);
+    // The cascade rationale must NOT appear in the chapeau slot.
+    expect(annexIv.chapeau).not.toMatch(/High-risk cascade: fires because/);
+    // The rationale slot carries the classifier-internal reason.
+    expect(annexIv.rationale).toMatch(/Article 11\(1\)|high-risk/);
+  });
+
+  it('DE: Annex IV section renders verbatim EUR-Lex chapeau in DE locale', async () => {
+    const r = await classify(INPUT_ANNEX_III_BIOMETRIC_DE, { lang: 'de' });
+    expect(r.annex_iv_required).toBe(true);
+    const out = formatExplain(r, { locale: 'de', format: 'json', withExcerpt: false });
+    const parsed = JSON.parse(out) as { fired: ReadonlyArray<{ id: string; chapeau: string; rationale: string }> };
+    const annexIv = parsed.fired.find((f) => f.id === 'annex_iv');
+    expect(annexIv).toBeDefined();
+    if (annexIv === undefined) throw new Error('annex_iv fire missing');
+    expect(annexIv.chapeau).toMatch(/Die in Artikel 11 Absatz 1 genannte technische Dokumentation/);
+    expect(annexIv.chapeau).not.toMatch(/Hochrisiko-Kaskade: feuert/);
+  });
+
+  it('markdown renders the Annex IV chapeau inside a blockquote (DPIA-paste-friendly)', async () => {
+    const r = await classify(INPUT_ANNEX_III_EMPLOYMENT_EN, { lang: 'en' });
+    const out = formatExplain(r, { locale: 'en', format: 'markdown', withExcerpt: false });
+    // The chapeau quote must appear directly under the Annex IV heading,
+    // prefixed with the markdown blockquote marker.
+    expect(out).toMatch(/### Annex IV — Technical documentation[\s\S]*?\n> The technical documentation referred to in Article 11\(1\) shall contain/);
+  });
+});
+
+describe('formatExplain() — Annex III chapeau correctness (bug-hunter M1)', () => {
+  it('EN: Annex III ¶4 section renders verbatim chapeau from i18n (not the title)', async () => {
+    const r = await classify(INPUT_ANNEX_III_EMPLOYMENT_EN, { lang: 'en' });
+    const out = formatExplain(r, { locale: 'en', format: 'json', withExcerpt: false });
+    const parsed = JSON.parse(out) as { fired: ReadonlyArray<{ id: string; chapeau: string }> };
+    const a4 = parsed.fired.find((f) => f.id === 'annex_iii_4');
+    expect(a4).toBeDefined();
+    if (a4 === undefined) throw new Error('annex_iii_4 fire missing');
+    // Verbatim EUR-Lex ¶4 chapeau ends with a colon (lead-in to sub-letters).
+    expect(a4.chapeau).toBe("Employment, workers' management and access to self-employment:");
+    // The paragraph title alone (without the colon) was the pre-fix-up output;
+    // ensure we no longer emit just the bare title.
+    expect(a4.chapeau).not.toBe("Employment, workers' management and access to self-employment");
+  });
+
+  it('EN: Annex III ¶6 chapeau carries the "in so far as ... permitted" carve-out wording', async () => {
+    const r = await classify(INPUT_ANNEX_III_LAW_ENFORCEMENT_EN, { lang: 'en' });
+    const out = formatExplain(r, { locale: 'en', format: 'json', withExcerpt: false });
+    const parsed = JSON.parse(out) as { fired: ReadonlyArray<{ id: string; chapeau: string }> };
+    const a6 = parsed.fired.find((f) => f.id === 'annex_iii_6');
+    expect(a6).toBeDefined();
+    if (a6 === undefined) throw new Error('annex_iii_6 fire missing');
+    expect(a6.chapeau).toMatch(/Law enforcement, in so far as their use is permitted/);
+  });
+
+  it('DE: Annex III ¶1 chapeau renders verbatim DE EUR-Lex wording', async () => {
+    const r = await classify(INPUT_ANNEX_III_BIOMETRIC_DE, { lang: 'de' });
+    const out = formatExplain(r, { locale: 'de', format: 'json', withExcerpt: false });
+    const parsed = JSON.parse(out) as { fired: ReadonlyArray<{ id: string; chapeau: string }> };
+    const a1 = parsed.fired.find((f) => f.id === 'annex_iii_1');
+    expect(a1).toBeDefined();
+    if (a1 === undefined) throw new Error('annex_iii_1 fire missing');
+    expect(a1.chapeau).toMatch(/Biometrie, soweit ihr Einsatz nach einschlägigem Unionsrecht/);
+  });
+});

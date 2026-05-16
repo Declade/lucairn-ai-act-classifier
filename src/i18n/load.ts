@@ -62,10 +62,29 @@ export interface I18nLabels {
   annex_iv_prefix: string;
 }
 
+export type I18nAnnexIIIChapeaux = Readonly<Record<'1' | '2' | '3' | '4' | '5' | '6' | '7' | '8', string>>;
+
 export interface I18nLocale {
   language: 'en' | 'de';
   version: string;
   labels: I18nLabels;
+  /**
+   * Verbatim EUR-Lex chapeau text per Annex III paragraph (1-8). Keyed by the
+   * paragraph number as a string. Used by the `--explain` formatter to render
+   * the paragraph's lead-in sentence in the chapeau slot (the paragraph title
+   * is NOT the chapeau — Annex III's verbatim chapeaux carry the
+   * "in so far as their use is permitted under relevant Union or national law"
+   * carve-out language for the law-enforcement / migration / biometrics
+   * paragraphs).
+   */
+  annex_iii_chapeaux: I18nAnnexIIIChapeaux;
+  /**
+   * Verbatim EUR-Lex Annex IV preamble (the chapeau text that immediately
+   * follows the Annex IV heading and introduces the technical-documentation
+   * checklist). Used by the `--explain` formatter to render the chapeau quote
+   * in the Annex IV section.
+   */
+  annex_iv_chapeau: string;
   annex_iv_reference: ReadonlyArray<I18nAnnexIVItem>;
 }
 

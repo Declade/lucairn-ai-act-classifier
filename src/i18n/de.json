@@ -42,6 +42,17 @@
     "annex_iii_prefix": "Anhang III",
     "annex_iv_prefix": "Anhang IV"
   },
+  "annex_iii_chapeaux": {
+    "1": "Biometrie, soweit ihr Einsatz nach einschlägigem Unionsrecht oder nationalem Recht zugelassen ist:",
+    "2": "Kritische Infrastruktur: KI-Systeme, die bestimmungsgemäß als Sicherheitsbauteile im Rahmen der Verwaltung und des Betriebs kritischer digitaler Infrastruktur, des Straßenverkehrs oder der Wasser-, Gas-, Wärme- oder Stromversorgung verwendet werden sollen",
+    "3": "Allgemeine und berufliche Bildung",
+    "4": "Beschäftigung, Personalmanagement und Zugang zur Selbstständigkeit",
+    "5": "Zugänglichkeit und Inanspruchnahme grundlegender privater und grundlegender öffentlicher Dienste und Leistungen:",
+    "6": "Strafverfolgung, soweit ihr Einsatz nach einschlägigem Unionsrecht oder nationalem Recht zugelassen ist:",
+    "7": "Migration, Asyl und Grenzkontrolle, soweit ihr Einsatz nach einschlägigem Unionsrecht oder nationalem Recht zugelassen ist:",
+    "8": "Rechtspflege und demokratische Prozesse"
+  },
+  "annex_iv_chapeau": "Die in Artikel 11 Absatz 1 genannte technische Dokumentation muss mindestens die folgenden Informationen enthalten, soweit sie für das betreffende KI-System von Belang sind:",
   "annex_iv_reference": [
     {
       "number": "1.",
