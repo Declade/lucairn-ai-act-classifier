@@ -2,7 +2,7 @@
 
 - **Rules version:** `v0.3.0`
 - **Rules hash:** `4f540b92` (full: `4f540b92c8fcd8234c99a9c9ce46ed4b7393faaa9f3e2042835f8be93820f488`)
-- **Last run:** 2026-05-16T15:40:10.824Z
+- **Last run:** 2026-05-16T15:52:54.462Z
 - **Fixture corpus:** 71 cases
 
 > **What this report measures:** internal consistency between the curated 50-case Day-7 fixture corpus + 9-case v0.1.3 + 3-case v0.1.4 launch-feedback fixtures and the v0.1.0+ lexicon. The headline numbers below are **not** a measure of arbitrary real-world accuracy — the Day-7 corpus was shaped to match the lexicon's canonical phrases. Per-fixture accuracy uses set-equality on Day-7 + day14-launch-feedback fixtures and subset-containment on the 11 legacy day3/4/5 fixtures pending Day-8 backfill. See [METHODOLOGY.md §"Honest limitations"](./METHODOLOGY.md#honest-limitations) for the Day-8 polish backlog. The CI floor is 80% overall + 100% Article 5; current numbers exceed both.
