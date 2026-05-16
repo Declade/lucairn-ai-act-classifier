@@ -30,7 +30,7 @@ The CLI deterministic accuracy on the 50-case fixture corpus is 98.2% overall / 
 > Our AI tool screens CVs and ranks job applicants based on resume content and predicted job-fit scores; HR teams use the candidate ranking for hiring decisions.
 
 **Input (DE):**
-> Unser KI-Tool screent Lebensläufe und bewertet Bewerber anhand des Lebenslaufs und prognostizierter Eignungswerte; HR-Teams nutzen das Bewerberranking für Einstellungsentscheidungen.
+> Unser KI-Tool nutzt Lebenslauf-Screening und Bewerberauswahl, um anhand prognostizierter Eignungswerte Einstellungsentscheidungen zu treffen.
 
 **Expected classification:**
 
@@ -78,7 +78,7 @@ The CLI deterministic accuracy on the 50-case fixture corpus is 98.2% overall / 
 > Our AI system supports immigration officers in evaluating each asylum application by performing eligibility checks against case-law databases.
 
 **Input (DE):**
-> Unser KI-System unterstützt Einwanderungsbehörden bei der Bewertung jedes Asylantrags durch Berechtigungsprüfungen gegen Rechtsprechungsdatenbanken.
+> Unser KI-System bewertet jeden Asylantrag und unterstützt Einwanderungsbehörden bei Berechtigungsprüfungen gegen Rechtsprechungsdatenbanken.
 
 **Expected classification:**
 
