@@ -1,55 +1,79 @@
 # @lucairn/ai-act-classifier
 
-Kostenloses CLI, das jede Beschreibung eines KI-Anwendungsfalls den auslösenden Artikeln der EU-KI-Verordnung zuordnet.
+Kostenloses CLI, das jede Beschreibung eines KI-Anwendungsfalls den auslösenden Artikeln der EU-KI-Verordnung zuordnet. Keine Netzwerkverbindung, keine Konfiguration, kein API-Key im deterministischen Standardmodus.
 
-> **⚠ Status: Vorab-Gerüst (v0.1.1, Tag 10 eines 14-tägigen Builds).**
-> Build-Fenster: 2026-05-16 → 2026-05-29. Das Paket ist noch nicht einsatzbereit; die öffentliche CLI-Oberfläche landet an Tag 6, die Klassifizierungsregeln an Tag 3-5, der kuratierte Testdatensatz an Tag 7-8. Repository ist während des Builds privat und wird am Launch-Tag öffentlich.
+> **Status: v0.1.1, Tag 11 eines 14-tägigen öffentlichen Builds.**
+> Build-Fenster 2026-05-16 → 2026-05-29. Launch-Ziel 2026-05-29. Das Repository ist während des Build-Fensters privat und wird am Launch-Tag öffentlich.
 
-## Was das Tool leisten wird (Ziel v0.1.1)
-
-Eine freitext-formulierte Beschreibung eines KI-Anwendungsfalls (Englisch oder Deutsch) entgegennehmen und zurückgeben:
-
-- Welche Artikel und Anhänge der EU-KI-Verordnung gelten (Art. 5, 6, 10, 13, 14, 15, 50; Anhang III, Anhang IV)
-- Lucairns Drei-Kategorien-Pflichten-Overlay (Sanitizer / Nachweis / Inventar)
-- Zitations-URLs zu primären Regulator-Quellen (EUR-Lex Verordnung 2024/1689, EU-KI-Büro, BSI, BfDI)
-- Konfidenz-Wert + SHA-fixierter Regelsatz-Version, damit das Ergebnis reproduzierbar und verteidigbar ist
-
-## Installation (nach Launch)
+## Schnelleinstieg
 
 ```bash
-npx @lucairn/ai-act-classifier "KI-System, das Lebensläufe bewertet und Einstellungs-Empfehlungen ausgibt"
+# Deterministischer Modus (Standard — kein API-Key, kein Netzwerk)
+npx @lucairn/ai-act-classifier "KI-System, das Bewerber nach Lebenslauf bewertet"
+
+# --explain — Begründungs-Spur + EUR-Lex-Zitate + Beinahe-Treffer + Disambiguator-Zustand
+npx @lucairn/ai-act-classifier --explain "Emotionserkennung in Kundenservice-Telefonaten"
+
+# --explain --with-excerpt — fügt kuratierten Regulator-Kommentar hinzu
+npx @lucairn/ai-act-classifier --explain --with-excerpt \
+  "KI-erzeugtes politisches Deepfake-Video für Social-Media-Verbreitung"
+
+# Optionale LLM-gestützte Feature-Extraktion (nutzt Ihren eigenen API-Key)
+ANTHROPIC_API_KEY="<ihr-key>" npx @lucairn/ai-act-classifier --llm anthropic \
+  --explain "KI-System, das Bewerber nach Lebenslauf bewertet"
 ```
 
-Keine Konfiguration. Keine Netzwerkverbindung. Kein API-Key erforderlich für den deterministischen Modus.
+## Was das Tool leistet
 
-Optionale LLM-gestützte Feature-Extraktion mit einem von drei Anbietern (verwendet Ihren eigenen API-Key; wird ausschließlich an den gewählten Anbieter gesendet):
+- Klassifiziert jede freie Anwendungsfall-Beschreibung (Englisch oder Deutsch) gegen die EU-KI-Verordnung:
+  - **Artikel 5** verbotene Praktiken (acht Buchstaben a–h mit dem Disambiguator „ausschließlich auf Profiling" für Art. 5 Abs. 1 Buchst. d)
+  - **Artikel 6 + Anhang III** Hochrisiko-Klassifikation (acht Domänen mit Buchstaben-Eingrenzung, wo das Lexikon ausreichend ist)
+  - **Artikel 10 / 12 / 13 / 14 / 15** Pflichten aus der Hochrisiko-Kaskade
+  - **Artikel 50** Transparenzpflichten (vier Absatz-Pfade)
+  - **Anhang IV** Pflicht zur technischen Dokumentation
+- Liefert Lucairns Drei-Kategorien-Pflichten-Overlay (Sanitizer / Nachweis / Inventar)
+- Verweist auf die EUR-Lex-Quelle pro ausgelöstem Artikel sowie auf die Service-Desk-Seite des EU-AI-Office und (optional) den Lucairn-Kommentar
+- Stempelt Regelsatz-Version und SHA in jede Ausgabe — dieselbe Eingabe auf demselben Regelsatz erzeugt eine byte-stabile Ausgabe
+- Verfügbar als CLI-Binary (dieses Paket) und als Bibliothek (`formatExplain` und `classify` exportiert aus `@lucairn/ai-act-classifier`)
 
-```bash
-ANTHROPIC_API_KEY="<ihr-key>" npx @lucairn/ai-act-classifier --llm anthropic "..."
-OPENAI_API_KEY="<ihr-key>"    npx @lucairn/ai-act-classifier --llm openai    "..."
-GROQ_API_KEY="<ihr-key>"      npx @lucairn/ai-act-classifier --llm groq      "..."
-```
+## Was das Tool NICHT leistet
 
-## `--llm` Modus (optional, 3 Anbieter)
+- **Keine Rechtsberatung.** Informationelles Werkzeug. Siehe [Haftungsausschluss](#haftungsausschluss).
+- **Keine Lucairn-Datenverarbeitung.** Im deterministischen Modus verlässt Ihr Text Ihren Rechner nicht. Im `--llm`-Modus wird Ihr Text nur an den von Ihnen gewählten LLM-Anbieter (über Ihren eigenen API-Key) gesendet — Lucairn steht nicht im Datenpfad.
+- **Keine Telemetrie, keine Analytics, kein Remote-Logging.** Der Quelltext ist prüfbar.
+- **Kein Ersatz für die Konformitätsbewertung nach der EU-KI-Verordnung.** Eine Hochrisiko-Klassifikation löst die Pflichten der Artikel 9 bis 15 aus, einschließlich der Konformitätsbewertung durch eine notifizierte Stelle für bestimmte Anhang-III-Kategorien. Dieses Tool hilft beim Pflichten-Scoping; es führt die Konformitätsbewertung nicht durch.
 
-Der Standardmodus ist deterministisch: ein Stichwort- und Phrasen-Matcher in DE+EN gegen das kuratierte Lexikon. Kein Netzwerk, kein API-Key, keine Kosten. Dies ist der empfohlene Modus für die meisten Anwendungsfälle — die deterministische Genauigkeit liegt auf dem kuratierten 50-Fall-Korpus über der LLM-Genauigkeit.
+## Flag `--explain` (Tag 11)
 
-Der optionale `--llm <provider>` Modus ersetzt den Stichwort-Extraktor durch ein LLM für semantische Feature-Extraktion. Die Regel-Engine, die die Artikel auswählt, ist **unverändert** — nur die Feature-Extraktion wird ersetzt. Das LLM ist darauf beschränkt, Phrasen aus dem kuratierten Lexikon zu zitieren; jede halluzinierte Phrase wird verworfen, bevor die Regel-Engine sie sieht.
+Das Flag `--explain` liefert zusätzlich zur Klassifikation eine strukturierte Begründungs-Spur:
 
-**Unterstützte Anbieter und Standard-Modelle:**
+- **Pro ausgelöstem Artikel:** wörtlicher EUR-Lex-Kopfsatz + getroffene Lexikon-Phrasen + Buchstaben-Eingrenzungs-Zweig + einzeilige Begründung + Tier-1-Zitations-URL
+- **Disambiguator-Zustand:** für Art. 5 Abs. 1 Buchst. d wird angezeigt, ob das Qualifikationsmerkmal „ausschließlich auf Profiling" erfüllt war (sonst Weiterleitung in Anhang III ¶6 Hochrisiko)
+- **Beinahe-Treffer:** bis zu zwei Artikel, die geprüft, aber NICHT ausgelöst wurden — etwa Kaskaden-Artikel, die durch ein Artikel-5-Verbot unterdrückt sind, oder die Forschungs-Ausnahme nach Art. 2 Abs. 8
+- **Optional `--with-excerpt`:** hängt einen handkuratierten Regulator-Kommentar aus dem ausgelieferten Auszugs-Korpus an (fünf Schlüssel × EN+DE = zehn Dateien unter `src/content/blog-excerpts/`)
+
+Drei Ausgabeformate: `--explain-format markdown` (Standard — gut zum Einfügen in Beraterdokumente), `--explain-format json` (strukturiert, snapshot-stabil, für programmatische Konsumenten), `--explain-format text` (reines ASCII für Terminal-Pipes).
+
+Die `--explain`-Ausgabe ist so gestaltet, dass sie direkt in eine Datenschutz-Folgenabschätzung, in ein Audit-Arbeitspapier oder in eine EU-KI-Verordnungs-Compliance-Checkliste übernommen werden kann — als Beleg für eine verteidigungsfähige Klassifikation. Jeder ausgelöste Artikel verweist auf die gesetzliche Quelle; die SHA-fixierte Regelsatz-Version macht das Ergebnis reproduzierbar.
+
+## Modi — deterministisch oder `--llm`
+
+Der Standardmodus ist **deterministisch**: ein kuratierter EN+DE-Stichwort- und Phrasen-Matcher gegen das Lexikon unter `src/data/patterns.{en,de}.json`. Kein Netzwerk, kein API-Key, keine Kosten. Auf dem kuratierten 50-Fall-Testdatensatz ist der deterministische Modus genauer als jeder LLM-Modus (der Korpus wurde so geformt, dass er den kanonischen Lexikon-Phrasen entspricht). Empfohlen für die meisten Anwendungsfälle.
+
+Der optionale `--llm <provider>`-Modus ersetzt den Stichwort-Extraktor durch ein LLM für semantische Feature-Extraktion. Die nachgelagerte Regel-Engine, die die Artikel tatsächlich auswählt, bleibt **unverändert**. Das LLM ist darauf beschränkt, Phrasen aus dem kuratierten Lexikon zu zitieren; jede halluzinierte Phrase wird verworfen, bevor die Regel-Engine sie sieht. Drei Anbieter werden unterstützt, jeweils mit Ihrem eigenen API-Key:
 
 | Anbieter | Standard-Modell | Kosten pro Aufruf (ca.) | Kosten pro 50-Fixture-Lauf (ca.) |
 |---|---|---|---|
-| `anthropic` | Claude Haiku 4.5 | \$0,003 | \$0,13 |
-| `openai` | GPT-4o-mini | \$0,0005 | \$0,025 |
-| `groq` | Llama 3.3 70B Versatile | \$0,0014 | \$0,07 |
+| `anthropic` | Claude Haiku 4.5 | 0,003 $ | 0,13 $ |
+| `openai` | GPT-4o-mini | 0,0005 $ | 0,025 $ |
+| `groq` | Llama 3.3 70B Versatile | 0,0014 $ | 0,07 $ |
 
-(Preise zum Versanddatum 2026-05-16. Modell pro Aufruf via SDK-Parameter `model` überschreibbar; die CLI verwendet derzeit die Standardwerte.)
+Preise zum Stand 2026-05-16. Modell pro Aufruf via `--llm <provider> --model <name>` überschreibbar.
 
-**Einrichtung:**
+### Einrichtung für den `--llm`-Modus
 
 ```bash
-# Optionale Abhängigkeiten — installieren Sie nur die SDKs, die Sie nutzen werden.
+# Optionale Abhängigkeiten — installieren Sie nur die SDK(s), die Sie nutzen.
 pnpm add @anthropic-ai/sdk      # für --llm anthropic
 pnpm add openai                 # für --llm openai UND --llm groq (Groq nutzt das OpenAI-SDK)
 
@@ -63,76 +87,88 @@ export GROQ_API_KEY="<ihr-groq-key>"
 ai-act-classify --llm groq "KI-System, das Bewerber nach Lebenslauf bewertet"
 ```
 
-> ⚠️ **Hinweis zum LLM-Modus-Nicht-Determinismus.** LLMs sind probabilistisch; ein erneuter
-> Aufruf auf derselben Eingabe kann unterschiedliche (korrelierte aber nicht identische)
-> Merkmale zurückliefern. Tag 9 maß Anthropic Haiku 4.5 bei **93,5 %–97,6 %**
-> Gesamtgenauigkeit über zwei unabhängige Läufe auf dem 50-Fall-Korpus. Die Cache-Schicht
-> (nächster Abschnitt) mildert dies, indem sie das Ergebnis des ersten Aufrufs speichert
-> — Wiederholungen auf identischen Eingaben sind byte-stabil. Für reproduzierbare
-> Klassifizierung auf neuen Eingaben empfehlen wir den deterministischen Standardmodus.
-
-**Tag-9 Genauigkeits-Delta (Anthropic) gegenüber dem deterministischen Basiswert (50-Fall-Korpus):**
-
-| Metrik | Deterministisch (Standard) | `--llm anthropic` (Tag 9) |
-|---|---|---|
-| Gesamtgenauigkeit | 98,2% | 97,6% _(einer von zwei beobachteten Läufen; Bereich 93,5–97,6 %)_ |
-| Art. 5 Verbots-Erkennung | 100,0% | 100,0% |
-| Binäre Hochrisiko-Klassifikation | 98,0% | 98,0% |
-
-OpenAI- + Groq-Genauigkeitszahlen werden ergänzt, sobald der Harness gegen diese Anbieter ausgeführt wurde. Marc kann jeden Bericht bei Bedarf mit `<PROVIDER>_API_KEY=... pnpm accuracy:llm-<provider>` neu erzeugen.
-
-Der deterministische Modus ist auf dem kuratierten Korpus in der Regel zuverlässiger, weil der Korpus so geformt wurde, dass er den kanonischen Phrasen des Lexikons entspricht. Der LLM-Modus tauscht Reproduzierbarkeit gegen eine bessere Abdeckung von semantisch ähnlichen Paraphrasen ein, die nicht im Lexikon erscheinen (z. B. deutsche Komposita wie `Emotionserkennungssystems`, die der deterministische n-Gramm-Extraktor verfehlt). Wählen Sie den Modus, der zu Ihrer Eingabe-Verteilung passt.
-
-Berichte: [accuracy/REPORT.md](./accuracy/REPORT.md) (deterministisch, CI-überwacht), [accuracy/REPORT.llm-anthropic.md](./accuracy/REPORT.llm-anthropic.md), [accuracy/REPORT.llm-openai.md](./accuracy/REPORT.llm-openai.md) und [accuracy/REPORT.llm-groq.md](./accuracy/REPORT.llm-groq.md).
+> **Hinweis zur LLM-Modus-Nichtdeterministik.** LLMs sind probabilistisch; ein erneuter Aufruf mit derselben Eingabe kann unterschiedliche (korrelierte, aber nicht identische) Merkmale liefern. Tag 9 hat Anthropic Haiku 4.5 mit 93,5–97,6 % Gesamtgenauigkeit über zwei unabhängige Läufe auf dem 50-Fall-Korpus gemessen. Die Cache-Schicht (nächster Abschnitt) mildert das ab — Wiederholungen auf identischen Eingaben sind byte-stabil. Für reproduzierbare Klassifikation auf neuen Eingaben empfehlen wir den deterministischen Standardmodus.
 
 ## Cache-Schicht
 
-Die Ergebnisse des LLM-Modus werden auf der Festplatte unter `~/.cache/lucairn-ai-act-classifier/llm/` zwischengespeichert (respektiert `XDG_CACHE_HOME`). Der Cache-Schlüssel ist `sha256(provider + model + lexikon-version + lang + normalisierte-eingabe)`, sodass dieselbe Eingabe auf derselben Lexikon-Version ein byte-stabiles Ergebnis liefert, ohne die API zu belasten.
+LLM-Modus-Ergebnisse werden auf der Festplatte unter `~/.cache/lucairn-ai-act-classifier/llm/` gespeichert (`XDG_CACHE_HOME` wird respektiert). Der Cache-Schlüssel ist `sha256(provider + model + lexikon-version + prompt-checksum + lang + normalisierte-eingabe)`, sodass dieselbe Eingabe auf derselben Regelsatz- und Prompt-Version ein byte-stabiles Ergebnis liefert, ohne die API zu belasten.
 
-> 🔒 **Cache-Dateiinhalt:** Jeder Cache-Eintrag speichert das vollständige `ExtractedFeatures`-Objekt einschließlich des ursprünglichen Eingabetexts (damit die Regel-Engine bei einem Cache-Hit ihre Zitationskette neu rendern kann). Der Cache liegt im benutzerprivaten Verzeichnis `~/.cache/` und wird nirgendwohin übertragen. Für sensible Anwendungsfall-Beschreibungen entweder mit `--no-cache` (einmalig) ausführen oder `~/.cache/lucairn-ai-act-classifier/` in die Sitzungs-Aufräumroutine aufnehmen (wiederkehrend).
+> **Cache-Dateiinhalt:** Jeder Cache-Eintrag speichert das vollständige `ExtractedFeatures`-Objekt einschließlich des ursprünglichen Eingabetexts (damit die Regel-Engine bei einem Cache-Hit ihre Zitationskette neu rendern kann). Cache-Dateien werden mit Modus 0600 (Nutzer-nur auf POSIX-Systemen) geschrieben; das Cache-Verzeichnis wird mit Modus 0700 erstellt. Der Cache liegt im benutzerprivaten Verzeichnis `~/.cache/` und wird nirgendwohin übertragen. Für sensible Anwendungsfall-Beschreibungen: entweder einmalig mit `--no-cache` ausführen oder `~/.cache/lucairn-ai-act-classifier/` in die Sitzungs-Aufräum-Routine aufnehmen.
 
-- **Cache-Hit:** typischerweise <100 ms (kein Netzwerk) gegenüber ~1–5 s für einen frischen API-Aufruf — über 10-facher Speedup bei jeder Wiederholung.
-- **Cache-Miss:** der Provider wird aufgerufen, das Ergebnis in den Cache geschrieben, und die zwischengespeicherten Merkmale bedienen jeden weiteren Aufruf, bis sich die Lexikon-Version ändert.
-- **Umgehung:** mit `--no-cache` einen frischen API-Aufruf erzwingen (für diesen Aufruf wird der Cache weder gelesen noch geschrieben).
-- **Invalidierung:** automatisch bei Lexikon-Version-Bump (z. B. v0.1.1 → v0.2.0); die Lexikon-Version ist Teil des Cache-Schlüssels, sodass alte Einträge nach einem Upgrade einfach nicht mehr referenziert werden.
-- **Fehlgeschlagene Aufrufe werden nicht zwischengespeichert.** Nur erfolgreiche Provider-Ergebnisse landen im Cache.
+- **Cache-Hit:** typischerweise <100 ms (kein Netzwerk) gegenüber ~1–5 s für einen frischen API-Aufruf.
+- **Cache-Miss:** der Anbieter wird aufgerufen, das Ergebnis atomar in den Cache geschrieben (`<key>.tmp` → `rename`), und die zwischengespeicherten Merkmale bedienen jeden weiteren Aufruf, bis sich die Lexikon-Version ODER der Prompt-Checksum ändert.
+- **Umgehen:** mit `--no-cache` wird ein frischer API-Aufruf erzwungen (der Cache wird für diesen Aufruf weder gelesen noch geschrieben).
+- **Invalidierung:** automatisch bei Lexikon-Version-Bump (z. B. v0.1.1 → v0.2.0) oder bei jeder Änderung am LLM-System-Prompt / Tool-Schema; beides ist Teil des Cache-Schlüssels.
+- **Fehlgeschlagene Aufrufe werden NICHT zwischengespeichert.** Nur erfolgreiche Provider-Ergebnisse landen im Cache.
 
 Cache manuell löschen: `rm -rf ~/.cache/lucairn-ai-act-classifier`.
 
 ## Architektur (in einem Absatz)
 
-Regelwerk-zuerst-Hybrid. Eine deterministische Regel-Engine in TypeScript wertet Art. 5, 6 + Anhang III, 10, 13, 14, 15, 50 gegen aus Ihrer Eingabe extrahierte Merkmale aus. Die Standard-Extraktion ist ein Stichwort- und Phrasen-Mustererkenner in DE+EN — funktioniert offline, ohne API-Key. Der optionale `--llm`-Modus nutzt Ihren eigenen API-Key für genauere Feature-Extraktion; die Regel-Engine wählt die Artikel weiterhin deterministisch aus. Jede Ausgabe enthält die Regelsatz-Version (SHA-fixiert), sodass dieselbe Eingabe immer dieselbe Klassifizierung erzeugt.
+Regelwerk-zuerst-Hybrid. Eine deterministische TypeScript-Regel-Engine wertet die Artikel 5, 6 + Anhang III, 10, 12, 13, 14, 15 und 50 gegen Merkmale aus, die aus Ihrer Eingabe extrahiert werden. Die Standard-Extraktion ist ein Stichwort- und Phrasen-Mustererkenner in EN+DE — funktioniert offline, ohne API-Key. Der optionale `--llm`-Modus nutzt Ihren eigenen API-Key für eine bessere Feature-Extraktion; die Regel-Engine wählt die Artikel weiterhin deterministisch aus. Jede Ausgabe verweist auf ihre Regelsatz-Version (SHA-fixiert) — dieselbe Eingabe erzeugt immer dieselbe Klassifikation. Quellbaum: `src/extract/` (Stichwort- und Spracherkennung + LLM-Anbieter + Cache), `src/rules/` (Pro-Artikel-Module mit Cite-and-Match-Zusammenfassungen), `src/format/` (CLI-Tabelle + JSON + Markdown + `--explain`-Ausgabe), `src/data/` (kuratierte Lexika + Anhang-III-Metadaten + Zitate), `src/i18n/` (EN+DE-Lokalisierungsbündel), `src/content/blog-excerpts/` (kuratierte Regulator-Kommentare).
 
 ## Genauigkeit (Accuracy)
 
 Der Klassifizierer wird gegen einen 50-Fall-zweisprachigen Fixture-Korpus (CC-BY-4.0) gebenchmarkt: 24 Anhang III Hochrisiko + 8 Art. 5 verboten + 8 Art. 50 Transparenz + 10 Negativfälle; 21 EN + 29 DE. Aktuelle Zahlen auf dem v0.1.1-Regelsatz:
 
-- **Gesamt:** 98,2% (granulare Feld-Trefferquote)
-- **Art. 5 Verbots-Erkennung** (sicherheitskritisch): 100,0%
-- **Binäre Hochrisiko-Klassifikation:** 98,0%
+- **Gesamtgenauigkeit:** 98,2 % (granulare Feld-Trefferquote)
+- **Art. 5 Verbots-Erkennung** (sicherheitskritisch): 100,0 %
+- **Binäre Hochrisiko-Klassifikation:** 98,0 %
 
-CI-Untergrenze (festgelegt): ≥80% Gesamt + 100% Art. 5. v1.0-Release-Ziel: ≥85% Gesamt + 100% Art. 5 + ≥90% binäre Hochrisiko-Klassifikation.
+CI-Untergrenze (festgelegt): ≥ 80 % Gesamt + 100 % Art. 5. v1.0-Release-Ziel: ≥ 85 % Gesamt + 100 % Art. 5 + ≥ 90 % binäre Hochrisiko-Klassifikation.
 
-Die Schlagzeile spiegelt die interne Konsistenz zwischen kuratiertem Fixture-Korpus und kuratiertem Lexikon wider — nicht die Genauigkeit auf beliebigen realen Eingaben. v0.1.1 (Tag 8) hat fünf Day-7-DE-Fixtures mit natürlichem Deutsch nach Berater-Urteil umgeschrieben und das Lexikon um natürlich-deutsche Varianten erweitert; eine verbleibende Lücke wurde aufgedeckt (Compound-Noun-Tokenisierung bei `Emotionserkennungssystems`) und in [accuracy/KNOWN-MISCLASSIFICATIONS.md](./accuracy/KNOWN-MISCLASSIFICATIONS.md) G-5 dokumentiert, statt sie wegzudesignen. Siehe [accuracy/METHODOLOGY.md](./accuracy/METHODOLOGY.md) §"Honest limitations" für die vollständige Offenlegung.
+Die Schlagzeile spiegelt die interne Konsistenz zwischen kuratiertem Fixture-Korpus und kuratiertem Lexikon wider — nicht die Genauigkeit auf beliebigen realen Eingaben. v0.1.1 (Tag 8) hat fünf Tag-7-DE-Fixtures mit natürlichem Deutsch nach Berater-Urteil umgeschrieben und das Lexikon um natürlich-deutsche Varianten erweitert; eine verbleibende Lücke wurde aufgedeckt (Compound-Noun-Tokenisierung bei `Emotionserkennungssystems`) und in [accuracy/KNOWN-MISCLASSIFICATIONS.md](./accuracy/KNOWN-MISCLASSIFICATIONS.md) §G-5 dokumentiert, statt sie wegzudesignen. Siehe [accuracy/METHODOLOGY.md](./accuracy/METHODOLOGY.md) §"Honest limitations" für die vollständige Offenlegung.
 
-Berichte: [accuracy/REPORT.md](./accuracy/REPORT.md).
+Berichte: [accuracy/REPORT.md](./accuracy/REPORT.md) (deterministisch, CI-überwacht), [accuracy/REPORT.llm-anthropic.md](./accuracy/REPORT.llm-anthropic.md), [accuracy/REPORT.llm-openai.md](./accuracy/REPORT.llm-openai.md), [accuracy/REPORT.llm-groq.md](./accuracy/REPORT.llm-groq.md).
 
-Fehlklassifikation gefunden? Öffnen Sie ein GitHub-Issue mit der Anwendungsfall-Beschreibung, Ihrer erwarteten Klassifikation, Ihrer Begründung (mit Zitat des entsprechenden EUR-Lex-Absatzes aus Verordnung (EU) 2024/1689) und der aktuellen Klassifizierer-Ausgabe.
+## Methodik
+
+Die Klassifizierungs-Methodik ist unter [accuracy/METHODOLOGY.md](./accuracy/METHODOLOGY.md) dokumentiert. Die wichtigsten Punkte:
+
+- **Cite-and-Match-Disziplin.** Jeder ausgelöste Artikel trägt eine EUR-Lex-Zitations-URL im Ergebnisobjekt. Der interne `regulator-validator`-Agent überprüft jedes `source`- und `summary_*`-Feld vor jedem PR-Merge erneut gegen EUR-Lex EN+DE.
+- **Lexikon-zuerst Feature-Extraktion.** Der deterministische Extraktor matcht n-Gramme der Eingabe gegen ein kuratiertes Lexikon unter `src/data/patterns.{en,de}.json`. Der LLM-Modus nutzt dasselbe Lexikon als Halluzinations-Wächter — jede vom LLM gelieferte Phrase, die nicht im Lexikon steht, wird verworfen, bevor die Regel-Engine sie sieht.
+- **Tier-1-Quellen-Allowlist.** Fixture-Korpus-`source_url`-Felder sind auf EUR-Lex / EU-AI-Office Service Desk / BSI / BfDI / Bitkom beschränkt — dieselben Quellen, auf die unsere `--explain`-Ausgabe verweist.
+- **Ehrliche Offenlegung.** Bekannte Lücken und das v0.2-Polish-Backlog sind öffentlich unter [accuracy/KNOWN-MISCLASSIFICATIONS.md](./accuracy/KNOWN-MISCLASSIFICATIONS.md).
+
+## Zitate
+
+Der Klassifizierer verweist auf folgende Regulator-Quellen:
+
+- **EUR-Lex Verordnung (EU) 2024/1689:** [DE HTML](https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=OJ:L_202401689) · [EN HTML](https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=OJ:L_202401689) · [DE PDF](https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689) · [EN PDF](https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689) — die Tier-1-Quelle.
+- **EU-AI-Office Service Desk:** [artificialintelligenceact.eu/de](https://artificialintelligenceact.eu/de/) · [artificialintelligenceact.eu/en](https://artificialintelligenceact.eu/) — Tier-2-Landingpages pro Artikel und Anhang.
+- **BSI** (Bundesamt für Sicherheit in der Informationstechnik): [bsi.bund.de](https://www.bsi.bund.de/) — Leitlinien zur KI-Cybersicherheit und Artikel-15-Robustheit.
+- **BfDI** (Bundesbeauftragte für den Datenschutz und die Informationsfreiheit): [bfdi.bund.de](https://www.bfdi.bund.de/) — Zusammenspiel der KI-Verordnung mit der DSGVO.
+- **Bitkom**: [bitkom.org](https://www.bitkom.org/) — Branchenleitfaden für den deutschen Mittelstand zur Umsetzung der KI-Verordnung.
+
+Lucairns Kommentar-Inhalte aus dem `--explain --with-excerpt`-Auszugs-Korpus sind handkuratierte Originaltexte und stehen wie der Quellcode unter MIT-Lizenz.
+
+## Lücken und bekannte Fehlklassifikationen
+
+Der Klassifizierer unterscheidet bewusst NICHT:
+
+- Anbieter- vs. Betreiber-Status. Beide Oberflächen treffen dieselbe Regel-Engine.
+- Ob ein System tatsächlich eine gesetzliche Ausnahme in Anspruch nehmen kann (z. B. die Strafverfolgungs-Ausnahme nach Art. 50 Abs. 1). Die Ausnahme-Sprache wird WÖRTLICH im Kopfsatz-Output ausgegeben, damit der Berater sie nachgelagert anwenden kann.
+- Vollständige Buchstaben-Eingrenzung für jeden Anhang-III-Absatz. Die Abdeckung ist vollständig über die Absätze 1–8 mit konservativen Standards: bei mehrdeutiger Eingrenzung geben wir ein leeres Buchstaben-Array zurück, statt zu viel zu behaupten.
+- Pluralformen und deutsche Morphologie im Stichwort-Extraktor. Komposita wie `Emotionserkennungssystems` sind eine bekannte v0.2-Lücke (siehe [accuracy/KNOWN-MISCLASSIFICATIONS.md](./accuracy/KNOWN-MISCLASSIFICATIONS.md) §G-5).
+
+Fehlklassifikation gefunden? Öffnen Sie ein GitHub-Issue mit: (a) der Anwendungsfall-Beschreibung, (b) Ihrer erwarteten Klassifikation, (c) Ihrer Begründung mit Verweis auf den entsprechenden EUR-Lex-Absatz der Verordnung (EU) 2024/1689 und (d) der aktuellen Klassifizierer-Ausgabe. Wir reagieren auf Issues während der mitteleuropäischen Geschäftszeiten.
 
 ## Lizenz
 
 Quellcode: MIT (siehe [LICENSE](./LICENSE)).
-Testdatensatz: CC-BY-4.0 (siehe [DATASET-LICENSE](./DATASET-LICENSE)).
+Testdatensatz und kuratierte Blog-Auszüge: CC-BY-4.0 (siehe [DATASET-LICENSE](./DATASET-LICENSE)).
 
 ## Haftungsausschluss
 
 Dieses Werkzeug dient ausschließlich der Information. Es stellt **keine Rechtsberatung** dar. Es begründet kein Mandatsverhältnis. Die Ausgabe ist vor jeder Compliance-Entscheidung durch qualifizierte Rechtsberatung zu überprüfen. Lucairn / Declade UG (i.G.) schließen jede Haftung aus. Siehe [LICENSE](./LICENSE) §AS-IS-Klausel.
 
-Der Klassifizierer spiegelt eine Interpretation der EU-KI-Verordnung zum Stand der in jeder Ausgabe gedruckten Regelsatz-Version wider. Das EU-KI-Büro veröffentlicht laufend Leitlinien, die Interpretationen ändern können. Jede Ausgabe verweist auf die Regulator-Quelle (EUR-Lex, EU-KI-Büro, BSI, BfDI) zur direkten Verifikation.
+Der Klassifizierer spiegelt eine Interpretation der EU-KI-Verordnung zum Stand der in jeder Ausgabe gedruckten Regelsatz-Version wider. Das EU-KI-Büro veröffentlicht laufend Leitlinien, die Interpretationen ändern können. Jede Ausgabe verweist auf die Regulator-Quelle zur direkten Verifikation.
 
 ## Über
 
 Entwickelt von [Lucairn](https://lucairn.eu) — der Compliance-Nachweis-Layer für die EU-KI-Verordnung. Betrieben durch Declade UG (i.G.).
+
+Hosted UI-Spiegel folgt an Tag 13: `https://lucairn.eu/tools/ai-act-classifier`.
 
 Zitiervorschlag:
 
