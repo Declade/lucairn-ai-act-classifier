@@ -176,7 +176,7 @@ The classifier reflects one interpretation of the EU AI Act as of the rule-set v
 
 ## About
 
-Built by [Lucairn](https://lucairn.eu) — the EU AI Act compliance evidence layer. Operated pre-incorporation by Marc Schülke as a natural person; Lucairn UG (haftungsbeschränkt) i.Gr. (formation initiated, pending Handelsregister entry).
+Built by [Lucairn](https://lucairn.eu) — the AI evidence layer for EU regulated companies. Operated pre-incorporation by Marc Schülke as a natural person; Lucairn UG (haftungsbeschränkt) i.Gr. (formation initiated, pending Handelsregister entry).
 
 Hosted UI: `https://lucairn.eu/tools/ai-act-classifier`.
 

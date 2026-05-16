@@ -176,7 +176,7 @@ Der Klassifizierer spiegelt eine Interpretation der EU-KI-Verordnung zum Stand d
 
 ## Über
 
-Entwickelt von [Lucairn](https://lucairn.eu) — der Compliance-Nachweis-Layer für die EU-KI-Verordnung. Vor Inkorporation betrieben als natürliche Person durch Marc Schülke; Lucairn UG (haftungsbeschränkt) i.Gr. (Gründung eingeleitet; vor Handelsregistereintrag).
+Entwickelt von [Lucairn](https://lucairn.eu) — der KI-Beweis-Schicht für die EU-KI-Verordnung. Vor Inkorporation betrieben als natürliche Person durch Marc Schülke; Lucairn UG (haftungsbeschränkt) i.Gr. (Gründung eingeleitet; vor Handelsregistereintrag).
 
 Hosted UI-Spiegel: `https://lucairn.eu/tools/ai-act-classifier`.
 
