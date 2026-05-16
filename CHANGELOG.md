@@ -4,6 +4,36 @@ All notable changes to `@lucairn/ai-act-classifier` will be documented in this f
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-05-16
+
+Article 4 (AI literacy) + GPAI Articles 53 + 55 — two new rule modules closing the two largest coverage gaps adversarial reviewers flagged on v0.1.x → v0.2.0 retests. Both modules are non-cascade roots (independent of Annex III high-risk and Article 5 prohibition status). The three-category overlay is intentionally NOT extended — neither Art 4 nor GPAI is in any Cat 1/2/3 pairing (matches the Article 50 precedent).
+
+### Added
+
+- **Article 4 — AI literacy rule module** (`src/rules/article-4.ts`). New non-cascade root: providers AND deployers of an AI system must ensure their staff (and other persons dealing with operation/use on their behalf) have a sufficient level of AI literacy. Horizontal obligation; no high-risk gate; no carve-out; single paragraph. Triggered via the new `article_4_ai_literacy.provider_or_deployer_with_staff` lexicon group (25 EN + 26 DE composite phrases encoding the provider-or-deployer + staff/operator combination). Verbatim Tier-1 EN+DE chapeau (Tier-2 EU AI Office Service Desk re-verified 2026-05-16 against the Tier-3 FLI mirror; corrects "on which" → "on whom" + 4 DE paraphrase drifts from a Tier-3 mirror lookup).
+- **GPAI Articles 53 + 55 rule module** (`src/rules/article-53-gpai.ts`). Two distinct triggers in one module. Article 53 fires when a named foundation model OR generic foundation-model phrasing is detected. Article 55 fires iff Article 53 fired AND systemic-risk markers are detected. New `gpai_models` lexicon group with 3 sub-categories: `named_foundation_models` (32 entries — GPT, Claude, Llama, Gemini, Mistral, Mixtral, Falcon, DeepSeek, Qwen, Command R, Yi, PaLM; same list in EN + DE since model names are language-neutral proper nouns), `generic_foundation_model_phrasing` (12 EN + 10 DE entries), `systemic_risk_markers` (conservative — 8 EN + 5 DE entries; Art 55 should fire rarely). Verbatim Tier-1 EN+DE chapeaux for Art 53(1) and Art 55(1) (Tier-2 EU AI Office Service Desk; corrects "für allgemeine Zwecke" → "mit allgemeinem Verwendungszweck" drift in the Tier-3 mirror).
+- **`ClassifyResult` shape extended**: now includes `article_4: Article4Result` and `gpai: GPAIResult` fields. Public API barrel re-exports new types (`Article4Result`, `Article4TriggeredBy`, `GPAIResult`, `GPAITriggeredBy`).
+- **JSON Schema artifact (`dist/classify-result.schema.json`) extended** with `article_4` + `gpai` sub-schemas + new entries in the top-level `required[]`. Ajv-validation test re-runs clean across all 71 fixtures.
+- **5 new test fixtures under `test/fixtures/use-cases/day15-v0.3.0/`**: `01-art4-staff-training-en`, `02-art4-staff-training-de`, `03-art53-gpt5-foundation-en`, `04-art53-llama-deployer-de` (dual-applicability — Art 53 + Art 4), `05-art55-systemic-risk-en`.
+- **Per-rule spec coverage**: `test/rules/article-4.spec.ts` (16 tests) + `test/rules/article-53-gpai.spec.ts` (22 tests). Mirror the article-50.spec.ts structure (determinism + type-guards + positive/negative + verbatim chapeau assertions + source URL). Both lock the Tier-1 verbatim text against future Tier-3-mirror drift.
+- **Accuracy harness extended**: `FixtureExpected` gains optional `article_4_applicable` / `gpai_article_53_applicable` / `gpai_article_55_applicable` (additive — legacy fixtures with absent fields are skipped, not failed). `day15-v0.3.0` directory added to fixture discovery.
+- **2 new citations entries** (`article_4`, `gpai_articles_53_55`) in `src/data/citations.json` + `CitationArticleId` union extended.
+
+### Changed
+
+- **`RULES_HASH` rotated.** Two new lexicon groups + Art 4 lexicon broadening + GPAI lexicon (32 named-model entries + 12 EN + 10 DE generic-phrasing + 8 EN + 5 DE systemic-risk markers) change the SHA-256 input. Normal — every v0.1.x → v0.1.x patch rotated it. Citations.json is intentionally NOT in the hash input (per locked decision #7 — documentation provenance, not rules data).
+- **Accuracy harness corpus expanded** from 66 to 71 fixtures. Overall accuracy 98.7 % → 98.8 %, binary high-risk 98.5 % → 98.6 %, Article 5 100 % (unchanged invariant). The 1 pre-existing misclassification (`fixture-day7-28-art50-emotion-marketing-de`) is unchanged — documented in v0.2.0 "Not in this release".
+- **Snapshot projections extended**. `test/classify/snapshots.spec.ts` + `test/rules/snapshots.spec.ts` projections now include `article_4` + `gpai` so the snapshot diffs lock the new fields. All 35 affected snapshots regenerated; the diffs confirm only Article-4/GPAI field additions + `rules_hash` rotation appear (no other regressions).
+- **Pipeline header comment** updated from "10-stage" to "12-stage" to reflect the two new non-cascade roots inserted at stage 9b + 9c (between Article 50 and the three-category overlay).
+- **`formatJson` KEY_ORDER extended** with `article_4` + `gpai` in stable position (right after `article_50`, before `three_category`).
+
+### Not in this release
+
+- **Hosted UI `/tools/ai-act-classifier` page update.** Scoped to a separate PR on `Declade/theveil-website` (see PRD §6). Includes the bumped `@lucairn/ai-act-classifier` dependency, version badge update `0.2.0` → `0.3.0`, zero-result-UX copy that removes Art 4 + GPAI from the "what's NOT covered" enumeration, and the new Plausible-analytics scope-honesty disclosure distinguishing CLI ("no data leaves your laptop") from hosted UI scope.
+- **GPAI sub-letter classification (Art 53(1) a-d, Art 55(1) a-d).** v0.3.0 surfaces the chapeau(x) verbatim; consultants apply each sub-letter downstream.
+- **Wizard surface (`src/wizard/`) extension for Art 4 + GPAI**. The wizard remains 3-step (Art 5 / Annex III / Art 50). Art 4 + GPAI fire from free-text descriptions; they are not user-facing yes/no toggles in this release.
+- **`fixture-day7-28-art50-emotion-marketing-de`** pre-existing misclassification — unchanged.
+
 ## [0.2.0] — 2026-05-16
 
 Guided-wizard mode + scope-honest UX + paraphrase tightening. Triggered by Marc's live-test of v0.1.4: a ServiceNow-consultant policy question returned a terse "No prohibition, high-risk, or transparency obligation triggered" with zero context — technically correct, useless to a real user. The classifier accepts free-form text but is ONLY equipped to handle ONE shape: AI system descriptions in regulator-adjacent vocabulary. Q&A questions return "nothing triggered" with no honest scope explanation.

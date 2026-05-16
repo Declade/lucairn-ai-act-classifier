@@ -1,6 +1,6 @@
 {
   "language": "de",
-  "version": "v0.2.0",
+  "version": "v0.3.0",
   "_meta": {
     "notice": "Saat-Lexikon für v0.1.x. Jeder Eintrag `source` MUSS verbatim gegen das deutsche EUR-Lex-Body verifiziert werden, bevor Regel-Module den Trigger konsumieren. Einträge ohne direkte EUR-Lex-Quelle werden ausgeschlossen.",
     "primary_source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
