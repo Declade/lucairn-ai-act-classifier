@@ -9,9 +9,10 @@
 //   - `metadata` → use theveil-website's `buildPageMetadata` helper (mirrors
 //     `src/app/[lang]/tools/ai-payload-inspector/page.tsx:7-19`).
 //   - Inline English strings → theveil-website's i18n loader pattern.
-//   - Plausible analytics → wire the existing site-wide Plausible script (the
-//     `data-plausible-event` attribute on the submit button is already in
-//     place for the wire-up).
+//   - Plausible analytics → the existing site-wide Plausible script in
+//     theveil-website's root layout picks up the vanilla Plausible class-based
+//     convention `class="plausible-event-name=classify-submit"` already in
+//     place on the submit button. No additional JS wire-up is required.
 //
 // Next.js types resolved at integration time (NOT in the classifier repo's
 // devDependencies — this template is shipped as source-only).

@@ -71,8 +71,8 @@ describe('Workspace import smoke (Day-12 Part A)', () => {
       mod = await import(/* @vite-ignore */ distUrl);
     }
     // Phrasing matched against the canonical EN lexicon entries for Annex III ¶4
-    // (`cv screening`, `applicant tracking`, `ranks candidates`) — same shape as
-    // `test/fixtures/use-cases/day3/04-employment-en.json`.
+    // (`cv screening`, `applicant tracking`, `candidate ranking`, `hiring decision`).
+    // Identical to fixture-day3-04 input at test/fixtures/use-cases/day3/04-employment-en.json:4.
     const result: ClassifyResult = await mod.classify(
       'Our AI tool performs CV screening and applicant tracking, ranks candidates, and supports the hiring decision for our enterprise customers.'
     );

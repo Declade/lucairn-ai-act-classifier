@@ -76,9 +76,16 @@ export function ClassifierClient({ classifyAction }: Props) {
         type="button"
         onClick={onSubmit}
         disabled={isPending || input.trim().length === 0}
-        // TODO(theveil-website): wire up Plausible event tracking in root layout.
-        data-plausible-event="classify-submit"
-        className="bg-black text-white px-6 py-2 rounded hover:bg-neutral-800 disabled:opacity-50"
+        // Plausible custom-event wire-up. The vanilla Plausible script
+        // (loaded in theveil-website's root layout) reads
+        // `class="plausible-event-name=<name>"` per
+        // https://plausible.io/docs/custom-event-goals — NOT a
+        // data-attribute. The class is concatenated to the styling
+        // classes; Plausible's script-side regex picks the name out.
+        // If theveil-website later migrates to the plausible-tracker
+        // npm package (which uses `data-plausible-event-name`), swap
+        // this class for the equivalent data attribute.
+        className="plausible-event-name=classify-submit bg-black text-white px-6 py-2 rounded hover:bg-neutral-800 disabled:opacity-50"
       >
         {isPending
           ? lang === 'de'

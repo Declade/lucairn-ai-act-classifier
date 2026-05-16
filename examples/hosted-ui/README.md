@@ -46,7 +46,7 @@ Total: ~140 lines of TypeScript across three files. No `ToolWorkspace` integrati
 
 4. Replace inline English/German strings in `page.tsx` + `ClassifierClient.tsx` with theveil-website's i18n loader pattern (look for `TODO(i18n)` markers in the source).
 
-5. Wire up Plausible analytics: the submit button already has `data-plausible-event="classify-submit"`. Confirm theveil-website's root layout's Plausible script propagates `data-plausible-event` attributes (or replace with the site's existing helper, e.g. `usePlausible()`).
+5. Wire up Plausible analytics: the submit button already has the class `plausible-event-name=classify-submit` (the vanilla Plausible script's class-based convention per https://plausible.io/docs/custom-event-goals). Confirm theveil-website's root layout loads the vanilla Plausible script. If theveil-website uses the `plausible-tracker` npm package instead, swap the class for the equivalent `data-plausible-event-name="classify-submit"` data-attribute.
 
 6. Add the page's route to the existing sitemap source-of-truth (theveil-website's `src/lib/seo/sitemap.ts` or equivalent).
 
@@ -72,7 +72,7 @@ Total: ~140 lines of TypeScript across three files. No `ToolWorkspace` integrati
 - **Server-side classify.** The classify() call runs in the server action. The classifier's lexicon + rules JSON never ship to the browser bundle. Bundle-size impact on the client is exactly the React-state machinery for the textarea + lang toggle (no classifier code crosses the boundary).
 - **Cache layer.** The server-side `~/.cache/lucairn-ai-act-classifier/` cache is process-local on the host. For high-traffic deployments, add a server-action-level memoization (e.g. LRU keyed by `sha256(input + lang)`) — v0.2 polish.
 - **LLM mode.** The hosted UI runs in deterministic mode only. LLM mode (`--llm anthropic` etc.) needs an `apiKey` parameter — exposing that surface in the hosted UI is a v0.2 feature; until then, point LLM-mode users at the CLI.
-- **Plausible:** `data-plausible-event="classify-submit"` is the wire-up surface; theveil-website's root layout's Plausible script propagates the event.
+- **Plausible:** `class="plausible-event-name=classify-submit"` is the wire-up surface (vanilla Plausible class-based convention). theveil-website's root layout's Plausible script picks it up automatically; no per-event JS handler required.
 - **TagPill rendering (v0.2).** The current implementation renders the markdown `--explain` output verbatim in a `<pre>` block. The Day-12 build plan row calls for reusing `theveil-website/src/components/blog/TagPill.tsx`; v0.2 polish replaces the `<pre>` block with structured tag pills per fired article.
 - **Input cap.** `server-action.ts` enforces `MAX_INPUT_BYTES = 8192` measured in UTF-8 bytes (via `new TextEncoder().encode(text).byteLength`, not `text.length` which counts UTF-16 code units). Mirror the same UTF-8-byte unit in any API-route guard layer theveil-website wraps around the server action.
 
