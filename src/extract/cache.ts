@@ -179,13 +179,22 @@ export async function cacheWrite(
   opts: CacheWriteOptions = {},
 ): Promise<void> {
   const dir = resolveCacheLlmDir(opts);
-  await mkdir(dir, { recursive: true });
+  // mode 0700 — directory is user-readable + user-writeable + user-executable
+  // only. On a multi-user POSIX system other accounts cannot list its contents
+  // and cannot read individual files. mkdir's `mode` is masked against
+  // process.umask; if your umask is unusually restrictive the effective
+  // permissions may end up tighter than 0700 (still safe).
+  await mkdir(dir, { recursive: true, mode: 0o700 });
   const finalPath = join(dir, `${key}.json`);
   // The tmp name carries random bytes so parallel writers don't clobber each
   // other's tmp files before rename. POSIX rename(2) is atomic so the
   // final file is either the previous version or the new one — never partial.
   const tmpPath = join(dir, `${key}.${randomBytes(6).toString('hex')}.tmp`);
   const body = JSON.stringify(value);
-  await writeFile(tmpPath, body, 'utf8');
+  // mode 0600 — user-only read/write. Cache files contain the verbatim input
+  // text (see the cache-contents disclosure in README). On multi-user POSIX
+  // systems this stops a co-tenant from reading them. Day-10 bug-hunter L4
+  // closure.
+  await writeFile(tmpPath, body, { mode: 0o600, encoding: 'utf8' });
   await rename(tmpPath, finalPath);
 }
