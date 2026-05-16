@@ -83,6 +83,69 @@ describe('formatCliTable() — Article 5 prohibition fixture (EN)', () => {
   });
 });
 
+describe('formatCliTable() — Article 4 + GPAI surfacing (B-1 closure)', () => {
+  const GPAI_AND_LITERACY_INPUT_EN =
+    'We train a foundation model with 10^25 floating-point operations. Our employees use it.';
+  const GPAI_AND_LITERACY_INPUT_DE =
+    'Wir entwickeln ein großes Sprachmodell mit 10^25 Floating-Point-Operationen Rechenleistung. Damit unser Personal das Modell nutzen kann, schulen wir alle Mitarbeiter.';
+
+  it('EN — emits Article 4 row when Art 4 fires (lexicon hit on provider + staff)', async () => {
+    const r = await classify(GPAI_AND_LITERACY_INPUT_EN, { lang: 'en' });
+    expect(r.article_4.applicable).toBe(true);
+    const out = formatCliTable(r, { locale: 'en', cite: false, useColor: false });
+    expect(out).toContain('Article 4');
+    expect(out).toContain('AI literacy');
+    expect(out).toContain('applies');
+  });
+
+  it('EN — emits Articles 53+55 (GPAI) row with "Art 53+55" cell when both fire', async () => {
+    const r = await classify(GPAI_AND_LITERACY_INPUT_EN, { lang: 'en' });
+    expect(r.gpai.article_53_applicable).toBe(true);
+    expect(r.gpai.article_55_applicable).toBe(true);
+    const out = formatCliTable(r, { locale: 'en', cite: false, useColor: false });
+    expect(out).toContain('Articles 53+55 (GPAI)');
+    expect(out).toContain('Art 53+55');
+  });
+
+  it('EN — Art 53-only fire (no systemic-risk markers) renders "Art 53" cell, not "Art 53+55"', async () => {
+    const r = await classify('We build a customer-facing chatbot on top of GPT-5 via the OpenAI API.', { lang: 'en' });
+    expect(r.gpai.article_53_applicable).toBe(true);
+    expect(r.gpai.article_55_applicable).toBe(false);
+    const out = formatCliTable(r, { locale: 'en', cite: false, useColor: false });
+    // The cell renders "Art 53" (not "Art 53+55"; not "not applicable").
+    expect(out).toMatch(/Articles 53\+55 \(GPAI\): Art 53(?!\+)/);
+  });
+
+  it('DE — emits Artikel 4 + Artikel 53+55 rows with locale labels', async () => {
+    const r = await classify(GPAI_AND_LITERACY_INPUT_DE, { lang: 'de' });
+    expect(r.gpai.article_53_applicable).toBe(true);
+    const out = formatCliTable(r, { locale: 'de', cite: false, useColor: false });
+    expect(out).toContain('Artikel 4');
+    expect(out).toContain('KI-Kompetenz');
+    expect(out).toContain('Artikel 53+55 (GPAI)');
+    // DE GPAI cell uses "Art." (with period) per locale.
+    expect(out).toMatch(/Art\. 53/);
+  });
+
+  it('renders "not applicable" cell for Art 4 + GPAI on a negative-classification input', async () => {
+    const r = await classify('A simple weather forecast model returning rainfall probabilities.', { lang: 'en' });
+    expect(r.article_4.applicable).toBe(false);
+    expect(r.gpai.article_53_applicable).toBe(false);
+    const out = formatCliTable(r, { locale: 'en', cite: false, useColor: false });
+    expect(out).toContain('Article 4');
+    expect(out).toContain('Articles 53+55 (GPAI)');
+  });
+
+  it('--cite block includes Art 4 + GPAI citation lines when applicable', async () => {
+    const r = await classify(GPAI_AND_LITERACY_INPUT_EN, { lang: 'en' });
+    const out = formatCliTable(r, { locale: 'en', cite: true, useColor: false });
+    // Both Art 4 and the GPAI Tier-3 mirror URLs should appear in the cite block.
+    expect(out).toContain('article/4/');
+    // The GPAI mirror URL covers both Art 53 + 55.
+    expect(out).toMatch(/article\/53\//);
+  });
+});
+
 describe('formatCliTable() — color discipline', () => {
   it('emits ANSI escape codes when useColor: true', async () => {
     const r = await classify('We use AI for CV screening.', { lang: 'en' });

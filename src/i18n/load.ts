@@ -32,6 +32,13 @@ export interface I18nLabels {
   article_14: string;
   article_15: string;
   article_50: string;
+  /** Article 4 (AI literacy). New v0.3.0 surface. */
+  article_4: string;
+  /** Articles 53 + 55 (GPAI). New v0.3.0 surface. Single row covers both
+   *  Article 53 (general GPAI provider obligations) and the Article 55
+   *  systemic-risk overlay; the per-row applicable-cell renders the active
+   *  paragraph(s) e.g. "Art 53" or "Art 53+55". */
+  gpai_articles_53_55: string;
   annex_iv: string;
   cat_1: string;
   cat_2: string;

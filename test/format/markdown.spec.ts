@@ -59,3 +59,41 @@ describe('formatMarkdown() — output shape', () => {
     }
   });
 });
+
+describe('formatMarkdown() — Article 4 + GPAI surfacing (B-1 closure)', () => {
+  it('EN — emits Article 4 + Articles 53+55 rows in mapping table when applicable', async () => {
+    const r = await classify(
+      'We train a foundation model with 10^25 floating-point operations. Our employees use it.',
+      { lang: 'en' },
+    );
+    expect(r.article_4.applicable).toBe(true);
+    expect(r.gpai.article_53_applicable).toBe(true);
+    expect(r.gpai.article_55_applicable).toBe(true);
+    const out = formatMarkdown(r, { locale: 'en', cite: false });
+    expect(out).toContain('Article 4');
+    expect(out).toContain('AI literacy');
+    expect(out).toContain('Articles 53+55 (GPAI)');
+    expect(out).toContain('Art 53+55');
+  });
+
+  it('EN — Art 53-only fire renders compact "Art 53" cell, no "+55"', async () => {
+    const r = await classify('We build a customer-facing chatbot on top of GPT-5 via the OpenAI API.', { lang: 'en' });
+    expect(r.gpai.article_53_applicable).toBe(true);
+    expect(r.gpai.article_55_applicable).toBe(false);
+    const out = formatMarkdown(r, { locale: 'en', cite: false });
+    expect(out).toMatch(/Art 53(?!\+)/);
+  });
+
+  it('DE — renders locale labels with "Art." (period) idiom', async () => {
+    const r = await classify(
+      'Wir entwickeln ein großes Sprachmodell. Damit unser Personal das Modell nutzen kann, schulen wir alle Mitarbeiter.',
+      { lang: 'de' },
+    );
+    expect(r.gpai.article_53_applicable).toBe(true);
+    const out = formatMarkdown(r, { locale: 'de', cite: false });
+    expect(out).toContain('Artikel 4');
+    expect(out).toContain('KI-Kompetenz');
+    expect(out).toContain('Artikel 53+55 (GPAI)');
+    expect(out).toMatch(/Art\. 53/);
+  });
+});

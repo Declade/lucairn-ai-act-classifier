@@ -124,6 +124,31 @@ function statusForAnnexIV(required: boolean, labels: I18nLocale['labels'], k: Kl
   return k.dim(labels.status_not_applicable);
 }
 
+/**
+ * GPAI row status. Renders one of:
+ *   - "Art 53+55"  (DE: "Art. 53+55") when both Art 53 + Art 55 apply
+ *   - "Art 53"     (DE: "Art. 53")    when only Art 53 applies
+ *   - "not applicable" (locale-aware) when neither applies
+ *
+ * Article 55 is an "in addition to" overlay — it requires Art 53 to fire by
+ * construction (cf. `src/rules/article-53-gpai.ts`). The compact row label
+ * preserves that semantics without exploding into two rows.
+ */
+function statusForGPAI(
+  gpai: ClassifyResult['gpai'],
+  locale: 'en' | 'de',
+  labels: I18nLocale['labels'],
+  k: KleurChain,
+): string {
+  if (gpai.article_55_applicable) {
+    return k.yellow(locale === 'de' ? 'Art. 53+55' : 'Art 53+55');
+  }
+  if (gpai.article_53_applicable) {
+    return k.yellow(locale === 'de' ? 'Art. 53' : 'Art 53');
+  }
+  return k.dim(labels.status_not_applicable);
+}
+
 function colorConfidence(value: number, k: KleurChain): string {
   const text = value.toFixed(2);
   if (value >= 0.8) return k.green(text);
@@ -184,6 +209,13 @@ function selectCitations(result: ClassifyResult, locale: 'en' | 'de'): ArticleCi
   if (result.article_14.applicable) out.push({ id: 'article_14', applicable: true, label: labels.article_14 });
   if (result.article_15.applicable) out.push({ id: 'article_15', applicable: true, label: labels.article_15 });
   if (result.article_50.applicable) out.push({ id: 'article_50', applicable: true, label: labels.article_50 });
+  // Article 4 (AI literacy) — horizontal obligation, independent root.
+  if (result.article_4.applicable) out.push({ id: 'article_4', applicable: true, label: labels.article_4 });
+  // Articles 53 + 55 (GPAI) — separate obligation root for foundation-model
+  // providers. A single citation entry covers both; Art 55 always implies Art 53.
+  if (result.gpai.article_53_applicable) {
+    out.push({ id: 'gpai_articles_53_55', applicable: true, label: labels.gpai_articles_53_55 });
+  }
   if (result.annex_iv_required) out.push({ id: 'annex_iv', applicable: true, label: labels.annex_iv });
   return out;
 }
@@ -319,6 +351,16 @@ export function formatCliTable(result: ClassifyResult, opts: CliTableOptions): s
     ? k.yellow(labels.status_applies)
     : k.dim(labels.status_not_triggered);
   lines.push(`  ${labels.article_50}:  ${art50Status}`);
+
+  // Article 4 (AI literacy) — horizontal obligation, independent root (not in
+  // the high-risk cascade). Surfaces as "applies" / "not applicable" with the
+  // same idiom as cascade rows.
+  lines.push(`  ${labels.article_4}: ${statusForCascade(result.article_4.applicable, labels, k)}`);
+
+  // Articles 53 + 55 (GPAI). Compact row label: "Art 53" or "Art 53+55" when
+  // applicable; "not applicable" otherwise. Art 55 is an "in addition to"
+  // overlay (cf. `src/rules/article-53-gpai.ts`).
+  lines.push(`  ${labels.gpai_articles_53_55}: ${statusForGPAI(result.gpai, opts.locale, labels, k)}`);
 
   // Annex IV.
   lines.push(`  ${labels.annex_iv}:  ${statusForAnnexIV(result.annex_iv_required, labels, k)}`);

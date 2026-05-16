@@ -17,7 +17,7 @@ export interface MarkdownFormatOptions {
 }
 
 function statusEmojiAndLabel(
-  kind: 'art5' | 'annex_iii' | 'cascade' | 'annex_iv' | 'art50' | 'category',
+  kind: 'art5' | 'annex_iii' | 'cascade' | 'annex_iv' | 'art50' | 'art4' | 'category',
   flag: boolean,
   suppressedByArt5: boolean,
   labels: I18nLocale['labels'],
@@ -32,11 +32,32 @@ function statusEmojiAndLabel(
       return flag ? `✅ ${labels.status_applies}` : `⬜ ${labels.status_not_applicable}`;
     case 'art50':
       return flag ? `✅ ${labels.status_applies}` : `⬜ ${labels.status_not_triggered}`;
+    case 'art4':
+      return flag ? `✅ ${labels.status_applies}` : `⬜ ${labels.status_not_applicable}`;
     case 'annex_iv':
       return flag ? `📄 ${labels.status_required}` : `⬜ ${labels.status_not_applicable}`;
     case 'category':
       return flag ? `🔴 ${labels.status_required}` : `⬜ ${labels.status_not_applicable}`;
   }
+}
+
+/**
+ * GPAI status cell. Same locale-aware compact label as the CLI-table renderer
+ * (`"Art 53"` / `"Art 53+55"` / `"not applicable"`). Article 55 always implies
+ * Article 53 (cf. `src/rules/article-53-gpai.ts`).
+ */
+function gpaiStatusCell(
+  gpai: ClassifyResult['gpai'],
+  locale: 'en' | 'de',
+  labels: I18nLocale['labels'],
+): string {
+  if (gpai.article_55_applicable) {
+    return locale === 'de' ? `✅ Art. 53+55` : `✅ Art 53+55`;
+  }
+  if (gpai.article_53_applicable) {
+    return locale === 'de' ? `✅ Art. 53` : `✅ Art 53`;
+  }
+  return `⬜ ${labels.status_not_applicable}`;
 }
 
 function annexIIINotes(annex: ClassifyResult['annex_iii'], locale: 'en' | 'de'): string {
@@ -79,6 +100,13 @@ function citationRows(result: ClassifyResult, locale: 'en' | 'de'): CiteRow[] {
   if (result.article_14.applicable) out.push({ id: 'article_14', label: labels.article_14 });
   if (result.article_15.applicable) out.push({ id: 'article_15', label: labels.article_15 });
   if (result.article_50.applicable) out.push({ id: 'article_50', label: labels.article_50 });
+  // Article 4 (AI literacy) — horizontal obligation, independent root.
+  if (result.article_4.applicable) out.push({ id: 'article_4', label: labels.article_4 });
+  // Articles 53 + 55 (GPAI) — separate obligation root for foundation-model
+  // providers. A single citation entry covers both; Art 55 always implies Art 53.
+  if (result.gpai.article_53_applicable) {
+    out.push({ id: 'gpai_articles_53_55', label: labels.gpai_articles_53_55 });
+  }
   if (result.annex_iv_required) out.push({ id: 'annex_iv', label: labels.annex_iv });
   return out;
 }
@@ -173,6 +201,15 @@ export function formatMarkdown(result: ClassifyResult, opts: MarkdownFormatOptio
   );
   lines.push(
     `| ${labels.article_50} | ${statusEmojiAndLabel('art50', result.article_50.applicable, false, labels)} |  |`,
+  );
+  // Article 4 (AI literacy) — horizontal obligation, independent root.
+  lines.push(
+    `| ${labels.article_4} | ${statusEmojiAndLabel('art4', result.article_4.applicable, false, labels)} |  |`,
+  );
+  // Articles 53 + 55 (GPAI) — compact "Art 53" / "Art 53+55" / "not applicable"
+  // status cell mirrors the CLI-table idiom; Art 55 always implies Art 53.
+  lines.push(
+    `| ${labels.gpai_articles_53_55} | ${gpaiStatusCell(result.gpai, opts.locale, labels)} |  |`,
   );
   lines.push(
     `| ${labels.annex_iv} | ${statusEmojiAndLabel('annex_iv', result.annex_iv_required, false, labels)} |  |`,
