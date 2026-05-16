@@ -418,6 +418,27 @@
       ]
     }
   },
+  "article_4_ai_literacy": {
+    "provider_or_deployer_with_staff": {
+      "description": "Art 4 — providers and deployers of AI systems must ensure their staff and other persons dealing with operation/use on their behalf have a sufficient level of AI literacy. Composite phrases that encode the provider-or-deployer + staff/operator combination; Art 4 has no sub-letters and one trigger fires the whole obligation.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "our employees use" },
+        { "phrase": "our staff use" },
+        { "phrase": "our team uses" },
+        { "phrase": "our consultants use" },
+        { "phrase": "our operators use" },
+        { "phrase": "internal users operate" },
+        { "phrase": "staff operating" },
+        { "phrase": "team using ai" },
+        { "phrase": "employees deploying" },
+        { "phrase": "operators rely on" },
+        { "phrase": "our workers use ai" },
+        { "phrase": "internal team operates" },
+        { "phrase": "company staff use" }
+      ]
+    }
+  },
   "scope_qualifiers": {
     "research_only": {
       "description": "Article 2(8) — research, testing, and development activity scope exclusion (pre-market). Surface for the rules engine to consider suppressing high-risk classification.",
