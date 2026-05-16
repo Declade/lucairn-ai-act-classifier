@@ -26,7 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   **Architectural decision: Groq passes its API key via the OpenAI client constructor's `apiKey` parameter — NEVER via OPENAI_API_KEY env mutation.** This means a Groq run on a host where BOTH GROQ_API_KEY and OPENAI_API_KEY are set will use the Groq key exclusively + never consult the OpenAI key. Locked by a `OPENAI_API_KEY NOT polluted by Groq run` invariant test in `test/extract/providers/groq.spec.ts`.
 
   **What this PR does NOT do:**
-  - Does NOT run real-API accuracy harness for OpenAI / Groq during the dispatch (local `~/.lucairn-classifier-key` only carries ANTHROPIC_API_KEY).
+  - Does NOT run real-API accuracy harness for OpenAI / Groq during the dispatch (the local env-file used by the dispatch harness carries ANTHROPIC_API_KEY only; OPENAI_API_KEY and GROQ_API_KEY have to be positioned explicitly to run those providers' integration tests).
   - Does NOT add a CI gate on cache behaviour (the cache is filesystem-state; CI runs are ephemeral).
   - Does NOT change RULES_HASH or any rule/lexicon JSON (no behaviour change to article selection).
 
