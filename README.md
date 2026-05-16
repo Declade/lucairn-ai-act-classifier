@@ -1,9 +1,6 @@
 # @lucairn/ai-act-classifier
 
-Free CLI that maps any AI use case description to the EU AI Act articles it triggers. Zero network, zero config, zero API key in the default deterministic mode.
-
-> **Status: v0.1.1, Day 13 of a 14-day public build.**
-> Build window 2026-05-16 → 2026-05-29. Public-launch target 2026-05-29. The repository is private during the build window and flips public on the launch day.
+Free CLI that maps any AI use case description to the EU AI Act articles it triggers. Zero network, zero config, zero API key in the default deterministic mode. MIT-licensed for the code; CC-BY-4.0 for the curated test corpus.
 
 ## Quick start
 
@@ -43,7 +40,7 @@ ANTHROPIC_API_KEY="<your-key>" npx @lucairn/ai-act-classifier --llm anthropic \
 - **No telemetry, no analytics, no remote logging.** Source is auditable.
 - **Not a substitute for an EU AI Act conformity assessment.** A high-risk classification triggers Article 9-15 obligations including a notified-body conformity assessment for certain Annex III categories. This tool helps you scope the obligations; it does not perform them.
 
-## `--explain` flag (Day 11)
+## `--explain` flag
 
 The `--explain` flag emits a structured reasoning trace alongside the classification:
 
@@ -89,7 +86,7 @@ export GROQ_API_KEY="<your-groq-key>"
 ai-act-classify --llm groq "AI system that ranks job applicants by CV"
 ```
 
-> **LLM-mode non-determinism note.** LLMs are probabilistic; re-running on the same input may return different (correlated but not identical) features. Day-9 measured Anthropic Haiku 4.5 at 93.5–97.6 % overall accuracy across two independent runs on the 50-case corpus. The cache layer (next section) mitigates by storing first-call results — repeated runs on identical inputs are byte-stable. For reproducible classification on novel inputs, prefer deterministic mode.
+> **LLM-mode non-determinism note.** LLMs are probabilistic; re-running on the same input may return different (correlated but not identical) features. Anthropic Haiku 4.5 was measured at 93.5–97.6 % overall accuracy across two independent runs on the 50-case corpus. The cache layer (next section) mitigates by storing first-call results — repeated runs on identical inputs are byte-stable. For reproducible classification on novel inputs, prefer deterministic mode.
 
 ## Cache layer
 
@@ -119,7 +116,7 @@ The classifier is benchmarked against a 50-case bilingual fixture corpus (CC-BY-
 
 CI floor (locked): ≥ 80 % overall + 100 % Article 5. v1.0 release target: ≥ 85 % overall + 100 % Article 5 + ≥ 90 % binary high-risk.
 
-The headline reflects internal consistency between the curated fixture corpus and the curated lexicon — not arbitrary real-world accuracy. v0.1.1 (Day 8) rewrote five Day-7 DE fixtures with natural German per consultant judgment and extended the lexicon to cover the natural-German phrasings; one residual gap surfaced (compound-noun tokenisation on `Emotionserkennungssystems`) and is tracked in [accuracy/KNOWN-MISCLASSIFICATIONS.md](./accuracy/KNOWN-MISCLASSIFICATIONS.md) §G-5 rather than engineered away. See [accuracy/METHODOLOGY.md](./accuracy/METHODOLOGY.md) §"Honest limitations" for the full disclosure.
+The headline reflects internal consistency between the curated fixture corpus and the curated lexicon — not arbitrary real-world accuracy. The DE fixture corpus is written in natural German per consultant judgment, and the lexicon covers natural-German phrasings; one residual gap (compound-noun tokenisation on `Emotionserkennungssystems`) is tracked in [accuracy/KNOWN-MISCLASSIFICATIONS.md](./accuracy/KNOWN-MISCLASSIFICATIONS.md) §G-5 rather than engineered away. See [accuracy/METHODOLOGY.md](./accuracy/METHODOLOGY.md) §"Honest limitations" for the full disclosure.
 
 Reports: [accuracy/REPORT.md](./accuracy/REPORT.md) (deterministic, CI-gated), [accuracy/REPORT.llm-anthropic.md](./accuracy/REPORT.llm-anthropic.md), [accuracy/REPORT.llm-openai.md](./accuracy/REPORT.llm-openai.md), [accuracy/REPORT.llm-groq.md](./accuracy/REPORT.llm-groq.md).
 
@@ -179,7 +176,7 @@ The classifier reflects one interpretation of the EU AI Act as of the rule-set v
 
 Built by [Lucairn](https://lucairn.eu) — the EU AI Act compliance evidence layer. Operated pre-incorporation by Marc Schülke as a natural person; Lucairn UG (haftungsbeschränkt) i.Gr. (formation initiated, pending Handelsregister entry).
 
-Hosted UI mirror coming Day 13: `https://lucairn.eu/tools/ai-act-classifier`.
+Hosted UI: `https://lucairn.eu/tools/ai-act-classifier`.
 
 Citation:
 

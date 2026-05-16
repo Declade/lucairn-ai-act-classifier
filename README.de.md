@@ -1,9 +1,6 @@
 # @lucairn/ai-act-classifier
 
-Kostenloses CLI, das jede Beschreibung eines KI-Anwendungsfalls den auslösenden Artikeln der EU-KI-Verordnung zuordnet. Keine Netzwerkverbindung, keine Konfiguration, kein API-Key im deterministischen Standardmodus.
-
-> **Status: v0.1.1, Tag 13 eines 14-tägigen öffentlichen Builds.**
-> Build-Fenster 2026-05-16 → 2026-05-29. Launch-Ziel 2026-05-29. Das Repository ist während des Build-Fensters privat und wird am Launch-Tag öffentlich.
+Kostenloses CLI, das jede Beschreibung eines KI-Anwendungsfalls den auslösenden Artikeln der EU-KI-Verordnung zuordnet. Keine Netzwerkverbindung, keine Konfiguration, kein API-Key im deterministischen Standardmodus. MIT-lizenziert für den Code; CC-BY-4.0 für den kuratierten Testkorpus.
 
 ## Schnelleinstieg
 
@@ -43,7 +40,7 @@ ANTHROPIC_API_KEY="<ihr-key>" npx @lucairn/ai-act-classifier --llm anthropic \
 - **Keine Telemetrie, keine Analytics, kein Remote-Logging.** Der Quelltext ist prüfbar.
 - **Kein Ersatz für die Konformitätsbewertung nach der EU-KI-Verordnung.** Eine Hochrisiko-Klassifikation löst die Pflichten der Artikel 9 bis 15 aus, einschließlich der Konformitätsbewertung durch eine notifizierte Stelle für bestimmte Anhang-III-Kategorien. Dieses Tool hilft beim Pflichten-Scoping; es führt die Konformitätsbewertung nicht durch.
 
-## Flag `--explain` (Tag 11)
+## Flag `--explain`
 
 Das Flag `--explain` liefert zusätzlich zur Klassifikation eine strukturierte Begründungs-Spur:
 
@@ -89,7 +86,7 @@ export GROQ_API_KEY="<ihr-groq-key>"
 ai-act-classify --llm groq "KI-System, das Bewerber nach Lebenslauf bewertet"
 ```
 
-> **Hinweis zur LLM-Modus-Nichtdeterministik.** LLMs sind probabilistisch; ein erneuter Aufruf mit derselben Eingabe kann unterschiedliche (korrelierte, aber nicht identische) Merkmale liefern. Tag 9 hat Anthropic Haiku 4.5 mit 93,5–97,6 % Gesamtgenauigkeit über zwei unabhängige Läufe auf dem 50-Fall-Korpus gemessen. Die Cache-Schicht (nächster Abschnitt) mildert das ab — Wiederholungen auf identischen Eingaben sind byte-stabil. Für reproduzierbare Klassifikation auf neuen Eingaben empfehlen wir den deterministischen Standardmodus.
+> **Hinweis zur LLM-Modus-Nichtdeterministik.** LLMs sind probabilistisch; ein erneuter Aufruf mit derselben Eingabe kann unterschiedliche (korrelierte, aber nicht identische) Merkmale liefern. Anthropic Haiku 4.5 wurde mit 93,5–97,6 % Gesamtgenauigkeit über zwei unabhängige Läufe auf dem 50-Fall-Korpus gemessen. Die Cache-Schicht (nächster Abschnitt) mildert das ab — Wiederholungen auf identischen Eingaben sind byte-stabil. Für reproduzierbare Klassifikation auf neuen Eingaben empfehlen wir den deterministischen Standardmodus.
 
 ## Cache-Schicht
 
@@ -119,7 +116,7 @@ Der Klassifizierer wird gegen einen 50-Fall-zweisprachigen Fixture-Korpus (CC-BY
 
 CI-Untergrenze (festgelegt): ≥ 80 % Gesamt + 100 % Art. 5. v1.0-Release-Ziel: ≥ 85 % Gesamt + 100 % Art. 5 + ≥ 90 % binäre Hochrisiko-Klassifikation.
 
-Die Schlagzeile spiegelt die interne Konsistenz zwischen kuratiertem Fixture-Korpus und kuratiertem Lexikon wider — nicht die Genauigkeit auf beliebigen realen Eingaben. v0.1.1 (Tag 8) hat fünf Tag-7-DE-Fixtures mit natürlichem Deutsch nach Berater-Urteil umgeschrieben und das Lexikon um natürlich-deutsche Varianten erweitert; eine verbleibende Lücke wurde aufgedeckt (Compound-Noun-Tokenisierung bei `Emotionserkennungssystems`) und in [accuracy/KNOWN-MISCLASSIFICATIONS.md](./accuracy/KNOWN-MISCLASSIFICATIONS.md) §G-5 dokumentiert, statt sie wegzudesignen. Siehe [accuracy/METHODOLOGY.md](./accuracy/METHODOLOGY.md) §"Honest limitations" für die vollständige Offenlegung.
+Die Schlagzeile spiegelt die interne Konsistenz zwischen kuratiertem Fixture-Korpus und kuratiertem Lexikon wider — nicht die Genauigkeit auf beliebigen realen Eingaben. Der DE-Fixture-Korpus ist in natürlichem Deutsch nach Berater-Urteil verfasst, und das Lexikon deckt natürlich-deutsche Varianten ab; eine verbleibende Lücke (Compound-Noun-Tokenisierung bei `Emotionserkennungssystems`) ist in [accuracy/KNOWN-MISCLASSIFICATIONS.md](./accuracy/KNOWN-MISCLASSIFICATIONS.md) §G-5 dokumentiert, statt sie wegzudesignen. Siehe [accuracy/METHODOLOGY.md](./accuracy/METHODOLOGY.md) §"Honest limitations" für die vollständige Offenlegung.
 
 Berichte: [accuracy/REPORT.md](./accuracy/REPORT.md) (deterministisch, CI-überwacht), [accuracy/REPORT.llm-anthropic.md](./accuracy/REPORT.llm-anthropic.md), [accuracy/REPORT.llm-openai.md](./accuracy/REPORT.llm-openai.md), [accuracy/REPORT.llm-groq.md](./accuracy/REPORT.llm-groq.md).
 
@@ -179,7 +176,7 @@ Der Klassifizierer spiegelt eine Interpretation der EU-KI-Verordnung zum Stand d
 
 Entwickelt von [Lucairn](https://lucairn.eu) — der Compliance-Nachweis-Layer für die EU-KI-Verordnung. Vor Inkorporation betrieben als natürliche Person durch Marc Schülke; Lucairn UG (haftungsbeschränkt) i.Gr. (Gründung eingeleitet; vor Handelsregistereintrag).
 
-Hosted UI-Spiegel folgt an Tag 13: `https://lucairn.eu/tools/ai-act-classifier`.
+Hosted UI-Spiegel: `https://lucairn.eu/tools/ai-act-classifier`.
 
 Zitiervorschlag:
 

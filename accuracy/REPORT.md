@@ -1,7 +1,7 @@
 # Accuracy report — @lucairn/ai-act-classifier
 
 - **Rules version:** `v0.1.1`
-- **Rules hash:** `12eafb8a` (full: `12eafb8a07525558f4075f3ce61d744ab305151c6ff5f2ed7a3456f5105b41ee`)
+- **Rules hash:** `5bccb27a` (full: `5bccb27af73fb79b5bfc0f5cb6b05f98fa5f5e77c43ffddca6fef01456ea58e7`)
 - **Last run:** 2026-05-16T03:10:37.993Z
 - **Fixture corpus:** 50 cases
 
