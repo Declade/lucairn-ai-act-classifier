@@ -54,7 +54,8 @@ export type CitationArticleId =
   | 'article_15'
   | 'article_50'
   | 'annex_iv'
-  | 'article_4';
+  | 'article_4'
+  | 'gpai_articles_53_55';
 
 export interface CitationsData {
   _meta: CitationsMeta;
@@ -68,6 +69,7 @@ export interface CitationsData {
   article_50: CitationEntry;
   annex_iv: CitationEntry;
   article_4: CitationEntry;
+  gpai_articles_53_55: CitationEntry;
 }
 
 function loadCitations(): CitationsData {
