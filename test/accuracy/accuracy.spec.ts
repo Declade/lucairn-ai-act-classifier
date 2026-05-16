@@ -20,9 +20,9 @@ import { describe, it, expect } from 'vitest';
 import { runAccuracy, renderMarkdown } from '../../scripts/accuracy.js';
 
 describe('accuracy harness — CI floor + structural invariants', () => {
-  it('loads exactly 62 fixtures (50 day{3,4,5,7} + 9 day14-launch-feedback v0.1.3 + 3 v0.1.4)', async () => {
+  it('loads exactly 66 fixtures (50 day{3,4,5,7} + 9 v0.1.3 + 3 v0.1.4 + 4 v0.2.0)', async () => {
     const report = await runAccuracy({ lastRunAtOverride: '2026-05-15T00:00:00Z' });
-    expect(report.fixture_count).toBe(62);
+    expect(report.fixture_count).toBe(66);
   });
 
   it('meets CI overall floor (>= 0.80)', async () => {
@@ -48,8 +48,8 @@ describe('accuracy harness — CI floor + structural invariants', () => {
     // DE Bewerbenden) and +1 article_5 (BLOCKER 3b EN workers' emotions in
     // customer-service workplace).
     expect(report.bucket_accuracy.annex_iii.count).toBe(22);
-    expect(report.bucket_accuracy.article_5.count).toBe(13);
-    expect(report.bucket_accuracy.article_50.count).toBe(9);
+    expect(report.bucket_accuracy.article_5.count).toBe(16);
+    expect(report.bucket_accuracy.article_50.count).toBe(10);
     expect(report.bucket_accuracy.negative.count).toBe(9);
     expect(report.bucket_accuracy.legacy.count).toBe(9);
   });

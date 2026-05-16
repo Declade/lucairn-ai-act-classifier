@@ -1,0 +1,25 @@
+{
+  "id": "fixture-day14-14-blocker3e-photorealistic-deepfake-en",
+  "lang": "en",
+  "input": "Tool that generates photorealistic synthetic videos of real people speaking words they never said.",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": false,
+    "annex_iii_domains": [],
+    "suppressed_by_article_5": false,
+    "article_10_applicable": false,
+    "article_12_applicable": false,
+    "article_13_applicable": false,
+    "article_14_applicable": false,
+    "article_15_applicable": false,
+    "three_category_applicable": [],
+    "article_50_paragraphs": [
+      "50(4)_sub1"
+    ],
+    "annex_iv_required": false,
+    "notes": "v0.1.5 post-v0.1.4 reviewer feedback (Claude-Code retest). Adjacent gap: the v0.1.4 lexicon covered `deepfake`, `deep fake`, `face swap` but not natural paraphrases like `generates photorealistic synthetic videos`. A deployer describing the same prohibited deployment with synonym vocabulary returned nothing. v0.1.5 adds `synthetic video`, `synthetic videos`, `generates synthetic videos`, `photorealistic synthetic video`, `ai-generated video`, `manipulated video`, `synthetic videos of real people`, and DE equivalents (`synthetische videos`, `ki-generierte videos`, etc.) to `article_50_gpai.4_deepfake_labeling`. Cite: EUR-Lex Regulation (EU) 2024/1689, Article 50(4)."
+  },
+  "bucket": "article_50",
+  "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689"
+}

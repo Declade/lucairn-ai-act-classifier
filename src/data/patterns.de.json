@@ -1,6 +1,6 @@
 {
   "language": "de",
-  "version": "v0.1.4",
+  "version": "v0.2.0",
   "_meta": {
     "notice": "Saat-Lexikon für v0.1.x. Jeder Eintrag `source` MUSS verbatim gegen das deutsche EUR-Lex-Body verifiziert werden, bevor Regel-Module den Trigger konsumieren. Einträge ohne direkte EUR-Lex-Quelle werden ausgeschlossen.",
     "primary_source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
@@ -246,7 +246,15 @@
         { "phrase": "stimmungserkennung am arbeitsplatz" },
         { "phrase": "mitarbeiteremotion" },
         { "phrase": "emotion detection arbeitsplatz" },
-        { "phrase": "arbeitsplatz emotionserkennung" }
+        { "phrase": "arbeitsplatz emotionserkennung" },
+        { "phrase": "mitarbeiteremotionen erkennen" },
+        { "phrase": "emotionen am arbeitsplatz erkennen" },
+        { "phrase": "webcam emotionserkennung" },
+        { "phrase": "webcam-emotionserkennung" },
+        { "phrase": "mitarbeiteremotionen über webcam" },
+        { "phrase": "arbeitsplatzüberwachung mit emotionserkennung" },
+        { "phrase": "arbeitsplatzüberwachungssystem mit emotionserkennung" },
+        { "phrase": "mitarbeiteremotionen über webcam erkennen" }
       ]
     },
     "g_biometric_categorisation_sensitive": {
@@ -256,7 +264,14 @@
         { "phrase": "politische meinung ableiten" },
         { "phrase": "sexuelle orientierung ableiten" },
         { "phrase": "religion ableiten" },
-        { "phrase": "ethnische herkunft ableiten" }
+        { "phrase": "ethnische herkunft ableiten" },
+        { "phrase": "biometrische kategorisierung zur ableitung" },
+        { "phrase": "biometrische kategorisierung zur ableitung der politischen meinung" },
+        { "phrase": "biometrische kategorisierung zur ableitung der sexuellen orientierung" },
+        { "phrase": "gewerkschaftszugehörigkeit ableiten" },
+        { "phrase": "weltanschauliche überzeugung ableiten" },
+        { "phrase": "religiöse überzeugung ableiten" },
+        { "phrase": "philosophische überzeugung ableiten" }
       ]
     },
     "h_realtime_remote_biometric_le": {
@@ -310,7 +325,16 @@
       "entries": [
         { "phrase": "deepfake" },
         { "phrase": "deep fake" },
-        { "phrase": "gesichtstausch" }
+        { "phrase": "gesichtstausch" },
+        { "phrase": "synthetische videos" },
+        { "phrase": "synthetische bilder" },
+        { "phrase": "synthetische medien" },
+        { "phrase": "ki-generierte videos" },
+        { "phrase": "ki-generierte bilder" },
+        { "phrase": "photorealistische synthetische videos" },
+        { "phrase": "manipulierte videos" },
+        { "phrase": "manipulierte audioaufnahmen" },
+        { "phrase": "synthetische videos echter personen" }
       ]
     },
     "5_public_interest_text": {

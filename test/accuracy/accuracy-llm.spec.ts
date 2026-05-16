@@ -68,15 +68,15 @@ afterEach(() => {
 });
 
 describe('runAccuracy({ llm: "anthropic" }) — offline (mocked SDK)', () => {
-  it('runs end-to-end against the full 62-fixture corpus', async () => {
+  it('runs end-to-end against the full 66-fixture corpus', async () => {
     const report = await runAccuracy({
       llm: 'anthropic',
       lastRunAtOverride: '2026-05-15T00:00:00Z',
       cache: { disabled: true },
     });
-    expect(report.fixture_count).toBe(62);
-    // 62 fixtures → 62 LLM calls (cache disabled so every call hits the mock).
-    expect(mockCallCount).toBe(62);
+    expect(report.fixture_count).toBe(66);
+    // 66 fixtures → 66 LLM calls (cache disabled so every call hits the mock).
+    expect(mockCallCount).toBe(66);
   });
 
   it('emits the same metric structure as deterministic mode', async () => {
@@ -89,8 +89,8 @@ describe('runAccuracy({ llm: "anthropic" }) — offline (mocked SDK)', () => {
     expect(typeof report.article_5_accuracy).toBe('number');
     expect(typeof report.binary_high_risk_accuracy).toBe('number');
     expect(report.bucket_accuracy.annex_iii.count).toBe(22);
-    expect(report.bucket_accuracy.article_5.count).toBe(13);
-    expect(report.bucket_accuracy.article_50.count).toBe(9);
+    expect(report.bucket_accuracy.article_5.count).toBe(16);
+    expect(report.bucket_accuracy.article_50.count).toBe(10);
     expect(report.bucket_accuracy.negative.count).toBe(9);
     expect(report.bucket_accuracy.legacy.count).toBe(9);
   });
@@ -102,8 +102,8 @@ describe('runAccuracy({ llm: "anthropic" }) — offline (mocked SDK)', () => {
       lastRunAtOverride: '2026-05-15T00:00:00Z',
       cache: { disabled: true },
     });
-    expect(report.fixture_count).toBe(62);
-    expect(mockCallCount).toBe(62);
+    expect(report.fixture_count).toBe(66);
+    expect(mockCallCount).toBe(66);
   });
 
   it('all-empty mocked extractor produces deterministic results (no flake)', async () => {

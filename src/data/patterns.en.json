@@ -1,6 +1,6 @@
 {
   "language": "en",
-  "version": "v0.1.4",
+  "version": "v0.2.0",
   "_meta": {
     "notice": "Seed lexicon for v0.1.x. Every entry's `source` MUST be verified verbatim against EUR-Lex before rule modules consume the trigger. Entries with no direct EUR-Lex source are excluded.",
     "primary_source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689"
@@ -298,7 +298,15 @@
         { "phrase": "infers emotions in education" },
         { "phrase": "emotion detection in a workplace" },
         { "phrase": "emotion recognition in a workplace" },
-        { "phrase": "emotion analysis in a workplace" }
+        { "phrase": "emotion analysis in a workplace" },
+        { "phrase": "detects employee emotions" },
+        { "phrase": "detect employee emotions" },
+        { "phrase": "surveillance system that detects emotions" },
+        { "phrase": "workplace surveillance that detects emotions" },
+        { "phrase": "emotion detection via webcam" },
+        { "phrase": "webcam emotion detection" },
+        { "phrase": "detects emotions via webcam" },
+        { "phrase": "workplace emotional surveillance" }
       ]
     },
     "g_biometric_categorisation_sensitive": {
@@ -308,7 +316,21 @@
         { "phrase": "infer political opinion" },
         { "phrase": "infer sexual orientation" },
         { "phrase": "infer race" },
-        { "phrase": "infer religion" }
+        { "phrase": "infer religion" },
+        { "phrase": "biometric categorisation to infer race" },
+        { "phrase": "biometric categorization to infer race" },
+        { "phrase": "biometric categorisation to infer political opinion" },
+        { "phrase": "biometric categorization to infer political opinion" },
+        { "phrase": "biometric categorisation to infer sexual orientation" },
+        { "phrase": "biometric categorization to infer sexual orientation" },
+        { "phrase": "biometric categorisation to infer religion" },
+        { "phrase": "biometric categorization to infer religion" },
+        { "phrase": "infers political opinion from facial features" },
+        { "phrase": "infers sexual orientation from facial features" },
+        { "phrase": "infers race from facial features" },
+        { "phrase": "infer trade union membership" },
+        { "phrase": "infer religious belief" },
+        { "phrase": "infer philosophical belief" }
       ]
     },
     "h_realtime_remote_biometric_le": {
@@ -350,11 +372,15 @@
       ]
     },
     "3_emotion_categorisation_disclosure": {
-      "description": "Art 50(3) — deployers of emotion-recognition or biometric-categorisation systems must inform exposed persons.",
+      "description": "Art 50(3) — deployers of emotion-recognition or biometric-categorisation systems must inform exposed persons. Lexicon scoped to deployer-disclosure / customer-facing contexts; raw 'biometric categorisation system' (without disclosure / customer context) is intentionally NOT here, because that bare phrasing applies to BOTH Art 5(1)(g) prohibition AND Art 50(3) transparency. Art 50(3) needs disclosure-context cues to avoid over-firing alongside Art 5(1)(g) inputs.",
       "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
       "entries": [
         { "phrase": "emotion recognition deployer" },
-        { "phrase": "biometric categorisation deployer" }
+        { "phrase": "biometric categorisation deployer" },
+        { "phrase": "emotion recognition for customers" },
+        { "phrase": "emotion recognition disclosure" },
+        { "phrase": "biometric categorisation disclosure" },
+        { "phrase": "inform persons of emotion recognition" }
       ]
     },
     "4_deepfake_labeling": {
@@ -363,7 +389,20 @@
       "entries": [
         { "phrase": "deepfake" },
         { "phrase": "deep fake" },
-        { "phrase": "face swap" }
+        { "phrase": "face swap" },
+        { "phrase": "synthetic video" },
+        { "phrase": "synthetic videos" },
+        { "phrase": "synthetic image" },
+        { "phrase": "synthetic images" },
+        { "phrase": "generates synthetic videos" },
+        { "phrase": "generates synthetic content" },
+        { "phrase": "photorealistic synthetic video" },
+        { "phrase": "photorealistic synthetic videos" },
+        { "phrase": "ai-generated video" },
+        { "phrase": "ai-generated image" },
+        { "phrase": "manipulated video" },
+        { "phrase": "manipulated audio" },
+        { "phrase": "synthetic videos of real people" }
       ]
     },
     "5_public_interest_text": {

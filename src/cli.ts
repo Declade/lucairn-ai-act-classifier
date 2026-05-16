@@ -121,6 +121,7 @@ interface RawOptions {
   explain?: boolean;
   explainFormat?: string;
   withExcerpt?: boolean;
+  wizard?: boolean;
 }
 
 function resolveExplainFormat(rawOpts: RawOptions): 'markdown' | 'json' | 'text' {
@@ -245,6 +246,10 @@ async function main(): Promise<void> {
       '--with-excerpt',
       'When used with --explain, append hand-curated regulator-explainer excerpts where available.',
     )
+    .option(
+      '--wizard',
+      'Interactive guided mode (3-step Y/N prompts against regulator-verbatim Article 5 / Annex III / Article 50 descriptions). Bypasses free-text keyword extraction; the rule engine is unchanged. Use when you do not have a written system description.',
+    )
     .addHelpText(
       'after',
       `
@@ -320,30 +325,44 @@ Exit codes:
   // ----- Locale resolution for in-band errors. -----------------------------
   const langOverride = resolveLang(rawOpts, errLocale);
 
-  // ----- Gather input text (positional > stdin > error). -------------------
-  // If positional text is provided, use it and ignore stdin entirely. This
-  // avoids reading from a non-TTY parent shell (e.g. our own integration tests
-  // running via spawnSync inherit stdin which is technically non-TTY).
-  // The "both stdin and positional" warning fires only when stdin is BOTH
-  // non-TTY AND has data available to read at the moment we check — but
-  // detecting that reliably across platforms requires a non-blocking read,
-  // which isn't worth the complexity. The contract is documented as: pass
-  // text positionally OR pipe via stdin, not both. The dispatch spec uses
-  // "warn + prefer positional" — we honour the preference, drop the warning
-  // (otherwise it false-positives on every spawnSync-style test runner).
-  const positionalText = positional.length > 0 ? positional.join(' ') : '';
-  let inputText = positionalText;
+  // ----- --wizard path (guided Y/N prompts; synthesize canonical text). ----
+  // The wizard collects structured selections, then synthesizes a canonical
+  // text from the lexicon. The rest of the pipeline (extract → classify →
+  // format) is unchanged. No new rule modules. Output shape identical to
+  // free-text mode.
+  let inputText: string;
+  if (rawOpts.wizard === true) {
+    const { runWizard } = await import('./wizard/runner.js');
+    const { synthesizeWizardText } = await import('./wizard/answers.js');
+    const wizardLang: 'en' | 'de' = langOverride ?? errLocale;
+    const answers = await runWizard({ lang: wizardLang });
+    inputText = synthesizeWizardText(answers);
+  } else {
+    // ----- Gather input text (positional > stdin > error). -----------------
+    // If positional text is provided, use it and ignore stdin entirely. This
+    // avoids reading from a non-TTY parent shell (e.g. our own integration tests
+    // running via spawnSync inherit stdin which is technically non-TTY).
+    // The "both stdin and positional" warning fires only when stdin is BOTH
+    // non-TTY AND has data available to read at the moment we check — but
+    // detecting that reliably across platforms requires a non-blocking read,
+    // which isn't worth the complexity. The contract is documented as: pass
+    // text positionally OR pipe via stdin, not both. The dispatch spec uses
+    // "warn + prefer positional" — we honour the preference, drop the warning
+    // (otherwise it false-positives on every spawnSync-style test runner).
+    const positionalText = positional.length > 0 ? positional.join(' ') : '';
+    inputText = positionalText;
 
-  if (inputText.length === 0 && process.stdin.isTTY !== true) {
-    // No positional text and stdin is a pipe — read it.
-    const stdinText = await readStdin();
-    inputText = stdinText;
-  }
+    if (inputText.length === 0 && process.stdin.isTTY !== true) {
+      // No positional text and stdin is a pipe — read it.
+      const stdinText = await readStdin();
+      inputText = stdinText;
+    }
 
-  if (inputText.trim().length === 0) {
-    const locale = getLocale(errLocale);
-    err(locale.labels.error_empty_input);
-    exit(2);
+    if (inputText.trim().length === 0) {
+      const locale = getLocale(errLocale);
+      err(locale.labels.error_empty_input);
+      exit(2);
+    }
   }
 
   // ----- Resolve --llm (may exit 3 if invalid or env missing). -------------

@@ -1,0 +1,29 @@
+{
+  "id": "fixture-day14-15-blocker3f-biometric-categorisation-political-en",
+  "lang": "en",
+  "input": "Biometric categorization system that infers political opinion from facial features.",
+  "expected": {
+    "article_5_prohibited": true,
+    "article_5_letters": [
+      "g"
+    ],
+    "annex_iii_high_risk": false,
+    "annex_iii_domains": [
+      1
+    ],
+    "suppressed_by_article_5": true,
+    "article_10_applicable": false,
+    "article_12_applicable": false,
+    "article_13_applicable": false,
+    "article_14_applicable": false,
+    "article_15_applicable": false,
+    "three_category_applicable": [],
+    "article_50_paragraphs": [
+      "50(3)"
+    ],
+    "annex_iv_required": false,
+    "notes": "v0.1.5 post-v0.1.4 reviewer feedback (Claude-Code retest). Art 5(1)(g) coverage gap: v0.1.4 lexicon covered only the bare verb form (`infer political opinion` / `infer sexual orientation` / `infer race` / `infer religion`) but not natural phrasings that prefix the biometric-categorization activity-noun. v0.1.5 adds `biometric categorization to infer political opinion`, `biometric categorisation to infer race`, `biometric categorization to infer sexual orientation`, `infer trade union membership`, `infer religious belief`, `infer philosophical belief`. DE side adds `biometrische kategorisierung zur ableitung`, `gewerkschaftszugehörigkeit ableiten`, `weltanschauliche überzeugung ableiten`. Cite: EUR-Lex Regulation (EU) 2024/1689, Article 5(1)(g)."
+  },
+  "bucket": "article_5",
+  "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689"
+}

@@ -5,7 +5,7 @@ exports[`formatExplain() — Article 5 prohibited fixture (predictive policing) 
 
 **Eingabe:** \`Eine Polizeibehörde nutzt unser KI-System für vorhersagende Polizeiarbeit und Kriminalrisiko-Profiling, das ausschließlich auf Profiling der natürlichen Person basiert, um das Risiko künftiger Straftaten zu prognostizieren.\`
 
-**Sprache:** de (sicher) · **Modus:** deterministic · **Regeln:** v0.1.4 (sha256:5a331907…) · **Konfidenz:** 0.60
+**Sprache:** de (sicher) · **Modus:** deterministic · **Regeln:** v0.2.0 (sha256:0735fda2…) · **Konfidenz:** 0.60
 
 ### Artikel 5 Abs. 1 Buchst. d — Verbotene Praxis
 
@@ -32,7 +32,7 @@ exports[`formatExplain() — Article 50 transparency fixture > markdown EN snaps
 
 **Input:** \`Our marketing agency uses an AI system to produce deepfake political-commentary videos for distribution on social-media — the deep fake content includes face swap of public figures.\`
 
-**Language:** en (confident) · **Mode:** deterministic · **Rules:** v0.1.4 (sha256:5a331907…) · **Confidence:** 0.60
+**Language:** en (confident) · **Mode:** deterministic · **Rules:** v0.2.0 (sha256:0735fda2…) · **Confidence:** 0.60
 
 ### Article 50(4) sub-paragraph 1 — Deep fake disclosure
 
@@ -53,8 +53,8 @@ exports[`formatExplain() — high-risk Annex III ¶4 single fixture > json EN sn
     "detected_lang": "en",
     "lang_confident": true,
     "mode": "deterministic",
-    "rules_version": "v0.1.4",
-    "rules_hash": "5a331907",
+    "rules_version": "v0.2.0",
+    "rules_hash": "0735fda2",
     "confidence": 0.64
   },
   "fired": [
@@ -145,7 +145,7 @@ exports[`formatExplain() — high-risk Annex III ¶4 single fixture > markdown E
 
 **Input:** \`Our AI tool screens CVs and ranks job applicants based on resume content and predicted job-fit scores; HR teams use the candidate ranking for hiring decisions.\`
 
-**Language:** en (confident) · **Mode:** deterministic · **Rules:** v0.1.4 (sha256:5a331907…) · **Confidence:** 0.64
+**Language:** en (confident) · **Mode:** deterministic · **Rules:** v0.2.0 (sha256:0735fda2…) · **Confidence:** 0.64
 
 ### Annex III ¶4(a) — Employment, workers' management and access to self-employment
 
@@ -207,7 +207,7 @@ exports[`formatExplain() — high-risk Annex III ¶4 single fixture > text EN sn
 ========================================
 
 Input: Our AI tool screens CVs and ranks job applicants based on resume content and predicted job-fit scores; HR teams use the candidate ranking for hiring decisions.
-Language: en · Mode: deterministic · Rules: v0.1.4 (sha256:5a331907...) · Confidence: 0.64
+Language: en · Mode: deterministic · Rules: v0.2.0 (sha256:0735fda2...) · Confidence: 0.64
 
 -- Annex III ¶4(a) — Employment, workers' management and access to self-employment --
 Employment, workers' management and access to self-employment:

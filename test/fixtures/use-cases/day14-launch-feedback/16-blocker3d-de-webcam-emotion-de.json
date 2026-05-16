@@ -1,0 +1,24 @@
+{
+  "id": "fixture-day14-16-blocker3d-de-webcam-emotion-de",
+  "lang": "de",
+  "input": "Arbeitsplatzüberwachungssystem, das Mitarbeiteremotionen über Webcam in Besprechungen erkennt.",
+  "expected": {
+    "article_5_prohibited": true,
+    "article_5_letters": [
+      "f"
+    ],
+    "annex_iii_high_risk": false,
+    "annex_iii_domains": [],
+    "suppressed_by_article_5": true,
+    "article_10_applicable": false,
+    "article_12_applicable": false,
+    "article_13_applicable": false,
+    "article_14_applicable": false,
+    "article_15_applicable": false,
+    "three_category_applicable": [],
+    "annex_iv_required": false,
+    "notes": "v0.1.5 post-v0.1.4 reviewer feedback DE parity (Claude-Code retest). DE-side parallel to fixture 13: natural German description of workplace webcam-emotion-surveillance returned nothing on v0.1.4. v0.1.5 adds `mitarbeiteremotionen erkennen`, `emotionen am arbeitsplatz erkennen`, `webcam-emotionserkennung`, `mitarbeiteremotionen über webcam` to the f_emotion_in_workplace_education DE lexicon. Cite: EUR-Lex Verordnung (EU) 2024/1689, Art. 5 Abs. 1 Buchst. f."
+  },
+  "bucket": "article_5",
+  "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689"
+}
