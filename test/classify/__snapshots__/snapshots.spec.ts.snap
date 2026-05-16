@@ -68,7 +68,7 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-01-bio
   },
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "4f540b92",
+  "rules_hash": "b65ef072",
   "rules_version": "v0.3.0",
   "three_category": {
     "applicable_categories": [],
@@ -142,7 +142,7 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-02-cri
   },
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "4f540b92",
+  "rules_hash": "b65ef072",
   "rules_version": "v0.3.0",
   "three_category": {
     "applicable_categories": [
@@ -222,7 +222,7 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-03-edu
   },
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "4f540b92",
+  "rules_hash": "b65ef072",
   "rules_version": "v0.3.0",
   "three_category": {
     "applicable_categories": [
@@ -300,7 +300,7 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-04-emp
   },
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "4f540b92",
+  "rules_hash": "b65ef072",
   "rules_version": "v0.3.0",
   "three_category": {
     "applicable_categories": [
@@ -379,7 +379,7 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-05-ess
   },
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "4f540b92",
+  "rules_hash": "b65ef072",
   "rules_version": "v0.3.0",
   "three_category": {
     "applicable_categories": [
@@ -457,7 +457,7 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-06-law
   },
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "4f540b92",
+  "rules_hash": "b65ef072",
   "rules_version": "v0.3.0",
   "three_category": {
     "applicable_categories": [
@@ -537,7 +537,7 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-07-mig
   },
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "4f540b92",
+  "rules_hash": "b65ef072",
   "rules_version": "v0.3.0",
   "three_category": {
     "applicable_categories": [
@@ -615,7 +615,7 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day3-08-jus
   },
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "4f540b92",
+  "rules_hash": "b65ef072",
   "rules_version": "v0.3.0",
   "three_category": {
     "applicable_categories": [
@@ -686,7 +686,7 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day4-01-low
   },
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "4f540b92",
+  "rules_hash": "b65ef072",
   "rules_version": "v0.3.0",
   "three_category": {
     "applicable_categories": [],
@@ -753,7 +753,7 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day5-01-art
   },
   "lang_confident": false,
   "mode": "deterministic",
-  "rules_hash": "4f540b92",
+  "rules_hash": "b65ef072",
   "rules_version": "v0.3.0",
   "three_category": {
     "applicable_categories": [],
@@ -820,7 +820,7 @@ exports[`classify() — end-to-end orchestration snapshots > fixture-day5-02-art
   },
   "lang_confident": true,
   "mode": "deterministic",
-  "rules_hash": "4f540b92",
+  "rules_hash": "b65ef072",
   "rules_version": "v0.3.0",
   "three_category": {
     "applicable_categories": [],

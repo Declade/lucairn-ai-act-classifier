@@ -25,7 +25,7 @@ exports[`formatMarkdown() — output shape > DE snapshot — high-risk fixture, 
 | Kat 2 Evidence   (Art. 12+14) | 12 + 14 | 🔴 ERFORDERLICH |
 | Kat 3 Inventory  (Art. 10+12+14+15) | 10 + 12 + 14 + 15 | 🔴 ERFORDERLICH |
 
-**Konfidenz:** 0.44 · **Modus:** deterministic · **Regeln:** v0.3.0 (sha256:4f540b92…)
+**Konfidenz:** 0.44 · **Modus:** deterministic · **Regeln:** v0.3.0 (sha256:b65ef072…)
 
 ---
 
@@ -57,7 +57,7 @@ exports[`formatMarkdown() — output shape > EN snapshot — high-risk fixture, 
 | Cat 2 Evidence   (Art 12+14) | 12 + 14 | 🔴 REQUIRED |
 | Cat 3 Inventory  (Art 10+12+14+15) | 10 + 12 + 14 + 15 | 🔴 REQUIRED |
 
-**Confidence:** 0.56 · **Mode:** deterministic · **Rules:** v0.3.0 (sha256:4f540b92…)
+**Confidence:** 0.56 · **Mode:** deterministic · **Rules:** v0.3.0 (sha256:b65ef072…)
 
 ---
 

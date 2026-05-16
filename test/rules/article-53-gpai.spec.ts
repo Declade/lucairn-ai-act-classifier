@@ -197,3 +197,79 @@ describe('classifyGPAI() — summary + source URL', () => {
     expect(result.source).toMatch(/eur-lex\.europa\.eu/);
   });
 });
+
+// ---------------------------------------------------------------------------
+// H-1 regression — bare-model-name false-positive suppression (v0.3.0)
+//
+// The original lexicon shipped bare entries like "qwen", "mistral",
+// "command r", "yi 34b", "deepseek", and "claude haiku" — all of which
+// cross-fired on benign prose ("The Mistral wind blew strong",
+// "Our customer Qwen Liu placed an order", etc.). Each entry was
+// tightened to require model/llm/api/version context. These probes
+// lock in the suppression.
+// ---------------------------------------------------------------------------
+
+describe('classifyGPAI() — H-1 bare-name false-positive suppression', () => {
+  it('"Our customer Qwen Liu placed an order" → does NOT fire Art 53', () => {
+    const result = classify('Our customer Qwen Liu placed an order');
+    expect(result.article_53_applicable).toBe(false);
+  });
+
+  it('"The Mistral wind blew strong" → does NOT fire Art 53', () => {
+    const result = classify('The Mistral wind blew strong');
+    expect(result.article_53_applicable).toBe(false);
+  });
+
+  it('"To execute the command R must be installed" → does NOT fire Art 53', () => {
+    const result = classify('To execute the command R must be installed');
+    expect(result.article_53_applicable).toBe(false);
+  });
+
+  it('"Our customer enjoyed a Claude Haiku poem" → does NOT fire Art 53', () => {
+    const result = classify('Our customer enjoyed a Claude Haiku poem');
+    expect(result.article_53_applicable).toBe(false);
+  });
+
+  it('"deepseek" alone on benign prose → does NOT fire Art 53', () => {
+    // The bare "deepseek" entry was a latent-risk false-positive vector;
+    // requiring the "model"/"llm"/"v3"/"r1" suffix kills it.
+    const result = classify('Our friend deepseek went diving in the Aegean.');
+    expect(result.article_53_applicable).toBe(false);
+  });
+
+  it('legitimate "Mistral 7B model" still fires Art 53', () => {
+    const result = classify('We use the Mistral 7B model via the Mistral API.');
+    expect(result.article_53_applicable).toBe(true);
+    expect(result.triggered_by.named_foundation_model).toBe(true);
+  });
+
+  it('legitimate "Qwen model" still fires Art 53', () => {
+    const result = classify('We deploy a Qwen model on our infrastructure.');
+    expect(result.article_53_applicable).toBe(true);
+  });
+
+  it('legitimate "Command R+" still fires Art 53', () => {
+    const result = classify('We use Command R+ for retrieval-augmented generation.');
+    expect(result.article_53_applicable).toBe(true);
+  });
+
+  it('legitimate "Yi-34B" (with hyphen) still fires Art 53', () => {
+    const result = classify('We use Yi-34B for our customer-facing use case.');
+    expect(result.article_53_applicable).toBe(true);
+  });
+
+  it('legitimate "Claude Haiku 4.5" (with version) still fires Art 53', () => {
+    const result = classify('Our pipeline routes via Claude Haiku 4.5 for low-latency replies.');
+    expect(result.article_53_applicable).toBe(true);
+  });
+
+  it('legitimate "anthropic claude haiku" still fires Art 53', () => {
+    const result = classify('We integrate Anthropic Claude Haiku into our app.');
+    expect(result.article_53_applicable).toBe(true);
+  });
+
+  it('legitimate "deepseek v3" still fires Art 53', () => {
+    const result = classify('We benchmark deepseek v3 on our test suite.');
+    expect(result.article_53_applicable).toBe(true);
+  });
+});
