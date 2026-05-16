@@ -1,4 +1,4 @@
-# Anchor blog post draft — `@lucairn/ai-act-classifier` v0.1.1 launch
+# Anchor blog post draft — `@lucairn/ai-act-classifier` v0.1.2 launch
 
 This directory ships the Day-13 hand-written anchor blog post draft (EN + DE). The drafts are **copy-paste-ready templates** that Marc places into `theveil-website/src/content/blog/eu-ai-act-classifier-launch.{en,de}.mdx` during Day-14 launch, with the website's standard frontmatter, hero image, and MDX layout integration.
 

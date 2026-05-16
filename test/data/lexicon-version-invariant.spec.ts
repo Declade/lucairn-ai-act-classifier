@@ -41,7 +41,7 @@ const EN = JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'patterns.en.json')
 const DE = JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'patterns.de.json'), 'utf8')) as LexiconHeader;
 
 describe('Lexicon version invariant — must match package.json semver to keep cache valid (bug-hunter M3)', () => {
-  // package.json `0.1.1` → lexicon expects `v0.1.1` (with `v` prefix per the
+  // package.json `0.1.2` → lexicon expects `v0.1.2` (with `v` prefix per the
   // RULES_VERSION convention in src/util/rules-hash.ts).
   const expected = `v${PKG.version}`;
 
