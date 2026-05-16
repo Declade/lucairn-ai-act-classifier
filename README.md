@@ -125,7 +125,7 @@ Reports: [accuracy/REPORT.md](./accuracy/REPORT.md) (deterministic, CI-gated), [
 
 The classification methodology is documented at [accuracy/METHODOLOGY.md](./accuracy/METHODOLOGY.md). Key points:
 
-- **Cite-and-match discipline.** Every fired article carries an EUR-Lex citation URL on the result object. The internal `regulator-validator` agent re-runs every `source` and `summary_*` field against EUR-Lex EN+DE before every PR merge.
+- **Cite-and-match discipline.** Every fired article carries an EUR-Lex citation URL on the result object. An automated citation-verification step re-runs every `source` and `summary_*` field against EUR-Lex EN+DE before every PR merge.
 - **Lexicon-first feature extraction.** The deterministic extractor matches input n-grams against a curated lexicon at `src/data/patterns.{en,de}.json`. The LLM mode uses the same lexicon as a hallucination guard — any phrase the LLM emits that is not in the lexicon is dropped before the rules engine sees it.
 - **Tier-1 source allowlist.** Fixture-corpus `source_url` fields are restricted to EUR-Lex / EU AI Office Service Desk / BSI / BfDI / Bitkom — the same hosts cited in our `--explain` output.
 - **Honest disclosure.** Known limitations + the v0.2 polish backlog are public at [accuracy/KNOWN-MISCLASSIFICATIONS.md](./accuracy/KNOWN-MISCLASSIFICATIONS.md).

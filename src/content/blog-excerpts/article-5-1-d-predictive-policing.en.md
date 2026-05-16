@@ -4,4 +4,4 @@ Article 5(1)(d) of Regulation (EU) 2024/1689 prohibits AI systems used for "maki
 
 The word **solely** is the load-bearing qualifier. A risk-assessment system that mixes profiling with objective verifiable facts that are directly linked to a criminal activity does not fall under the prohibition; it falls under Annex III paragraph 6 high-risk obligations instead. The [Future of Life Institute regulation-text mirror (Tier-3)](https://artificialintelligenceact.eu/article/5/) walks through the same line.
 
-Implementation tip: if your design document does not explicitly say "the risk score is based solely on profiling", the classifier will route to Annex III ¶6 high-risk. Add Article 11 + Article 15 + the human-oversight requirements of Article 14; do not assume the carve-out applies.
+Implementation tip: if a design document does not explicitly state that "the risk score is based solely on profiling", the classifier routes the case to Annex III ¶6 high-risk. In that case, Articles 11, 14, and 15 obligations apply — the prohibition carve-out does not take effect automatically.

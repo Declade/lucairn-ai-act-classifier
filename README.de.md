@@ -125,7 +125,7 @@ Berichte: [accuracy/REPORT.md](./accuracy/REPORT.md) (deterministisch, CI-überw
 
 Die Klassifizierungs-Methodik ist unter [accuracy/METHODOLOGY.md](./accuracy/METHODOLOGY.md) dokumentiert. Die wichtigsten Punkte:
 
-- **Cite-and-Match-Disziplin.** Jeder ausgelöste Artikel trägt eine EUR-Lex-Zitations-URL im Ergebnisobjekt. Der interne `regulator-validator`-Agent überprüft jedes `source`- und `summary_*`-Feld vor jedem PR-Merge erneut gegen EUR-Lex EN+DE.
+- **Cite-and-Match-Disziplin.** Jeder ausgelöste Artikel trägt eine EUR-Lex-Zitations-URL im Ergebnisobjekt. Eine automatisierte Zitations-Verifikationsstufe überprüft jedes `source`- und `summary_*`-Feld vor jedem PR-Merge erneut gegen EUR-Lex EN+DE.
 - **Lexikon-zuerst Feature-Extraktion.** Der deterministische Extraktor matcht n-Gramme der Eingabe gegen ein kuratiertes Lexikon unter `src/data/patterns.{en,de}.json`. Der LLM-Modus nutzt dasselbe Lexikon als Halluzinations-Wächter — jede vom LLM gelieferte Phrase, die nicht im Lexikon steht, wird verworfen, bevor die Regel-Engine sie sieht.
 - **Tier-1-Quellen-Allowlist.** Fixture-Korpus-`source_url`-Felder sind auf EUR-Lex / Service Desk des EU-AI-Office / BSI / BfDI / Bitkom beschränkt — dieselben Quellen, auf die unsere `--explain`-Ausgabe verweist.
 - **Ehrliche Offenlegung.** Bekannte Lücken und das v0.2-Polish-Backlog sind öffentlich unter [accuracy/KNOWN-MISCLASSIFICATIONS.md](./accuracy/KNOWN-MISCLASSIFICATIONS.md).
