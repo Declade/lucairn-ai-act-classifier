@@ -5,7 +5,7 @@
     "primary_pdf_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
     "primary_pdf_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
     "commentary_publisher": "Lucairn UG (haftungsbeschränkt) i.Gr. — pre-incorporation; operated by Marc Schülke as a natural person",
-    "_provenance_notice": "Service Desk URLs sourced from EU AI Office reference site (artificialintelligenceact.eu) — Tier-2 reference. All 9 per-article DE URLs verified live 2026-05-15 (PAGE_EXISTS via WebFetch). Lucairn commentary URLs source: lucairn.eu blog corpus (commentary, not regulator-authoritative). EUR-Lex HTML omits per-article anchors because EUR-Lex page-version anchors are inconsistent across page versions (regulator-validator Day-5 finding)."
+    "_provenance_notice": "regulation_text_mirror_* URLs point at the Future of Life Institute regulation-text mirror (artificialintelligenceact.eu) — Tier-3 third-party mirror per the regulator-validator tier scheme (Tier-1 = EUR-Lex + EU AI Office Service Desk at ai-act-service-desk.ec.europa.eu; Tier-2 = BSI + BfDI + Bitkom WG; Tier-3 = FLI mirror + ai-act-law.eu/de). All 9 per-article DE URLs verified live 2026-05-15 (PAGE_EXISTS via WebFetch). Lucairn commentary URLs source: lucairn.eu blog corpus (commentary, not regulator-authoritative). EUR-Lex HTML omits per-article anchors because EUR-Lex page-version anchors are inconsistent across page versions (regulator-validator Day-5 finding). Day-12 FX4 closure (bug-hunter M3): renamed service_desk_* to regulation_text_mirror_* to match Day-11 FX6 relabel pattern; URLs unchanged."
   },
   "article_5": {
     "label_en": "Article 5 — Prohibited AI practices",
@@ -14,8 +14,8 @@
     "eur_lex_html_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=OJ:L_202401689",
     "eur_lex_pdf_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
     "eur_lex_pdf_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
-    "service_desk_en": "https://artificialintelligenceact.eu/article/5/",
-    "service_desk_de": "https://artificialintelligenceact.eu/de/article/5/",
+    "regulation_text_mirror_en": "https://artificialintelligenceact.eu/article/5/",
+    "regulation_text_mirror_de": "https://artificialintelligenceact.eu/de/article/5/",
     "lucairn_commentary_en": "https://lucairn.eu/en/blog/eu-ai-act-architecture-2026",
     "lucairn_commentary_de": "https://lucairn.eu/de/blog/eu-ai-act-architecture-2026"
   },
@@ -26,8 +26,8 @@
     "eur_lex_html_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=OJ:L_202401689",
     "eur_lex_pdf_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
     "eur_lex_pdf_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
-    "service_desk_en": "https://artificialintelligenceact.eu/article/6/",
-    "service_desk_de": "https://artificialintelligenceact.eu/de/article/6/",
+    "regulation_text_mirror_en": "https://artificialintelligenceact.eu/article/6/",
+    "regulation_text_mirror_de": "https://artificialintelligenceact.eu/de/article/6/",
     "lucairn_commentary_en": "https://lucairn.eu/en/blog/eu-ai-act-architecture-2026",
     "lucairn_commentary_de": "https://lucairn.eu/de/blog/eu-ai-act-architecture-2026"
   },
@@ -38,8 +38,8 @@
     "eur_lex_html_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=OJ:L_202401689",
     "eur_lex_pdf_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
     "eur_lex_pdf_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
-    "service_desk_en": "https://artificialintelligenceact.eu/article/10/",
-    "service_desk_de": "https://artificialintelligenceact.eu/de/article/10/",
+    "regulation_text_mirror_en": "https://artificialintelligenceact.eu/article/10/",
+    "regulation_text_mirror_de": "https://artificialintelligenceact.eu/de/article/10/",
     "lucairn_commentary_en": "https://lucairn.eu/en/blog/eu-ai-act-architecture-2026",
     "lucairn_commentary_de": "https://lucairn.eu/de/blog/eu-ai-act-architecture-2026"
   },
@@ -50,8 +50,8 @@
     "eur_lex_html_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=OJ:L_202401689",
     "eur_lex_pdf_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
     "eur_lex_pdf_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
-    "service_desk_en": "https://artificialintelligenceact.eu/article/12/",
-    "service_desk_de": "https://artificialintelligenceact.eu/de/article/12/",
+    "regulation_text_mirror_en": "https://artificialintelligenceact.eu/article/12/",
+    "regulation_text_mirror_de": "https://artificialintelligenceact.eu/de/article/12/",
     "lucairn_commentary_en": "https://lucairn.eu/en/blog/eu-ai-act-architecture-2026",
     "lucairn_commentary_de": "https://lucairn.eu/de/blog/eu-ai-act-architecture-2026"
   },
@@ -62,8 +62,8 @@
     "eur_lex_html_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=OJ:L_202401689",
     "eur_lex_pdf_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
     "eur_lex_pdf_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
-    "service_desk_en": "https://artificialintelligenceact.eu/article/13/",
-    "service_desk_de": "https://artificialintelligenceact.eu/de/article/13/",
+    "regulation_text_mirror_en": "https://artificialintelligenceact.eu/article/13/",
+    "regulation_text_mirror_de": "https://artificialintelligenceact.eu/de/article/13/",
     "lucairn_commentary_en": "https://lucairn.eu/en/blog/eu-ai-act-architecture-2026",
     "lucairn_commentary_de": "https://lucairn.eu/de/blog/eu-ai-act-architecture-2026"
   },
@@ -74,8 +74,8 @@
     "eur_lex_html_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=OJ:L_202401689",
     "eur_lex_pdf_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
     "eur_lex_pdf_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
-    "service_desk_en": "https://artificialintelligenceact.eu/article/14/",
-    "service_desk_de": "https://artificialintelligenceact.eu/de/article/14/",
+    "regulation_text_mirror_en": "https://artificialintelligenceact.eu/article/14/",
+    "regulation_text_mirror_de": "https://artificialintelligenceact.eu/de/article/14/",
     "lucairn_commentary_en": "https://lucairn.eu/en/blog/eu-ai-act-architecture-2026",
     "lucairn_commentary_de": "https://lucairn.eu/de/blog/eu-ai-act-architecture-2026"
   },
@@ -86,8 +86,8 @@
     "eur_lex_html_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=OJ:L_202401689",
     "eur_lex_pdf_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
     "eur_lex_pdf_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
-    "service_desk_en": "https://artificialintelligenceact.eu/article/15/",
-    "service_desk_de": "https://artificialintelligenceact.eu/de/article/15/",
+    "regulation_text_mirror_en": "https://artificialintelligenceact.eu/article/15/",
+    "regulation_text_mirror_de": "https://artificialintelligenceact.eu/de/article/15/",
     "lucairn_commentary_en": "https://lucairn.eu/en/blog/eu-ai-act-architecture-2026",
     "lucairn_commentary_de": "https://lucairn.eu/de/blog/eu-ai-act-architecture-2026"
   },
@@ -98,8 +98,8 @@
     "eur_lex_html_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=OJ:L_202401689",
     "eur_lex_pdf_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
     "eur_lex_pdf_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
-    "service_desk_en": "https://artificialintelligenceact.eu/article/50/",
-    "service_desk_de": "https://artificialintelligenceact.eu/de/article/50/",
+    "regulation_text_mirror_en": "https://artificialintelligenceact.eu/article/50/",
+    "regulation_text_mirror_de": "https://artificialintelligenceact.eu/de/article/50/",
     "lucairn_commentary_en": "https://lucairn.eu/en/blog/eu-ai-act-architecture-2026",
     "lucairn_commentary_de": "https://lucairn.eu/de/blog/eu-ai-act-architecture-2026"
   },
@@ -110,8 +110,8 @@
     "eur_lex_html_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=OJ:L_202401689",
     "eur_lex_pdf_en": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689",
     "eur_lex_pdf_de": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689",
-    "service_desk_en": "https://artificialintelligenceact.eu/annex/4/",
-    "service_desk_de": "https://artificialintelligenceact.eu/de/annex/4/",
+    "regulation_text_mirror_en": "https://artificialintelligenceact.eu/annex/4/",
+    "regulation_text_mirror_de": "https://artificialintelligenceact.eu/de/annex/4/",
     "lucairn_commentary_en": "https://lucairn.eu/en/blog/eu-ai-act-architecture-2026",
     "lucairn_commentary_de": "https://lucairn.eu/de/blog/eu-ai-act-architecture-2026"
   }

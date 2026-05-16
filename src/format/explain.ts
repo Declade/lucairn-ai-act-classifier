@@ -199,9 +199,9 @@ export function readExcerpt(key: string, locale: 'en' | 'de'): string | null {
 function citationUrlForArticle(id: CitationArticleId, locale: 'en' | 'de'): string {
   const c = getCitation(id);
   if (locale === 'de') {
-    return c.service_desk_de ?? c.eur_lex_html_de;
+    return c.regulation_text_mirror_de ?? c.eur_lex_html_de;
   }
-  return c.service_desk_en ?? c.eur_lex_html_en;
+  return c.regulation_text_mirror_en ?? c.eur_lex_html_en;
 }
 
 function buildArticle5Fires(article5: Article5Result, locale: 'en' | 'de'): FiredArticle[] {

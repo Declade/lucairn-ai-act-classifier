@@ -100,8 +100,8 @@ function renderCitations(
   out.push(`- **${labels.label_primary_eur_lex}** ${primaryUrl}`);
   for (const row of rows) {
     const c = getCitation(row.id);
-    const desk = locale === 'de' ? c.service_desk_de ?? c.eur_lex_html_de : c.service_desk_en ?? c.eur_lex_html_en;
-    out.push(`- ${row.label}: ${desk}`);
+    const mirror = locale === 'de' ? c.regulation_text_mirror_de ?? c.eur_lex_html_de : c.regulation_text_mirror_en ?? c.eur_lex_html_en;
+    out.push(`- ${row.label}: ${mirror}`);
   }
   if (rows.length > 0) {
     const first = rows[0];

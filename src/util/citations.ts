@@ -21,8 +21,15 @@ export interface CitationEntry {
   eur_lex_html_de: string;
   eur_lex_pdf_en: string;
   eur_lex_pdf_de: string;
-  service_desk_en: string | null;
-  service_desk_de: string | null;
+  /**
+   * Future of Life Institute regulation-text mirror URL (artificialintelligenceact.eu).
+   * Tier-3 per the regulator-validator tier scheme — not authoritative; useful as a
+   * deep-anchor reference for the regulation text. Day-12 FX4 (bug-hunter M3) renamed
+   * this field from `service_desk_*` (which falsely implied Tier-1 sourcing) to
+   * `regulation_text_mirror_*` — matches Day-11 FX6 cross-surface relabel.
+   */
+  regulation_text_mirror_en: string | null;
+  regulation_text_mirror_de: string | null;
   lucairn_commentary_en: string | null;
   lucairn_commentary_de: string | null;
 }

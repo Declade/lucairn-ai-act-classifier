@@ -189,10 +189,10 @@ function selectCitations(result: ClassifyResult, locale: 'en' | 'de'): ArticleCi
 }
 
 function citationUrlEN(c: CitationEntry): string {
-  return c.service_desk_en ?? c.eur_lex_html_en;
+  return c.regulation_text_mirror_en ?? c.eur_lex_html_en;
 }
 function citationUrlDE(c: CitationEntry): string {
-  return c.service_desk_de ?? c.eur_lex_html_de;
+  return c.regulation_text_mirror_de ?? c.eur_lex_html_de;
 }
 function commentaryUrl(c: CitationEntry, locale: 'en' | 'de'): string | null {
   return locale === 'de' ? c.lucairn_commentary_de : c.lucairn_commentary_en;
@@ -213,8 +213,8 @@ function renderCitations(
 
   for (const ctx of citations) {
     const c = getCitation(ctx.id);
-    const desk = locale === 'de' ? citationUrlDE(c) : citationUrlEN(c);
-    out.push(`       ${desk}`);
+    const mirror = locale === 'de' ? citationUrlDE(c) : citationUrlEN(c);
+    out.push(`       ${mirror}`);
   }
   // Commentary tail (one shared lucairn.eu URL per locale; collapse to a single line).
   if (citations.length > 0) {
