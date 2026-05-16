@@ -439,6 +439,78 @@
       ]
     }
   },
+  "gpai_models": {
+    "named_foundation_models": {
+      "description": "Art 53/55 — closed list of named general-purpose AI (GPAI) / foundation models. Triggers the Art 53(1) chapeau independently of generic phrasing. Model names are language-neutral proper nouns; the same list appears in both EN and DE lexicons.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "gpt-4" },
+        { "phrase": "gpt-4o" },
+        { "phrase": "gpt-5" },
+        { "phrase": "gpt-4.5" },
+        { "phrase": "gpt-3.5" },
+        { "phrase": "claude 3" },
+        { "phrase": "claude 4" },
+        { "phrase": "claude 3.5" },
+        { "phrase": "claude 3.7" },
+        { "phrase": "claude opus" },
+        { "phrase": "claude sonnet" },
+        { "phrase": "claude haiku" },
+        { "phrase": "llama 2" },
+        { "phrase": "llama 3" },
+        { "phrase": "llama 4" },
+        { "phrase": "llama-2" },
+        { "phrase": "llama-3" },
+        { "phrase": "gemini 1.5" },
+        { "phrase": "gemini 2" },
+        { "phrase": "gemini pro" },
+        { "phrase": "mistral" },
+        { "phrase": "mixtral" },
+        { "phrase": "falcon 40b" },
+        { "phrase": "falcon 180b" },
+        { "phrase": "deepseek" },
+        { "phrase": "qwen" },
+        { "phrase": "command r" },
+        { "phrase": "yi 34b" },
+        { "phrase": "palm 2" },
+        { "phrase": "anthropic claude" },
+        { "phrase": "openai gpt" },
+        { "phrase": "meta llama" }
+      ]
+    },
+    "generic_foundation_model_phrasing": {
+      "description": "Art 53 — generic phrasing describing a foundation / general-purpose AI MODEL (not a system built on top of one). Triggers the Art 53(1) chapeau when a named model is not explicitly cited but the description identifies the work as building/training a GPAI model.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "foundation model" },
+        { "phrase": "base model" },
+        { "phrase": "general-purpose ai model" },
+        { "phrase": "general purpose ai model" },
+        { "phrase": "frontier model" },
+        { "phrase": "large language model" },
+        { "phrase": "llm provider" },
+        { "phrase": "we train a large language model" },
+        { "phrase": "pretrained model" },
+        { "phrase": "pre-trained model" },
+        { "phrase": "we build an llm" },
+        { "phrase": "general-purpose ai system" }
+      ]
+    },
+    "systemic_risk_markers": {
+      "description": "Art 55 — markers that fire the systemic-risk overlay on top of Art 53. Conservative list (Art 55 should fire rarely): explicit FLOP threshold references, 'systemic risk' phrase, training-compute-threshold references.",
+      "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "10^25 flop" },
+        { "phrase": "10^25 floating-point operations" },
+        { "phrase": "10^26 flop" },
+        { "phrase": "systemic risk" },
+        { "phrase": "training compute threshold" },
+        { "phrase": "compute threshold" },
+        { "phrase": "presumed systemic risk" },
+        { "phrase": "designated systemic risk" }
+      ]
+    }
+  },
   "scope_qualifiers": {
     "research_only": {
       "description": "Article 2(8) — research, testing, and development activity scope exclusion (pre-market). Surface for the rules engine to consider suppressing high-risk classification.",

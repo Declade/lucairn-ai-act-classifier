@@ -374,6 +374,73 @@
       ]
     }
   },
+  "gpai_models": {
+    "named_foundation_models": {
+      "description": "Art. 53/55 — geschlossene Liste benannter KI-Modelle mit allgemeinem Verwendungszweck (GPAI) / Basismodelle. Modellnamen sind sprachneutrale Eigennamen; die gleiche Liste erscheint im EN- und DE-Lexikon.",
+      "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "gpt-4" },
+        { "phrase": "gpt-4o" },
+        { "phrase": "gpt-5" },
+        { "phrase": "gpt-4.5" },
+        { "phrase": "gpt-3.5" },
+        { "phrase": "claude 3" },
+        { "phrase": "claude 4" },
+        { "phrase": "claude 3.5" },
+        { "phrase": "claude 3.7" },
+        { "phrase": "claude opus" },
+        { "phrase": "claude sonnet" },
+        { "phrase": "claude haiku" },
+        { "phrase": "llama 2" },
+        { "phrase": "llama 3" },
+        { "phrase": "llama 4" },
+        { "phrase": "llama-2" },
+        { "phrase": "llama-3" },
+        { "phrase": "gemini 1.5" },
+        { "phrase": "gemini 2" },
+        { "phrase": "gemini pro" },
+        { "phrase": "mistral" },
+        { "phrase": "mixtral" },
+        { "phrase": "falcon 40b" },
+        { "phrase": "falcon 180b" },
+        { "phrase": "deepseek" },
+        { "phrase": "qwen" },
+        { "phrase": "command r" },
+        { "phrase": "yi 34b" },
+        { "phrase": "palm 2" },
+        { "phrase": "anthropic claude" },
+        { "phrase": "openai gpt" },
+        { "phrase": "meta llama" }
+      ]
+    },
+    "generic_foundation_model_phrasing": {
+      "description": "Art. 53 — generische Beschreibung eines Basismodells / KI-Modells mit allgemeinem Verwendungszweck (nicht ein darauf aufbauendes System). Löst die Art. 53 Abs. 1-Pflicht aus, wenn kein benanntes Modell genannt wird, die Beschreibung aber identifiziert, dass das Vorhaben den Aufbau/das Training eines GPAI-Modells umfasst.",
+      "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "basismodell" },
+        { "phrase": "basis-modell" },
+        { "phrase": "großes sprachmodell" },
+        { "phrase": "grosses sprachmodell" },
+        { "phrase": "großes ki-modell" },
+        { "phrase": "frontier-modell" },
+        { "phrase": "ki-modell mit allgemeinem verwendungszweck" },
+        { "phrase": "general-purpose ki" },
+        { "phrase": "vortrainiertes modell" },
+        { "phrase": "vortrainierten modells" }
+      ]
+    },
+    "systemic_risk_markers": {
+      "description": "Art. 55 — Marker, die die Überlagerung durch das systemische Risiko zusätzlich zu Art. 53 auslösen. Konservative Liste (Art. 55 soll selten auslösen): explizite FLOP-Schwellenwert-Referenzen, Phrase 'systemisches Risiko', Bezugnahmen auf den Rechenleistungs-Schwellenwert.",
+      "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
+      "entries": [
+        { "phrase": "10^25 flop" },
+        { "phrase": "10^25 gleitkommaoperationen" },
+        { "phrase": "systemisches risiko" },
+        { "phrase": "schwellenwert für die rechenleistung" },
+        { "phrase": "rechenleistungs-schwellenwert" }
+      ]
+    }
+  },
   "scope_qualifiers": {
     "research_only": {
       "description": "Art. 2 Abs. 8 — Forschungs-, Test- und Entwicklungstätigkeit Geltungsausschluss (vor dem Inverkehrbringen).",
