@@ -1,6 +1,6 @@
 {
   "language": "de",
-  "version": "v0.1.0-seed",
+  "version": "v0.1.1",
   "_meta": {
     "notice": "Saat-Lexikon für Tag 2 des v0.1.0-Builds. Jeder Eintrag `source` MUSS gegen das deutsche EUR-Lex-Body durch den regulator-validator-Agenten verifiziert werden, bevor Tag-3-Regel-Module diese Trigger konsumieren. NO_DIRECT_SOURCE oder FAIL Findings blockieren Tag-3-Arbeit.",
     "primary_source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
