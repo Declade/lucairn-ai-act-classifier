@@ -2,6 +2,8 @@
 
 Kostenloses CLI, das jede Beschreibung eines KI-Anwendungsfalls den auslösenden Artikeln der EU-KI-Verordnung zuordnet. Keine Netzwerkverbindung, keine Konfiguration, kein API-Key im deterministischen Standardmodus. MIT-lizenziert für den Code; CC-BY-4.0 für den kuratierten Testkorpus.
 
+> **Über den Herausgeber.** Ein kostenloses Werkzeug vom Team hinter [Lucairn](https://lucairn.eu/de) — der KI-Beweis-Schicht für regulierte Unternehmen in der EU. Nutzen Sie dieses CLI, um zu klären, welche KI-Verordnungs-Artikel Ihr System auslöst; nutzen Sie Lucairn selbst, wenn Sie auditfähige, signierte Quittungen pro LLM-Aufruf benötigen.
+
 ## Schnelleinstieg
 
 ```bash
