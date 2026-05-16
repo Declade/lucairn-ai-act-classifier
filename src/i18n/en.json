@@ -37,6 +37,7 @@
     "error_invalid_lang": "Error: --lang must be 'en' or 'de'. Got: ",
     "error_rules_version_mismatch": "Error: rules-version mismatch — requested \"{requested}\", current \"{current}\". Available: \"{current}\".",
     "error_annex_invalid": "Error: --annex only supports 'iv' (Annex IV technical-documentation reference). Got: ",
+    "error_wizard_cancelled": "Wizard cancelled (no input received).",
     "annex_iv_reference_title": "Annex IV — Technical documentation (Regulation (EU) 2024/1689)",
     "annex_iv_reference_source": "Source: EUR-Lex Regulation (EU) 2024/1689, Annex IV",
     "annex_iii_prefix": "Annex III",
