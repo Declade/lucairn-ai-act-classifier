@@ -56,6 +56,7 @@ export interface I18nLabels {
   error_invalid_lang: string;
   error_rules_version_mismatch: string;
   error_annex_invalid: string;
+  error_wizard_cancelled: string;
   annex_iv_reference_title: string;
   annex_iv_reference_source: string;
   annex_iii_prefix: string;

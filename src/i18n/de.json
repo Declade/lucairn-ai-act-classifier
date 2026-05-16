@@ -37,6 +37,7 @@
     "error_invalid_lang": "Fehler: --lang muss 'en' oder 'de' sein. Erhalten: ",
     "error_rules_version_mismatch": "Fehler: rules-version-Konflikt — angefordert \"{requested}\", aktuell \"{current}\". Verfügbar: \"{current}\".",
     "error_annex_invalid": "Fehler: --annex unterstützt nur 'iv' (Anhang IV technische Dokumentation). Erhalten: ",
+    "error_wizard_cancelled": "Wizard abgebrochen (keine Eingabe empfangen).",
     "annex_iv_reference_title": "Anhang IV — Technische Dokumentation (Verordnung (EU) 2024/1689)",
     "annex_iv_reference_source": "Quelle: EUR-Lex Verordnung (EU) 2024/1689, Anhang IV",
     "annex_iii_prefix": "Anhang III",

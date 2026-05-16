@@ -332,10 +332,28 @@ Exit codes:
   // free-text mode.
   let inputText: string;
   if (rawOpts.wizard === true) {
-    const { runWizard } = await import('./wizard/runner.js');
+    const { runWizard, WizardCancelledError } = await import('./wizard/runner.js');
     const { synthesizeWizardText } = await import('./wizard/answers.js');
     const wizardLang: 'en' | 'de' = langOverride ?? errLocale;
-    const answers = await runWizard({ lang: wizardLang });
+    let answers;
+    try {
+      answers = await runWizard({ lang: wizardLang });
+    } catch (e: unknown) {
+      // Stream-closed cancellation (EOF or SIGINT) — emit a lang-aware
+      // diagnostic and exit 2. Before this catch, `printf "y\n" | --wizard`
+      // silently exited 0 because rl.question() abandoned its promise when
+      // stdin closed mid-flow.
+      if (e instanceof WizardCancelledError) {
+        const locale = getLocale(wizardLang);
+        err(locale.labels.error_wizard_cancelled);
+        if (process.env['AI_ACT_CLASSIFY_DEBUG'] === '1') {
+          err(`(reason: ${e.reason})`);
+        }
+        exit(2);
+      }
+      // Re-throw anything else so it surfaces to `main().catch(...)`.
+      throw e;
+    }
     inputText = synthesizeWizardText(answers);
   } else {
     // ----- Gather input text (positional > stdin > error). -----------------
