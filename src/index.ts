@@ -27,3 +27,8 @@ export type {
   ThreeCategoryItem,
 } from './rules/index.js';
 export type { ExtractedFeatures, ExtractedHit } from './extract/keyword.js';
+
+// Format module — public surface for downstream consumers that want to render
+// classify() output without going through the CLI binary.
+export { formatExplain } from './format/explain.js';
+export type { ExplainFormatOptions } from './format/explain.js';
