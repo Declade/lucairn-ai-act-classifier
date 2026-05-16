@@ -245,6 +245,25 @@ export const CANONICAL_PHRASES_DE: typeof CANONICAL_PHRASES_EN = {
 };
 
 /**
+ * Validation sets for `synthesizeWizardText()`. Frozen at module scope to avoid
+ * re-allocating on every call and to make the accepted vocabulary auditable
+ * from one source-line. TypeScript already forbids invalid values via
+ * `Article5Letter | AnnexIIIParagraph | Article50Path`, but callers can bypass
+ * the type system (e.g. JSON-parsed input from another process); the runtime
+ * checks here close that hole.
+ */
+const VALID_ARTICLE_5_LETTERS: ReadonlySet<string> = new Set([
+  'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
+]);
+const VALID_ANNEX_III_PARAGRAPHS: ReadonlySet<number> = new Set([
+  1, 2, 3, 4, 5, 6, 7, 8,
+]);
+const VALID_ARTICLE_50_PATHS: ReadonlySet<string> = new Set([
+  '50(1)', '50(2)', '50(3)', '50(4)_sub1', '50(4)_sub2',
+]);
+const VALID_LANGS: ReadonlySet<string> = new Set(['en', 'de']);
+
+/**
  * Build a synthetic canonical text from wizard answers. The output is a single
  * sentence-per-selection paragraph that the existing extractFeatures() will
  * tokenize and feed to the rules engine, producing the same ClassifyResult
@@ -252,8 +271,78 @@ export const CANONICAL_PHRASES_DE: typeof CANONICAL_PHRASES_EN = {
  *
  * @param answers structured wizard answers
  * @returns synthetic canonical text matching the lexicon
+ * @throws TypeError if `answers` is not a non-null object, if `lang` is not
+ *   'en' or 'de', if any `article_5_letters` entry is outside a-h, if any
+ *   `annex_iii_selections[].paragraph` is outside 1-8, if any sub_letter is
+ *   not a string, or if any `article_50_paths` entry is outside the known
+ *   path set. TypeScript callers cannot trip these at compile time; the
+ *   checks defend against JSON-parsed input and `any`-cast bypasses.
  */
 export function synthesizeWizardText(answers: WizardAnswers): string {
+  if (answers === null || typeof answers !== 'object' || Array.isArray(answers)) {
+    throw new TypeError(
+      'synthesizeWizardText(): answers must be a non-null WizardAnswers object.',
+    );
+  }
+  if (typeof answers.lang !== 'string' || !VALID_LANGS.has(answers.lang)) {
+    throw new TypeError(
+      `synthesizeWizardText(): answers.lang must be "en" or "de", got ${JSON.stringify(answers.lang)}.`,
+    );
+  }
+  if (!Array.isArray(answers.article_5_letters)) {
+    throw new TypeError(
+      'synthesizeWizardText(): answers.article_5_letters must be an array.',
+    );
+  }
+  for (const l of answers.article_5_letters) {
+    if (typeof l !== 'string' || !VALID_ARTICLE_5_LETTERS.has(l)) {
+      throw new TypeError(
+        `synthesizeWizardText(): invalid Article 5 letter ${JSON.stringify(l)} (expected one of a-h).`,
+      );
+    }
+  }
+  if (!Array.isArray(answers.annex_iii_selections)) {
+    throw new TypeError(
+      'synthesizeWizardText(): answers.annex_iii_selections must be an array.',
+    );
+  }
+  for (const sel of answers.annex_iii_selections) {
+    if (sel === null || typeof sel !== 'object' || Array.isArray(sel)) {
+      throw new TypeError(
+        `synthesizeWizardText(): annex_iii_selections entry must be an object, got ${JSON.stringify(sel)}.`,
+      );
+    }
+    if (typeof sel.paragraph !== 'number' || !VALID_ANNEX_III_PARAGRAPHS.has(sel.paragraph)) {
+      throw new TypeError(
+        `synthesizeWizardText(): invalid Annex III paragraph ${JSON.stringify(sel.paragraph)} (expected one of 1-8).`,
+      );
+    }
+    if (!Array.isArray(sel.sub_letters)) {
+      throw new TypeError(
+        `synthesizeWizardText(): annex_iii_selections[${sel.paragraph}].sub_letters must be an array.`,
+      );
+    }
+    for (const sub of sel.sub_letters) {
+      if (typeof sub !== 'string') {
+        throw new TypeError(
+          `synthesizeWizardText(): annex_iii_selections[${sel.paragraph}].sub_letters entries must be strings, got ${JSON.stringify(sub)}.`,
+        );
+      }
+    }
+  }
+  if (!Array.isArray(answers.article_50_paths)) {
+    throw new TypeError(
+      'synthesizeWizardText(): answers.article_50_paths must be an array.',
+    );
+  }
+  for (const p of answers.article_50_paths) {
+    if (typeof p !== 'string' || !VALID_ARTICLE_50_PATHS.has(p)) {
+      throw new TypeError(
+        `synthesizeWizardText(): invalid Article 50 path ${JSON.stringify(p)} (expected one of 50(1), 50(2), 50(3), 50(4)_sub1, 50(4)_sub2).`,
+      );
+    }
+  }
+
   const phrases =
     answers.lang === 'de' ? CANONICAL_PHRASES_DE : CANONICAL_PHRASES_EN;
   const parts: string[] = [];
