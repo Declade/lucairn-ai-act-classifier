@@ -2,7 +2,7 @@
 
 > **LLM mode (opt-in).** This report reflects the Day-9 `--llm anthropic` extractor (Claude Haiku 4.5 via the Anthropic API). The rules engine that selects articles is unchanged — only feature extraction is replaced. LLM-mode results are NOT a CI-blocking metric. Cost: ~$0.13 per run on the 50-case corpus.
 
-- **Rules version:** `v0.1.1`
+- **Rules version:** `v0.1.2`
 - **Rules hash:** `cf212dc6` (full: `cf212dc6e56c97d8a8faf93c4438553204c1221abbc8905c90deab1f9aa3d6d9`)
 - **Last run:** 2026-05-15T22:23:51.205Z
 - **Fixture corpus:** 50 cases

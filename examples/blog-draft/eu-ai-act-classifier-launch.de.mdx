@@ -44,7 +44,7 @@ Reale Ausgabe:
   Kat 2 Evidence   (Art. 12+14):  ERFORDERLICH
   Kat 3 Inventory  (Art. 10+12+14+15): ERFORDERLICH
 
-  Konfidenz: 0.52   Modus: deterministic   Regeln: v0.1.1 (sha256:5bccb27a…)
+  Konfidenz: 0.52   Modus: deterministic   Regeln: v0.1.2 (sha256:d366b943…)
 
   ⚠ Informationelles Werkzeug — keine Rechtsberatung. Siehe README §Disclaimer.
 ```
@@ -69,7 +69,7 @@ Wer nur die Regulator-Sicht möchte, schaltet das Overlay mit `--no-three-catego
 
 ## Fünf bearbeitete Beispiele
 
-Die folgenden fünf Beispiele decken die tragenden Fälle ab. Jeder Ausgabeblock zeigt die tragenden Zeilen realer `dist/cli.js`-Ausgabe der v0.1.1-Binär. Beispiele 1 und 2 enthalten die vollständige Tabelle wörtlich; Beispiele 3, 4 und 5 zeigen nur die Zeilen, um die es geht. Die Artikel-10–15-Kaskade und das Drei-Kategorien-Overlay sind aus Lesbarkeitsgründen gekürzt — den CLI ausführen, um die vollständige Zuordnung zu sehen (typischerweise rund 18 Zeilen pro Anwendungsfall).
+Die folgenden fünf Beispiele decken die tragenden Fälle ab. Jeder Ausgabeblock zeigt die tragenden Zeilen realer `dist/cli.js`-Ausgabe der v0.1.2-Binär. Beispiele 1 und 2 enthalten die vollständige Tabelle wörtlich; Beispiele 3, 4 und 5 zeigen nur die Zeilen, um die es geht. Die Artikel-10–15-Kaskade und das Drei-Kategorien-Overlay sind aus Lesbarkeitsgründen gekürzt — den CLI ausführen, um die vollständige Zuordnung zu sehen (typischerweise rund 18 Zeilen pro Anwendungsfall).
 
 ### Beispiel 1 — Bewerber-Screening (Anhang III Nr. 4)
 
@@ -135,7 +135,7 @@ Browserverlauf-basierte Produktempfehlungen sind die Art Verbraucher-KI mittlere
 
 Der Klassifizierer wird mit einem kuratierten 50-Fälle-Korpus unter `test/fixtures/use-cases/` ausgeliefert. Der Korpus deckt 17 Hochrisiko-Fälle nach Anhang III ab (jede Nummer 1–8 mit mindestens einem Buchstaben-Eingrenzungstest), 7 Verbote nach Artikel 5 (jeder Buchstabe a–i exerziert), 8 Transparenzfälle nach Artikel 50 (Betreiber- und Anbieterseite), 9 Negativfälle (bewusst unauffällige KI zur Prüfung auf Falsch-Positiv-Über-Auslösung) und 9 Altfälle aus dem Day-3-Prototyp.
 
-Die empirischen Zahlen aus `accuracy/REPORT.md`, neu erzeugt auf dem v0.1.1-main-Branch:
+Die empirischen Zahlen aus `accuracy/REPORT.md`, neu erzeugt auf dem v0.1.2-main-Branch:
 
 - **Gesamtgenauigkeit:** 98,2 % (feinkörnige Pro-Feld-Bestehensquote über alle 50 Fixtures).
 - **Erkennung von Artikel-5-Verboten:** 100,0 % (jedes Verbot feuert korrekt; kein Falsch-Positiv-Verbot gegen die 9 Negativfälle).

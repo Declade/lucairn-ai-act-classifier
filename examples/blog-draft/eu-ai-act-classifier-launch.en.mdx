@@ -44,7 +44,7 @@ Real output:
   Cat 2 Evidence   (Art 12+14):  REQUIRED
   Cat 3 Inventory  (Art 10+12+14+15): REQUIRED
 
-  Confidence: 0.56   Mode: deterministic   Rules: v0.1.1 (sha256:5bccb27a…)
+  Confidence: 0.56   Mode: deterministic   Rules: v0.1.2 (sha256:d366b943…)
 
   ⚠ Informational tool — not legal advice. See README §Disclaimer.
 ```
@@ -69,7 +69,7 @@ You can suppress the overlay with `--no-three-category` if you only want the reg
 
 ## Five worked examples
 
-The following five examples cover the load-bearing cases. Each output block shows the load-bearing lines of real `dist/cli.js` output from the v0.1.1 binary. Examples 1 and 2 carry the full table verbatim; Examples 3, 4, and 5 show only the rows the discussion is about. The Articles 10-15 cascade and the three-category overlay are abridged for readability — run the CLI to see the full mapping (typically ~18 lines per use case).
+The following five examples cover the load-bearing cases. Each output block shows the load-bearing lines of real `dist/cli.js` output from the v0.1.2 binary. Examples 1 and 2 carry the full table verbatim; Examples 3, 4, and 5 show only the rows the discussion is about. The Articles 10-15 cascade and the three-category overlay are abridged for readability — run the CLI to see the full mapping (typically ~18 lines per use case).
 
 ### Example 1 — Employment screening (Annex III paragraph 4)
 
@@ -135,7 +135,7 @@ Browsing-history-based product recommendation is the kind of mid-stakes consumer
 
 The classifier ships with a 50-case curated fixture corpus at `test/fixtures/use-cases/`. The corpus covers 17 Annex III high-risk cases (every paragraph 1-8 with at least one sub-letter narrowing test), 7 Article 5 prohibitions (every letter a-i exercised), 8 Article 50 transparency cases (both deployer and provider sides), 9 negative cases (deliberately innocuous AI to test for false-positive over-firing), and 9 legacy cases retained from the Day-3 prototype.
 
-The empirical numbers from `accuracy/REPORT.md`, regenerated on the v0.1.1 main branch:
+The empirical numbers from `accuracy/REPORT.md`, regenerated on the v0.1.2 main branch:
 
 - **Overall accuracy:** 98.2% (granular per-field pass rate across all 50 fixtures).
 - **Article 5 prohibition detection:** 100.0% (every prohibition fires correctly; no false-positive prohibition flag against the 9 negative cases).

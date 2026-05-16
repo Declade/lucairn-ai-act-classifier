@@ -24,7 +24,7 @@ Total: ~140 lines of TypeScript across three files. No `ToolWorkspace` integrati
 
 2. Add `@lucairn/ai-act-classifier` as a workspace dependency in `theveil-website/package.json`:
    - Pre-Day-14 (npm not yet published): use `workspace:*` if both repos share a pnpm workspace, OR `file:../lucairn-ai-act-classifier` for a non-workspace local link.
-   - Post-Day-14 (after `pnpm publish` ships v0.1.1 to npm): use `"^0.1.1"`.
+   - Post-Day-14 (after `pnpm publish` ships v0.1.2 to npm): use `"^0.1.1"`.
 
 3. Replace the placeholder `metadata` block in `page.tsx` with theveil-website's `buildPageMetadata` helper (mirrors `src/app/[lang]/tools/ai-payload-inspector/page.tsx:7-19`):
 

@@ -1,4 +1,4 @@
-# Internal alpha test — @lucairn/ai-act-classifier v0.1.1
+# Internal alpha test — @lucairn/ai-act-classifier v0.1.2
 
 **Purpose:** validate the classifier against EU/DE consultant judgment on 5 representative test cases × 2 locales BEFORE the 2026-05-29 public launch. The credibility-moat-for-launch claim ("informational tool tuned with EU/DE consultant judgment, not a generic LLM wrapper") needs at least 3-5 real consultants to sign off on the worked examples before we publicly cite their judgment as the corpus design input.
 
@@ -205,7 +205,7 @@ Looking for a balanced spread across:
 ### Personal email template
 
 ```
-Subject: 30-minute pre-launch sanity check — Lucairn AI-Act classifier (v0.1.1)
+Subject: 30-minute pre-launch sanity check — Lucairn AI-Act classifier (v0.1.2)
 
 Hi <Name>,
 
@@ -247,7 +247,7 @@ Marc
 
 - **NOT a marketing exercise.** Don't ask for testimonials. Don't ask for case studies. Don't ask for permission to quote.
 - **NOT a paid engagement.** This is a 30-minute favor request from a small early-stage project; treat it as such.
-- **NOT a release-blocker for v1.0.** v0.1.1 ships either way; alpha feedback shapes the launch-day disclosure tone and the v0.2 polish backlog.
+- **NOT a release-blocker for v1.0.** v0.1.2 ships either way; alpha feedback shapes the launch-day disclosure tone and the v0.2 polish backlog.
 
 ### Appendix — tester feedback log
 

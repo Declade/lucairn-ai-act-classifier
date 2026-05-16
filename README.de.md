@@ -97,7 +97,7 @@ LLM-Modus-Ergebnisse werden auf der Festplatte unter `~/.cache/lucairn-ai-act-cl
 - **Cache-Hit:** typischerweise <100 ms (kein Netzwerk) gegenüber ~1–5 s für einen frischen API-Aufruf.
 - **Cache-Miss:** der Anbieter wird aufgerufen, das Ergebnis atomar in den Cache geschrieben (`<key>.tmp` → `rename`), und die zwischengespeicherten Merkmale bedienen jeden weiteren Aufruf, bis sich die Lexikon-Version ODER der Prompt-Checksum ändert.
 - **Umgehen:** mit `--no-cache` wird ein frischer API-Aufruf erzwungen (der Cache wird für diesen Aufruf weder gelesen noch geschrieben).
-- **Invalidierung:** automatisch bei Lexikon-Version-Bump (z. B. v0.1.1 → v0.2.0) oder bei jeder Änderung am LLM-System-Prompt / Tool-Schema; beides ist Teil des Cache-Schlüssels.
+- **Invalidierung:** automatisch bei Lexikon-Version-Bump (z. B. v0.1.2 → v0.2.0) oder bei jeder Änderung am LLM-System-Prompt / Tool-Schema; beides ist Teil des Cache-Schlüssels.
 - **Fehlgeschlagene Aufrufe werden NICHT zwischengespeichert.** Nur erfolgreiche Provider-Ergebnisse landen im Cache.
 
 Cache manuell löschen: `rm -rf ~/.cache/lucairn-ai-act-classifier`.
@@ -108,7 +108,7 @@ Regelwerk-zuerst-Hybrid. Eine deterministische TypeScript-Regel-Engine wertet di
 
 ## Genauigkeit (Accuracy)
 
-Der Klassifizierer wird gegen einen 50-Fall-zweisprachigen Fixture-Korpus (CC-BY-4.0) gebenchmarkt: 24 Anhang III Hochrisiko + 8 Art. 5 verboten + 8 Art. 50 Transparenz + 10 Negativfälle; 21 EN + 29 DE. Aktuelle Zahlen auf dem v0.1.1-Regelsatz:
+Der Klassifizierer wird gegen einen 50-Fall-zweisprachigen Fixture-Korpus (CC-BY-4.0) gebenchmarkt: 24 Anhang III Hochrisiko + 8 Art. 5 verboten + 8 Art. 50 Transparenz + 10 Negativfälle; 21 EN + 29 DE. Aktuelle Zahlen auf dem v0.1.2-Regelsatz:
 
 - **Gesamtgenauigkeit:** 98,2 % (granulare Feld-Trefferquote)
 - **Art. 5 Verbots-Erkennung** (sicherheitskritisch): 100,0 %

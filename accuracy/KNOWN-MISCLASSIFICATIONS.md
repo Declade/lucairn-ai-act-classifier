@@ -1,6 +1,6 @@
 # Known misclassifications & v0.2 polish backlog
 
-This document lists known classifier limitations surfaced during the Day-7+8 build of the 50-case fixture corpus + accuracy harness. As of v0.1.1 (Day 8) the harness reports 1 fixture-level misclassification on the 50-case corpus (overall 98.2%, Art 5 100.0%, binary high-risk 98.0%). The harness only checks what the fixtures pin; the items below are limitations either caught by the harness (G-5) or not currently caught. Pre-launch items closed by Day-8 are marked with closure SHAs; post-launch items remain `v0.2 fix`.
+This document lists known classifier limitations surfaced during the Day-7+8 build of the 50-case fixture corpus + accuracy harness. As of v0.1.2 (Day 8) the harness reports 1 fixture-level misclassification on the 50-case corpus (overall 98.2%, Art 5 100.0%, binary high-risk 98.0%). The harness only checks what the fixtures pin; the items below are limitations either caught by the harness (G-5) or not currently caught. Pre-launch items closed by Day-8 are marked with closure SHAs; post-launch items remain `v0.2 fix`.
 
 The full discussion of why the headline is a fixture-engineering metric rather than a real-world-accuracy metric lives in [`METHODOLOGY.md`](./METHODOLOGY.md) §"Honest limitations". The entries below are the concrete, actionable items.
 

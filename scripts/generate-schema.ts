@@ -26,7 +26,7 @@
 //   6. **Day-13 fix-up note (B1 closure).** The previous schema version was
 //      empirically broken: an Ajv-validated `classify()` output produced 382
 //      errors. The shapes below have been corrected to match the actual public
-//      output of `classify()` as of v0.1.1, sub-shape by sub-shape:
+//      output of `classify()` as of v0.1.2, sub-shape by sub-shape:
 //        - `features.byCategory` is a 2-level nested object
 //          (`Record<group, Record<category, phrase[]>>`).
 //        - `features.hits[]` entries carry `{group, category, phrase, source}`
@@ -101,7 +101,7 @@ const extractedFeatures = {
     input: { type: 'string', description: 'Raw input text passed to classify().' },
     lang: { type: 'string', enum: ['en', 'de'], description: 'Locale used for extraction.' },
     langConfident: { type: 'boolean', description: 'Whether the language detector was confident in the language assignment.' },
-    lexiconVersion: { type: 'string', description: 'Lexicon version pin (e.g. "v0.1.1").' },
+    lexiconVersion: { type: 'string', description: 'Lexicon version pin (e.g. "v0.1.2").' },
     hits: { type: 'array', items: lexiconHit, description: 'Lexicon-phrase hits surfaced from the input.' },
     byCategory: {
       type: 'object',
@@ -408,7 +408,7 @@ const schema = {
     input_text: { type: 'string', description: 'Raw input text passed to classify(), unmodified.' },
     detected_lang: { type: 'string', enum: ['en', 'de'], description: 'Locale used for extraction.' },
     lang_confident: { type: 'boolean', description: 'Whether the language detector was confident.' },
-    rules_version: { type: 'string', description: 'Loaded rules-version pin with v-prefix, e.g. "v0.1.1".' },
+    rules_version: { type: 'string', description: 'Loaded rules-version pin with v-prefix, e.g. "v0.1.2".' },
     rules_hash: { type: 'string', pattern: '^[0-9a-f]{8}$', description: 'First 8 hex chars of rules_hash_full.' },
     rules_hash_full: { type: 'string', pattern: '^[0-9a-f]{64}$', description: 'Full SHA-256 of the rule + lexicon JSON file set.' },
     mode: {

@@ -4,7 +4,7 @@ All notable changes to `@lucairn/ai-act-classifier` will be documented in this f
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.1.1] — 2026-05-16
+## [0.1.2] — 2026-05-16
 
 Initial public release. Free CLI + hosted UI that maps any free-text AI use-case description to the EU AI Act articles, paragraphs, and sub-letters it triggers.
 
@@ -68,4 +68,4 @@ All three providers are user-supplied API keys. The classifier is not a Lucairn 
 - LLM mode is non-deterministic. Repeated runs on the same input may return correlated but not identical features. For reproducible classification, prefer deterministic mode (default).
 - The classifier is informational tooling. It does not perform an EU AI Act conformity assessment, does not replace your DPO, and does not give legal advice. Output should be reviewed by qualified counsel before reliance for compliance decisions.
 
-[0.1.1]: https://github.com/Declade/lucairn-ai-act-classifier/releases/tag/v0.1.1
+[0.1.1]: https://github.com/Declade/lucairn-ai-act-classifier/releases/tag/v0.1.2

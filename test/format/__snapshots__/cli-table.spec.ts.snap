@@ -53,7 +53,7 @@ exports[`formatCliTable() — Article 5 prohibition fixture (EN) > matches snaps
   Cat 2 Evidence   (Art 12+14):  not applicable
   Cat 3 Inventory  (Art 10+12+14+15): not applicable
 
-  Confidence: 0.48   Mode: deterministic   Rules: v0.1.1 (sha256:5bccb27a…)
+  Confidence: 0.48   Mode: deterministic   Rules: v0.1.2 (sha256:d366b943…)
 
   ⚠ Informational tool — not legal advice. See README §Disclaimer."
 `;
@@ -76,7 +76,7 @@ exports[`formatCliTable() — high-risk fixture (DE) > matches snapshot when use
   Kat 2 Evidence   (Art. 12+14):  ERFORDERLICH
   Kat 3 Inventory  (Art. 10+12+14+15): ERFORDERLICH
 
-  Konfidenz: 0.44   Modus: deterministic   Regeln: v0.1.1 (sha256:5bccb27a…)
+  Konfidenz: 0.44   Modus: deterministic   Regeln: v0.1.2 (sha256:d366b943…)
 
   ⚠ Informationelles Werkzeug — keine Rechtsberatung. Siehe README §Disclaimer."
 `;
@@ -99,7 +99,7 @@ exports[`formatCliTable() — high-risk fixture (EN) > matches snapshot when cit
   Cat 2 Evidence   (Art 12+14):  REQUIRED
   Cat 3 Inventory  (Art 10+12+14+15): REQUIRED
 
-  Confidence: 0.56   Mode: deterministic   Rules: v0.1.1 (sha256:5bccb27a…)
+  Confidence: 0.56   Mode: deterministic   Rules: v0.1.2 (sha256:d366b943…)
   Cite: https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=OJ:L_202401689
          https://artificialintelligenceact.eu/article/6/
          https://artificialintelligenceact.eu/article/10/
@@ -131,7 +131,7 @@ exports[`formatCliTable() — high-risk fixture (EN) > matches snapshot when use
   Cat 2 Evidence   (Art 12+14):  REQUIRED
   Cat 3 Inventory  (Art 10+12+14+15): REQUIRED
 
-  Confidence: 0.56   Mode: deterministic   Rules: v0.1.1 (sha256:5bccb27a…)
+  Confidence: 0.56   Mode: deterministic   Rules: v0.1.2 (sha256:d366b943…)
 
   ⚠ Informational tool — not legal advice. See README §Disclaimer."
 `;
@@ -152,7 +152,7 @@ exports[`formatCliTable() — high-risk fixture (EN) > matches snapshot with --n
   Lucairn obligation overlay
   Lucairn obligation overlay suppressed via --no-three-category.
 
-  Confidence: 0.56   Mode: deterministic   Rules: v0.1.1 (sha256:5bccb27a…)
+  Confidence: 0.56   Mode: deterministic   Rules: v0.1.2 (sha256:d366b943…)
 
   ⚠ Informational tool — not legal advice. See README §Disclaimer."
 `;

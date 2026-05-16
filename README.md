@@ -97,7 +97,7 @@ LLM-mode results are cached on disk at `~/.cache/lucairn-ai-act-classifier/llm/`
 - **Cache hit:** typically <100 ms (no network) vs ~1-5 s for a fresh API call.
 - **Cache miss:** the provider runs, the result is written to cache atomically (`<key>.tmp` → `rename`), and the cached features serve every subsequent call until the lexicon version OR the prompt checksum changes.
 - **Bypass:** pass `--no-cache` to force a fresh API call (the cache is neither read nor written for that invocation).
-- **Invalidation:** automatic on lexicon-version bump (e.g. v0.1.1 → v0.2.0) or on any edit to the LLM system prompt / tool schema; both are part of the cache key.
+- **Invalidation:** automatic on lexicon-version bump (e.g. v0.1.2 → v0.2.0) or on any edit to the LLM system prompt / tool schema; both are part of the cache key.
 - **Failed calls are not cached.** Only successful provider returns hit the cache.
 
 To clear the cache manually: `rm -rf ~/.cache/lucairn-ai-act-classifier`.
@@ -108,7 +108,7 @@ Rules-first hybrid. A deterministic TypeScript rules engine evaluates Article 5,
 
 ## Accuracy
 
-The classifier is benchmarked against a 50-case bilingual fixture corpus (CC-BY-4.0): 24 Annex III high-risk + 8 Article 5 prohibited + 8 Article 50 transparency + 10 negative cases; 21 EN + 29 DE. Current numbers on the v0.1.1 rule-set:
+The classifier is benchmarked against a 50-case bilingual fixture corpus (CC-BY-4.0): 24 Annex III high-risk + 8 Article 5 prohibited + 8 Article 50 transparency + 10 negative cases; 21 EN + 29 DE. Current numbers on the v0.1.2 rule-set:
 
 - **Overall accuracy:** 98.2 % (granular per-field pass rate)
 - **Article 5 prohibition** (safety-critical): 100.0 %

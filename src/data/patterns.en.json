@@ -1,6 +1,6 @@
 {
   "language": "en",
-  "version": "v0.1.1",
+  "version": "v0.1.2",
   "_meta": {
     "notice": "Seed lexicon for v0.1.x. Every entry's `source` MUST be verified verbatim against EUR-Lex before rule modules consume the trigger. Entries with no direct EUR-Lex source are excluded.",
     "primary_source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689"
