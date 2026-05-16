@@ -54,6 +54,8 @@ The `--explain` flag emits a structured reasoning trace alongside the classifica
 
 Three output formats: `--explain-format markdown` (default — consultant-paste-friendly), `--explain-format json` (structured, snapshot-stable, programmatic consumers), `--explain-format text` (plain ASCII for terminal pipes).
 
+**Note:** `--explain` overrides `--format` / `--json` — use `--explain-format <markdown|json|text>` to choose the explain output format. `ai-act-classify --explain --format json "..."` produces the default markdown `--explain` output (the `--format json` flag is silently ignored).
+
 The `--explain` output is designed to drop directly into a DPIA, an audit working-paper, or an EU AI Act compliance checklist as evidence of defensible classification. Every fired article cites the legislative source, and the SHA-pinned rules version makes the result reproducible.
 
 ## Modes — deterministic vs `--llm`
