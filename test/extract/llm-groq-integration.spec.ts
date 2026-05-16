@@ -5,12 +5,12 @@
 //   - LUCAIRN_LLM_INTEGRATION=1
 //   - GROQ_API_KEY=...
 //
-// When either env var is absent, the suite SKIPS. The local
-// `~/.lucairn-classifier-key` only ships with ANTHROPIC_API_KEY (verified
-// via grep -c at dispatch time); this suite is therefore SKIPPED during the
-// Day-10 dispatch verification gate. Marc can position GROQ_API_KEY locally
-// + run with `LUCAIRN_LLM_INTEGRATION=1 GROQ_API_KEY=... pnpm test
-// test/extract/llm-groq-integration.spec.ts`.
+// When either env var is absent, the suite SKIPS. The local env-file used
+// by the dispatch harness carries only ANTHROPIC_API_KEY (verified via
+// grep -c at dispatch time); this suite is therefore SKIPPED during the
+// Day-10 dispatch verification gate. To run the suite locally position
+// GROQ_API_KEY explicitly:
+//   `LUCAIRN_LLM_INTEGRATION=1 GROQ_API_KEY=... pnpm test test/extract/llm-groq-integration.spec.ts`.
 //
 // Cost: ~$0.0003 per run (3 messages × Llama 3.3 70B at ~$0.0001/call;
 // Groq is by far the cheapest of the three providers).

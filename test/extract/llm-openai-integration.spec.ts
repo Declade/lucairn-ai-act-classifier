@@ -7,11 +7,11 @@
 // When either env var is absent, the suite SKIPS (vitest reports skipped
 // instead of failing). CI never sets these env vars, so CI never bills.
 //
-// The local `~/.lucairn-classifier-key` ships with only ANTHROPIC_API_KEY
-// (verified via grep -c at dispatch time); this suite is therefore SKIPPED
-// during the Day-10 dispatch verification gate. Marc can position
-// OPENAI_API_KEY locally + run the suite with `LUCAIRN_LLM_INTEGRATION=1
-// OPENAI_API_KEY=... pnpm test test/extract/llm-openai-integration.spec.ts`.
+// The local env-file used by the dispatch harness carries only
+// ANTHROPIC_API_KEY (verified via grep -c at dispatch time); this suite is
+// therefore SKIPPED during the Day-10 dispatch verification gate. To run
+// the suite locally position OPENAI_API_KEY explicitly:
+//   `LUCAIRN_LLM_INTEGRATION=1 OPENAI_API_KEY=... pnpm test test/extract/llm-openai-integration.spec.ts`.
 //
 // Cost: ~$0.0015 per run (3 messages × gpt-4o-mini at ~$0.00050/call).
 // Latency: 1-5s per call.
