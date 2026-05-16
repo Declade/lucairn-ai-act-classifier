@@ -50,6 +50,18 @@ function makeOutput(): Writable {
   });
 }
 
+/** Capture-stdout sink that records every chunk for assertion. */
+function makeCapturingOutput(): { writable: Writable; getOutput: () => string } {
+  const chunks: string[] = [];
+  const writable = new Writable({
+    write(chunk, _enc, cb) {
+      chunks.push(typeof chunk === 'string' ? chunk : (chunk as Buffer).toString('utf8'));
+      cb();
+    },
+  });
+  return { writable, getOutput: () => chunks.join('') };
+}
+
 describe('runWizard() — happy paths', () => {
   it('all-N answers (29 prompts) → returns empty WizardAnswers (EN)', async () => {
     // 8 Art 5 letters + 8 Annex III paragraphs + 5 Art 50 paths = 21 Y/N prompts.
@@ -163,5 +175,43 @@ describe('runWizard() — cancellation paths (B-2)', () => {
         expect(e.reason).toBe('eof');
       }
     }
+  });
+});
+
+describe('runWizard() — M-1 closure: scope note before submit', () => {
+  it('EN — prints the Art 4 / GPAI scope note immediately before the submit line', async () => {
+    const input = makeInput(Array(21).fill('n'));
+    const { writable, getOutput } = makeCapturingOutput();
+    await runWizard({ lang: 'en', input, output: writable });
+    const captured = getOutput();
+    // Scope note prints BEFORE submit. Verify both appear AND verify the
+    // scope note literal sits earlier in the byte stream than the submit line.
+    expect(captured).toContain(
+      'Note: this wizard covers Article 5 (prohibited), Annex III (high-risk), and Article 50 (transparency).',
+    );
+    expect(captured).toContain('It does NOT cover Article 4 (AI literacy) or Articles 53+55 (GPAI)');
+    expect(captured).toContain('foundation model');
+    expect(captured).toContain('free-text description');
+    expect(captured).toContain('All answers collected.');
+    const scopeIdx = captured.indexOf('Note: this wizard');
+    const submitIdx = captured.indexOf('All answers collected.');
+    expect(scopeIdx).toBeGreaterThan(0);
+    expect(submitIdx).toBeGreaterThan(scopeIdx);
+  });
+
+  it('DE — prints the German scope note immediately before the submit line', async () => {
+    const input = makeInput(Array(21).fill('n'));
+    const { writable, getOutput } = makeCapturingOutput();
+    await runWizard({ lang: 'de', input, output: writable });
+    const captured = getOutput();
+    expect(captured).toContain('Hinweis: Dieser Assistent prüft Artikel 5 (verboten)');
+    expect(captured).toContain('NICHT Artikel 4 (KI-Kompetenz) oder Artikel 53/55 (GPAI)');
+    expect(captured).toContain('Basismodell');
+    expect(captured).toContain('Freitextbeschreibung');
+    expect(captured).toContain('Alle Antworten erfasst.');
+    const scopeIdx = captured.indexOf('Hinweis: Dieser Assistent');
+    const submitIdx = captured.indexOf('Alle Antworten erfasst.');
+    expect(scopeIdx).toBeGreaterThan(0);
+    expect(submitIdx).toBeGreaterThan(scopeIdx);
   });
 });

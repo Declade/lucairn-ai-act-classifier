@@ -241,6 +241,17 @@ export async function runWizard(opts: RunnerOptions): Promise<WizardAnswers> {
       if (yes) article_50_paths.push(item.key);
     }
 
+    // --- M-1 closure (v0.3.0) — scope note before submit ---
+    // The 3-step wizard surface intentionally does NOT cover Article 4 (AI
+    // literacy) or Articles 53/55 (GPAI). Both rule modules fire only off
+    // free-text lexicon hits (staff/operators phrasing for Art 4;
+    // foundation-model phrasing for GPAI), neither of which the wizard
+    // synthesizes today. Without this scope note, a wizard user describing a
+    // system that uses a foundation model or has staff operating AI would see
+    // "Art 4: not applicable / GPAI: not applicable" in the post-wizard output
+    // and incorrectly conclude those obligations don't apply.
+    output.write(`\n${prompts.step_intro.scope_note}\n`);
+
     output.write(`\n${prompts.step_intro.submit}\n`);
 
     return {
