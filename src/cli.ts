@@ -229,10 +229,10 @@ async function main(): Promise<void> {
     )
     .option(
       '--explain',
-      'Emit a reasoning trace + EUR-Lex citations per fired article. Defaults to markdown output (consultant-paste-friendly); change with --explain-format.',
+      'Emit a reasoning trace + EUR-Lex citations per fired article. Defaults to markdown output (consultant-paste-friendly); change with --explain-format. When --explain is set, --format / --json are ignored.',
     )
     .addOption(
-      new Option('--explain-format <fmt>', 'Output format for --explain')
+      new Option('--explain-format <fmt>', 'Output format for --explain (ignored unless --explain is set)')
         .choices(['markdown', 'json', 'text'])
         .default('markdown'),
     )

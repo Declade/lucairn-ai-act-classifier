@@ -54,6 +54,8 @@ Das Flag `--explain` liefert zusätzlich zur Klassifikation eine strukturierte B
 
 Drei Ausgabeformate: `--explain-format markdown` (Standard — gut zum Einfügen in Beraterdokumente), `--explain-format json` (strukturiert, snapshot-stabil, für programmatische Konsumenten), `--explain-format text` (reines ASCII für Terminal-Pipes).
 
+**Hinweis:** `--explain` überschreibt `--format` / `--json` — über `--explain-format <markdown|json|text>` wird das Ausgabeformat der Begründungs-Spur gewählt. `ai-act-classify --explain --format json "..."` liefert die Standard-Markdown-Ausgabe von `--explain` (das `--format json` wird ignoriert).
+
 Die `--explain`-Ausgabe ist so gestaltet, dass sie direkt in eine Datenschutz-Folgenabschätzung, in ein Audit-Arbeitspapier oder in eine EU-KI-Verordnungs-Compliance-Checkliste übernommen werden kann — als Beleg für eine verteidigungsfähige Klassifikation. Jeder ausgelöste Artikel verweist auf die gesetzliche Quelle; die SHA-fixierte Regelsatz-Version macht das Ergebnis reproduzierbar.
 
 ## Modi — deterministisch oder `--llm`
