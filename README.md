@@ -108,11 +108,11 @@ Rules-first hybrid. A deterministic TypeScript rules engine evaluates Article 5,
 
 ## Accuracy
 
-The classifier is benchmarked against a 50-case bilingual fixture corpus (CC-BY-4.0): 24 Annex III high-risk + 8 Article 5 prohibited + 8 Article 50 transparency + 10 negative cases; 21 EN + 29 DE. Current numbers on the v0.1.2 rule-set:
+The classifier is benchmarked against a 59-case bilingual fixture corpus (CC-BY-4.0): 50 day{3,4,5,7} fixtures + 9 v0.1.3 launch-feedback fixtures; ~30 EN + ~29 DE across 5 buckets (annex_iii / article_5 / article_50 / negative / legacy). Current numbers on the v0.1.3 rule-set:
 
-- **Overall accuracy:** 98.2 % (granular per-field pass rate)
+- **Overall accuracy:** 98.5 % (granular per-field pass rate; up from 98.2 % in v0.1.2)
 - **Article 5 prohibition** (safety-critical): 100.0 %
-- **Binary high-risk classification:** 98.0 %
+- **Binary high-risk classification:** 98.3 %
 
 CI floor (locked): ≥ 80 % overall + 100 % Article 5. v1.0 release target: ≥ 85 % overall + 100 % Article 5 + ≥ 90 % binary high-risk.
 

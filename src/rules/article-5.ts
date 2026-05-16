@@ -249,6 +249,59 @@ const PREDICTIVE_POLICING_DISAMBIGUATORS_DE: readonly string[] = [
   'allein auf grundlage von profiling',
   'allein auf grundlage des profilings',
   'nur auf der grundlage des profilings',
+  // v0.1.3 reviewer-feedback (BLOCKER 2b): natural EN paraphrase variants
+  // that reviewers wrote without the EUR-Lex verbatim qualifier word but
+  // semantically equivalent. "based exclusively on" / "only based on" are
+  // common in German consultant translations of the EUR-Lex EN body. DE
+  // paraphrase mirroring the same colloquial loosening for completeness.
+  'lediglich auf profiling',
+  'lediglich auf der grundlage von profiling',
+];
+
+// ---------------------------------------------------------------------------
+// Disambiguation: Art 5(1)(f) medical/safety carve-out
+// ---------------------------------------------------------------------------
+//
+// Art 5(1)(f) prohibits inferring emotions at the workplace or in education
+// EXCEPT where the AI system is intended to be put in place or into the market
+// for MEDICAL OR SAFETY reasons. The disambiguator below detects the
+// carve-out phrases. When present, we DOWNGRADE the (f) hit — let it fall
+// back to Annex III.1(c) (emotion recognition high-risk) + Article 50(3)
+// transparency.
+//
+// EUR-Lex EN: "...except where the use of the AI system is intended to be
+// put in place or into the market for medical or safety reasons."
+// EUR-Lex DE: "...es sei denn, die Verwendung des KI-Systems ist dazu
+// bestimmt, aus medizinischen Gründen oder Sicherheitsgründen in Verkehr
+// gebracht oder in Betrieb genommen zu werden."
+const EMOTION_F_CARVE_OUT_PHRASES_EN: readonly string[] = [
+  'medical',
+  'medical reason',
+  'medical reasons',
+  'safety reason',
+  'safety reasons',
+  'patient',
+  'patients',
+  'diagnose',
+  'diagnosis',
+  'clinical',
+  'therapeutic',
+  'for medical purposes',
+  'for safety purposes',
+];
+
+const EMOTION_F_CARVE_OUT_PHRASES_DE: readonly string[] = [
+  'medizinisch',
+  'medizinische gründe',
+  'medizinischen gründen',
+  'sicherheitsgründe',
+  'sicherheitsgründen',
+  'patientenversorgung',
+  'patient',
+  'patientin',
+  'diagnose',
+  'klinisch',
+  'therapeutisch',
 ];
 
 /**
@@ -267,6 +320,29 @@ function hasPredictivePolicingDisambiguator(input: string): boolean {
     if (lower.includes(phrase)) return true;
   }
   for (const phrase of PREDICTIVE_POLICING_DISAMBIGUATORS_DE) {
+    if (lower.includes(phrase)) return true;
+  }
+  return false;
+}
+
+/**
+ * Returns true iff the input contains a medical/safety carve-out phrase for
+ * Art 5(1)(f). When present, the prohibition does NOT fire (system falls back
+ * to Annex III.1(c) high-risk + Article 50(3) transparency).
+ *
+ * Substring match on lowercased input — same architecture as the predictive-
+ * policing disambiguator. EN+DE accepted unconditionally.
+ *
+ * EUR-Lex Art 5(1)(f) carve-out: "...except where the use of the AI system is
+ * intended to be put in place or into the market for medical or safety
+ * reasons."
+ */
+function hasEmotionFCarveOut(input: string): boolean {
+  const lower = input.toLowerCase();
+  for (const phrase of EMOTION_F_CARVE_OUT_PHRASES_EN) {
+    if (lower.includes(phrase)) return true;
+  }
+  for (const phrase of EMOTION_F_CARVE_OUT_PHRASES_DE) {
     if (lower.includes(phrase)) return true;
   }
   return false;
@@ -335,6 +411,18 @@ export function classifyArticle5(features: ExtractedFeatures): Article5Result {
       }
       reasoning.push(
         `Lexicon hit on "${categoryKey}" with disambiguating phrase present in the input ("solely on profiling" / equivalent). Art 5(1)(d) prohibition fires.`,
+      );
+    } else if (meta.letter === 'f') {
+      // Letter (f) carve-out gate. EUR-Lex Art 5(1)(f) prohibits inferring
+      // emotions in workplace or education EXCEPT for medical/safety reasons.
+      if (hasEmotionFCarveOut(features.input)) {
+        reasoning.push(
+          `Lexicon hit on "${categoryKey}" (workplace/education emotion recognition) BUT the input mentions medical/safety context (e.g. "medical", "patient", "safety reason", "medizinisch", "Patient"). Per Art 5(1)(f), the prohibition has a narrow carve-out for AI systems put in place for medical or safety reasons. Downgrading: this will surface as Annex III.1(c) high-risk + Article 50(3) transparency, not as an Art 5 prohibition.`,
+        );
+        continue;
+      }
+      reasoning.push(
+        `Lexicon hit on "${categoryKey}" (workplace/education emotion recognition) with no medical/safety carve-out phrase in the input. Art 5(1)(f) prohibition fires. Matched phrases: ${matched.map((p) => `"${p}"`).join(', ')}.`,
       );
     } else {
       reasoning.push(

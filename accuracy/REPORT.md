@@ -1,27 +1,27 @@
 # Accuracy report — @lucairn/ai-act-classifier
 
-- **Rules version:** `v0.1.2`
-- **Rules hash:** `d366b943` (full: `d366b943f73fb79b5bfc0f5cb6b05f98fa5f5e77c43ffddca6fef01456ea58e7`)
-- **Last run:** 2026-05-16T03:10:37.993Z
-- **Fixture corpus:** 50 cases
+- **Rules version:** `v0.1.3`
+- **Rules hash:** `e5869c89` (full: `e5869c8925dee2f9d4b3c38fc440f957da31a0a121ea71b23dbe3175e3aa6f12`)
+- **Last run:** 2026-05-16T09:50:49.067Z
+- **Fixture corpus:** 59 cases
 
-> **What this report measures:** internal consistency between the curated 50-case fixture corpus and the v0.1.0 lexicon. The headline numbers below are **not** a measure of arbitrary real-world accuracy — the corpus was shaped during the Day-7 build to match the lexicon's canonical phrases. Per-fixture accuracy uses set-equality on Day-7 fixtures and subset-containment on the 11 legacy day3/4/5 fixtures pending Day-8 backfill. See [METHODOLOGY.md §"Honest limitations"](./METHODOLOGY.md#honest-limitations) for the Day-8 polish backlog. The CI floor is 80% overall + 100% Article 5; current numbers exceed both.
+> **What this report measures:** internal consistency between the curated 50-case Day-7 fixture corpus + 9-case v0.1.3 launch-feedback fixtures and the v0.1.0+ lexicon. The headline numbers below are **not** a measure of arbitrary real-world accuracy — the Day-7 corpus was shaped to match the lexicon's canonical phrases. Per-fixture accuracy uses set-equality on Day-7 + day14-launch-feedback fixtures and subset-containment on the 11 legacy day3/4/5 fixtures pending Day-8 backfill. See [METHODOLOGY.md §"Honest limitations"](./METHODOLOGY.md#honest-limitations) for the Day-8 polish backlog. The CI floor is 80% overall + 100% Article 5; current numbers exceed both.
 
 ## Headline numbers
 
 | Metric | Score |
 |---|---|
-| **Overall accuracy** (granular per-field pass rate) | **98.2%** |
+| **Overall accuracy** (granular per-field pass rate) | **98.5%** |
 | **Article 5 prohibition detection** (safety-critical) | **100.0%** |
-| **Binary high-risk classification** (Annex III + Article 6) | **98.0%** |
+| **Binary high-risk classification** (Annex III + Article 6) | **98.3%** |
 
 ## Per-bucket accuracy (pass-all-asserted-fields)
 
 | Bucket | Count | Passed | Accuracy |
 |---|---|---|---|
-| annex_iii | 17 | 17 | 100.0% |
-| article_5 | 7 | 7 | 100.0% |
-| article_50 | 8 | 7 | 87.5% |
+| annex_iii | 20 | 20 | 100.0% |
+| article_5 | 12 | 12 | 100.0% |
+| article_50 | 9 | 8 | 88.9% |
 | negative | 9 | 9 | 100.0% |
 | legacy | 9 | 9 | 100.0% |
 
@@ -29,9 +29,9 @@
 
 | | v1.0 release target | CI floor (Day 7) | Current |
 |---|---|---|---|
-| Overall | ≥85% | ≥80% | **98.2%** |
+| Overall | ≥85% | ≥80% | **98.5%** |
 | Article 5 | 100% | 100% | **100.0%** |
-| Binary high-risk | ≥90% | (informational) | **98.0%** |
+| Binary high-risk | ≥90% | (informational) | **98.3%** |
 
 ## Per-fixture results
 
@@ -87,6 +87,15 @@
 | `fixture-day7-37-neg-ad-optim-en` | en | negative | PASS | — |
 | `fixture-day7-38-neg-factory-qc-de` | de | negative | PASS | — |
 | `fixture-day7-39-neg-search-ranking-de` | de | negative | PASS | — |
+| `fixture-day14-01-blocker1-rank-job-applicants-cv-en` | en | annex_iii | PASS | — |
+| `fixture-day14-02-blocker2a-rbi-by-police-en` | en | article_5 | PASS | — |
+| `fixture-day14-03-blocker2a-rbi-by-police-de` | de | article_5 | PASS | — |
+| `fixture-day14-04-blocker2b-predictive-policing-solely-en` | en | article_5 | PASS | — |
+| `fixture-day14-05-blocker2c-emotion-workplace-en` | en | article_5 | PASS | — |
+| `fixture-day14-06-blocker2c-emotion-workplace-medical-carveout-en` | en | article_50 | PASS | — |
+| `fixture-day14-07-high1-de-cv-bewerber-sortieren-de` | de | annex_iii | PASS | — |
+| `fixture-day14-08-high2-citizens-trustworthiness-en` | en | article_5 | PASS | — |
+| `fixture-day14-09-high2-education-access-en` | en | annex_iii | PASS | — |
 
 ## Misclassification details
 

@@ -197,11 +197,22 @@ export function readExcerpt(key: string, locale: 'en' | 'de'): string | null {
 // ---------------------------------------------------------------------------
 
 function citationUrlForArticle(id: CitationArticleId, locale: 'en' | 'de'): string {
+  // v0.1.3 (reviewer-feedback MEDIUM-1): primary "Citation" URL MUST be the
+  // EUR-Lex Tier-1 URL (eur_lex_html_{en,de}), NOT the Future of Life
+  // Institute Tier-3 mirror (regulation_text_mirror_*). The Tier-3 mirror
+  // is preserved in citations.json as a secondary "See also" surface but
+  // is not the operative citation a DPIA reviewer should follow.
+  //
+  // EUR-Lex per-article anchors are inconsistent across page versions (see
+  // citations.json `_provenance_notice`), so we use the regulation-level
+  // HTML URL with an in-prose paragraph reference rather than fabricating
+  // a per-article anchor. PDF URLs are available in citations.json but the
+  // HTML form is friendlier for in-CLI / in-Markdown viewing.
   const c = getCitation(id);
   if (locale === 'de') {
-    return c.regulation_text_mirror_de ?? c.eur_lex_html_de;
+    return c.eur_lex_html_de;
   }
-  return c.regulation_text_mirror_en ?? c.eur_lex_html_en;
+  return c.eur_lex_html_en;
 }
 
 function buildArticle5Fires(article5: Article5Result, locale: 'en' | 'de'): FiredArticle[] {

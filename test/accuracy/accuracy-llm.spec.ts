@@ -68,15 +68,15 @@ afterEach(() => {
 });
 
 describe('runAccuracy({ llm: "anthropic" }) — offline (mocked SDK)', () => {
-  it('runs end-to-end against the full 50-fixture corpus', async () => {
+  it('runs end-to-end against the full 59-fixture corpus', async () => {
     const report = await runAccuracy({
       llm: 'anthropic',
       lastRunAtOverride: '2026-05-15T00:00:00Z',
       cache: { disabled: true },
     });
-    expect(report.fixture_count).toBe(50);
-    // 50 fixtures → 50 LLM calls (cache disabled so every call hits the mock).
-    expect(mockCallCount).toBe(50);
+    expect(report.fixture_count).toBe(59);
+    // 59 fixtures → 59 LLM calls (cache disabled so every call hits the mock).
+    expect(mockCallCount).toBe(59);
   });
 
   it('emits the same metric structure as deterministic mode', async () => {
@@ -88,9 +88,9 @@ describe('runAccuracy({ llm: "anthropic" }) — offline (mocked SDK)', () => {
     expect(typeof report.overall_accuracy).toBe('number');
     expect(typeof report.article_5_accuracy).toBe('number');
     expect(typeof report.binary_high_risk_accuracy).toBe('number');
-    expect(report.bucket_accuracy.annex_iii.count).toBe(17);
-    expect(report.bucket_accuracy.article_5.count).toBe(7);
-    expect(report.bucket_accuracy.article_50.count).toBe(8);
+    expect(report.bucket_accuracy.annex_iii.count).toBe(20);
+    expect(report.bucket_accuracy.article_5.count).toBe(12);
+    expect(report.bucket_accuracy.article_50.count).toBe(9);
     expect(report.bucket_accuracy.negative.count).toBe(9);
     expect(report.bucket_accuracy.legacy.count).toBe(9);
   });
@@ -102,8 +102,8 @@ describe('runAccuracy({ llm: "anthropic" }) — offline (mocked SDK)', () => {
       lastRunAtOverride: '2026-05-15T00:00:00Z',
       cache: { disabled: true },
     });
-    expect(report.fixture_count).toBe(50);
-    expect(mockCallCount).toBe(50);
+    expect(report.fixture_count).toBe(59);
+    expect(mockCallCount).toBe(59);
   });
 
   it('all-empty mocked extractor produces deterministic results (no flake)', async () => {

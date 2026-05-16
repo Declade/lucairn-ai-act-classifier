@@ -1,6 +1,6 @@
 {
   "language": "en",
-  "version": "v0.1.2",
+  "version": "v0.1.3",
   "_meta": {
     "notice": "Seed lexicon for v0.1.x. Every entry's `source` MUST be verified verbatim against EUR-Lex before rule modules consume the trigger. Entries with no direct EUR-Lex source are excluded.",
     "primary_source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689"
@@ -44,7 +44,22 @@
         { "phrase": "learning assessments" },
         { "phrase": "proctoring" },
         { "phrase": "cheating detection" },
-        { "phrase": "education level determination" }
+        { "phrase": "education level determination" },
+        { "phrase": "determine access to educational institutions" },
+        { "phrase": "access to educational institutions" },
+        { "phrase": "determine access to education" },
+        { "phrase": "access to education" },
+        { "phrase": "admission to educational institutions" },
+        { "phrase": "university admission" },
+        { "phrase": "university admissions" },
+        { "phrase": "school admission" },
+        { "phrase": "school admissions" },
+        { "phrase": "evaluate student admission" },
+        { "phrase": "student admission decision" },
+        { "phrase": "predict student performance" },
+        { "phrase": "exam proctoring" },
+        { "phrase": "online exam monitoring" },
+        { "phrase": "automated essay scoring" }
       ]
     },
     "4_employment": {
@@ -61,7 +76,44 @@
         { "phrase": "hiring decisions" },
         { "phrase": "performance evaluation" },
         { "phrase": "performance evaluations" },
-        { "phrase": "worker monitoring" }
+        { "phrase": "worker monitoring" },
+        { "phrase": "rank job applicants" },
+        { "phrase": "ranks job applicants" },
+        { "phrase": "rank applicants" },
+        { "phrase": "ranks applicants" },
+        { "phrase": "rank candidates" },
+        { "phrase": "ranks candidates" },
+        { "phrase": "rank job candidates" },
+        { "phrase": "ranks job candidates" },
+        { "phrase": "shortlist" },
+        { "phrase": "shortlists" },
+        { "phrase": "shortlisting" },
+        { "phrase": "recruitment" },
+        { "phrase": "recruit" },
+        { "phrase": "recruits" },
+        { "phrase": "recruiting" },
+        { "phrase": "applicant selection" },
+        { "phrase": "candidate selection" },
+        { "phrase": "selection of candidates" },
+        { "phrase": "screen cvs" },
+        { "phrase": "screens cvs" },
+        { "phrase": "screen resumes" },
+        { "phrase": "screens resumes" },
+        { "phrase": "screen applicants" },
+        { "phrase": "screens applicants" },
+        { "phrase": "screen candidates" },
+        { "phrase": "screens candidates" },
+        { "phrase": "evaluate applicants" },
+        { "phrase": "evaluates applicants" },
+        { "phrase": "evaluate candidates" },
+        { "phrase": "evaluates candidates" },
+        { "phrase": "evaluate cvs" },
+        { "phrase": "evaluate resumes" },
+        { "phrase": "evaluate job applicants" },
+        { "phrase": "automated hiring" },
+        { "phrase": "automated recruitment" },
+        { "phrase": "job applicants by cv" },
+        { "phrase": "applicants by cv" }
       ]
     },
     "5_essential_services": {
@@ -153,7 +205,24 @@
       "entries": [
         { "phrase": "social scoring" },
         { "phrase": "social credit" },
-        { "phrase": "trustworthiness score" }
+        { "phrase": "trustworthiness score" },
+        { "phrase": "social trustworthiness" },
+        { "phrase": "ranks citizens" },
+        { "phrase": "rank citizens" },
+        { "phrase": "score citizens" },
+        { "phrase": "scores citizens" },
+        { "phrase": "rate citizens" },
+        { "phrase": "rates citizens" },
+        { "phrase": "rank people by behavior" },
+        { "phrase": "ranks people by behavior" },
+        { "phrase": "rank people by behaviour" },
+        { "phrase": "ranks people by behaviour" },
+        { "phrase": "score people based on behavior" },
+        { "phrase": "score people based on behaviour" },
+        { "phrase": "citizen behavior scoring" },
+        { "phrase": "citizen behaviour scoring" },
+        { "phrase": "general-purpose social scoring" },
+        { "phrase": "citizens by trustworthiness" }
       ]
     },
     "d_predictive_policing": {
@@ -161,7 +230,11 @@
       "source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
       "entries": [
         { "phrase": "predictive policing profiling" },
-        { "phrase": "criminal risk profiling" }
+        { "phrase": "criminal risk profiling" },
+        { "phrase": "predictive policing" },
+        { "phrase": "predict criminal offence" },
+        { "phrase": "predict criminal offences" },
+        { "phrase": "will commit a criminal offence" }
       ]
     },
     "e_facial_scraping": {
@@ -179,7 +252,22 @@
       "entries": [
         { "phrase": "emotion inference at work" },
         { "phrase": "workplace emotion" },
-        { "phrase": "classroom emotion recognition" }
+        { "phrase": "classroom emotion recognition" },
+        { "phrase": "emotion recognition in the workplace" },
+        { "phrase": "emotion recognition in workplace" },
+        { "phrase": "emotion detection in the workplace" },
+        { "phrase": "emotion detection in workplace" },
+        { "phrase": "emotion recognition in education" },
+        { "phrase": "emotion recognition in schools" },
+        { "phrase": "emotion recognition for students" },
+        { "phrase": "emotion detection in schools" },
+        { "phrase": "emotion analysis in workplace" },
+        { "phrase": "emotion analysis in the workplace" },
+        { "phrase": "infer emotions in workplace" },
+        { "phrase": "infer emotions in the workplace" },
+        { "phrase": "infer emotions in education" },
+        { "phrase": "emotion-aware hr system" },
+        { "phrase": "workplace emotion monitoring" }
       ]
     },
     "g_biometric_categorisation_sensitive": {
@@ -198,7 +286,16 @@
       "entries": [
         { "phrase": "real-time biometric identification" },
         { "phrase": "live facial recognition" },
-        { "phrase": "real-time facial recognition" }
+        { "phrase": "real-time facial recognition" },
+        { "phrase": "real-time remote biometric identification" },
+        { "phrase": "real time remote biometric identification" },
+        { "phrase": "real-time face recognition" },
+        { "phrase": "real-time rbi" },
+        { "phrase": "facial recognition by police" },
+        { "phrase": "facial recognition for law enforcement" },
+        { "phrase": "biometric identification by law enforcement" },
+        { "phrase": "biometric identification by police" },
+        { "phrase": "biometric identification in publicly accessible spaces" }
       ]
     }
   },

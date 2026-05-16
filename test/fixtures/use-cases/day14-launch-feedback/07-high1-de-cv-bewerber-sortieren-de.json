@@ -1,0 +1,33 @@
+{
+  "id": "fixture-day14-07-high1-de-cv-bewerber-sortieren-de",
+  "lang": "de",
+  "input": "KI-System bewertet Bewerbungen, Lebensläufe und Vorstellungsgespräche, um Kandidaten für eine Stelle zu sortieren.",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": true,
+    "annex_iii_domains": [
+      4
+    ],
+    "annex_iii_sub_letters": {
+      "4": [
+        "a"
+      ]
+    },
+    "suppressed_by_article_5": false,
+    "article_10_applicable": true,
+    "article_12_applicable": true,
+    "article_13_applicable": true,
+    "article_14_applicable": true,
+    "article_15_applicable": true,
+    "three_category_applicable": [
+      1,
+      2,
+      3
+    ],
+    "annex_iv_required": true,
+    "notes": "v0.1.3 launch-feedback HIGH-1 (Codex reviewer). v0.1.2 DE lexicon was materially weaker than EN — this natural DE recruiting description fired NOTHING. v0.1.3 adds ~17 DE entries to annex_iii.4_employment including 'bewerber sortieren', 'kandidaten für eine stelle zu sortieren', 'bewertet bewerbungen', 'bewerbungen bewerten' — so the natural DE phrasing now fires Anhang III.4(a). Cite: EUR-Lex Verordnung (EU) 2024/1689, Anhang III Nr. 4(a)."
+  },
+  "bucket": "annex_iii",
+  "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689"
+}

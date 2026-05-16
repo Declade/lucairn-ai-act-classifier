@@ -1,0 +1,36 @@
+{
+  "id": "fixture-day14-06-blocker2c-emotion-workplace-medical-carveout-en",
+  "lang": "en",
+  "input": "Emotion recognition in the workplace used for medical safety monitoring of patients with neurological conditions",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": true,
+    "annex_iii_domains": [
+      1
+    ],
+    "annex_iii_sub_letters": {
+      "1": [
+        "c"
+      ]
+    },
+    "suppressed_by_article_5": false,
+    "article_10_applicable": true,
+    "article_12_applicable": true,
+    "article_13_applicable": true,
+    "article_14_applicable": true,
+    "article_15_applicable": true,
+    "article_50_paragraphs": [
+      "50(3)"
+    ],
+    "three_category_applicable": [
+      1,
+      2,
+      3
+    ],
+    "annex_iv_required": true,
+    "notes": "v0.1.3 launch-feedback BLOCKER 2c medical/safety carve-out regression lock. Art 5(1)(f) prohibition carries a narrow carve-out: '...except where the use of the AI system is intended to be put in place or into the market for medical or safety reasons.' This fixture verifies the new hasEmotionFCarveOut() disambiguator suppresses the Art 5(1)(f) hit when 'medical', 'patient', 'safety' (or DE 'medizinisch', 'Patient') is present, falling back to Annex III.1(c) high-risk + Article 50(3) transparency. Cite: EUR-Lex Regulation (EU) 2024/1689, Article 5(1)(f) second clause + Annex III paragraph 1(c)."
+  },
+  "bucket": "article_50",
+  "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689"
+}

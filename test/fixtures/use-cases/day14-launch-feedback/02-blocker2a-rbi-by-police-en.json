@@ -1,0 +1,26 @@
+{
+  "id": "fixture-day14-02-blocker2a-rbi-by-police-en",
+  "lang": "en",
+  "input": "Real-time remote biometric identification system deployed by police in publicly accessible spaces for law enforcement purposes",
+  "expected": {
+    "article_5_prohibited": true,
+    "article_5_letters": [
+      "h"
+    ],
+    "annex_iii_high_risk": false,
+    "annex_iii_domains": [
+      1
+    ],
+    "suppressed_by_article_5": true,
+    "article_10_applicable": false,
+    "article_12_applicable": false,
+    "article_13_applicable": false,
+    "article_14_applicable": false,
+    "article_15_applicable": false,
+    "three_category_applicable": [],
+    "annex_iv_required": false,
+    "notes": "v0.1.3 launch-feedback BLOCKER 2a (both Claude-Code + Codex reviewers). v0.1.2 emitted Annex III.1(a) high-risk; the correct classification is Article 5(1)(h) prohibition with the Annex III high-risk path suppressed. The reviewer's verbatim input contains the phrase 'real-time remote biometric identification' which v0.1.3 now matches via the h_realtime_remote_biometric_le lexicon. Cite: EUR-Lex Regulation (EU) 2024/1689, Article 5(1)(h)."
+  },
+  "bucket": "article_5",
+  "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689"
+}

@@ -384,14 +384,97 @@ function narrowSubLetters(
     const hits = new Set<string>();
     if (
       matchedLower.some((p) =>
-        ['cv screening', 'resume screening', 'candidate ranking', 'applicant tracking', 'hiring decision', 'lebenslauf-screening', 'bewerberauswahl', 'bewerber-ranking', 'personalauswahl', 'einstellungsentscheidung'].includes(p),
+        [
+          'cv screening',
+          'cv screenings',
+          'resume screening',
+          'resume screenings',
+          'candidate ranking',
+          'applicant tracking',
+          'hiring decision',
+          'hiring decisions',
+          'lebenslauf-screening',
+          'bewerberauswahl',
+          'bewerber-ranking',
+          'personalauswahl',
+          'einstellungsentscheidung',
+          'einstellungsentscheidungen',
+          // v0.1.3 launch-feedback BLOCKER 1 + HIGH-1 paraphrases.
+          'rank job applicants',
+          'ranks job applicants',
+          'rank applicants',
+          'ranks applicants',
+          'rank candidates',
+          'ranks candidates',
+          'rank job candidates',
+          'ranks job candidates',
+          'shortlist',
+          'shortlists',
+          'shortlisting',
+          'recruitment',
+          'recruit',
+          'recruits',
+          'recruiting',
+          'applicant selection',
+          'candidate selection',
+          'selection of candidates',
+          'screen cvs',
+          'screens cvs',
+          'screen resumes',
+          'screens resumes',
+          'screen applicants',
+          'screens applicants',
+          'screen candidates',
+          'screens candidates',
+          'evaluate applicants',
+          'evaluates applicants',
+          'evaluate candidates',
+          'evaluates candidates',
+          'evaluate cvs',
+          'evaluate resumes',
+          'evaluate job applicants',
+          'automated hiring',
+          'automated recruitment',
+          'job applicants by cv',
+          'applicants by cv',
+          // DE paraphrases for natural-language descriptions of the same.
+          'bewerber sortieren',
+          'kandidaten sortieren',
+          'bewerber bewerten',
+          'bewerber screening',
+          'bewerbungsscreening',
+          'lebenslauf screening',
+          'lebenslaufscreening',
+          'bewerbungen bewerten',
+          'bewerbungen sortieren',
+          'stellenbewerber',
+          'kandidaten auswählen',
+          'kandidaten ranken',
+          'kandidaten bewerten',
+          'vorstellungsgespräche auswerten',
+          'rekrutierung',
+          'rekrutieren',
+          'stellenbesetzung',
+          'einstellungsverfahren',
+          'auswahl von bewerbern',
+          'kandidaten für eine stelle zu sortieren',
+          'kandidaten für eine stelle sortieren',
+          'bewertet bewerbungen',
+        ].includes(p),
       )
     ) {
       hits.add('a');
     }
     if (
       matchedLower.some((p) =>
-        ['performance evaluation', 'worker monitoring', 'leistungsbewertung', 'mitarbeiterüberwachung'].includes(p),
+        [
+          'performance evaluation',
+          'performance evaluations',
+          'worker monitoring',
+          'leistungsbewertung',
+          'leistungsbewertungen',
+          'mitarbeiterüberwachung',
+        ].includes(p),
       )
     ) {
       hits.add('b');
@@ -467,14 +550,54 @@ function narrowSubLetters(
     const hits = new Set<string>();
     if (
       matchedLower.some((p) =>
-        ['admission', 'student admission', 'schüleraufnahme', 'studienzulassung'].includes(p),
+        [
+          'admission',
+          'student admission',
+          'student admissions',
+          'admission decision',
+          'admission decisions',
+          'schüleraufnahme',
+          'studienzulassung',
+          // v0.1.3 launch-feedback HIGH-2: natural EN paraphrases of EUR-Lex
+          // ¶3(a) "access or admission" wording.
+          'determine access to educational institutions',
+          'access to educational institutions',
+          'determine access to education',
+          'access to education',
+          'admission to educational institutions',
+          'university admission',
+          'university admissions',
+          'school admission',
+          'school admissions',
+          'evaluate student admission',
+          'student admission decision',
+          // v0.1.3 launch-feedback HIGH-2 DE.
+          'zugang zu bildungseinrichtungen bestimmen',
+          'zugang zu bildungseinrichtungen',
+          'zulassung zu hochschulen',
+          'zulassungsentscheidung universität',
+        ].includes(p),
       )
     ) {
       hits.add('a');
     }
     if (
       matchedLower.some((p) =>
-        ['outcome evaluation', 'automated grading', 'exam scoring', 'learning outcome assessment', 'learning assessment', 'lernbewertung', 'automatisierte benotung', 'prüfungsbewertung'].includes(p),
+        [
+          'outcome evaluation',
+          'automated grading',
+          'exam scoring',
+          'learning outcome assessment',
+          'learning assessment',
+          'lernbewertung',
+          'automatisierte benotung',
+          'prüfungsbewertung',
+          // v0.1.3 launch-feedback HIGH-2 paraphrases.
+          'automated essay scoring',
+          'predict student performance',
+          'bewertung von schülern',
+          'automatische notenvergabe',
+        ].includes(p),
       )
     ) {
       hits.add('b');
@@ -496,7 +619,17 @@ function narrowSubLetters(
     }
     if (
       matchedLower.some((p) =>
-        ['exam monitoring', 'proctoring', 'cheating detection', 'prüfungsüberwachung', 'betrugserkennung prüfung'].includes(p),
+        [
+          'exam monitoring',
+          'proctoring',
+          'cheating detection',
+          'prüfungsüberwachung',
+          'betrugserkennung prüfung',
+          // v0.1.3 launch-feedback HIGH-2 paraphrases.
+          'exam proctoring',
+          'online exam monitoring',
+          'online-prüfung überwachen',
+        ].includes(p),
       )
     ) {
       hits.add('d');

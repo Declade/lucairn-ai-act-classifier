@@ -1,6 +1,6 @@
 {
   "language": "de",
-  "version": "v0.1.2",
+  "version": "v0.1.3",
   "_meta": {
     "notice": "Saat-Lexikon für v0.1.x. Jeder Eintrag `source` MUSS verbatim gegen das deutsche EUR-Lex-Body verifiziert werden, bevor Regel-Module den Trigger konsumieren. Einträge ohne direkte EUR-Lex-Quelle werden ausgeschlossen.",
     "primary_source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
@@ -43,7 +43,15 @@
         { "phrase": "bildungsniveau bestimmen" },
         { "phrase": "bildungszuweisung" },
         { "phrase": "bewertung des bildungsniveaus" },
-        { "phrase": "bewertung angemessenes bildungsniveau" }
+        { "phrase": "bewertung angemessenes bildungsniveau" },
+        { "phrase": "zugang zu bildungseinrichtungen bestimmen" },
+        { "phrase": "zugang zu bildungseinrichtungen" },
+        { "phrase": "zulassung zu hochschulen" },
+        { "phrase": "zulassungsentscheidung universität" },
+        { "phrase": "bewertung von schülern" },
+        { "phrase": "online-prüfung überwachen" },
+        { "phrase": "automatische notenvergabe" },
+        { "phrase": "studienzulassung" }
       ]
     },
     "4_employment": {
@@ -58,7 +66,29 @@
         { "phrase": "einstellungsentscheidungen" },
         { "phrase": "leistungsbewertung" },
         { "phrase": "leistungsbewertungen" },
-        { "phrase": "mitarbeiterüberwachung" }
+        { "phrase": "mitarbeiterüberwachung" },
+        { "phrase": "bewerber sortieren" },
+        { "phrase": "kandidaten sortieren" },
+        { "phrase": "bewerber bewerten" },
+        { "phrase": "bewerber screening" },
+        { "phrase": "bewerbungsscreening" },
+        { "phrase": "lebenslauf screening" },
+        { "phrase": "lebenslaufscreening" },
+        { "phrase": "bewerbungen bewerten" },
+        { "phrase": "bewerbungen sortieren" },
+        { "phrase": "stellenbewerber" },
+        { "phrase": "kandidaten auswählen" },
+        { "phrase": "kandidaten ranken" },
+        { "phrase": "kandidaten bewerten" },
+        { "phrase": "vorstellungsgespräche auswerten" },
+        { "phrase": "rekrutierung" },
+        { "phrase": "rekrutieren" },
+        { "phrase": "stellenbesetzung" },
+        { "phrase": "einstellungsverfahren" },
+        { "phrase": "auswahl von bewerbern" },
+        { "phrase": "kandidaten für eine stelle zu sortieren" },
+        { "phrase": "kandidaten für eine stelle sortieren" },
+        { "phrase": "bewertet bewerbungen" }
       ]
     },
     "5_essential_services": {
@@ -153,7 +183,16 @@
       "entries": [
         { "phrase": "sozialbewertung" },
         { "phrase": "social credit" },
-        { "phrase": "vertrauenswürdigkeitsbewertung" }
+        { "phrase": "vertrauenswürdigkeitsbewertung" },
+        { "phrase": "bürger nach vertrauenswürdigkeit bewerten" },
+        { "phrase": "soziale bewertung" },
+        { "phrase": "bürger-bewertung" },
+        { "phrase": "verhaltens-scoring" },
+        { "phrase": "soziale trustworthiness-bewertung" },
+        { "phrase": "punktesystem für bürger" },
+        { "phrase": "bürgerbewertung" },
+        { "phrase": "bewertung von bürgern" },
+        { "phrase": "klassifizierung von personen über zeitraum" }
       ]
     },
     "d_predictive_policing": {
@@ -163,7 +202,10 @@
         { "phrase": "vorhersagende polizeiarbeit profiling" },
         { "phrase": "kriminalrisiko-profiling" },
         { "phrase": "straftaten vorhersagen profiling" },
-        { "phrase": "vorhersagende kriminalanalyse" }
+        { "phrase": "vorhersagende kriminalanalyse" },
+        { "phrase": "vorhersagende polizeiarbeit" },
+        { "phrase": "straftat vorhersagen" },
+        { "phrase": "straftaten vorhersagen" }
       ]
     },
     "e_facial_scraping": {
@@ -186,7 +228,16 @@
         { "phrase": "emotionen am arbeitsplatz" },
         { "phrase": "stimmungen der mitarbeiter erkennen" },
         { "phrase": "stimmungserkennung der mitarbeiter" },
-        { "phrase": "emotionen von mitarbeitern erkennen" }
+        { "phrase": "emotionen von mitarbeitern erkennen" },
+        { "phrase": "emotionserkennung im büro" },
+        { "phrase": "emotionserkennung in der schule" },
+        { "phrase": "emotionserkennung in bildungseinrichtungen" },
+        { "phrase": "emotionserkennung im klassenzimmer" },
+        { "phrase": "emotionsanalyse am arbeitsplatz" },
+        { "phrase": "stimmungserkennung am arbeitsplatz" },
+        { "phrase": "mitarbeiteremotion" },
+        { "phrase": "emotion detection arbeitsplatz" },
+        { "phrase": "arbeitsplatz emotionserkennung" }
       ]
     },
     "g_biometric_categorisation_sensitive": {
@@ -200,12 +251,16 @@
       ]
     },
     "h_realtime_remote_biometric_le": {
-      "description": "Art. 5 Abs. 1 Buchst. h — biometrische Echtzeit-Fernidentifizierung in öffentlich zugänglichen Räumen zu Strafverfolgungszwecken (nur enge Ausnahmen).",
+      "description": "Art. 5 Abs. 1 Buchst. h — biometrische Echtzeit-Fernidentifizierung in öffentlich zugänglichen Räumen zu Strafverfolgungszwecken (nur enge Ausnahmen). Lexikon-Einträge MÜSSEN den Echtzeit-Charakter mitführen — `biometrische fernidentifizierung` allein ist Anhang III Nr. 1(a) und KEIN Art. 5 Abs. 1 Buchst. h.",
       "source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
       "entries": [
         { "phrase": "biometrische echtzeit-identifizierung" },
         { "phrase": "echtzeit-gesichtserkennung" },
-        { "phrase": "live-gesichtserkennung" }
+        { "phrase": "live-gesichtserkennung" },
+        { "phrase": "echtzeit-fernidentifizierung" },
+        { "phrase": "biometrische echtzeit-fernidentifizierung" },
+        { "phrase": "fernidentifizierung in echtzeit" },
+        { "phrase": "echtzeit-fernidentifizierungssystem" }
       ]
     }
   },
