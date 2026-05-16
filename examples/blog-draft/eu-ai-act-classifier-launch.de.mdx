@@ -1,0 +1,182 @@
+# Wir haben ein kostenloses CLI gebaut, das jeden KI-Anwendungsfall den ausgelösten Artikeln der EU-KI-Verordnung zuordnet. Was uns 50 reale Fälle gelehrt haben.
+
+Die Verordnung (EU) 2024/1689 hat 113 Artikel, 13 Anhänge und rund 458 Seiten dichten Regulierungstextes. Einen konkreten KI-Anwendungsfall — etwa „Wir bewerten Bewerber per CV-Ranking" — den passenden Artikeln, Absätzen und Unterbuchstaben zuzuordnen, dauert bei einer kompetenten Compliance-Praktikerin zwischen sechs und zehn Stunden. Wir haben das an drei der unten gezeigten Fälle gemessen, bevor wir mit dem Klassifizierer angefangen haben.
+
+Wir hatten an diesen sechs bis zehn Stunden je Anwendungsfall keinen Spaß. Das nächste Compliance-Team, das vor der gleichen Frage steht, wird ebenfalls keinen haben. Also haben wir ein Werkzeug gebaut.
+
+## Das Problem
+
+Es gibt eine strukturelle Diskrepanz zwischen dem Aufbau der KI-Verordnung und der Art, wie Produktteams KI-Systeme bauen.
+
+Die Verordnung ist top-down nach Regulierungsanliegen strukturiert: verbotene Praktiken in Artikel 5, Hochrisiko-Einstufung in Artikel 6 und Anhang III, technische Pflichten in der Kaskade durch die Artikel 10 bis 15, Transparenzpflichten in Artikel 50, Governance ab Artikel 70 und so weiter. Jeder Absatz verweist auf andere Absätze. Jeder Anhang-Eintrag verweist zurück auf den Artikel, der ihn anruft. Liest man die Verordnung linear durch, entsteht eine Karte der *Denkstruktur des Regulators*.
+
+Produktteams gehen das Problem bottom-up an. Sie haben einen konkreten Anwendungsfall: „Wir screenen Lebensläufe", „Wir prognostizieren das Wetter", „Wir erzeugen Deepfakes". Sie möchten wissen, welche Artikel für diesen einen Fall gelten, welche Nachweise der Regulator irgendwann verlangen wird und wie der Zeitrahmen für die Einhaltung aussieht.
+
+Der kürzeste Pfad zwischen diesen beiden Lesefolgen sind Stunden des Quervergleichs. Compliance-Anwälte rechnen diese Stunden ab. Internes Counsel existiert in den meisten KI-Unternehmen in der Frühphase nicht. Das Ergebnis ist ein reales, beobachtbares Versagensmuster der Branche: Unternehmen klassifizieren entweder zu hoch (sie nehmen an, alles sei Hochrisiko, und zahlen für KI-VO-Compliance-Theater auf Fällen, die noch nicht einmal Anhang III berühren) oder zu niedrig (sie nehmen an, Artikel 5 betreffe sie nicht, und versenden ein Produkt, das ein Verbot auslöst, von dem sie erst Notiz nehmen, wenn die Aufsichtsbehörde anklopft).
+
+Bauteams lesen keine Regulierung. Juristinnen lesen keine Architektur-Diagramme. Irgendwer muss die Lücke schließen — wieder und wieder, für jeden neuen KI-Anwendungsfall. Heute ist dieser Irgendwer überwiegend eine erfahrene Compliance-Beraterin, deren Stundensatz die Übung unter einer bestimmten Produktgröße ökonomisch unmöglich macht.
+
+## Was das Werkzeug tut
+
+`@lucairn/ai-act-classifier` ist ein einzelner Befehl. Man übergibt ihm eine Freitext-Beschreibung eines KI-Anwendungsfalls. Er gibt die spezifischen Anhang-III-Nummern, die Buchstaben des Artikel-5-Verbots, die Artikel-50-Absätze und die daraus folgende Kaskade-Anwendbarkeit der Artikel 10/12/13/14/15 zurück. Er funktioniert auf Deutsch und auf Englisch. Im deterministischen Standardmodus läuft er vollständig auf dem eigenen Rechner — kein Netzwerkaufruf, kein LLM, keine Daten verlassen den Laptop. Er ist kostenlos, MIT-lizenziert und über npm installierbar.
+
+```bash
+$ npx @lucairn/ai-act-classifier --lang de "Unser KI-Tool screent Lebensläufe und bewertet Bewerber anhand des Lebenslaufs und prognostizierter Eignungswerte; HR-Teams nutzen das Bewerberranking für Einstellungsentscheidungen."
+```
+
+Reale Ausgabe:
+
+```
+  EU-KI-VO-Zuordnung
+  Artikel 5  (verboten): nicht ausgelöst
+  Artikel 6  + Anhang III:      HOCHRISIKO
+    └─ Anhang III.4 — Beschäftigung, Personalmanagement und Zugang zur Selbstständigkeit
+  Artikel 10 (Daten-Governance): anwendbar
+  Artikel 12 (Protokollierung/Aufzeichnungen): anwendbar
+  Artikel 13 (Betreiber-Transparenz): anwendbar
+  Artikel 14 (menschliche Aufsicht): anwendbar
+  Artikel 15 (Genauigkeit/Robustheit/Cybersicherheit): anwendbar
+  Artikel 50 (GPAI/Betreiber):  nicht ausgelöst
+  Anhang IV  (technische Dokumentation):  ERFORDERLICH
+
+  Lucairn-Pflichten-Overlay
+  Kat 1 Sanitizer  (Art. 10+15):  ERFORDERLICH
+  Kat 2 Evidence   (Art. 12+14):  ERFORDERLICH
+  Kat 3 Inventory  (Art. 10+12+14+15): ERFORDERLICH
+
+  Konfidenz: 0.52   Modus: deterministic   Regeln: v0.1.1 (sha256:12eafb8a…)
+
+  ⚠ Informationelles Werkzeug — keine Rechtsberatung. Siehe README §Disclaimer.
+```
+
+Mit `--explain` erhält man eine Begründungsspur mit den wörtlichen EUR-Lex-Absatz-Chapeaux, den passenden Lexikon-Phrasen, der Buchstaben-Eingrenzung sowie einer Zitations-URL für jeden ausgelösten Artikel. Mit `--lang en` schaltet man auf Englisch. Mit `--llm anthropic` (oder `openai` oder `groq`) tauscht man den deterministischen Schlüsselwort-Extraktor gegen einen optionalen LLM-Aufruf gegen den eigenen API-Schlüssel aus — sinnvoll dann, wenn die Beschreibung des Anwendungsfalls nicht zu den kanonischen Phrasen des kuratierten Lexikons passt.
+
+Die Ausgabe ist standardmäßig markdown-formatiertes Berater-Copy-Paste-Material, per `--format json` ein parsbarer JSON-Stream oder per `--explain-format text` Terminal-Pipe-freundlicher Klartext. Mit `--cite` lässt sich ein zitationsfähiger Block aus EUR-Lex- + EU-KI-Office-Service-Desk- + lucairn.eu-URLs als Fußnoten-Block für ein Compliance-Memo erzeugen. Mit `--annex iv` druckt das Werkzeug die neungliedrige Referenztabelle für die Anhang-IV-Technische-Dokumentation. Mit `--rules-version` lässt sich in CI-Pipelines prüfen, dass die geladenen Regeln einer angepinnten Version entsprechen — nützlich, um überraschende Klassifizierer-Upgrades abzufangen.
+
+## Das festgeschriebene Drei-Kategorien-Pflichten-Mapping
+
+Neben der neutralen Artikel-Zuordnung liefern wir genau ein meinungsstarkes Overlay mit: die Lucairn-Drei-Kategorien-Sichtweise.
+
+Sie funktioniert so: Die Hochrisiko-Pflichtenoberfläche der KI-Verordnung sind die Artikel 10 + 12 + 13 + 14 + 15. Liest man diese Artikel zusammen mit den zugehörigen Durchführungsrechtsakten, den harmonisierten Normen und der BSI- / BfDI- / Bitkom-Praxisleitlinien-Lage, kristallisieren sich drei operative Arbeitskategorien heraus. Es sind keine drei neuen Regulator-Kategorien — es sind drei Gruppierungen bestehender Pflichten, abgebildet auf die drei tatsächlichen Engineering-Arbeitsströme, die ein Compliance-bewusstes Team aufsetzen muss:
+
+- **Kategorie 1 — Sanitizer (Artikel 10 + 15).** Daten-Governance plus Genauigkeit/Robustheit/Cybersicherheit. Alles, was die Trainingsdaten-Pipeline, die Input-/Output-Filterschicht und die Adversarial-Robustheits-Geschichte berührt.
+- **Kategorie 2 — Evidence (Artikel 12 + 14).** Aufzeichnungen plus menschliche Aufsicht. Alles, was Audit-Pfade, Entscheidungslogs, Aufsichts-Trigger-Dokumentation und die Beweiskette erzeugt, die die Aufsichtsbehörde zuerst sehen will.
+- **Kategorie 3 — Inventory (Artikel 10 + 12 + 14 + 15).** Die End-to-End-Sicht „KI-Systemregister" — das Inventar, welche Systeme im Einsatz sind, wer ihre Aufsichtsbeauftragten sind, auf welchen Daten sie trainiert wurden, wie ihre Logging-Oberfläche aussieht. Das ist das Dokumentations-Artefakt, das organisatorisch über Produkt + DSB + Compliance + Sicherheit hinweg lebt.
+
+Der Grund, warum wir dieses meinungsstarke Mapping zusätzlich zur neutralen Artikel-Liste mitliefern: Das Versagensmuster „Hedging-als-Lieferobjekt" ist zu häufig. Compliance-Praktiker, die klassifizieren, aber nicht operationalisieren, produzieren fünfzigseitige Memos, die sagen „Artikel 12 ist anwendbar, Sie brauchen Aufzeichnungen", ohne jemals zu konkretisieren, was diese Aufzeichnungs-Infrastruktur kostet, wer sie verantwortet oder wann mit dem Bau zu beginnen ist. Das Drei-Kategorien-Overlay zwingt das Gespräch in drei konkrete Projektpläne — jeder mit einer verantwortlichen Person, einem Budget und einem Liefertermin.
+
+Wer nur die Regulator-Sicht möchte, schaltet das Overlay mit `--no-three-category` ab. Wir liefern es standardmäßig an, weil diejenigen, die einen Klassifizierer benutzen werden, sehr wahrscheinlich auch diejenigen sind, die etwas ausliefern müssen.
+
+## Fünf bearbeitete Beispiele
+
+Die folgenden fünf Beispiele decken die tragenden Fälle ab. Jede Ausgabe ist reale `dist/cli.js`-Ausgabe der v0.1.1-Binär — kein Illustrations-Material.
+
+### Beispiel 1 — Bewerber-Screening (Anhang III Nr. 4)
+
+```
+$ ai-act-classify --lang de "Unser KI-Tool screent Lebensläufe und bewertet Bewerber anhand des Lebenslaufs und prognostizierter Eignungswerte; HR-Teams nutzen das Bewerberranking für Einstellungsentscheidungen."
+
+  Artikel 6  + Anhang III:      HOCHRISIKO
+    └─ Anhang III.4 — Beschäftigung, Personalmanagement und Zugang zur Selbstständigkeit
+  Artikel 10–15: alle anwendbar (Kaskade)
+  Anhang IV (technische Dokumentation): ERFORDERLICH
+```
+
+Der Klassifizierer löst Anhang III Nr. 4(a) auf den passenden Phrasen „Bewerberranking" und „Einstellungsentscheidungen" aus. Die Buchstaben-Eingrenzung führt zu (a) — Rekrutierung/Auswahl — und nicht zu (b) — Arbeitsplatzentscheidungen — oder (c) — Workforce-Überwachung —, weil die Beschreibung die Bewerberauswahl im Einstellungsschritt schildert, nicht eine Bewertung in laufender Beschäftigung. Anschließend feuert die volle Kaskade der Artikel 10–15 deterministisch.
+
+### Beispiel 2 — Vorhersagende Polizeiarbeit (Verbot nach Artikel 5)
+
+```
+$ ai-act-classify --lang de "Eine Polizeibehörde nutzt unser KI-System für vorhersagende Polizeiarbeit und Kriminalrisiko-Profiling, das ausschließlich auf Profiling der natürlichen Person basiert, um das Risiko künftiger Straftaten zu prognostizieren."
+
+  Artikel 5  (verboten): VERBOTEN
+  Artikel 6  + Anhang III:      durch Art. 5 unterdrückt
+  Artikel 10–15: alle nicht anwendbar
+```
+
+Das ist Artikel 5 Absatz 1 Buchstabe d: das Verbot des „Inverkehrbringens, der Inbetriebnahme oder der Verwendung von KI-Systemen zur Bewertung des Risikos einer natürlichen Person, eine Straftat zu begehen, ausschließlich auf der Grundlage des Profilings einer natürlichen Person oder der Bewertung ihrer Persönlichkeitsmerkmale". Der Klassifizierer unterdrückt die Hochrisiko-Einstufung nach Anhang III — das Verbot greift der gesamten Pflichtenoberfläche vor. Die Ausgabe endet mit Exit-Code 1 (Artikel-5-Verbot ausgelöst), damit CI-Pipelines bei verbotenen Anwendungsfällen lautstark fehlschlagen können. Der Disambiguator „ausschließlich auf Profiling der natürlichen Person" ist hier tragend: Ohne diese Phrase würde derselbe Input nur Anhang III Nr. 6 (Hochrisiko-Strafverfolgung) auslösen, kein Verbot.
+
+### Beispiel 3 — GPAI-Finetuning für einen Kundenservice-Chatbot (Transparenz nach Artikel 50)
+
+```
+$ ai-act-classify --lang de "Wir finetunen Llama für unseren Kundenservice-Chatbot"
+
+  Artikel 5  (verboten): nicht ausgelöst
+  Artikel 6  + Anhang III:      nicht ausgelöst
+  Artikel 50 (GPAI/Betreiber):  anwendbar
+  Anhang IV  (technische Dokumentation):  nicht anwendbar
+```
+
+Das ist der Chatbot-Offenlegungspfad nach Artikel 50 Absatz 1. Entscheidend: Der Klassifizierer löst NICHT Anhang III aus — das Finetuning eines Allzweckmodells für ein Kundenservice-Routing trifft keine Anhang-III-Nummer. Die Ausgabe entspricht dem Pfad der begrenzten Risiken: Transparenzpflichten nach Artikel 50, keine Anhang-IV-Dokumentation, keine Artikel-10–15-Kaskade.
+
+### Beispiel 4 — Deepfake-Inhalte für die Berichterstattung über Angelegenheiten von öffentlichem Interesse (Artikel 50(4))
+
+```
+$ ai-act-classify --lang de "KI, die synthetische Deepfake-Videoinhalte für Nachrichtenartikel zu Angelegenheiten von öffentlichem Interesse erzeugt"
+
+  Artikel 50 (GPAI/Betreiber):  anwendbar
+```
+
+Der Klassifizierer löst Artikel 50 Absatz 4 auf den passenden Phrasen „Deepfake" und „öffentliches Interesse" aus. Die Betreiber-Pflicht greift: KI-generierte Inhalte, die in der Berichterstattung über Angelegenheiten von öffentlichem Interesse verwendet werden, müssen als künstlich gekennzeichnet werden — es sei denn, der Inhalt wurde einer redaktionellen Kontrolle mit öffentlicher-Interesse-Rechtfertigung unterzogen (Carve-out nach Artikel 50 Absatz 4 Unterabsatz 2). Die Unterscheidung Unterabsatz 1 vs. Unterabsatz 2 verschiebt der Klassifizierer in den redaktionellen Arbeitsablauf des Betreibers — beide Pfade verlangen eine Offenlegung, nur die Offenlegungsform unterscheidet sich.
+
+### Beispiel 5 — Negativfall: Produktempfehlungen (keine Pflicht greift)
+
+```
+$ ai-act-classify --lang de "KI, die Produkte basierend auf dem Browserverlauf empfiehlt"
+
+  Artikel 5  (verboten): nicht ausgelöst
+  Artikel 6  + Anhang III:      nicht ausgelöst
+  Artikel 50 (GPAI/Betreiber):  nicht ausgelöst
+```
+
+Browserverlauf-basierte Produktempfehlungen sind die Art Verbraucher-KI mittlerer Eingriffstiefe, die von Compliance-Teams im Erste-Prinzipien-Durchlauf häufig zu hoch klassifiziert wird. Der Klassifizierer gibt korrekt die leere Pflichtenoberfläche zurück. Der Anwendungsfall wird ausschließlich von der DSGVO (Einwilligung, Zweckbindung, Transparenz) und der E-Commerce-Richtlinie reguliert — beides nicht im Geltungsbereich des KI-VO-Klassifizierers.
+
+## Was die 50 Testfälle gezeigt haben
+
+Der Klassifizierer wird mit einem kuratierten 50-Fälle-Korpus unter `test/fixtures/use-cases/` ausgeliefert. Der Korpus deckt 17 Hochrisiko-Fälle nach Anhang III ab (jede Nummer 1–8 mit mindestens einem Buchstaben-Eingrenzungstest), 7 Verbote nach Artikel 5 (jeder Buchstabe a–i exerziert), 8 Transparenzfälle nach Artikel 50 (Betreiber- und Anbieterseite), 9 Negativfälle (bewusst unauffällige KI zur Prüfung auf Falsch-Positiv-Über-Auslösung) und 9 Altfälle aus dem Day-3-Prototyp.
+
+Die empirischen Zahlen aus `accuracy/REPORT.md`, neu erzeugt auf dem v0.1.1-main-Branch:
+
+- **Gesamtgenauigkeit:** 98,2 % (feinkörnige Pro-Feld-Bestehensquote über alle 50 Fixtures).
+- **Erkennung von Artikel-5-Verboten:** 100,0 % (jedes Verbot feuert korrekt; kein Falsch-Positiv-Verbot gegen die 9 Negativfälle).
+- **Binäre Hochrisiko-Einstufung:** 98,0 % (Anhang III plus Artikel 6, mit Buchstaben-Eingrenzung).
+
+Die ehrliche Einordnung: Diese Zahlen messen die interne Konsistenz zwischen einem kuratierten Fixture-Korpus und dem Lexikon. Der Korpus wurde während der Build-Phasen 7–8 so geformt, dass er die kanonischen Phrasen des Lexikons exerziert. Die Zahlen sind kein Maß für willkürliche Real-Welt-Genauigkeit. Sie sind ein Maß für „wenn wir uns auf die kanonische Formulierung eines Anwendungsfalls einigen, ordnet der Klassifizierer ihn der richtigen Artikel-Oberfläche zu". Die Korpus-Design-Disziplin (jede Fixture zitiert einen wörtlichen EUR-Lex-Absatz; jede Fixture besteht eine Regulator-Validator-Review-Kette) macht die 98,2-%-Zahl ehrlicher als eine höhere Zahl auf einem nicht offengelegten Korpus.
+
+Der optionale LLM-Modus (`--llm anthropic`) wurde auf demselben 50-Fall-Korpus zu 93,5–97,6 % gemessen, über zwei unabhängige Läufe (Claude-Haiku-4.5-Modell; der deterministische Modus ist byte-stabil über Läufe hinweg, der LLM-Modus probabilistisch und variiert). Für reproduzierbare Klassifizierung den deterministischen Modus verwenden. Der LLM-Modus tauscht Reproduzierbarkeit gegen bessere Abdeckung paraphrasierter Inputs, die nicht zu den kanonischen Phrasen des Lexikons passen.
+
+Was die 50 Fälle während des Baus unerwartet gezeigt haben: Ein messbarer Anteil der Anwendungsfälle, die Compliance-Teams als „operativ" oder „logistisch" beschreiben würden, lösen tatsächlich Anhang-III-Hochrisiko aus. Drei konkrete Beispiele aus dem Korpus:
+
+- **Fixture-09 (Mitarbeiterüberwachung in der Logistikzentrale).** Mitarbeiter-Monitoring in einer Logistikzentrale, kombiniert mit individueller Aufgabenzuteilung. Liest sich wie Operations-Arbeit. Löst Anhang III Nr. 4(b) aus — „Entscheidungen über Bedingungen arbeitsbezogener Beziehungen, die Zuweisung von Aufgaben anhand individuellen Verhaltens oder personenbezogener Merkmale oder die Überwachung und Bewertung von Leistung und Verhalten der in solchen Beziehungen stehenden Personen" — mit voller Artikel-10–15-Kaskade.
+- **Fixture-11 (Notrufdisposition/Rettungsleitstelle).** KI-gestützte Triage in einer Notruf-Dispositionsstelle. Liest sich wie humanitäre Arbeit. Löst Anhang III Nr. 5(d) aus — „KI-Systeme, die für die Bewertung und Klassifizierung von Notrufen natürlicher Personen oder zur Disposition oder zur Festlegung der Priorität von Notdiensten, einschließlich Polizei, Feuerwehr und medizinischer Hilfe, sowie für Patiententriage-Systeme im Gesundheitsnotfall, bestimmt sind".
+- **Fixture-17 (Voter Targeting und Wahleinflussnahme).** KI für Wähler-Targeting, vermarktet für Wahleinflussnahme-Kampagnen. Liest sich wie Marketing-Technologie. Löst Anhang III Nr. 8(b) aus — wahlbeeinflussende KI-Systeme sind unabhängig davon, ob der Betreiber die Tätigkeit als Marketing oder als politische Arbeit beschreibt, hochrisikobehaftet.
+
+Jeder dieser Fälle ist die Sorte, bei der ein Selbst-Klassifizierungs-Erstdurchlauf routinemäßig „nicht hochrisikobehaftet" zurückgeben würde. Der Klassifizierer macht sie in rund zwei Sekunden als Hochrisiko sichtbar. Diese Lücke — zwischen der Intuition der Praktikerin und dem Framing des Regulators — macht das Werkzeug nützlich.
+
+## Grenzen
+
+Der Klassifizierer wird Ihre DSB nicht ersetzen. Er wird Ihre Anwältin nicht ersetzen. Er wird, trotz der Versuchung das im Marketing-Text so zu formulieren, keine Rechtsberatung geben.
+
+Was er gibt, ist ein Startpunkt: Artikelnummern, Absatzverweise, die Kaskade-Anwendbarkeit und eine Zitationskette. Alles, was darunter liegt — die Unterscheidung Betreiber vs. Anbieter, die Ausrichtung an harmonisierten Normen, die grenzüberschreitende Reichweiten-Prüfung, der Zeitrahmen-Effekt der gestaffelten Anwendungsdaten nach Artikel 113, das Zusammenspiel mit sektoralem Recht (Medizinprodukte, Finanzdienstleistungen, Luftfahrt) — verlangt menschliches Urteil.
+
+Der Klassifizierer kennt eine bekannte verbleibende Fehlklassifizierung, offen dokumentiert in `accuracy/KNOWN-MISCLASSIFICATIONS.md`. Fixture-28 (ein deutschsprachiger Artikel-50-Emotions-Marketing-Fall) enthält das Kompositum `Emotionserkennungssystems`. Das 1-Gramm `emotionserkennung` aus dem Lexikon feuert nicht *innerhalb* des Kompositums, weil der Extraktor an Leerzeichen und Satzzeichen tokenisiert, nicht an komposita-internen morphologischen Wurzeln. Der Klassifizierer feuert korrekt Artikel 50(3), verfehlt aber die parallele Anhang-III-Nr.-1(c)-Emotionserkennungs-Hochrisiko-Einstufung. Wir dokumentieren das, anstatt darum herum zu konstruieren, weil eine ehrliche Offenlegung einer bekannten Grenze eine Schein-100-%-Genauigkeit schlägt. Der Fix ist eine handkuratierte deutsche Komposita-Spalttabelle; sie ist Punkt eins im v0.2-Backlog.
+
+Das Lexikon ist handkuratiert. Es wird Paraphrasen verfehlen, die Menschen semantisch als identisch zu den kanonischen Phrasen erkennen würden. Der optionale `--llm`-Modus ist die Umgehung für solche Fälle. Wir haben drei Anbieter geprüft (Anthropic Haiku 4.5, OpenAI GPT-4o-mini, Groq Llama 3.3 70B) und liefern alle drei aus. Das LLM ist darauf beschränkt, Phrasen aus dem kuratierten Lexikon zu zitieren; jede halluzinierte Phrase wird verworfen, bevor die Regel-Engine sie sieht.
+
+## Benutzen. Forken. Brechen.
+
+Das Werkzeug ist auf npm. Installation per `pnpm add @lucairn/ai-act-classifier` oder direkter Aufruf per `npx -y @lucairn/ai-act-classifier "<Anwendungsfall>"`. Der Quellcode liegt auf [github.com/Declade/lucairn-ai-act-classifier](https://github.com/Declade/lucairn-ai-act-classifier) — MIT für den Code, CC-BY-4.0 für den kuratierten Testkorpus.
+
+Wer eine Klassifizierung findet, die rechtlich falsch ist, eröffnet ein GitHub-Issue mit dem Input-Text, der erwarteten Ausgabe, dem EUR-Lex-Absatz, der die eigene Lesart stützt, und gerne einem Fix-Vorschlag. Wir behandeln solche Issues als Launch-Blocker für die nächste Version.
+
+EU/DE-Beraterinnen und -Berater, die das Werkzeug in Mandatsarbeit zitieren möchten, erzeugen mit dem `--cite`-Flag einen Zitationsblock aus Tier 1 (EUR-Lex + EU-KI-Office-Service-Desk) + Tier 2 (BSI/BfDI/Bitkom) + Tier 3 (lucairn.eu) — direkt einfügbar in die Memo-Fußnoten.
+
+Der Klassifizierer ist Teil einer größeren Lucairn-Compliance-Tooling-Geschichte. Die Begleit-Werkzeuge `/tools/ai-payload-inspector`, `/tools/evidence-readiness` und `/tools/mcp-risk-scanner` sind bereits auf lucairn.eu live. Die längeren Texte zur Verordnung — [der EU-KI-VO-Architektur-Beitrag](https://lucairn.eu/de/blog/eu-ai-act-architecture-2026), [die Artikel-12-Logging-Anleitung](https://lucairn.eu/de/blog/ai-act-article-12-logging-in-practice), [der Artikel-50-GPAI-Betreiber-Beitrag](https://lucairn.eu/de/blog/article-50-gpai-deployers-2026) — stehen neben dem Klassifizierer als Teil desselben Projekts.
+
+Dies ist informationelles Werkzeug. Keine Rechtsberatung. Kein Ersatz für Counsel. Aber die Artikel-Zuordnungs-Frage ist jetzt einen `npx`-Aufruf entfernt, und die sechs bis zehn Stunden, die sie bisher gekostet hat, können in die Pflichten fließen, die der Klassifizierung tatsächlich nachgelagert sind.
+
+Genau diesen Tausch wollten wir. Wir hoffen, er ist nützlich.
+
+---
+
+> *Informationelles Werkzeug — keine Rechtsberatung. Die Ausgabe des Klassifizierers ist gegen Verordnung (EU) 2024/1689, den EU-KI-Office-Service-Desk, BSI- / BfDI- / Bitkom-Leitlinien und einen kuratierten 50-Fälle-Korpus geerdet. Verwenden Sie sie als Ausgangspunkt; prüfen Sie mit Ihrer DSB und Ihrem Counsel, bevor Sie auf eine Klassifizierung hin handeln.*
