@@ -152,6 +152,11 @@ function resolveLang(rawOpts: RawOptions, errLocale: 'en' | 'de'): 'en' | 'de' |
  * `anthropic`, `openai`, and `groq`. Each provider's API-key env var is
  * checked upfront — exit 3 with a setup pointer when missing. Unknown
  * providers exit 3 with the supported list.
+ *
+ * Day 13 polish: every error message now ends with an actionable recovery
+ * hint (the exact `export VAR=...` command, or the supported-providers
+ * list, or a status-page URL). The previous "See README" pointers stayed
+ * but were not actionable from the terminal.
  */
 function resolveLlm(rawOpts: RawOptions): LLMProvider | undefined {
   if (rawOpts.llm === undefined) return undefined;
@@ -162,7 +167,7 @@ function resolveLlm(rawOpts: RawOptions): LLMProvider | undefined {
       process.env['ANTHROPIC_API_KEY'].length === 0
     ) {
       err(
-        'Error: --llm anthropic requires the ANTHROPIC_API_KEY env var. See README §--llm mode (opt-in).',
+        'Error: --llm anthropic requires the ANTHROPIC_API_KEY env var. Set via: export ANTHROPIC_API_KEY=sk-ant-... (see README §--llm mode setup).',
       );
       exit(3);
     }
@@ -174,7 +179,7 @@ function resolveLlm(rawOpts: RawOptions): LLMProvider | undefined {
       process.env['OPENAI_API_KEY'].length === 0
     ) {
       err(
-        'Error: --llm openai requires the OPENAI_API_KEY env var. See README §--llm mode (opt-in).',
+        'Error: --llm openai requires the OPENAI_API_KEY env var. Set via: export OPENAI_API_KEY=sk-... (see README §--llm mode setup).',
       );
       exit(3);
     }
@@ -186,7 +191,7 @@ function resolveLlm(rawOpts: RawOptions): LLMProvider | undefined {
       process.env['GROQ_API_KEY'].length === 0
     ) {
       err(
-        'Error: --llm groq requires the GROQ_API_KEY env var. See README §--llm mode (opt-in).',
+        'Error: --llm groq requires the GROQ_API_KEY env var. Set via: export GROQ_API_KEY=gsk_... (see README §--llm mode setup).',
       );
       exit(3);
     }

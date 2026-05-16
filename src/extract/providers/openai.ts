@@ -161,7 +161,7 @@ export async function extractWithOpenAI(
   const apiKey = opts.apiKey ?? process.env['OPENAI_API_KEY'];
   if (typeof apiKey !== 'string' || apiKey.length === 0) {
     throw new Error(
-      'LLM_NO_API_KEY: OPENAI_API_KEY env var not set. See README §--llm mode setup.',
+      'LLM_NO_API_KEY: OPENAI_API_KEY env var not set. Set via: export OPENAI_API_KEY=sk-... (see README §--llm mode setup).',
     );
   }
 
@@ -171,7 +171,7 @@ export async function extractWithOpenAI(
     sdkMod = (await import('openai')) as unknown as OpenAISDKModule;
   } catch {
     throw new Error(
-      'LLM_SDK_NOT_INSTALLED: openai SDK is not installed. Run: pnpm add openai',
+      'LLM_SDK_NOT_INSTALLED: openai SDK is not installed. Install via: pnpm add openai (or: npm install openai). Note: the same SDK serves both --llm openai and --llm groq.',
     );
   }
 
@@ -225,8 +225,16 @@ export async function extractWithOpenAI(
       // Network / auth / model errors: throw immediately without retry. The
       // SDK throws subclasses of Error with provider-specific names; we wrap
       // with a stable error-code prefix and DROP the api key from the message.
+      // Day-13 polish: append a status-page hint. The Groq path passes a
+      // baseURL containing "groq.com"; route the hint URL accordingly.
       const msg = err instanceof Error ? err.message : String(err);
-      throw new Error(`LLM_API_ERROR: ${redactApiKey(msg, apiKey)}`);
+      const statusUrl =
+        typeof opts.baseURL === 'string' && opts.baseURL.includes('groq.com')
+          ? 'https://groqstatus.com'
+          : 'https://status.openai.com';
+      throw new Error(
+        `LLM_API_ERROR: ${redactApiKey(msg, apiKey)} (For transient errors, retry. For persistent errors, check provider status: ${statusUrl}.)`,
+      );
     }
 
     // Find the tool_call in the first choice's message.
@@ -272,7 +280,7 @@ export async function extractWithOpenAI(
   if (parsed === null) {
     const lastMsg = lastErr instanceof Error ? lastErr.message : 'unknown';
     throw new Error(
-      `LLM_PARSE_ERROR: failed to obtain a valid emit_features response after 2 attempts. Last: ${lastMsg}`,
+      `LLM_PARSE_ERROR: failed to obtain a valid emit_features response after 2 attempts. Last: ${lastMsg} (Try a different provider via --llm anthropic|groq, or rerun with --no-cache to retry.)`,
     );
   }
 

@@ -118,7 +118,7 @@ export async function extractWithAnthropic(
   const apiKey = process.env['ANTHROPIC_API_KEY'];
   if (typeof apiKey !== 'string' || apiKey.length === 0) {
     throw new Error(
-      'LLM_NO_API_KEY: ANTHROPIC_API_KEY env var not set. See README §--llm anthropic mode setup.',
+      'LLM_NO_API_KEY: ANTHROPIC_API_KEY env var not set. Set via: export ANTHROPIC_API_KEY=sk-ant-... (see README §--llm mode setup).',
     );
   }
 
@@ -128,7 +128,7 @@ export async function extractWithAnthropic(
     sdkMod = (await import('@anthropic-ai/sdk')) as unknown as AnthropicSDKModule;
   } catch {
     throw new Error(
-      'LLM_SDK_NOT_INSTALLED: @anthropic-ai/sdk is not installed. Run: pnpm add @anthropic-ai/sdk',
+      'LLM_SDK_NOT_INSTALLED: @anthropic-ai/sdk is not installed. Install via: pnpm add @anthropic-ai/sdk (or: npm install @anthropic-ai/sdk).',
     );
   }
 
@@ -172,8 +172,12 @@ export async function extractWithAnthropic(
       // Network / auth / model errors: throw immediately without retry. The
       // SDK throws subclasses of Error with provider-specific names; we wrap
       // with a stable error-code prefix and DROP the api key from the message.
+      // Day-13 polish: append a status-page hint so transient outages are
+      // distinguishable from misconfiguration in the terminal output.
       const msg = err instanceof Error ? err.message : String(err);
-      throw new Error(`LLM_API_ERROR: ${redactApiKey(msg, apiKey)}`);
+      throw new Error(
+        `LLM_API_ERROR: ${redactApiKey(msg, apiKey)} (For transient errors, retry. For persistent errors, check provider status: https://status.anthropic.com.)`,
+      );
     }
 
     // Find the tool_use block in the response content.
@@ -202,7 +206,7 @@ export async function extractWithAnthropic(
   if (parsed === null) {
     const lastMsg = lastErr instanceof Error ? lastErr.message : 'unknown';
     throw new Error(
-      `LLM_PARSE_ERROR: failed to obtain a valid emit_features response after 2 attempts. Last: ${lastMsg}`,
+      `LLM_PARSE_ERROR: failed to obtain a valid emit_features response after 2 attempts. Last: ${lastMsg} (Try a different provider via --llm openai|groq, or rerun with --no-cache to retry.)`,
     );
   }
 
