@@ -4,6 +4,35 @@ All notable changes to `@lucairn/ai-act-classifier` will be documented in this f
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.4] — 2026-05-16
+
+Launch-feedback retest fix-up. Same two adversarial reviewers (Claude Code + Codex CLI) retested v0.1.3 on its launch day. Both confirmed every v0.1.3 BLOCKER is closed and the accuracy floor holds (100 % Article 5 + ≥ 98 % overall). The Codex reviewer flagged two new paraphrase false-negatives that would burn trust with a first-contact EU/DE consultant typing realistic natural-language inputs, plus a static-copy letter-count inconsistency between the hosted UI and the README. v0.1.4 closes both paraphrase gaps + the static-copy inconsistency.
+
+### Fixed
+
+- **BLOCKER 3a — EN employment paraphrase now fires.** `AI system used to evaluate job applications and CVs to select candidates for employment.` previously fired no obligations because the v0.1.3 lexicon covered `evaluate job applicants` (plural-NOUN) but not `evaluate job applications` (plural-NOUN — the second noun form differs by one suffix). v0.1.4 adds ~10 EN paraphrases to `annex_iii.4_employment`: `evaluate job applications`, `evaluate job applications and cvs`, `evaluates job applications`, `evaluating job applications`, `select candidates for employment`, `selects candidates for employment`, `selecting candidates for employment`, `select candidates for a position`, `candidates for employment`, `job applications and cvs`. Sub-letter `a` narrowing list extended to include every new paraphrase.
+- **BLOCKER 3b — EN emotion-workplace paraphrase now fires Art 5(1)(f).** `AI system infers workers' emotions during customer-service calls in a workplace.` previously fired nothing because the v0.1.3 lexicon covered the rigid `infer emotions in [the] workplace` form (infinitive verb + article `the` or no article) but not natural third-person paraphrases like `infers workers' emotions` or the article-`a` form `in a workplace`. v0.1.4 adds ~14 EN paraphrases to `prohibited_practices.f_emotion_in_workplace_education`: `infers workers emotions`, `infer workers emotions`, `detect workers emotions`, `detects workers emotions`, `analyze workers emotions`, `analyse workers emotions` (UK), `infer emotions in a workplace`, `infers emotions in a workplace`, `infers emotions in workplace`, `infers emotions in the workplace`, `infers emotions in education`, `emotion detection in a workplace`, `emotion recognition in a workplace`, `emotion analysis in a workplace`. The existing `hasEmotionFCarveOut()` rule-level medical/safety carve-out invariant continues to hold across all new paraphrases.
+- **HIGH-1 carry-forward (DE Bewerbenden paraphrase) — now fires.** Claude-Code reviewer's stale-from-v0.1.3 case: the natural German recruiting paraphrase `Vorauswahl von Bewerbenden` (gender-neutral participle form, common in modern DE HR-tech copy) returned nothing on v0.1.3. v0.1.4 adds 9 DE paraphrases to `annex_iii.4_employment`: `vorauswahl von bewerbenden`, `bewerbenden bewerten`, `bewerbende bewerten`, `bewerbenden auswählen`, `bewerbende auswählen`, `anwerbung von natürlichen personen` (natural-language paraphrase that maps to the regulator's verbatim `Einstellung oder Auswahl natürlicher Personen` from Verordnung (EU) 2024/1689 Anhang III Nr. 4(a)), `recruiting-system`, `personal-recruiting`, `personalrecruiting`. Sub-letter narrowing list extended.
+- **Hosted-UI letter-count inconsistency (Codex reviewer MEDIUM).** The hosted UI at `lucairn.eu/tools/ai-act-classifier` said `Article 5 prohibited practices — letters (a) through (i)` (EN body), `Buchstaben (a) bis (i)` (DE body), and `letters a-i` (SoftwareApplication JSON-LD `featureList`) in three places. Article 5(1) in Regulation (EU) 2024/1689 has letters (a) through (h) — 8 letters, not 9. README was correct. Fixed in `theveil-website` companion PR; rule-side `src/rules/article-5.ts` was already correct (only fires a-h).
+
+### Changed
+
+- **Accuracy floor moved UP, not down.** With 3 new fixtures + 5 misclassifications-as-correct deltas: overall accuracy 98.5 % → 98.6 %, binary high-risk 98.3 % → 98.4 %, Article 5 100 % → 100 % (unchanged, the safety-critical floor holds). CI floor (≥ 80 % overall + 100 % Article 5) unchanged.
+- **Fixture corpus 59 → 62.** Total +3 fixtures, all under `test/fixtures/use-cases/day14-launch-feedback/`. Bucket counts: annex_iii 20 → 22, article_5 12 → 13, article_50 / negative / legacy unchanged at 9 each. Accuracy spec + accuracy-llm spec hard-locked counts updated to match.
+
+### Added
+
+- **3 new test fixtures** under `test/fixtures/use-cases/day14-launch-feedback/` covering every reviewer-cited reproduction command verbatim:
+  - `10-blocker3a-evaluate-job-applications-en.json` — EN employment paraphrase → Annex III ¶4(a) + cascade.
+  - `11-blocker3b-workers-emotions-customer-service-en.json` — EN emotion paraphrase → Article 5(1)(f) PROHIBITED + suppression.
+  - `12-blocker3c-bewerbenden-de.json` — DE Bewerbenden paraphrase → Anhang III ¶4(a) + cascade.
+
+### Not in this release (out of scope)
+
+- **GPAI / Article 53 / Article 55 coverage.** Both reviewers flagged this; Claude-Code explicitly deferred to v0.1.5. Codex did not list it as a BLOCKER. The work is a genuinely new rule module + GPAI-specific lexicon — too much scope for a paraphrase-coverage retest fix-up release. Deferred to v0.1.5 (post-launch credibility-arc milestone).
+- **`fixture-day7-28-art50-emotion-marketing-de`** — pre-existing v0.1.3 misclassification on an article_50 emotion-marketing edge case (DE). Not introduced by v0.1.4 and not in scope for a paraphrase-coverage release. Documented limitation; will be addressed in a future article_50 polish PR.
+- **npm maintainer email refresh.** Will be a no-op side-effect of publishing v0.1.4 with a freshly-authenticated `npm publish`. No code change needed.
+
 ## [0.1.3] — 2026-05-16
 
 Launch-feedback fix-up. Two adversarial reviewers (Claude Code + Codex CLI) independently flagged the same 5 BLOCKER cases the day v0.1.2 shipped: the README's own example (`AI system that ranks job applicants by CV`) fired no obligations; three Article 5 prohibitions were misclassified as mere high-risk; the DE lexicon was materially weaker than EN; and explain-mode citations pointed at the Tier-3 mirror rather than EUR-Lex Tier-1. v0.1.3 closes all five reproductions plus the surrounding HIGH gaps.

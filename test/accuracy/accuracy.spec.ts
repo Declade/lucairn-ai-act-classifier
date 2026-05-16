@@ -6,10 +6,11 @@
 //
 // Plus structural invariants:
 //
-//   - 59 fixtures loaded (50 day{3,4,5,7} + 9 day14-launch-feedback). Bucket
-//     counts: 20 annex_iii + 12 article_5 + 9 article_50 + 9 negative + 9 legacy.
-//     v0.1.3 (Day-14 launch-feedback) added 9 fixtures across the annex_iii (+3),
-//     article_5 (+5), and article_50 (+1) buckets.
+//   - 62 fixtures loaded (50 day{3,4,5,7} + 9 day14-launch-feedback v0.1.3 + 3
+//     day14-launch-feedback v0.1.4). Bucket counts: 22 annex_iii + 13 article_5 +
+//     9 article_50 + 9 negative + 9 legacy. v0.1.4 launch-feedback retest added 3
+//     fixtures: +2 annex_iii (EN evaluate-job-applications + DE Bewerbenden) and
+//     +1 article_5 (EN workers' emotions in customer-service workplace).
 //   - Per-bucket counts match the locked corpus matrix.
 //   - report.misclassifications.length === fixtures.filter(passed===false).length.
 //   - Every fixture has at least one field_check (no fixture is silently skipped).
@@ -19,9 +20,9 @@ import { describe, it, expect } from 'vitest';
 import { runAccuracy, renderMarkdown } from '../../scripts/accuracy.js';
 
 describe('accuracy harness — CI floor + structural invariants', () => {
-  it('loads exactly 59 fixtures (50 day{3,4,5,7} + 9 day14-launch-feedback)', async () => {
+  it('loads exactly 62 fixtures (50 day{3,4,5,7} + 9 day14-launch-feedback v0.1.3 + 3 v0.1.4)', async () => {
     const report = await runAccuracy({ lastRunAtOverride: '2026-05-15T00:00:00Z' });
-    expect(report.fixture_count).toBe(59);
+    expect(report.fixture_count).toBe(62);
   });
 
   it('meets CI overall floor (>= 0.80)', async () => {
@@ -42,9 +43,12 @@ describe('accuracy harness — CI floor + structural invariants', () => {
     // + 2 day5 + 1 day14 medical-carve-out). v0.1.3 launch-feedback added
     // +3 annex_iii (BLOCKER 1 EN/HIGH-1 DE/HIGH-2 EN), +5 article_5 (BLOCKER
     // 2a EN/DE + 2b + 2c + HIGH-2 social-trust), +1 article_50 (medical
-    // carve-out regression-lock).
-    expect(report.bucket_accuracy.annex_iii.count).toBe(20);
-    expect(report.bucket_accuracy.article_5.count).toBe(12);
+    // carve-out regression-lock). v0.1.4 launch-feedback retest added +2
+    // annex_iii (BLOCKER 3a EN evaluate-job-applications + HIGH-1-carry
+    // DE Bewerbenden) and +1 article_5 (BLOCKER 3b EN workers' emotions in
+    // customer-service workplace).
+    expect(report.bucket_accuracy.annex_iii.count).toBe(22);
+    expect(report.bucket_accuracy.article_5.count).toBe(13);
     expect(report.bucket_accuracy.article_50.count).toBe(9);
     expect(report.bucket_accuracy.negative.count).toBe(9);
     expect(report.bucket_accuracy.legacy.count).toBe(9);

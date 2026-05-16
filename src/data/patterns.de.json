@@ -1,6 +1,6 @@
 {
   "language": "de",
-  "version": "v0.1.3",
+  "version": "v0.1.4",
   "_meta": {
     "notice": "Saat-Lexikon für v0.1.x. Jeder Eintrag `source` MUSS verbatim gegen das deutsche EUR-Lex-Body verifiziert werden, bevor Regel-Module den Trigger konsumieren. Einträge ohne direkte EUR-Lex-Quelle werden ausgeschlossen.",
     "primary_source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
@@ -88,7 +88,16 @@
         { "phrase": "auswahl von bewerbern" },
         { "phrase": "kandidaten für eine stelle zu sortieren" },
         { "phrase": "kandidaten für eine stelle sortieren" },
-        { "phrase": "bewertet bewerbungen" }
+        { "phrase": "bewertet bewerbungen" },
+        { "phrase": "vorauswahl von bewerbenden" },
+        { "phrase": "bewerbenden bewerten" },
+        { "phrase": "bewerbende bewerten" },
+        { "phrase": "bewerbenden auswählen" },
+        { "phrase": "bewerbende auswählen" },
+        { "phrase": "anwerbung von natürlichen personen" },
+        { "phrase": "recruiting-system" },
+        { "phrase": "personal-recruiting" },
+        { "phrase": "personalrecruiting" }
       ]
     },
     "5_essential_services": {

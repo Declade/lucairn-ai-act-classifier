@@ -57,7 +57,7 @@ Die `--explain`-Ausgabe ist so gestaltet, dass sie direkt in eine Datenschutz-Fo
 
 ## Modi — deterministisch oder `--llm`
 
-Der Standardmodus ist **deterministisch**: ein kuratierter EN+DE-Stichwort- und Phrasen-Matcher gegen das Lexikon unter `src/data/patterns.{en,de}.json`. Kein Netzwerk, kein API-Key, keine Kosten. Auf dem kuratierten 50-Fall-Testdatensatz ist der deterministische Modus genauer als jeder LLM-Modus (der Korpus wurde so geformt, dass er den kanonischen Lexikon-Phrasen entspricht). Empfohlen für die meisten Anwendungsfälle.
+Der Standardmodus ist **deterministisch**: ein kuratierter EN+DE-Stichwort- und Phrasen-Matcher gegen das Lexikon unter `src/data/patterns.{en,de}.json`. Kein Netzwerk, kein API-Key, keine Kosten. Auf dem kuratierten 62-Fall-zweisprachigen-Testdatensatz ist der deterministische Modus genauer als jeder LLM-Modus (der Korpus wurde so geformt, dass er den kanonischen Lexikon-Phrasen entspricht). Empfohlen für die meisten Anwendungsfälle.
 
 Der optionale `--llm <provider>`-Modus ersetzt den Stichwort-Extraktor durch ein LLM für semantische Feature-Extraktion. Die nachgelagerte Regel-Engine, die die Artikel tatsächlich auswählt, bleibt **unverändert**. Das LLM ist darauf beschränkt, Phrasen aus dem kuratierten Lexikon zu zitieren; jede halluzinierte Phrase wird verworfen, bevor die Regel-Engine sie sieht. Drei Anbieter werden unterstützt, jeweils mit Ihrem eigenen API-Key:
 
@@ -86,7 +86,7 @@ export GROQ_API_KEY="<ihr-groq-key>"
 ai-act-classify --llm groq "KI-System, das Bewerber nach Lebenslauf bewertet"
 ```
 
-> **Hinweis zur LLM-Modus-Nichtdeterministik.** LLMs sind probabilistisch; ein erneuter Aufruf mit derselben Eingabe kann unterschiedliche (korrelierte, aber nicht identische) Merkmale liefern. Anthropic Haiku 4.5 wurde mit 93,5–97,6 % Gesamtgenauigkeit über zwei unabhängige Läufe auf dem 50-Fall-Korpus gemessen. Die Cache-Schicht (nächster Abschnitt) mildert das ab — Wiederholungen auf identischen Eingaben sind byte-stabil. Für reproduzierbare Klassifikation auf neuen Eingaben empfehlen wir den deterministischen Standardmodus.
+> **Hinweis zur LLM-Modus-Nichtdeterministik.** LLMs sind probabilistisch; ein erneuter Aufruf mit derselben Eingabe kann unterschiedliche (korrelierte, aber nicht identische) Merkmale liefern. Anthropic Haiku 4.5 wurde mit 93,5–97,6 % Gesamtgenauigkeit über zwei unabhängige Läufe auf dem v0.1.0 50-Fall-Korpus gemessen (LLM-Modus-Neumessung gegen den v0.1.4 62-Fall-Korpus ist auf v0.1.5 verschoben). Die Cache-Schicht (nächster Abschnitt) mildert das ab — Wiederholungen auf identischen Eingaben sind byte-stabil. Für reproduzierbare Klassifikation auf neuen Eingaben empfehlen wir den deterministischen Standardmodus.
 
 ## Cache-Schicht
 
@@ -108,11 +108,11 @@ Regelwerk-zuerst-Hybrid. Eine deterministische TypeScript-Regel-Engine wertet di
 
 ## Genauigkeit (Accuracy)
 
-Der Klassifizierer wird gegen einen 59-Fall-zweisprachigen Fixture-Korpus (CC-BY-4.0) gebenchmarkt: 50 day{3,4,5,7} Fixtures + 9 v0.1.3 Launch-Feedback Fixtures; ~30 EN + ~29 DE über 5 Buckets (annex_iii / article_5 / article_50 / negative / legacy). Aktuelle Zahlen auf dem v0.1.3-Regelsatz:
+Der Klassifizierer wird gegen einen 62-Fall-zweisprachigen Fixture-Korpus (CC-BY-4.0) gebenchmarkt: 50 day{3,4,5,7} Fixtures + 9 v0.1.3 Launch-Feedback Fixtures + 3 v0.1.4 Launch-Feedback-Retest Fixtures; ~30 EN + ~32 DE über 5 Buckets (annex_iii / article_5 / article_50 / negative / legacy). Aktuelle Zahlen auf dem v0.1.4-Regelsatz:
 
-- **Gesamtgenauigkeit:** 98,5 % (granulare Feld-Trefferquote; up von 98,2 % in v0.1.2)
+- **Gesamtgenauigkeit:** 98,6 % (granulare Feld-Trefferquote; up von 98,5 % in v0.1.3 und 98,2 % in v0.1.2)
 - **Art. 5 Verbots-Erkennung** (sicherheitskritisch): 100,0 %
-- **Binäre Hochrisiko-Klassifikation:** 98,3 %
+- **Binäre Hochrisiko-Klassifikation:** 98,4 %
 
 CI-Untergrenze (festgelegt): ≥ 80 % Gesamt + 100 % Art. 5. v1.0-Release-Ziel: ≥ 85 % Gesamt + 100 % Art. 5 + ≥ 90 % binäre Hochrisiko-Klassifikation.
 

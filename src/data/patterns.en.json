@@ -1,6 +1,6 @@
 {
   "language": "en",
-  "version": "v0.1.3",
+  "version": "v0.1.4",
   "_meta": {
     "notice": "Seed lexicon for v0.1.x. Every entry's `source` MUST be verified verbatim against EUR-Lex before rule modules consume the trigger. Entries with no direct EUR-Lex source are excluded.",
     "primary_source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689"
@@ -121,7 +121,16 @@
         { "phrase": "automated hiring" },
         { "phrase": "automated recruitment" },
         { "phrase": "job applicants by cv" },
-        { "phrase": "applicants by cv" }
+        { "phrase": "applicants by cv" },
+        { "phrase": "evaluate job applications" },
+        { "phrase": "evaluate job applications and cvs" },
+        { "phrase": "evaluates job applications" },
+        { "phrase": "evaluating job applications" },
+        { "phrase": "select candidates for employment" },
+        { "phrase": "selects candidates for employment" },
+        { "phrase": "selecting candidates for employment" },
+        { "phrase": "candidates for employment" },
+        { "phrase": "job applications and cvs" }
       ]
     },
     "5_essential_services": {
@@ -275,7 +284,21 @@
         { "phrase": "infer emotions in the workplace" },
         { "phrase": "infer emotions in education" },
         { "phrase": "emotion-aware hr system" },
-        { "phrase": "workplace emotion monitoring" }
+        { "phrase": "workplace emotion monitoring" },
+        { "phrase": "infers workers emotions" },
+        { "phrase": "infer workers emotions" },
+        { "phrase": "detect workers emotions" },
+        { "phrase": "detects workers emotions" },
+        { "phrase": "analyze workers emotions" },
+        { "phrase": "analyse workers emotions" },
+        { "phrase": "infer emotions in a workplace" },
+        { "phrase": "infers emotions in a workplace" },
+        { "phrase": "infers emotions in workplace" },
+        { "phrase": "infers emotions in the workplace" },
+        { "phrase": "infers emotions in education" },
+        { "phrase": "emotion detection in a workplace" },
+        { "phrase": "emotion recognition in a workplace" },
+        { "phrase": "emotion analysis in a workplace" }
       ]
     },
     "g_biometric_categorisation_sensitive": {

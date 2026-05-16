@@ -11,3 +11,7 @@ coverage/
 # Accuracy harness machine-readable artifact (only the .md is committed).
 accuracy/REPORT.json
 accuracy/REPORT.llm-anthropic.json
+
+# Internal product-requirements documents (anchoring artifacts for build sessions).
+# Kept locally for fresh-context resumes; not part of the public source tree.
+specs/

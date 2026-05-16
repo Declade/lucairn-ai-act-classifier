@@ -1,0 +1,33 @@
+{
+  "id": "fixture-day14-10-blocker3a-evaluate-job-applications-en",
+  "lang": "en",
+  "input": "AI system used to evaluate job applications and CVs to select candidates for employment.",
+  "expected": {
+    "article_5_prohibited": false,
+    "article_5_letters": [],
+    "annex_iii_high_risk": true,
+    "annex_iii_domains": [
+      4
+    ],
+    "annex_iii_sub_letters": {
+      "4": [
+        "a"
+      ]
+    },
+    "suppressed_by_article_5": false,
+    "article_10_applicable": true,
+    "article_12_applicable": true,
+    "article_13_applicable": true,
+    "article_14_applicable": true,
+    "article_15_applicable": true,
+    "three_category_applicable": [
+      1,
+      2,
+      3
+    ],
+    "annex_iv_required": true,
+    "notes": "v0.1.4 launch-feedback BLOCKER 3a (Codex reviewer retest of v0.1.3). v0.1.3 covered 'evaluate job applicants' (plural-NOUN form) but not 'evaluate job applications' (plural-NOUN form) or 'select candidates for employment'. A natural EN paraphrase that a first-contact EU consultant would type returned zero obligations. v0.1.4 adds 'evaluate job applications', 'evaluate job applications and cvs', 'select candidates for employment', 'select candidates for a position', and 'candidates for employment' to the annex_iii.4_employment EN lexicon. Cite: EUR-Lex Regulation (EU) 2024/1689, Annex III paragraph 4(a)."
+  },
+  "bucket": "annex_iii",
+  "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689"
+}
