@@ -244,6 +244,98 @@ describe('CLI integration — --llm flag (Day 10: anthropic + openai + groq)', (
   });
 });
 
+// ---------------------------------------------------------------------------
+// M4 fix-up — --explain CLI integration tests (Day-11 PR #11 fix-up r1)
+// ---------------------------------------------------------------------------
+//
+// Closes bug-hunter M4: pre-fix-up cli.spec.ts had 28 tests; none touched the
+// new `--explain` flag. The 6 tests below exercise the flag via spawnSync
+// against the built `dist/cli.js` — same pattern as the other --llm + --annex
+// CLI tests above. Tests skip-gracefully when `dist/cli.js` is absent.
+
+const HIGH_RISK_EMPLOYMENT_INPUT =
+  'Our AI tool screens CVs and ranks job applicants based on resume content and predicted job-fit scores; HR teams use the candidate ranking for hiring decisions.';
+const ART5_PROHIBITED_INPUT =
+  'A predictive policing profiling tool based solely on profiling of natural persons to forecast risk of criminal offences.';
+
+describe('CLI integration — --explain (bug-hunter M4)', () => {
+  itDist('--explain produces markdown output by default (no --explain-format)', () => {
+    const r = runCli(['--explain', HIGH_RISK_EMPLOYMENT_INPUT]);
+    expect(r.status).toBe(0);
+    // Header from formatExplain markdown renderer.
+    expect(r.stdout).toMatch(/## EU AI Act classification — reasoning trace/);
+    // Heading style is markdown (### per fired article).
+    expect(r.stdout).toContain('### Annex III ¶4');
+    // Verbatim chapeau quote (FX4 fix) is present inside a blockquote.
+    expect(r.stdout).toMatch(/> Employment, workers' management and access to self-employment:/);
+    // Mandatory disclaimer footer.
+    expect(r.stdout).toMatch(/Informational tool — not legal advice/);
+  });
+
+  itDist('--explain --explain-format json produces valid JSON output', () => {
+    const r = runCli(['--explain', '--explain-format', 'json', HIGH_RISK_EMPLOYMENT_INPUT]);
+    expect(r.status).toBe(0);
+    expect(() => JSON.parse(r.stdout)).not.toThrow();
+    const parsed = JSON.parse(r.stdout) as {
+      header: { detected_lang: string; mode: string; rules_version: string };
+      fired: ReadonlyArray<{ id: string }>;
+      disclaimer: string;
+    };
+    expect(parsed.header.detected_lang).toBe('en');
+    expect(parsed.header.mode).toBe('deterministic');
+    expect(Array.isArray(parsed.fired)).toBe(true);
+    expect(parsed.fired.some((f) => f.id === 'annex_iii_4')).toBe(true);
+    expect(parsed.disclaimer).toMatch(/legal advice/i);
+  });
+
+  itDist('--explain --explain-format text produces plain-text output (no markdown syntax)', () => {
+    const r = runCli(['--explain', '--explain-format', 'text', HIGH_RISK_EMPLOYMENT_INPUT]);
+    expect(r.status).toBe(0);
+    // Plain-text format uses "-- HEADING --" delimiters; markdown's ###/`>` MUST be absent.
+    expect(r.stdout).toContain('-- Annex III ¶4');
+    expect(r.stdout).not.toMatch(/^### /m);
+    expect(r.stdout).not.toMatch(/^> /m);
+    // ASCII underline below the section title.
+    expect(r.stdout).toMatch(/EU AI Act classification reasoning trace\n=+/);
+  });
+
+  itDist('--explain --with-excerpt appends commentary excerpt when fixture matches an excerpt key', () => {
+    const r = runCli(['--explain', '--with-excerpt', HIGH_RISK_EMPLOYMENT_INPUT]);
+    expect(r.status).toBe(0);
+    // The Annex III ¶4 fire maps to excerpt key 'annex-iii-4-employment' which
+    // ships in dist/content/blog-excerpts/. The commentary block heading
+    // appears in both EN and DE locales.
+    expect(r.stdout).toMatch(/### Lucairn commentary \(excerpts\)/);
+    // Content from the excerpt file should be present.
+    expect(r.stdout).toMatch(/Annex III paragraph 4 of Regulation \(EU\) 2024\/1689/);
+  });
+
+  itDist('--explain --format json is silent override (--explain wins, JSON-explain output, not regular JSON)', () => {
+    // --format json without --explain produces the regular formatJson() output
+    // (a classify() result envelope). --explain --format json should produce the
+    // formatExplain markdown (because --explain overrides --format, per
+    // cli.ts:resolveFormat documentation in the help text). The behaviour
+    // contract is: --explain wins, --format is ignored, output is the default
+    // --explain-format (markdown).
+    const r = runCli(['--explain', '--format', 'json', HIGH_RISK_EMPLOYMENT_INPUT]);
+    expect(r.status).toBe(0);
+    // Markdown output, NOT a parseable JSON envelope.
+    expect(r.stdout).toMatch(/## EU AI Act classification — reasoning trace/);
+    expect(() => JSON.parse(r.stdout)).toThrow();
+  });
+
+  itDist('--explain exit code is 1 when input triggers Art 5 prohibition (same as default CLI)', () => {
+    const r = runCli(['--explain', ART5_PROHIBITED_INPUT]);
+    // Build-plan exit-code scheme reserves 1 for "Article 5 prohibited
+    // triggered" regardless of output format. The --explain markdown renders
+    // the Article 5 fire + a "cascade suppressed by Article 5" nearest-miss.
+    expect(r.status).toBe(1);
+    expect(r.stdout).toMatch(/### Article 5\(1\)\(d\)/);
+    // Cascade-suppressed nearest-miss surfaces.
+    expect(r.stdout).toMatch(/suppressed by Article 5/i);
+  });
+});
+
 describe('CLI integration — disclaimer present', () => {
   itDist('CLI table output contains the disclaimer footer (EN)', () => {
     const r = runCli(['We use AI for CV screening.']);
