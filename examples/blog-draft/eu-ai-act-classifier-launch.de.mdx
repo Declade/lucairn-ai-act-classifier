@@ -74,15 +74,15 @@ Die folgenden fünf Beispiele decken die tragenden Fälle ab. Jede Ausgabe ist r
 ### Beispiel 1 — Bewerber-Screening (Anhang III Nr. 4)
 
 ```
-$ ai-act-classify --lang de "Unser KI-Tool screent Lebensläufe und bewertet Bewerber anhand des Lebenslaufs und prognostizierter Eignungswerte; HR-Teams nutzen das Bewerberranking für Einstellungsentscheidungen."
+$ ai-act-classify --lang de "Unser KI-Tool nutzt Lebenslauf-Screening und Bewerberauswahl, um anhand prognostizierter Eignungswerte Einstellungsentscheidungen zu treffen."
 
   Artikel 6  + Anhang III:      HOCHRISIKO
-    └─ Anhang III.4 — Beschäftigung, Personalmanagement und Zugang zur Selbstständigkeit
+    └─ Anhang III.4(a) — Beschäftigung, Personalmanagement und Zugang zur Selbstständigkeit
   Artikel 10–15: alle anwendbar (Kaskade)
   Anhang IV (technische Dokumentation): ERFORDERLICH
 ```
 
-Der Klassifizierer löst Anhang III Nr. 4(a) auf den passenden Phrasen „Bewerberranking" und „Einstellungsentscheidungen" aus. Die Buchstaben-Eingrenzung führt zu (a) — Rekrutierung/Auswahl — und nicht zu (b) — Arbeitsplatzentscheidungen — oder (c) — Workforce-Überwachung —, weil die Beschreibung die Bewerberauswahl im Einstellungsschritt schildert, nicht eine Bewertung in laufender Beschäftigung. Anschließend feuert die volle Kaskade der Artikel 10–15 deterministisch.
+Der Klassifizierer löst Anhang III Nr. 4(a) auf den passenden Phrasen „Lebenslauf-Screening", „Bewerberauswahl" und „Einstellungsentscheidungen" aus. Die Buchstaben-Eingrenzung führt zu (a) — Rekrutierung/Auswahl — und nicht zu (b) — Arbeitsplatzentscheidungen — oder (c) — Workforce-Überwachung —, weil die Beschreibung die Bewerberauswahl im Einstellungsschritt schildert, nicht eine Bewertung in laufender Beschäftigung. Anschließend feuert die volle Kaskade der Artikel 10–15 deterministisch.
 
 ### Beispiel 2 — Vorhersagende Polizeiarbeit (Verbot nach Artikel 5)
 
