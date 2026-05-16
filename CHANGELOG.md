@@ -8,6 +8,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- **Day 11 — `--explain` flag + blog-excerpt corpus + README EN+DE launch finalization + Day-10 LOW carry-forward closures.**
+
+  **New `--explain` flag** lights up the rules-first architecture's defensibility surface. For every fired article the formatter emits the verbatim EUR-Lex chapeau + matched lexicon phrases + sub-letter narrowing branch + a 1-line "why this paragraph fires" rationale + the Tier-1 citation URL. The output is consultant-paste-friendly markdown by default; `--explain-format json` returns the same content as a snapshot-stable structured object for programmatic consumers; `--explain-format text` returns plain ASCII for terminal pipes. Three additional reasoning surfaces: (a) **disambiguator state** — surfaces the Art 5(1)(d) "solely on profiling" / "ausschließlich auf Profiling" qualifier check explicitly, including the NOT-fired branch when the lexicon hits predictive policing without the disambiguator (the rule routes to Annex III ¶6 high-risk; we surface this transition); (b) **nearest-miss reasoning** — up to 2 articles considered but not fired, including cascade-suppressed-by-Article-5 and Art 2(8) research-only carve-out cases; (c) optional **commentary excerpt block** via `--with-excerpt` that appends a hand-curated regulator-explainer paragraph from `src/content/blog-excerpts/<key>.<locale>.md`. The excerpt loader is graceful: missing files are silently omitted (never throws); the lookup keys are stable (cite-back: `src/format/explain.ts:getExcerptKey()`). New CLI flags: `--explain`, `--explain-format <markdown|json|text>` (default `markdown`), `--with-excerpt`. `--explain` overrides `--format` / `--json`.
+
+  **New blog-excerpt corpus** at `src/content/blog-excerpts/` (5 keys × EN+DE = 10 files): article-5-1-d-predictive-policing, annex-iii-4-employment, annex-iii-6-law-enforcement, article-10-data-governance, article-50-transparency. Every file is 80-150 words of hand-curated original prose citing at least one Tier-1 source (EUR-Lex, EU AI Office, BSI, BfDI, or Bitkom). **NOT machine-translated** — the DE files are hand-written natural German per consultant judgment. License: MIT, same as source code. The build script copies them into `dist/content/blog-excerpts/` so they ship in the npm tarball.
+
+  **README EN + DE finalized for launch.** Both READMEs restructured for the Day-14 public-launch reading: 3+ usage examples at the top (deterministic + `--explain` + `--explain --with-excerpt` + `--llm`), refined "What it does" + "What it does NOT do" non-claims, refined `--explain` documentation with output-format matrix, refined cache-layer disclosure (mode 0600 + lexicon-version + prompt-checksum invalidation), refined Accuracy + Methodology + Citations sections cross-linking [accuracy/METHODOLOGY.md](./accuracy/METHODOLOGY.md) + [accuracy/KNOWN-MISCLASSIFICATIONS.md](./accuracy/KNOWN-MISCLASSIFICATIONS.md), refined disclaimer (informational tool / not legal advice / Lucairn-not-in-data-path framing) consistent across both locales. Banner v0.1.1 / Day 11. Hosted-UI cross-link to `https://lucairn.eu/tools/ai-act-classifier` (live Day 13).
+
+  **Day-10 LOW carry-forward closures bundled.**
+  - **L4 (cache file perms):** `src/extract/cache.ts` `writeFile` now passes `{mode: 0o600}` and `mkdir` passes `{mode: 0o700}`. README EN+DE cache-layer section notes the perms explicitly. New test asserts `fs.statSync(cacheFile).mode & 0o777 === 0o600`.
+  - **L6 (DEFAULT_MODEL drift):** each provider module now exports `DEFAULT_MODEL` as a named export; `src/extract/llm.ts:getDefaultModel()` imports them rather than duplicating literals. New drift-guard test asserts equality across all 3 providers.
+  - **L7 (internal-export coverage gap):** new tests in `test/extract/cache.spec.ts` covering `normalizeInputForCacheKey()` (idempotence + whitespace-collapse + non-lowercasing) and `getDefaultModel()` (returns correct string per provider).
+
+  **Tests** — 41 new in `test/format/explain.spec.ts` covering input validation + 4 representative classify() output snapshots × 3 format variants (Annex III ¶4 employment EN, Art 5(1)(d) DE prohibition, Article 50 deepfake EN, negative weather model EN) + locale switching + nearest-miss rationale correctness + disambiguator-state surfacing in EN+DE + `--with-excerpt` graceful-omission + disclaimer-footer invariant + `getExcerptKey()` mapping table. 46 new in `test/content/blog-excerpts.spec.ts` covering file inventory + key parity + Tier-1 citation invariance + banned-literal sweep + content-discipline (byte-size range). Plus ~10 new tests for the L4/L6/L7 closures. Test count: 533 (Day-10) → 620+ (Day-11).
+
+  **What this PR does NOT do.**
+  - Does NOT modify the rules engine or extractor — `--explain` is presentation-layer only.
+  - Does NOT change `RULES_HASH` — no rule or lexicon JSON edits.
+  - Does NOT add LLM-mode-specific `--explain` differences — same output shape regardless of extraction mode.
+  - Does NOT implement website-sync pipeline (Day-12 hosted UI is a separate workstream).
+  - Does NOT change deterministic or LLM-mode accuracy numbers.
+
 - **Day 10 — `--llm openai` + `--llm groq` modes + LLM-mode filesystem cache.** Three-provider story now LIVE:
   - `--llm openai` (default model GPT-4o-mini at ~\$0.0005/call; ~\$0.025 per 50-fixture run).
   - `--llm groq` (default model Llama 3.3 70B Versatile at ~\$0.0014/call; ~\$0.07 per 50-fixture run; uses the OpenAI SDK against `api.groq.com/openai/v1` — same chat-completions surface, lower cost, faster latency).
