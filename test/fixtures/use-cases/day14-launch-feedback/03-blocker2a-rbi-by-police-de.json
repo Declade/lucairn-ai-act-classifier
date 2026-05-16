@@ -1,0 +1,24 @@
+{
+  "id": "fixture-day14-03-blocker2a-rbi-by-police-de",
+  "lang": "de",
+  "input": "Echtzeit-Fernidentifizierungssystem mittels biometrischer Daten im öffentlich zugänglichen Raum durch die Polizei",
+  "expected": {
+    "article_5_prohibited": true,
+    "article_5_letters": [
+      "h"
+    ],
+    "annex_iii_high_risk": false,
+    "annex_iii_domains": [],
+    "suppressed_by_article_5": true,
+    "article_10_applicable": false,
+    "article_12_applicable": false,
+    "article_13_applicable": false,
+    "article_14_applicable": false,
+    "article_15_applicable": false,
+    "three_category_applicable": [],
+    "annex_iv_required": false,
+    "notes": "v0.1.3 launch-feedback BLOCKER 2a DE (Codex reviewer). v0.1.2 fired NOTHING on this input (gap surfaced HIGH-1 — DE materially weaker than EN). v0.1.3 adds 'echtzeit-fernidentifizierungssystem' to the h_realtime_remote_biometric_le DE lexicon so the natural DE phrasing 'Echtzeit-Fernidentifizierungssystem' fires Art. 5 Abs. 1 Buchst. h. Cite: EUR-Lex Regulation (EU) 2024/1689, Art. 5 Abs. 1 Buchst. h."
+  },
+  "bucket": "article_5",
+  "source_url": "https://eur-lex.europa.eu/legal-content/DE/TXT/PDF/?uri=OJ:L_202401689"
+}

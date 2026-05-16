@@ -250,9 +250,20 @@ describe('classifyArticle5() — Day-8 PR-#8 fix-up disambiguator FP guards', ()
     expect(result.hits.some((h) => h.letter === 'd')).toBe(false);
   });
 
-  it('Day-8 fix-up regression lock: DE consultant critique of vorhersagende Polizeiarbeit does NOT fire Art 5(1)(d)', () => {
+  it('v0.1.3 regression lock: DE consultant academic prose (no qualifier) does NOT fire Art 5(1)(d)', () => {
+    // v0.1.3 reviewer-feedback (BLOCKER 2b): the DE side intentionally accepts
+    // "nur auf Profiling" as a colloquial paraphrase of "ausschließlich auf
+    // Profiling" (per Day-8 G-4(a) governance). Combined with the v0.1.3
+    // lexicon expansion that adds "vorhersagende polizeiarbeit" as a standalone
+    // d_predictive_policing entry, DE inputs that contain BOTH the base phrase
+    // AND the qualifier WILL fire. That is the intended Day-14 behavior — the
+    // Codex reviewer specifically asked for natural DE paraphrases to fire.
+    //
+    // This regression lock guards a SEPARATE FP surface: DE consultant prose
+    // about predictive policing that does NOT contain the qualifier. The
+    // disambiguator still gates correctly: no qualifier → no Art 5(1)(d) hit.
     const result = classify(
-      'Eine Berater-Studie kritisiert vorhersagende Polizeiarbeit, die nur auf Profiling basiert.',
+      'Eine Berater-Studie kritisiert vorhersagende Polizeiarbeit ohne weitere Erläuterung der Risikobewertung.',
       'de',
     );
     expect(result.prohibited).toBe(false);

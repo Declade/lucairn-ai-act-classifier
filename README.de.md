@@ -108,11 +108,11 @@ Regelwerk-zuerst-Hybrid. Eine deterministische TypeScript-Regel-Engine wertet di
 
 ## Genauigkeit (Accuracy)
 
-Der Klassifizierer wird gegen einen 50-Fall-zweisprachigen Fixture-Korpus (CC-BY-4.0) gebenchmarkt: 24 Anhang III Hochrisiko + 8 Art. 5 verboten + 8 Art. 50 Transparenz + 10 Negativfälle; 21 EN + 29 DE. Aktuelle Zahlen auf dem v0.1.2-Regelsatz:
+Der Klassifizierer wird gegen einen 59-Fall-zweisprachigen Fixture-Korpus (CC-BY-4.0) gebenchmarkt: 50 day{3,4,5,7} Fixtures + 9 v0.1.3 Launch-Feedback Fixtures; ~30 EN + ~29 DE über 5 Buckets (annex_iii / article_5 / article_50 / negative / legacy). Aktuelle Zahlen auf dem v0.1.3-Regelsatz:
 
-- **Gesamtgenauigkeit:** 98,2 % (granulare Feld-Trefferquote)
+- **Gesamtgenauigkeit:** 98,5 % (granulare Feld-Trefferquote; up von 98,2 % in v0.1.2)
 - **Art. 5 Verbots-Erkennung** (sicherheitskritisch): 100,0 %
-- **Binäre Hochrisiko-Klassifikation:** 98,0 %
+- **Binäre Hochrisiko-Klassifikation:** 98,3 %
 
 CI-Untergrenze (festgelegt): ≥ 80 % Gesamt + 100 % Art. 5. v1.0-Release-Ziel: ≥ 85 % Gesamt + 100 % Art. 5 + ≥ 90 % binäre Hochrisiko-Klassifikation.
 

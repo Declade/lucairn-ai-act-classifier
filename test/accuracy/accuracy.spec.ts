@@ -6,8 +6,10 @@
 //
 // Plus structural invariants:
 //
-//   - 50 fixtures loaded (24 Annex III + 8 Art 5 + 8 Art 50 + 10 negatives, of which
-//     11 are legacy day3/4/5 without a bucket field and 39 are Day-7).
+//   - 59 fixtures loaded (50 day{3,4,5,7} + 9 day14-launch-feedback). Bucket
+//     counts: 20 annex_iii + 12 article_5 + 9 article_50 + 9 negative + 9 legacy.
+//     v0.1.3 (Day-14 launch-feedback) added 9 fixtures across the annex_iii (+3),
+//     article_5 (+5), and article_50 (+1) buckets.
 //   - Per-bucket counts match the locked corpus matrix.
 //   - report.misclassifications.length === fixtures.filter(passed===false).length.
 //   - Every fixture has at least one field_check (no fixture is silently skipped).
@@ -17,9 +19,9 @@ import { describe, it, expect } from 'vitest';
 import { runAccuracy, renderMarkdown } from '../../scripts/accuracy.js';
 
 describe('accuracy harness — CI floor + structural invariants', () => {
-  it('loads exactly 50 fixtures', async () => {
+  it('loads exactly 59 fixtures (50 day{3,4,5,7} + 9 day14-launch-feedback)', async () => {
     const report = await runAccuracy({ lastRunAtOverride: '2026-05-15T00:00:00Z' });
-    expect(report.fixture_count).toBe(50);
+    expect(report.fixture_count).toBe(59);
   });
 
   it('meets CI overall floor (>= 0.80)', async () => {
@@ -36,11 +38,14 @@ describe('accuracy harness — CI floor + structural invariants', () => {
     const report = await runAccuracy({ lastRunAtOverride: '2026-05-15T00:00:00Z' });
     // Day-8 M-3 backfill: day5/01 + day5/02 now carry bucket=article_50, so
     // they shifted from 'legacy' (-2) into 'article_50' (+2). Legacy now
-    // carries 9 fixtures (8 day3 + 1 day4) and article_50 carries 8 (6 day7
-    // + 2 day5). annex_iii / article_5 / negative buckets unchanged.
-    expect(report.bucket_accuracy.annex_iii.count).toBe(17);
-    expect(report.bucket_accuracy.article_5.count).toBe(7);
-    expect(report.bucket_accuracy.article_50.count).toBe(8);
+    // carries 9 fixtures (8 day3 + 1 day4) and article_50 carries 9 (6 day7
+    // + 2 day5 + 1 day14 medical-carve-out). v0.1.3 launch-feedback added
+    // +3 annex_iii (BLOCKER 1 EN/HIGH-1 DE/HIGH-2 EN), +5 article_5 (BLOCKER
+    // 2a EN/DE + 2b + 2c + HIGH-2 social-trust), +1 article_50 (medical
+    // carve-out regression-lock).
+    expect(report.bucket_accuracy.annex_iii.count).toBe(20);
+    expect(report.bucket_accuracy.article_5.count).toBe(12);
+    expect(report.bucket_accuracy.article_50.count).toBe(9);
     expect(report.bucket_accuracy.negative.count).toBe(9);
     expect(report.bucket_accuracy.legacy.count).toBe(9);
   });

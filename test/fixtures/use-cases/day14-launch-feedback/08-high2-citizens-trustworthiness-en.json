@@ -1,0 +1,24 @@
+{
+  "id": "fixture-day14-08-high2-citizens-trustworthiness-en",
+  "lang": "en",
+  "input": "ranks citizens by social trustworthiness and restricts access to public services",
+  "expected": {
+    "article_5_prohibited": true,
+    "article_5_letters": [
+      "c"
+    ],
+    "annex_iii_high_risk": false,
+    "annex_iii_domains": [],
+    "suppressed_by_article_5": true,
+    "article_10_applicable": false,
+    "article_12_applicable": false,
+    "article_13_applicable": false,
+    "article_14_applicable": false,
+    "article_15_applicable": false,
+    "three_category_applicable": [],
+    "annex_iv_required": false,
+    "notes": "v0.1.3 launch-feedback HIGH-2 (Codex reviewer). v0.1.2 lexicon required near-verbatim 'social scoring' / 'trustworthiness score' — natural paraphrase 'ranks citizens by social trustworthiness' fired nothing. v0.1.3 adds 'social trustworthiness', 'ranks citizens', 'citizens by trustworthiness', 'general-purpose social scoring' to c_social_scoring. Cite: EUR-Lex Regulation (EU) 2024/1689, Article 5(1)(c)."
+  },
+  "bucket": "article_5",
+  "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689"
+}

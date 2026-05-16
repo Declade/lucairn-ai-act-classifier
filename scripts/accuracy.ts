@@ -3,7 +3,7 @@
 // CLI:
 //   pnpm accuracy [--verbose] [--format json|markdown|both] [--llm <provider>] [--cache]
 //
-// Loads every JSON fixture under test/fixtures/use-cases/day{3,4,5,7}/, runs
+// Loads every JSON fixture under test/fixtures/use-cases/day{3,4,5,7,14-launch-feedback}/, runs
 // each through `classify(fixture.input, { lang: fixture.lang })`, compares the
 // classifier output against every `expected.*` field present on the fixture,
 // computes per-bucket + per-target-metric accuracy, and emits:
@@ -338,7 +338,7 @@ function getRepoRoot(): string {
 
 function loadAllFixtures(): Fixture[] {
   const fixturesBase = join(getRepoRoot(), 'test', 'fixtures', 'use-cases');
-  const days = ['day3', 'day4', 'day5', 'day7'];
+  const days = ['day3', 'day4', 'day5', 'day7', 'day14-launch-feedback'];
   const fixtures: Fixture[] = [];
   for (const day of days) {
     const dir = join(fixturesBase, day);
@@ -416,11 +416,12 @@ export interface RunAccuracyOptions {
 
 /**
  * Cost-cap sentinel: hardcodes the maximum number of fixtures the LLM-mode
- * harness will process in a single run. Set deliberately conservatively at the
- * current corpus size (50) so a fat-fingered loop never burns more than ~$0.13
- * of API spend per invocation.
+ * harness will process in a single run. Bumped 50 → 75 in v0.1.3 to admit the
+ * 9 launch-feedback fixtures (day14-launch-feedback/) while keeping a tight
+ * cost-discipline guard: a fat-fingered loop still cannot burn more than
+ * ~$0.20 of API spend per invocation.
  */
-const MAX_FIXTURES_PER_RUN = 50;
+const MAX_FIXTURES_PER_RUN = 75;
 
 /**
  * Run `runAccuracy` once over the local fixture corpus. Async since Day 9
@@ -575,7 +576,7 @@ export function renderMarkdown(
   lines.push(`- **Fixture corpus:** ${report.fixture_count} cases`);
   lines.push('');
   lines.push(
-    '> **What this report measures:** internal consistency between the curated 50-case fixture corpus and the v0.1.0 lexicon. The headline numbers below are **not** a measure of arbitrary real-world accuracy — the corpus was shaped during the Day-7 build to match the lexicon\'s canonical phrases. Per-fixture accuracy uses set-equality on Day-7 fixtures and subset-containment on the 11 legacy day3/4/5 fixtures pending Day-8 backfill. See [METHODOLOGY.md §"Honest limitations"](./METHODOLOGY.md#honest-limitations) for the Day-8 polish backlog. The CI floor is 80% overall + 100% Article 5; current numbers exceed both.',
+    '> **What this report measures:** internal consistency between the curated 50-case Day-7 fixture corpus + 9-case v0.1.3 launch-feedback fixtures and the v0.1.0+ lexicon. The headline numbers below are **not** a measure of arbitrary real-world accuracy — the Day-7 corpus was shaped to match the lexicon\'s canonical phrases. Per-fixture accuracy uses set-equality on Day-7 + day14-launch-feedback fixtures and subset-containment on the 11 legacy day3/4/5 fixtures pending Day-8 backfill. See [METHODOLOGY.md §"Honest limitations"](./METHODOLOGY.md#honest-limitations) for the Day-8 polish backlog. The CI floor is 80% overall + 100% Article 5; current numbers exceed both.',
   );
   lines.push('');
   lines.push('## Headline numbers');

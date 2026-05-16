@@ -102,7 +102,20 @@ export interface ExtractOptions {
   lang?: 'en' | 'de';
   /** minimum n-gram length (default 1) */
   minN?: number;
-  /** maximum n-gram length (default 4; AI Act phrases rarely exceed 4 tokens after normalization) */
+  /**
+   * maximum n-gram length (default 6 in v0.1.3+; was 4 in v0.1.2-).
+   *
+   * Bumped from 4 → 6 to accept EUR-Lex verbatim sub-phrases that surface
+   * as 5- or 6-token n-grams after normalization (filler words "in the",
+   * "of a", "for the" expand the token count). Examples landing in v0.1.3:
+   *   - "emotion recognition in the workplace" (5 tokens)
+   *   - "biometric identification in publicly accessible spaces" (6 tokens)
+   *   - "predict that a natural person will commit a criminal offence" (10)
+   *
+   * Memory/perf cost is bounded — the candidate set scales linearly with
+   * token count × n-gram width, and Day-14 launch inputs are short (≤ 200
+   * tokens typical, 800-token CLI cap).
+   */
   maxN?: number;
 }
 
@@ -166,7 +179,7 @@ export function extractFeatures(text: string, opts: ExtractOptions = {}): Extrac
   const lang = opts.lang ?? detection.lang;
   const lexicon = LEXICONS[lang];
   const minN = opts.minN ?? 1;
-  const maxN = opts.maxN ?? 4;
+  const maxN = opts.maxN ?? 6;
 
   const tokens = tokenize(normalized);
   const candidates = ngrams(tokens, minN, maxN);

@@ -4,6 +4,35 @@ All notable changes to `@lucairn/ai-act-classifier` will be documented in this f
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.3] — 2026-05-16
+
+Launch-feedback fix-up. Two adversarial reviewers (Claude Code + Codex CLI) independently flagged the same 5 BLOCKER cases the day v0.1.2 shipped: the README's own example (`AI system that ranks job applicants by CV`) fired no obligations; three Article 5 prohibitions were misclassified as mere high-risk; the DE lexicon was materially weaker than EN; and explain-mode citations pointed at the Tier-3 mirror rather than EUR-Lex Tier-1. v0.1.3 closes all five reproductions plus the surrounding HIGH gaps.
+
+### Fixed
+
+- **BLOCKER 1 — README/CLI example now fires.** `ai-act-classify "AI system that ranks job applicants by CV"` now correctly fires Annex III ¶4(a) + the Articles 10/12/13/14/15 cascade. Closed via ~25 EN paraphrase additions to `annex_iii.4_employment` (`rank job applicants`, `ranks applicants`, `shortlist`, `recruitment`, `selection of candidates`, `evaluate job applicants`, `automated hiring`, etc.).
+- **BLOCKER 2a — Real-time RBI by police now fires Article 5(1)(h).** Both EN ("Real-time remote biometric identification system deployed by police in publicly accessible spaces for law enforcement purposes") and DE ("Echtzeit-Fernidentifizierungssystem mittels biometrischer Daten im öffentlich zugänglichen Raum durch die Polizei") now fire Art 5(1)(h) prohibition with Annex III.1(a) suppressed. The lexicon entries are intentionally narrow — `biometrische fernidentifizierung` without an `echtzeit-` prefix stays Annex III ¶1(a) high-risk (forensic post-event biometric ID is high-risk, not prohibited).
+- **BLOCKER 2b — Predictive policing solely on profiling now fires Article 5(1)(d).** `Predictive policing system based solely on profiling to predict that a natural person will commit a criminal offence.` now fires Art 5(1)(d). The disambiguator already accepted "solely on profiling" / "based solely on profiling" — the missing piece was a base `predictive policing` lexicon entry in `d_predictive_policing`. DE side accepts colloquial "nur auf Profiling" / "lediglich auf Profiling" via the documented Day-8 colloquial-paraphrase coverage.
+- **BLOCKER 2c — Emotion recognition in workplace now fires Article 5(1)(f).** `Emotion recognition in the workplace.` now fires Art 5(1)(f) prohibition (was previously Annex III.1(c) + Article 50(3)). A new `hasEmotionFCarveOut()` rule-side disambiguator preserves the EUR-Lex Art 5(1)(f) second-clause medical/safety carve-out: when the input mentions "medical", "patient", "safety reason" (or DE `medizinisch`, `Patient`, `Sicherheitsgründen`) the prohibition is downgraded back to the Annex III.1(c) high-risk path, which is the correct EUR-Lex reading.
+- **HIGH-1 — DE lexicon parity.** v0.1.2 DE materially weaker than EN: natural recruiting descriptions like `Bewerber sortieren`, `Kandidaten für eine Stelle zu sortieren`, `Bewertet Bewerbungen` fired nothing. v0.1.3 adds ~17 DE paraphrase entries to `annex_iii.4_employment` so the Codex reproduction `KI-System bewertet Bewerbungen, Lebensläufe und Vorstellungsgespräche, um Kandidaten für eine Stelle zu sortieren.` now correctly fires Anhang III ¶4(a).
+- **HIGH-2 — Natural-paraphrase coverage.** Three reviewer-cited paraphrases close in this release: `ranks citizens by social trustworthiness and restricts access to public services` (Art 5(1)(c)), `AI system used to determine access to educational institutions` (Annex III ¶3(a)), `Real-time biometric identification by police` (Art 5(1)(h)). Plus ~12 additional EN + ~10 additional DE entries across `c_social_scoring`, `3_education`, `f_emotion_in_workplace_education`, `h_realtime_remote_biometric_le`.
+- **MEDIUM-1 — Citation tier fix.** `--explain` output's primary `Citation:` line per fired article now emits the EUR-Lex Tier-1 URL (e.g. `https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=OJ:L_202401689`), not the Future of Life Institute Tier-3 mirror (artificialintelligenceact.eu). The Tier-3 mirror remains in `citations.json` as documentation provenance but is no longer the operative citation a DPIA reviewer follows.
+
+### Changed
+
+- **Default extractor n-gram max (`maxN`) bumped from 4 → 6.** The 4-token cap excluded EUR-Lex verbatim sub-phrases that surface as 5- or 6-token n-grams after filler words ("in the", "of a", "for the") expand the token count. The bump enables matches like "emotion recognition in the workplace" (5 tokens) and "biometric identification in publicly accessible spaces" (6 tokens). Test fixture for `extract/keyword.spec.ts` `respects opts.minN / opts.maxN` still uses an explicit `maxN: 1` override so behaviour is unchanged when callers pin the value.
+- **Accuracy harness fixture cap bumped 50 → 75.** Cost-discipline guard relaxed to admit the 9 launch-feedback fixtures (`test/fixtures/use-cases/day14-launch-feedback/`).
+
+### Added
+
+- **9 new test fixtures** under `test/fixtures/use-cases/day14-launch-feedback/` — one per reviewer reproduction command, each carrying the verbatim input plus expected article/letters/sub-letters/cascade. Total fixture corpus: 59 (was 50). Accuracy harness reports 98.5 % overall (up from 98.2 % in v0.1.2), 100 % Article 5, 98.3 % binary high-risk.
+
+### Not in this release (out of scope)
+
+- **GPAI / Article 53 / Article 55 coverage.** v0.1 scope covers Article 5 prohibitions + Article 6 / Annex III high-risk + Article 50 transparency. General-purpose AI provider obligations (foundation model / large language model classification) are v0.2 scope. Reviewer-cited input `Foundation language model trained on 1 trillion tokens` correctly fires nothing in v0.1.3 — documented limitation, not a bug.
+- **npm maintainer email (`contact@dsaveil.io`).** Not fixable in the repo — set by the npm account profile. Marc updates separately via npm account settings.
+- **DE textarea aria-label fix.** Cross-repo (`theveil-website`); shipped separately under the lead-dev override for `lucairn-ai-act-classifier` only.
+
 ## [0.1.2] — 2026-05-16
 
 Initial public release. Free CLI + hosted UI that maps any free-text AI use-case description to the EU AI Act articles, paragraphs, and sub-letters it triggers.
