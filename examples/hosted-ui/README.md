@@ -60,10 +60,11 @@ Total: ~140 lines of TypeScript across three files. No `ToolWorkspace` integrati
    open http://localhost:3000/de/tools/ai-act-classifier
    ```
 
-8. Deploy via theveil-website's standard manual deploy:
+8. Deploy via your site's standard release process:
 
    ```bash
-   ssh deploy@<hetzner-ip> /opt/bin/deploy-website.sh
+   # run your site's deploy script
+   ssh <user>@<your-server> /path/to/<your-deploy-script>.sh
    ```
 
 ## Architecture notes
@@ -72,7 +73,7 @@ Total: ~140 lines of TypeScript across three files. No `ToolWorkspace` integrati
 - **Cache layer.** The server-side `~/.cache/lucairn-ai-act-classifier/` cache is process-local on the host. For high-traffic deployments, add a server-action-level memoization (e.g. LRU keyed by `sha256(input + lang)`) — v0.2 polish.
 - **LLM mode.** The hosted UI runs in deterministic mode only. LLM mode (`--llm anthropic` etc.) needs an `apiKey` parameter — exposing that surface in the hosted UI is a v0.2 feature; until then, point LLM-mode users at the CLI.
 - **Plausible:** `data-plausible-event="classify-submit"` is the wire-up surface; theveil-website's root layout's Plausible script propagates the event.
-- **TagPill rendering (v0.2).** The current implementation renders the markdown `--explain` output verbatim in a `<pre>` block. The plan canonical Day 12 row (line 245) calls for reusing `theveil-website/src/components/blog/TagPill.tsx`; v0.2 polish replaces the `<pre>` block with structured tag pills per fired article.
+- **TagPill rendering (v0.2).** The current implementation renders the markdown `--explain` output verbatim in a `<pre>` block. The Day-12 build plan row calls for reusing `theveil-website/src/components/blog/TagPill.tsx`; v0.2 polish replaces the `<pre>` block with structured tag pills per fired article.
 - **Input cap.** `server-action.ts` enforces `MAX_INPUT_BYTES = 8192`; mirror this in any API-route guard layer theveil-website wraps around the server action.
 
 ## Validation
@@ -88,6 +89,6 @@ After integration, smoke-test the page end-to-end:
 
 ## Cross-references
 
-- Plan canonical row: `~/.claude/plans/ok-lets-plan-this-fluffy-graham.md` line 245.
+- Plan canonical row: Day-12 in the build plan.
 - Page-template reference (mirror): `theveil-website/src/app/[lang]/tools/ai-payload-inspector/page.tsx`.
 - Public API barrel: `src/index.ts` in this repo.
