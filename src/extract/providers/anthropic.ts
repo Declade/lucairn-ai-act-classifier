@@ -82,7 +82,13 @@ interface AnthropicSDKModule {
 // Main extractor
 // ---------------------------------------------------------------------------
 
-const DEFAULT_MODEL = 'claude-haiku-4-5-20251001';
+/**
+ * Default Anthropic model. Exported as a NAMED export so `src/extract/llm.ts`
+ * can import it for the centralised `getDefaultModel()` dispatch; this closes
+ * the drift risk identified by Day-10 bug-hunter L6 (literal duplication
+ * across providers + llm.ts).
+ */
+export const DEFAULT_MODEL = 'claude-haiku-4-5-20251001';
 const DEFAULT_TIMEOUT_MS = 30_000;
 const MAX_TOKENS = 1024;
 

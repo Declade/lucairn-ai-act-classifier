@@ -21,7 +21,14 @@ import type { ExtractedFeatures } from '../keyword.js';
 import type { LLMExtractOptions } from '../llm.js';
 
 const DEFAULT_GROQ_BASE_URL = 'https://api.groq.com/openai/v1';
-const DEFAULT_GROQ_MODEL = 'llama-3.3-70b-versatile';
+/**
+ * Default Groq model. Exported as a NAMED export so `src/extract/llm.ts` can
+ * import it for the centralised `getDefaultModel()` dispatch; this closes the
+ * drift risk identified by Day-10 bug-hunter L6 (literal duplication across
+ * providers + llm.ts).
+ */
+export const DEFAULT_MODEL = 'llama-3.3-70b-versatile';
+const DEFAULT_GROQ_MODEL = DEFAULT_MODEL;
 
 /**
  * Extract regulator-keyed features via Groq's Llama 3.3 70B (or any

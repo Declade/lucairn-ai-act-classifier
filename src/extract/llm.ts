@@ -233,25 +233,39 @@ export async function extractFeaturesLLM(
 }
 
 /**
- * Default model per provider — must mirror the per-provider `DEFAULT_MODEL`
- * constants in `providers/<name>.ts`. Centralised here so the cache key is
+ * Default model per provider — imported from the per-provider modules so the
+ * literal lives in exactly one place. Centralised here so the cache key is
  * stable across cache-miss + cache-hit cycles when the caller does NOT
- * supply `opts.model`.
+ * supply `opts.model`. Day-11 L6 closure (Day-10 bug-hunter finding): the
+ * literals were previously duplicated in each provider AND in this switch,
+ * creating a drift risk where a provider could bump its default without the
+ * cache key tracking the change.
  *
  * @internal — exported for cache spec but not for general consumption.
  */
 export function getDefaultModel(provider: LLMProvider): string {
   switch (provider) {
     case 'anthropic':
-      return 'claude-haiku-4-5-20251001';
+      return ANTHROPIC_DEFAULT_MODEL;
     case 'openai':
-      return 'gpt-4o-mini';
+      return OPENAI_DEFAULT_MODEL;
     case 'groq':
-      return 'llama-3.3-70b-versatile';
+      return GROQ_DEFAULT_MODEL;
     default:
       return 'unknown';
   }
 }
+
+// Imported AT BOTTOM of file (not at module-init scope at the top) because the
+// providers' own dynamic-import pattern means we can't put them in the static
+// import block — the providers themselves declare `optionalDependencies` SDKs
+// that might be absent on a deterministic-only install. We import only the
+// model-name constants statically (these are inert string literals with no
+// SDK side effect). Each provider module's body still dynamic-imports its
+// SDK at call-time inside the extract function.
+import { DEFAULT_MODEL as ANTHROPIC_DEFAULT_MODEL } from './providers/anthropic.js';
+import { DEFAULT_MODEL as OPENAI_DEFAULT_MODEL } from './providers/openai.js';
+import { DEFAULT_MODEL as GROQ_DEFAULT_MODEL } from './providers/groq.js';
 
 /**
  * Normalize input for cache-key stability. Trims leading/trailing whitespace,
