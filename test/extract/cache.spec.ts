@@ -252,12 +252,13 @@ describe('cacheWrite — POSIX file permissions (Day-10 L4 closure)', () => {
     const llmDir = join(tmpCacheDir, 'llm');
     const stat = statSync(llmDir);
     const perms = stat.mode & 0o777;
-    // mkdir's mode is masked against process.umask; on a default umask of
-    // 0o022 the effective dir mode is 0o700 (because 0o700 & ~0o022 === 0o700).
-    // On unusual umasks the effective mode could end up tighter than 0o700;
-    // accept anything in the allowed set as long as it's user-only.
+    // Bug-hunter M2 (Day-11 PR #11): the previous "user bits intact"
+    // assertion was `expect(perms & 0o700).toBe(perms & 0o700)` — a
+    // tautology that always passes regardless of actual mode. Replaced
+    // with a real invariant: owner MUST have read+write+execute (0o700),
+    // AND group+other MUST have no bits set (0o077 mask).
     expect(perms & 0o077).toBe(0); // group + other = 0
-    expect(perms & 0o700).toBe(perms & 0o700); // user bits intact
+    expect(perms & 0o700).toBe(0o700); // owner has rwx
   });
 });
 
