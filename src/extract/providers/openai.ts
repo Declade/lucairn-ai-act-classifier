@@ -119,7 +119,13 @@ interface OpenAISDKModule {
 // Main extractor
 // ---------------------------------------------------------------------------
 
-const DEFAULT_MODEL = 'gpt-4o-mini';
+/**
+ * Default OpenAI model. Exported as a NAMED export so `src/extract/llm.ts`
+ * can import it for the centralised `getDefaultModel()` dispatch; this closes
+ * the drift risk identified by Day-10 bug-hunter L6 (literal duplication
+ * across providers + llm.ts).
+ */
+export const DEFAULT_MODEL = 'gpt-4o-mini';
 const DEFAULT_TIMEOUT_MS = 30_000;
 const MAX_TOKENS = 1024;
 
