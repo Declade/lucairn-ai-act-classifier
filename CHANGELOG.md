@@ -4,6 +4,16 @@ All notable changes to `@lucairn/ai-act-classifier` will be documented in this f
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.1] - 2026-07-02
+
+Corrected copyright holder to Lucairn UG (haftungsbeschränkt) and updated liability disclaimer to reflect UG registration (HRB 46107, 29.05.2026).
+
+### Fixed
+
+- **LICENSE copyright holder.** `Declade UG (i.G.)` (never a legal entity — Declade is only the GitHub org name) corrected to `Lucairn UG (haftungsbeschränkt)`.
+- **README.md + README.de.md disclaimer + About sections.** Removed stale "i.Gr." (in Gründung) / pre-incorporation / "operated by Marc Schülke as a natural person" framing. The UG has been registered since 2026-05-29 (HRB 46107 Amtsgericht Nürnberg); copy now names the registered entity directly.
+- **`src/data/citations.json` `commentary_publisher`.** Same stale pre-incorporation framing corrected to the registered entity.
+
 ## [0.3.0] - 2026-05-16
 
 Article 4 (AI literacy) + GPAI Articles 53 + 55 — two new rule modules closing the two largest coverage gaps adversarial reviewers flagged on v0.1.x → v0.2.0 retests. Both modules are non-cascade roots (independent of Annex III high-risk and Article 5 prohibition status). The three-category overlay is intentionally NOT extended — neither Art 4 nor GPAI is in any Cat 1/2/3 pairing (matches the Article 50 precedent).

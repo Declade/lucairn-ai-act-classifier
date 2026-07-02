@@ -1,6 +1,6 @@
 {
   "name": "@lucairn/ai-act-classifier",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Free CLI from the Lucairn team that maps EU AI Act articles to your AI use case. Companion to Lucairn — the AI evidence layer for EU regulated companies.",
   "license": "MIT",
   "author": "Marc Schülke <marc@lucairn.eu> (https://lucairn.eu)",
