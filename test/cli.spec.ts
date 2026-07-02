@@ -79,8 +79,8 @@ describe('CLI integration — happy paths', () => {
     expect(r.stdout).toContain('Verordnung (EU) 2024/1689');
   });
 
-  itDist('--rules-version v0.3.0 → exits 0 (matches current)', () => {
-    const r = runCli(['--rules-version', 'v0.3.0', 'We use AI for CV screening.']);
+  itDist('--rules-version v0.3.1 → exits 0 (matches current)', () => {
+    const r = runCli(['--rules-version', 'v0.3.1', 'We use AI for CV screening.']);
     expect(r.status).toBe(0);
   });
 

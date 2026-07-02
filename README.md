@@ -170,13 +170,13 @@ Test fixtures + curated blog excerpts: CC-BY-4.0 (see [DATASET-LICENSE](./DATASE
 
 ## Disclaimer
 
-This tool is informational. It is **not legal advice**. It does not establish a lawyer-client relationship. Output must be reviewed by qualified counsel before reliance for compliance decisions. Lucairn UG (haftungsbeschränkt) i.Gr. — operated pre-incorporation by Marc Schülke as a natural person — disclaims all liability. See [LICENSE](./LICENSE) §AS-IS clause.
+This tool is informational. It is **not legal advice**. It does not establish a lawyer-client relationship. Output must be reviewed by qualified counsel before reliance for compliance decisions. Lucairn UG (haftungsbeschränkt), Nürnberg (HRB 46107 Amtsgericht Nürnberg), disclaims all liability. See [LICENSE](./LICENSE) §AS-IS clause.
 
 The classifier reflects one interpretation of the EU AI Act as of the rule-set version printed in every output. The EU AI Office publishes ongoing guidance that may change interpretation. Each output cites the regulator source so you can verify directly.
 
 ## About
 
-Built by [Lucairn](https://lucairn.eu) — the AI evidence layer for EU regulated companies. Operated pre-incorporation by Marc Schülke as a natural person; Lucairn UG (haftungsbeschränkt) i.Gr. (formation initiated, pending Handelsregister entry).
+Built by [Lucairn](https://lucairn.eu) — the AI evidence layer for EU regulated companies. Operated by Lucairn UG (haftungsbeschränkt), registered at HRB 46107 Amtsgericht Nürnberg.
 
 Hosted UI: `https://lucairn.eu/tools/ai-act-classifier`.
 
