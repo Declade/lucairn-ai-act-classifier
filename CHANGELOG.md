@@ -11,7 +11,7 @@ Corrected copyright holder to Lucairn UG (haftungsbeschränkt) and updated liabi
 ### Fixed
 
 - **LICENSE copyright holder.** `Declade UG (i.G.)` (never a legal entity — Declade is only the GitHub org name) corrected to `Lucairn UG (haftungsbeschränkt)`.
-- **README.md + README.de.md disclaimer + About sections.** Removed stale "i.Gr." (in Gründung) / pre-incorporation / "operated by Marc Schülke as a natural person" framing. The UG has been registered since 2026-05-29 (HRB 46107 Amtsgericht Nürnberg); copy now names the registered entity directly.
+- **README.md + README.de.md disclaimer + About sections.** Removed stale pre-incorporation / in-Gründung entity framing. The UG has been registered since 2026-05-29 (HRB 46107 Amtsgericht Nürnberg); copy now names the registered entity directly.
 - **`src/data/citations.json` `commentary_publisher`.** Same stale pre-incorporation framing corrected to the registered entity.
 
 ## [0.3.0] - 2026-05-16
