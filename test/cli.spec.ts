@@ -6,8 +6,8 @@
 // SHA).
 
 import { describe, it, expect } from 'vitest';
-import { spawnSync, type SpawnSyncReturns } from 'node:child_process';
-import { existsSync } from 'node:fs';
+import { spawn, spawnSync, type SpawnSyncReturns } from 'node:child_process';
+import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -33,6 +33,35 @@ function runCli(args: string[], opts: { stdin?: string; env?: Record<string, str
       NO_COLOR: '1',
       ...(opts.env ?? {}),
     },
+  });
+}
+
+function runCliThroughPipes(
+  args: string[],
+  opts: { stdin?: string; env?: Record<string, string> } = {},
+): Promise<{ status: number | null; stdout: string; stderr: string }> {
+  return new Promise((resolve, reject) => {
+    const child = spawn(process.execPath, [CLI_PATH, ...args], {
+      env: {
+        ...process.env,
+        NO_COLOR: '1',
+        ...(opts.env ?? {}),
+      },
+      stdio: ['pipe', 'pipe', 'pipe'],
+    });
+    const stdout: Buffer[] = [];
+    const stderr: Buffer[] = [];
+    child.stdout.on('data', (chunk: Buffer) => stdout.push(chunk));
+    child.stderr.on('data', (chunk: Buffer) => stderr.push(chunk));
+    child.on('error', reject);
+    child.on('close', (status) => {
+      resolve({
+        status,
+        stdout: Buffer.concat(stdout).toString('utf8'),
+        stderr: Buffer.concat(stderr).toString('utf8'),
+      });
+    });
+    child.stdin.end(opts.stdin ?? '');
   });
 }
 
@@ -109,6 +138,45 @@ describe('CLI integration — happy paths', () => {
     expect(r.stdout).toMatch(/1\s+Article 5 prohibited/);
     expect(r.stdout).toMatch(/2\s+parse error/);
     expect(r.stdout).toMatch(/3\s+LLM error/);
+  });
+});
+
+describe('CLI integration — piped output drains before exit', () => {
+  const LARGE_INPUT = 'We use AI for CV screening and applicant ranking. '.repeat(30_000);
+
+  itDist('--json large output through a captured pipe → exit 0 + complete parseable JSON', async () => {
+    const r = await runCliThroughPipes(['--json'], {
+      stdin: LARGE_INPUT,
+      env: { AI_ACT_CLASSIFY_INCLUDE_FEATURES: '1' },
+    });
+    expect(r.status).toBe(0);
+    const parsed = JSON.parse(r.stdout) as { input_text: string };
+    expect(parsed.input_text).toBe(LARGE_INPUT);
+  });
+
+  itDist('prohibited JSON through a captured pipe → exit 1 + complete parseable JSON', async () => {
+    const r = await runCliThroughPipes([
+      '--json',
+      'We deploy real-time facial recognition for general law-enforcement surveillance in public spaces.',
+    ]);
+    expect(r.status).toBe(1);
+    expect(() => JSON.parse(r.stdout)).not.toThrow();
+  });
+
+  itDist('parse and LLM errors through captured stderr → exit 2/3 + complete diagnostics', async () => {
+    const parseError = await runCliThroughPipes(['--rules-version', 'v99.99.99', 'anything']);
+    expect(parseError.status).toBe(2);
+    expect(parseError.stderr).toContain('rules-version');
+
+    const llmError = await runCliThroughPipes(['--llm', 'mistral', 'anything']);
+    expect(llmError.status).toBe(3);
+    expect(llmError.stderr).toContain('Supported: anthropic, openai, groq');
+  });
+
+  it('production CLI contains no forced process.exit call', () => {
+    // Keep this source-level invariant close to the process-I/O regression it protects.
+    const source = readFileSync(join(REPO_ROOT, 'src', 'cli.ts'), 'utf8');
+    expect(source).not.toContain('process.exit(');
   });
 });
 
