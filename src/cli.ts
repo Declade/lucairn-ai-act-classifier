@@ -43,8 +43,14 @@ function err(text: string): void {
   if (!text.endsWith('\n')) process.stderr.write('\n');
 }
 
+const CLI_EXIT = Symbol('CLI_EXIT');
+
 function exit(code: 0 | 1 | 2 | 3): never {
-  process.exit(code);
+  // Do not force termination here: stdout/stderr may still be draining when
+  // the CLI is writing to a pipe. The top-level handler consumes this sentinel
+  // and lets Node exit naturally after pending writes have flushed.
+  process.exitCode = code;
+  throw CLI_EXIT;
 }
 
 async function readStdin(): Promise<string> {
@@ -469,6 +475,7 @@ Exit codes:
 
 // Run.
 main().catch((e: unknown) => {
+  if (e === CLI_EXIT) return;
   if (e instanceof Error) {
     err(`Error: ${e.message}`);
     if (process.env['AI_ACT_CLASSIFY_DEBUG'] === '1' && typeof e.stack === 'string') {
@@ -477,5 +484,5 @@ main().catch((e: unknown) => {
   } else {
     err(`Error: ${String(e)}`);
   }
-  exit(2);
+  process.exitCode = 2;
 });
