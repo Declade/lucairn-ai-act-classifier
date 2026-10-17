@@ -10,9 +10,13 @@
 //   - GOVERNED_NEGATION_SET: sentences where the cue really governs the
 //     phrase. 0 prohibited / high-risk triggers allowed (PRD Locked
 //     criterion 1), and every one must report the phrase in negated_hits.
-//   - Sweep construction: "<unrelated negated clause><joiner><plainly stated
-//     trigger>" over the joiners below. The negated clause has nothing to do
-//     with the trigger, so the verdict must equal the trigger's.
+//   - Sweep: five shape families (buildSweep). (1) "<unrelated negated
+//     clause><joiner><plainly stated trigger>"; (2) a governed phrase followed
+//     by an open continuation (only / alone / by X / during X / but /
+//     sondern …); (3) a phrase in subject position with a following predicate;
+//     (4) a negated list followed by an affirmative clause; (5) the review-seat
+//     inputs. None of them denies the practice, so the verdict must equal the
+//     pre-negation engine's.
 
 export type Lang = 'en' | 'de';
 
@@ -79,6 +83,23 @@ export const MUST_STILL_FIRE: ReadonlyArray<Case> = [
   { id: 'I2-en-02', lang: 'en', text: 'The tool is not simply a CV filter that ranks job applicants.' },
   { id: 'I2-de-01', lang: 'de', text: 'Das System übernimmt nicht nur die Bonitätsprüfung.' },
   { id: 'I2-de-02', lang: 'de', text: 'Das Tool soll nicht ausschließlich Bewerber sortieren.' },
+  // R3 — review seat (gpt-6.1-sol) on 768307fb: open constructions after a
+  // governed phrase (restriction, subject + predicate, list + affirmative clause).
+  { id: 'R3-en-01', lang: 'en', text: 'We do not rank job applicants only by experience; age is also scored.' },
+  { id: 'R3-en-02', lang: 'en', text: 'We do not perform emotion recognition in the workplace only during interviews; it runs continuously.' },
+  { id: 'R3-de-03', lang: 'de', text: 'Nicht die Bonitätsprüfung allein entscheidet über den Kredit.' },
+  { id: 'R3-en-04', lang: 'en', text: 'No credit scoring request is left unprocessed.' },
+  { id: 'R3-de-05', lang: 'de', text: 'Keine Bonitätsprüfung wird ausgelassen.' },
+  { id: 'R3-en-06', lang: 'en', text: 'Not using social scoring is impossible.' },
+  { id: 'R3-en-07', lang: 'en', text: 'We do not offer facial recognition, social scoring or credit scoring is used instead.' },
+  // R3 — counterparts in the other language.
+  { id: 'R3-de-01', lang: 'de', text: 'Wir nutzen keine Bewerberauswahl allein nach Erfahrung; das Alter wird auch bewertet.' },
+  { id: 'R3-de-02', lang: 'de', text: 'Wir nutzen keine Emotionserkennung am Arbeitsplatz nur während der Interviews; sie läuft dauerhaft.' },
+  { id: 'R3-en-03', lang: 'en', text: 'Not credit scoring alone decides on the loan.' },
+  { id: 'R3-de-04', lang: 'de', text: 'Keine Bonitätsprüfung bleibt unbearbeitet.' },
+  { id: 'R3-en-05', lang: 'en', text: 'No credit scoring is skipped.' },
+  { id: 'R3-de-06', lang: 'de', text: 'Keine Sozialbewertung zu nutzen ist unmöglich.' },
+  { id: 'R3-de-07', lang: 'de', text: 'Wir bieten keine Gesichtserkennung, Sozialbewertung oder Bonitätsprüfung wird stattdessen genutzt.' },
 ];
 
 /** Cue governs the phrase → no prohibited / high-risk trigger, phrase in negated_hits. */
@@ -92,7 +113,7 @@ export const GOVERNED_NEGATION_SET: ReadonlyArray<Case & { phrase: string }> = [
   { id: 'N-en-07', lang: 'en', text: 'Facial recognition is not used.', phrase: 'facial recognition' },
   { id: 'N-en-08', lang: 'en', text: 'Emotion recognition in the workplace will never be performed.', phrase: 'emotion recognition in the workplace' },
   { id: 'N-en-09', lang: 'en', text: 'We do not use emotion recognition, facial recognition or social scoring.', phrase: 'facial recognition' },
-  { id: 'N-en-10', lang: 'en', text: 'Neither social scoring nor emotion recognition is part of it.', phrase: 'emotion recognition' },
+  { id: 'N-en-10', lang: 'en', text: 'We use neither social scoring nor emotion recognition.', phrase: 'emotion recognition' },
   { id: 'N-de-01', lang: 'de', text: 'Unser System nutzt keine Emotionserkennung am Arbeitsplatz.', phrase: 'emotionserkennung am arbeitsplatz' },
   { id: 'N-de-02', lang: 'de', text: 'Es findet keine Sozialbewertung statt.', phrase: 'sozialbewertung' },
   { id: 'N-de-03', lang: 'de', text: 'Das Tool soll nicht Bewerber sortieren.', phrase: 'bewerber sortieren' },
@@ -100,7 +121,7 @@ export const GOVERNED_NEGATION_SET: ReadonlyArray<Case & { phrase: string }> = [
   { id: 'N-de-05', lang: 'de', text: 'Wir setzen niemals Gesichtserkennung ein.', phrase: 'gesichtserkennung' },
   { id: 'N-de-06', lang: 'de', text: 'Wir nutzen Emotionserkennung nicht.', phrase: 'emotionserkennung' },
   { id: 'N-de-07', lang: 'de', text: 'Es findet kein Bewerber-Ranking statt.', phrase: 'bewerber-ranking' },
-  { id: 'N-de-08', lang: 'de', text: 'Weder Emotionserkennung noch Sozialbewertung werden eingesetzt.', phrase: 'sozialbewertung' },
+  { id: 'N-de-08', lang: 'de', text: 'Wir nutzen weder Emotionserkennung noch Sozialbewertung.', phrase: 'sozialbewertung' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -202,30 +223,181 @@ export const SWEEP_TRIGGERS: Record<Lang, ReadonlyArray<string>> = {
   ],
 };
 
+export type SweepFamily =
+  | 'unrelated-negation'
+  | 'post-phrase-continuation'
+  | 'subject-position'
+  | 'list-plus-affirmative'
+  | 'reviewer-inputs';
+
+export const SWEEP_FAMILIES: ReadonlyArray<SweepFamily> = [
+  'unrelated-negation',
+  'post-phrase-continuation',
+  'subject-position',
+  'list-plus-affirmative',
+  'reviewer-inputs',
+];
+
 export interface SweepCase extends Case {
-  clause: string;
-  joiner: string;
-  trigger: string;
+  family: SweepFamily;
+  /** unrelated-negation only: the trigger sentence (its "alone" baseline must trigger on the reference) */
+  trigger?: string;
 }
 
-/** Every "<negated clause><joiner><trigger>" combination for one language. */
-export function buildSweep(lang: Lang): SweepCase[] {
+/** EN verb + object predicates a cue can govern ("We do not <P>."). */
+const EN_PREDICATES: ReadonlyArray<string> = [
+  'rank job applicants',
+  'use emotion recognition in the workplace',
+  'do social scoring',
+  'perform credit scoring',
+  'use facial recognition',
+  'evaluate creditworthiness',
+  'use live facial recognition',
+  'do predictive policing',
+  'perform cv screening',
+  'use biometric categorisation to infer race',
+  'use a subliminal technique',
+  'do automated grading',
+];
+
+/** Open continuations after a governed EN phrase (restriction, contrast, purpose, time). */
+const EN_CONTINUATIONS: ReadonlyArray<string> = [
+  ' only by experience; age is also scored',
+  ' only during interviews; it runs continuously',
+  ' alone',
+  ' solely for testing',
+  ' just in the pilot',
+  ' merely on request',
+  ' by default',
+  ' during interviews',
+  ' for most users',
+  ' but we do it manually',
+  ', but the vendor does',
+  ' rather than humans',
+  ' except at night',
+  ' at the moment, the vendor does it for us',
+];
+
+/** EN nouns for subject-position and list shapes. */
+const EN_NOUNS: ReadonlyArray<string> = [
+  'credit scoring',
+  'social scoring',
+  'emotion recognition in the workplace',
+  'facial recognition',
+  'cv screening',
+  'predictive policing',
+  'live facial recognition',
+  'biometric categorisation',
+];
+
+const EN_SUBJECT_TEMPLATES: ReadonlyArray<(n: string) => string> = [
+  (n) => `No ${n} request is left unprocessed.`,
+  (n) => `No ${n} step is ever skipped.`,
+  (n) => `Not using ${n} is impossible.`,
+  (n) => `No ${n} is optional here.`,
+  (n) => `No ${n} decision goes unreviewed.`,
+  (n) => `Not ${n} alone decides the outcome.`,
+];
+
+const EN_LIST_TEMPLATES: ReadonlyArray<(a: string, b: string, c: string) => string> = [
+  (a, b, c) => `We do not offer ${a}, ${b} or ${c} is used instead.`,
+  (a, b) => `We do not use ${a} or ${b} is used instead.`,
+  (a, b) => `We do not use ${a} and ${b} runs in production.`,
+  (a, b) => `We do not use ${a}, ${b} is active.`,
+];
+
+/** DE nouns with the matching form of kein. */
+const DE_ITEMS: ReadonlyArray<{ kein: string; noun: string }> = [
+  { kein: 'keine', noun: 'Emotionserkennung am Arbeitsplatz' },
+  { kein: 'keine', noun: 'Sozialbewertung' },
+  { kein: 'keine', noun: 'Bonitätsprüfung' },
+  { kein: 'keine', noun: 'Gesichtserkennung' },
+  { kein: 'keine', noun: 'Echtzeit-Gesichtserkennung' },
+  { kein: 'keine', noun: 'vorhersagende Polizeiarbeit' },
+  { kein: 'kein', noun: 'Lebenslauf-Screening' },
+  { kein: 'keine', noun: 'Bewerberauswahl' },
+  { kein: 'keine', noun: 'Prüfungsbewertung' },
+  { kein: 'kein', noun: 'Bewerber-Ranking' },
+];
+
+const DE_CONTINUATIONS: ReadonlyArray<string> = [
+  ' allein',
+  ' nur im Test',
+  ' nur während der Interviews; sie läuft dauerhaft',
+  ' lediglich als Pilot',
+  ' bloß auf Anfrage',
+  ' während der Bewerbung',
+  ' für die meisten Nutzer',
+  ', sondern der Anbieter',
+  ', aber der Anbieter schon',
+  ' außer nachts',
+  ' ausschließlich für Bestandskunden',
+  ' bei Neukunden',
+];
+
+const DE_SUBJECT_TEMPLATES: ReadonlyArray<(i: { kein: string; noun: string }) => string> = [
+  (i) => `${cap(i.kein)} ${i.noun} wird ausgelassen.`,
+  (i) => `${cap(i.kein)} ${i.noun} ist optional.`,
+  (i) => `Nicht die ${i.noun} entscheidet, sondern der Mensch.`,
+  (i) => `${cap(i.kein)} ${i.noun} bleibt unbearbeitet.`,
+  (i) => `Nicht die ${i.noun} allein entscheidet über den Kredit.`,
+];
+
+const DE_LIST_TEMPLATES: ReadonlyArray<(a: { kein: string; noun: string }, b: { noun: string }, c: { noun: string }) => string> = [
+  (a, b, c) => `Wir bieten ${a.kein} ${a.noun}, ${b.noun} oder ${c.noun} wird stattdessen genutzt.`,
+  (a, b) => `Wir nutzen ${a.kein} ${a.noun} und ${b.noun} läuft produktiv.`,
+  (a, b) => `Wir nutzen ${a.kein} ${a.noun}, ${b.noun} ist aktiv.`,
+  (a, b) => `Wir nutzen ${a.kein} ${a.noun} oder ${b.noun} wird genutzt.`,
+];
+
+function cap(x: string): string {
+  return `${x.charAt(0).toUpperCase()}${x.slice(1)}`;
+}
+
+/** Family 1: every "<negated clause><joiner><trigger>" combination for one language. */
+function buildUnrelated(lang: Lang): SweepCase[] {
   const out: SweepCase[] = [];
   for (const clause of SWEEP_NEGATED_CLAUSES[lang]) {
     for (const j of SWEEP_JOINERS[lang]) {
       for (const trigger of SWEEP_TRIGGERS[lang]) {
         const close = j.id === 'bracket' ? ')' : '';
         out.push({
-          id: `${lang}|${clause}|${j.id}|${trigger}`,
+          id: `${lang}|unrelated|${clause}|${j.id}|${trigger}`,
           lang,
-          clause,
-          joiner: j.id,
+          family: 'unrelated-negation',
           trigger,
           text: `${clause}${j.text}${trigger}${close}.`,
         });
       }
     }
   }
+  return out;
+}
+
+/** Every generated sweep sentence for one language, all five families. */
+export function buildSweep(lang: Lang): SweepCase[] {
+  const out: SweepCase[] = buildUnrelated(lang);
+  const push = (family: SweepFamily, text: string): void => {
+    out.push({ id: `${lang}|${family}|${text}`, lang, family, text });
+  };
+  if (lang === 'en') {
+    for (const p of EN_PREDICATES) for (const c of EN_CONTINUATIONS) push('post-phrase-continuation', `We do not ${p}${c}.`);
+    for (const n of EN_NOUNS) for (const t of EN_SUBJECT_TEMPLATES) push('subject-position', t(n));
+    EN_NOUNS.forEach((a, i) => {
+      const b = EN_NOUNS[(i + 1) % EN_NOUNS.length] as string;
+      const c = EN_NOUNS[(i + 2) % EN_NOUNS.length] as string;
+      for (const t of EN_LIST_TEMPLATES) push('list-plus-affirmative', t(a, b, c));
+    });
+  } else {
+    for (const item of DE_ITEMS) for (const c of DE_CONTINUATIONS) push('post-phrase-continuation', `Wir nutzen ${item.kein} ${item.noun}${c}.`);
+    for (const item of DE_ITEMS) for (const t of DE_SUBJECT_TEMPLATES) push('subject-position', t(item));
+    DE_ITEMS.forEach((a, i) => {
+      const b = DE_ITEMS[(i + 1) % DE_ITEMS.length] as { noun: string };
+      const c = DE_ITEMS[(i + 2) % DE_ITEMS.length] as { noun: string };
+      for (const t of DE_LIST_TEMPLATES) push('list-plus-affirmative', t(a, b, c));
+    });
+  }
+  for (const c of MUST_STILL_FIRE) if (c.lang === lang && c.id.startsWith('R3-')) push('reviewer-inputs', c.text);
   return out;
 }
 

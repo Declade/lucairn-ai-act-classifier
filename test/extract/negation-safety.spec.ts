@@ -9,10 +9,15 @@
 //      verdict of the pre-negation engine (origin/main cee0381b). The expected
 //      labels below were produced by running that engine on each input
 //      (scripts/negation-sweep.ts --reference <checkout> reproduces them).
-//   2. The differential sweep, self-referenced: a sentence never gets a
-//      lower verdict than its trigger alone.
+//   2. The differential sweep, self-referenced: an unrelated negation never
+//      lowers the trigger's verdict, and every open-construction shape
+//      (continuation after the phrase, subject + predicate, list + affirmative
+//      clause, review-seat inputs) fires.
 //   3. GOVERNED_NEGATION_SET — 0 prohibited / high-risk triggers, and each
-//      suppressed phrase is reported in negated_hits (PRD Locked criterion 1).
+//      suppressed phrase is reported in negated_hits with status "denied"
+//      (PRD Locked criterion 1).
+//   4. Open constructions next to a governing cue fire AND carry an advisory
+//      negated_hits entry with status "near".
 
 import { describe, it, expect } from 'vitest';
 import { classify } from '../../src/classify.js';
@@ -77,6 +82,20 @@ const REFERENCE: Record<string, string> = {
   'I2-en-02': 'high-risk III[4]',
   'I2-de-01': 'high-risk III[5]',
   'I2-de-02': 'high-risk III[4]',
+  'R3-en-01': 'high-risk III[4]',
+  'R3-en-02': 'prohibited 5(1)(f) III[1]',
+  'R3-de-03': 'high-risk III[5]',
+  'R3-en-04': 'high-risk III[5]',
+  'R3-de-05': 'high-risk III[5]',
+  'R3-en-06': 'prohibited 5(1)(c)',
+  'R3-en-07': 'prohibited 5(1)(c) III[1,5]',
+  'R3-de-01': 'high-risk III[4]',
+  'R3-de-02': 'prohibited 5(1)(f) III[1]',
+  'R3-en-03': 'high-risk III[5]',
+  'R3-de-04': 'high-risk III[5]',
+  'R3-en-05': 'high-risk III[5]',
+  'R3-de-06': 'prohibited 5(1)(c)',
+  'R3-de-07': 'prohibited 5(1)(c) III[1,5]',
 };
 
 describe('negation safety — MUST_STILL_FIRE (verdict equals the pre-negation engine)', () => {
@@ -89,25 +108,31 @@ describe('negation safety — MUST_STILL_FIRE (verdict equals the pre-negation e
   });
 });
 
-describe('negation safety — differential sweep (self-referenced)', () => {
+describe('negation safety — differential sweep (self-referenced; the reference run is scripts/negation-sweep.ts)', () => {
   for (const lang of ['en', 'de'] as const) {
-    it(`${lang.toUpperCase()}: no sentence gets a lower verdict than its trigger alone`, async () => {
+    it(`${lang.toUpperCase()}: unrelated negation never lowers the trigger's verdict; open constructions always fire`, async () => {
       const alone = new Map<string, Awaited<ReturnType<typeof classify>>>();
-      const lowered: string[] = [];
+      const bad: string[] = [];
       for (const c of buildSweep(lang)) {
-        let ref = alone.get(c.trigger);
-        if (ref === undefined) {
-          ref = await classify(`${c.trigger.charAt(0).toUpperCase()}${c.trigger.slice(1)}.`, { lang });
-          expect(verdictLevel(ref), `trigger alone must be high-risk or prohibited: ${c.trigger}`).toBeGreaterThanOrEqual(2);
-          alone.set(c.trigger, ref);
-        }
         const r = await classify(c.text, { lang });
-        if (verdictLevel(r) < verdictLevel(ref) || droppedTriggers(ref, r).length > 0) {
-          lowered.push(`${c.text} → ${verdictLabel(r)} (alone: ${verdictLabel(ref)})`);
+        if (c.family === 'unrelated-negation' && c.trigger !== undefined) {
+          let ref = alone.get(c.trigger);
+          if (ref === undefined) {
+            ref = await classify(`${c.trigger.charAt(0).toUpperCase()}${c.trigger.slice(1)}.`, { lang });
+            expect(verdictLevel(ref), `trigger alone must be high-risk or prohibited: ${c.trigger}`).toBeGreaterThanOrEqual(2);
+            alone.set(c.trigger, ref);
+          }
+          if (verdictLevel(r) < verdictLevel(ref) || droppedTriggers(ref, r).length > 0) {
+            bad.push(`${c.text} → ${verdictLabel(r)} (alone: ${verdictLabel(ref)})`);
+          }
+        } else if (verdictLevel(r) < 2) {
+          // Every open-construction shape is high-risk / prohibited on the
+          // pre-negation engine (checked by the sweep script); it must fire.
+          bad.push(`[${c.family}] ${c.text} → ${verdictLabel(r)}`);
         }
       }
-      expect(lowered).toEqual([]);
-    }, 120_000);
+      expect(bad).toEqual([]);
+    }, 180_000);
   }
 });
 
@@ -122,10 +147,26 @@ describe('negation safety — governed negation set (0 false triggers, each in n
       const r = await classify(text, { lang });
       expect(r.article_5.prohibited).toBe(false);
       expect(r.annex_iii.high_risk).toBe(false);
-      const hit = r.negated_hits.find((h) => h.phrase === phrase);
+      const hit = r.negated_hits.find((h) => h.phrase === phrase && h.status === 'denied');
       expect(hit, `negated_hits should report "${phrase}"`).toBeDefined();
       expect(hit?.cue.length).toBeGreaterThan(0);
       expect(hit?.ref.length).toBeGreaterThan(0);
     },
   );
+});
+
+describe('negation safety — open constructions fire with a "near" note', () => {
+  it.each([
+    ['en', 'We do not rank job applicants only by experience; age is also scored.', 'rank job applicants'],
+    ['en', 'No credit scoring request is left unprocessed.', 'credit scoring'],
+    ['en', 'Not using social scoring is impossible.', 'social scoring'],
+    ['en', 'We do not offer facial recognition, social scoring or credit scoring is used instead.', 'facial recognition'],
+    ['de', 'Keine Bonitätsprüfung wird ausgelassen.', 'bonitätsprüfung'],
+    ['de', 'Nicht die Bonitätsprüfung allein entscheidet über den Kredit.', 'bonitätsprüfung'],
+  ] as const)('%s: %s', async (lang, text, phrase) => {
+    const r = await classify(text, { lang });
+    expect(verdictLevel(r)).toBeGreaterThanOrEqual(2);
+    expect(r.negated_hits).toContainEqual(expect.objectContaining({ phrase, status: 'near' }));
+    expect(r.negated_hits.some((h) => h.status === 'denied')).toBe(false);
+  });
 });

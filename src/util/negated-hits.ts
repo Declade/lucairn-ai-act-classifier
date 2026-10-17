@@ -16,6 +16,12 @@ export interface NegatedHitResult {
   ref: string;
   /** the negation words that governed the phrase, e.g. "not use", "keine", "is not used" */
   cue: string;
+  /**
+   * "denied" — read as denied, did NOT fire ("found but read as denied — check").
+   * "near"   — fired; a negation governs it but the sentence continues after
+   *            the phrase ("near a negation — check"). Advisory only.
+   */
+  status: 'denied' | 'near';
   /** lexicon group, e.g. "article_5_prohibited" */
   group: string;
   /** lexicon category key, e.g. "c_social_scoring" */
@@ -69,6 +75,7 @@ export function toNegatedHitResults(hits: ReadonlyArray<NegatedHit> | undefined)
     phrase: h.phrase,
     ref: negatedHitRef(h.group, h.category, 'en'),
     cue: h.cue,
+    status: h.status,
     group: h.group,
     category: h.category,
     source: h.source,
@@ -80,6 +87,27 @@ export function negatedHitsHeading(locale: 'en' | 'de'): string {
   return locale === 'de'
     ? 'Gefunden, aber als verneint gelesen — bitte prüfen'
     : 'Found but read as denied — check';
+}
+
+/** Localized heading for the advisory "near a negation" block (these phrases fired). */
+export function nearNegationHeading(locale: 'en' | 'de'): string {
+  return locale === 'de'
+    ? 'Ausgelöst, steht aber nahe einer Verneinung — bitte prüfen'
+    : 'Fired, but near a negation — check';
+}
+
+/** Split hits into the two display blocks, each with its heading. */
+export function negatedHitBlocks(
+  hits: ReadonlyArray<NegatedHitResult> | undefined,
+  locale: 'en' | 'de',
+): Array<{ heading: string; hits: NegatedHitResult[] }> {
+  const all = hits ?? [];
+  const out: Array<{ heading: string; hits: NegatedHitResult[] }> = [];
+  const denied = all.filter((h) => h.status !== 'near');
+  const near = all.filter((h) => h.status === 'near');
+  if (denied.length > 0) out.push({ heading: negatedHitsHeading(locale), hits: denied });
+  if (near.length > 0) out.push({ heading: nearNegationHeading(locale), hits: near });
+  return out;
 }
 
 /** One localized line per negated hit: `"phrase" (ref) — cue: "…"`. */

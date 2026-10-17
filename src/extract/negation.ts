@@ -46,14 +46,31 @@
 //    non-denials ("not limited to", "no limits on", "no consent is required",
 //    "no way to avoid", "keine Einschränkungen").
 //
-// 2. Lists. A governed phrase extends over a list of further lexicon phrases
-//    joined by commas and closed by a `list_disjunctions` word:
-//    "does not use emotion recognition, facial recognition or social scoring".
-//    "and"-joined objects are NOT extended (known limit, fires).
+// 2. Closed construction (strict). A governed phrase is suppressed ONLY when
+//    the construction is closed right after it:
+//      - sentence punctuation (. ! ? ; :) or end of text follows the phrase
+//        (DE: optionally after ONE `closers` word — a clause-final particle,
+//        verb-final verb or participle: "findet keine Sozialbewertung
+//        statt.", "…, der keine Gesichtserkennung nutzt.", "Es wird keine
+//        Sozialbewertung durchgeführt."), or
+//      - "," / and / or / nor · und / oder / noch introduces a FURTHER
+//        member of an object list (lexicon phrases only) — the whole list
+//        must then end the clause the same way — or a further NEGATED
+//        clause ("does not use X and does not do Y", "…, we never …").
+//    ANY other continuation fires: only / alone / solely / allein / nur …,
+//    but / rather / sondern / aber, a following verb or predicate ("No credit
+//    scoring request is left unprocessed", "Keine Bonitätsprüfung wird
+//    ausgelassen", "Not using social scoring is impossible"), a prepositional
+//    restriction ("… only by experience", "… during interviews"), a dash or
+//    bracket, an affirmative clause after a list ("… or credit scoring is
+//    used instead"). Such a phrase FIRES and is listed in negated_hits with
+//    status "near" ("near a negation — check"); that note never changes the
+//    verdict.
 //
 // 3. without / ohne negates only a phrase that starts immediately after it
-//    (determiners / modifiers allowed). "Without human review the tool ranks
-//    job applicants" → the ranking still fires.
+//    (determiners / modifiers allowed), and rule 2 applies to it too.
+//    "Without human review the tool ranks job applicants" → the ranking
+//    still fires.
 //
 // 4. Trailing denial (cue AFTER the phrase), only when the predicate ends the
 //    clause:
@@ -82,11 +99,15 @@
 //
 // Known limits (all in the conservative "still fires" direction): negation
 // carried by a main verb ("we refrain from", "verzichten auf"), negation in
-// another sentence, "and"-joined objects under one cue, a trailing denial
-// with a complement after the predicate ("is not used in this product"), a
-// noun between cue and phrase ("no use of facial recognition", "keinen
-// Einsatz von Gesichtserkennung"), and a negated main clause before a comma
-// ("Wir garantieren nicht, dass …").
+// another sentence, ANY words after a governed phrase ("we do not use facial
+// recognition in this product", "no facial recognition is used", "neither X
+// nor Y is part of it", "das System soll ohne Gesichtserkennung arbeiten"),
+// list members that are not lexicon phrases, a trailing denial with a
+// complement ("is not used in this product"), a noun between cue and phrase
+// ("no use of facial recognition", "keinen Einsatz von Gesichtserkennung"),
+// and a negated main clause before a comma ("Wir garantieren nicht, dass …").
+// Phrases that fire only because of the closed-construction rule are flagged
+// with status "near" in negated_hits.
 // ---------------------------------------------------------------------------
 
 import { normalize, tokenize } from './normalize.js';
@@ -118,7 +139,12 @@ export interface NegationLexicon {
   /** Prepositions allowed before a relative opener (", in which", ", in dem"). */
   prepositions: string[];
   without: string;
-  list_disjunctions: string[];
+  /** Words that join members of an object list, or a further negated clause (and/or/nor · und/oder/noch). */
+  list_joiners: string[];
+  /** Subject pronouns allowed before the cue of a following negated clause ("…, we do not …"). */
+  clause_pronouns: string[];
+  /** DE: one clause-final particle / verb-final verb allowed right after the phrase ("findet keine X statt", "der keine X nutzt"). */
+  closers: string[];
   /** A word right after a trailing denial's clause end that cancels the denial. */
   cancel_after: string[];
   trailing_aux: string[];
@@ -156,7 +182,9 @@ interface Compiled {
   openers: ReadonlySet<string>;
   preps: ReadonlySet<string>;
   without: string;
-  disjunctions: ReadonlySet<string>;
+  joiners: ReadonlySet<string>;
+  pronouns: ReadonlySet<string>;
+  closers: ReadonlySet<string>;
   cancel: ReadonlySet<string>;
   trailAux: ReadonlySet<string>;
   trailFill: ReadonlySet<string>;
@@ -190,7 +218,9 @@ function compile(lex: NegationLexicon): Compiled {
     openers: new Set(lex.subclause_openers),
     preps: new Set(lex.prepositions),
     without: lex.without,
-    disjunctions: new Set(lex.list_disjunctions),
+    joiners: new Set(lex.list_joiners),
+    pronouns: new Set(lex.clause_pronouns),
+    closers: new Set(lex.closers),
     cancel: new Set(lex.cancel_after),
     trailAux: new Set(lex.trailing_aux),
     trailFill: new Set(lex.trailing_fillers),
@@ -218,7 +248,9 @@ const STRING_LISTS = [
   'breakers',
   'subclause_openers',
   'prepositions',
-  'list_disjunctions',
+  'list_joiners',
+  'clause_pronouns',
+  'closers',
   'cancel_after',
   'trailing_aux',
   'trailing_fillers',
@@ -266,6 +298,8 @@ interface Tokens {
   breakBefore: boolean[];
   /** commaOnly[i] — the only split characters before token i were commas / spaces. */
   commaOnly: boolean[];
+  /** hardBefore[i] — sentence punctuation (. ! ? ; : line break) sat before token i. */
+  hardBefore: boolean[];
   /** isBreak[i] — token i is a dash / slash / bullet token. */
   isBreak: boolean[];
   /** Clause id per token (breaks, break tokens and clause words open a new clause). */
@@ -277,6 +311,7 @@ function tokenizeWithBreaks(text: string, c: Compiled): Tokens | null {
   const tokens: string[] = [];
   const breakBefore: boolean[] = [];
   const commaOnly: boolean[] = [];
+  const hardBefore: boolean[] = [];
   const nfkc = text.normalize('NFKC');
   // Walk the text, splitting at SPLIT characters while remembering which
   // characters separated consecutive pieces.
@@ -289,6 +324,7 @@ function tokenizeWithBreaks(text: string, c: Compiled): Tokens | null {
       const sep = k === 0 ? pendingSep : '';
       breakBefore.push(sep.length > 0);
       commaOnly.push(sep.length > 0 && /^[,\s]+$/.test(sep));
+      hardBefore.push(/[.!?;:\n\r]/.test(sep));
     });
     if (toks.length > 0) pendingSep = '';
     piece = '';
@@ -308,6 +344,7 @@ function tokenizeWithBreaks(text: string, c: Compiled): Tokens | null {
   if (breakBefore.length > 0) {
     breakBefore[0] = false;
     commaOnly[0] = false;
+    hardBefore[0] = false;
   }
   const isBreak = tokens.map((t) => BREAK_TOKEN.test(t));
   const clause: number[] = [];
@@ -316,7 +353,7 @@ function tokenizeWithBreaks(text: string, c: Compiled): Tokens | null {
     if (i > 0 && (breakBefore[i] || isBreak[i] || isBreak[i - 1] || c.clauseWords.has(t))) id++;
     clause.push(id);
   });
-  return { tokens, breakBefore, commaOnly, isBreak, clause };
+  return { tokens, breakBefore, commaOnly, hardBefore, isBreak, clause };
 }
 
 // ---------------------------------------------------------------------------
@@ -552,6 +589,82 @@ function trailingCue(t: Tokens, c: Compiled, s: number, e: number): string | nul
 }
 
 // ---------------------------------------------------------------------------
+// Closed construction (rule 2)
+// ---------------------------------------------------------------------------
+
+/** Does a further negated clause start at token k ("and does not …", ", we never …", "und keine …")? */
+function negatedClauseAt(t: Tokens, c: Compiled, k: number): boolean {
+  const n = t.tokens.length;
+  for (let j = k, skipped = 0; j < n && skipped <= 3; j++) {
+    if (j > k && !joined(t, j)) return false;
+    if (t.isBreak[j]) return false;
+    const cue = cueEndingAt(t, c, j);
+    if (cue !== null) return true;
+    if (j + 1 < n && t.tokens[j + 1] === 't' && c.ntStems.has(t.tokens[j] as string)) continue;
+    const w = t.tokens[j] as string;
+    if (!(c.trailAux.has(w) || c.pronouns.has(w) || c.verbs.has(w) || c.bareVerbs.has(w) || c.det.has(w))) return false;
+    skipped++;
+  }
+  return false;
+}
+
+/**
+ * The joiner at token j: a comma before j and/or a list joiner word at j.
+ * Returns the index after the joiner, or -1 when nothing joins here.
+ */
+function joinerAt(t: Tokens, c: Compiled, j: number): number {
+  if (j >= t.tokens.length) return -1;
+  const comma = t.breakBefore[j] === true && t.commaOnly[j] === true;
+  if (t.breakBefore[j] && !comma) return -1;
+  if (t.isBreak[j]) return -1;
+  const w = t.tokens[j] as string;
+  if (c.joiners.has(w)) return j + 1;
+  return comma ? j : -1;
+}
+
+/**
+ * Rule 2. Starting from the governed phrase [s, e), walk an object list
+ * (members = lexicon phrases joined by "," / and / or / nor · und / oder /
+ * noch, determiners allowed) and accept it only when it is CLOSED: the last
+ * member is followed by sentence punctuation / end of text (DE: optionally
+ * one `closers` word first), or a joiner hands over to a further negated
+ * clause. Returns the members, or null (open construction → fires).
+ */
+function closedList(
+  t: Tokens,
+  c: Compiled,
+  longestAt: ReadonlyMap<number, number>,
+  s: number,
+  e: number,
+): Array<{ start: number; end: number }> | null {
+  const n = t.tokens.length;
+  const members: Array<{ start: number; end: number }> = [{ start: s, end: e }];
+  let pos = e;
+  for (let guard = 0; guard < 32; guard++) {
+    // Clause end right after the phrase (DE: one closer word may come first).
+    let p = pos;
+    if (p < n && joined(t, p) && c.closers.has(t.tokens[p] as string)) p++;
+    if (p >= n || t.hardBefore[p] === true) return members;
+    const after = joinerAt(t, c, p);
+    if (after < 0) return null;
+    // A further list member (only directly after the phrase, not after a closer)?
+    if (p === pos) {
+      let m = after;
+      while (m < n && m < after + 2 && joined(t, m) && c.det.has(t.tokens[m] as string)) m++;
+      const e2 = longestAt.get(m);
+      if (e2 !== undefined && (m === after || joined(t, m))) {
+        members.push({ start: m, end: e2 });
+        pos = e2;
+        continue;
+      }
+    }
+    // Or a further negated clause.
+    return negatedClauseAt(t, c, after) ? members : null;
+  }
+  return null;
+}
+
+// ---------------------------------------------------------------------------
 // Public entry point
 // ---------------------------------------------------------------------------
 
@@ -560,6 +673,12 @@ export interface NegationResult {
   active: boolean;
   /** occurrence index → cue text, for every suppressed occurrence. */
   suppressed: Map<number, string>;
+  /**
+   * occurrence index → cue text, for occurrences a cue governs but whose
+   * construction is open (something follows the phrase): they FIRE; this is
+   * an advisory "near a negation — check" signal only.
+   */
+  near: Map<number, string>;
 }
 
 /**
@@ -574,7 +693,7 @@ export function findNegated(
   lex: NegationLexicon | undefined,
   occs: ReadonlyArray<PhraseOccurrence>,
 ): NegationResult {
-  const off: NegationResult = { active: false, suppressed: new Map() };
+  const off: NegationResult = { active: false, suppressed: new Map(), near: new Map() };
   if (lex === undefined) return off;
   const c = compile(lex);
   const t = tokenizeWithBreaks(text, c);
@@ -588,68 +707,30 @@ export function findNegated(
     if (cur === undefined || o.end > cur) longestAt.set(o.start, o.end);
   }
 
-  // Suppressed spans: [start, end) → cue.
+  // Suppressed spans: [start, end) → cue. Near spans: governed but not closed.
   const spans: Array<{ start: number; end: number; cue: string }> = [];
+  const nearSpans: Array<{ start: number; end: number; cue: string }> = [];
 
   const starts = [...longestAt.keys()].sort((a, b) => a - b);
   for (const s of starts) {
     const e = longestAt.get(s) as number;
     const fwd = forwardCue(t, c, s);
-    if (fwd !== null) {
-      // Rule 5: a without/ohne after the phrase in the cue's clause cancels.
-      if (withoutLater(t, c, s, fwd.clauseOf)) continue;
-      spans.push({ start: s, end: e, cue: fwd.cue });
-      // Rule 2: list continuation.
-      const chain: Array<{ start: number; end: number; closes: boolean }> = [];
-      let prevEnd = e;
-      for (;;) {
-        let found: { start: number; end: number; closes: boolean } | null = null;
-        for (let s2 = prevEnd; s2 <= prevEnd + 2 && s2 < t.tokens.length; s2++) {
-          const e2 = longestAt.get(s2);
-          if (e2 === undefined) continue;
-          let ok = true;
-          let comma = false;
-          let disj = false;
-          for (let k = prevEnd; k <= s2; k++) {
-            if (t.isBreak[k] && k < s2) ok = false;
-            if (t.breakBefore[k]) {
-              if (t.commaOnly[k]) comma = true;
-              else ok = false;
-            }
-            if (k < s2) {
-              const w = t.tokens[k] as string;
-              if (c.disjunctions.has(w)) disj = true;
-              else if (!c.det.has(w)) ok = false;
-            }
-          }
-          if (ok && (comma || disj)) found = { start: s2, end: e2, closes: disj };
-          break;
-        }
-        if (found === null) break;
-        chain.push(found);
-        prevEnd = found.end;
+    if (fwd !== null && !withoutLater(t, c, s, fwd.clauseOf)) {
+      // Rule 2: closed construction — the phrase (or the object list it
+      // heads) must end the clause, or hand over to another negated clause.
+      const members = closedList(t, c, longestAt, s, e);
+      if (members !== null) {
+        for (const m of members) spans.push({ start: m.start, end: m.end, cue: fwd.cue });
+        continue;
       }
-      let lastClose = -1;
-      chain.forEach((el, k) => {
-        if (el.closes) lastClose = k;
-      });
-      if (lastClose >= 0) {
-        const tail = chain[lastClose] as { start: number; end: number };
-        // A without/ohne after the list in its clause cancels the list part.
-        if (!withoutLater(t, c, tail.end, tail.start)) {
-          for (let k = 0; k <= lastClose; k++) {
-            const el = chain[k] as { start: number; end: number };
-            spans.push({ start: el.start, end: el.end, cue: fwd.cue });
-          }
-        }
-      }
-      continue;
+      nearSpans.push({ start: s, end: e, cue: fwd.cue });
     }
     const trail = trailingCue(t, c, s, e);
     if (trail !== null) spans.push({ start: s, end: e, cue: trail });
   }
 
   // Rule 6: every occurrence starting inside a suppressed span is suppressed.
+  const near = new Map<number, string>();
   occs.forEach((o, idx) => {
     for (const sp of spans) {
       if (o.start >= sp.start && o.start < sp.end) {
@@ -657,6 +738,12 @@ export function findNegated(
         return;
       }
     }
+    for (const sp of nearSpans) {
+      if (o.start >= sp.start && o.start < sp.end) {
+        near.set(idx, sp.cue);
+        return;
+      }
+    }
   });
-  return { active: true, suppressed };
+  return { active: true, suppressed, near };
 }

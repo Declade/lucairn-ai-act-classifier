@@ -98,12 +98,14 @@ describe('negation — EN forms', () => {
     ['never + governed verb (past)', 'We never used facial recognition.', 'We used facial recognition.', 'facial recognition'],
     ['not to + governed verb', 'We decided not to use facial recognition.', 'We decided to use facial recognition.', 'facial recognition'],
     ["isn't (is not + phrase)", "It isn't facial recognition.", 'It is facial recognition.', 'facial recognition'],
+    ['and-list ending the clause', 'We do not use emotion recognition and facial recognition.', 'We use emotion recognition and facial recognition.', 'facial recognition'],
+    ['handover to a further negated clause', 'We do not use facial recognition and we never do social scoring.', 'We use facial recognition and we do social scoring.', 'facial recognition'],
   ])('%s', (_label, negated, control, phrase) => {
     expectNegated('en', { text: negated, phrase }, { text: control, phrase });
   });
 
-  it('neither … nor negates both items', () => {
-    const p = phrases('Neither social scoring nor emotion recognition is part of it.', 'en');
+  it('neither … nor negates both items (closed: the list ends the clause)', () => {
+    const p = phrases('We use neither social scoring nor emotion recognition.', 'en');
     expect(p).not.toContain('social scoring');
     expect(p).not.toContain('emotion recognition');
     const c = phrases('Social scoring and emotion recognition are part of it.', 'en');
@@ -175,7 +177,15 @@ describe('negation — EN must still fire (no over-correction)', () => {
     ['trailing: cancelled by "but"', 'Facial recognition is not used, but emotion recognition is.', 'facial recognition'],
     ['double negation in one clause', 'There is no case in which the system does not rank job applicants.', 'rank job applicants'],
     ['double negation across a relative clause', 'There is no case, in which the system does not rank job applicants.', 'rank job applicants'],
-    ['and-joined object under one cue (known limit)', 'We do not use emotion recognition and facial recognition.', 'facial recognition'],
+    ['neither … nor as a subject with a predicate (open construction)', 'Neither social scoring nor emotion recognition is part of it.', 'social scoring'],
+    ['continuation after the phrase: only by …', 'We do not rank job applicants only by experience; age is also scored.', 'rank job applicants'],
+    ['continuation after the phrase: preposition', 'We do not use facial recognition in this product.', 'facial recognition'],
+    ['subject + predicate', 'No credit scoring request is left unprocessed.', 'credit scoring'],
+    ['subject + predicate: no X is used', 'No facial recognition is used.', 'facial recognition'],
+    ['gerund subject', 'Not using social scoring is impossible.', 'social scoring'],
+    ['list followed by an affirmative clause', 'We do not offer facial recognition, social scoring or credit scoring is used instead.', 'social scoring'],
+    ['and-list followed by a predicate', 'We do not use emotion recognition and facial recognition is used instead.', 'emotion recognition'],
+    ['comma + affirmative clause', 'We do not use facial recognition, we use social scoring.', 'facial recognition'],
   ])('%s', (_label, text, phrase) => {
     expect(phrases(text, 'en')).toContain(phrase);
   });
@@ -192,7 +202,9 @@ describe('negation — DE forms', () => {
     ['keine', 'Das System nutzt keine Emotionserkennung.', 'Das System nutzt Emotionserkennung.', 'emotionserkennung'],
     ['keine + Adjektiv', 'Das System nutzt keine biometrische Kategorisierung.', 'Das System nutzt biometrische Kategorisierung.', 'biometrische kategorisierung'],
     ['nicht + Artikel', 'Das System nutzt nicht die Gesichtserkennung.', 'Das System nutzt die Gesichtserkennung.', 'gesichtserkennung'],
-    ['ohne', 'Das System soll ohne Gesichtserkennung arbeiten.', 'Das System soll mit Gesichtserkennung arbeiten.', 'gesichtserkennung'],
+    ['ohne', 'Das System arbeitet ohne Gesichtserkennung.', 'Das System arbeitet mit Gesichtserkennung.', 'gesichtserkennung'],
+    ['keine … nutzt (Verbletzt)', 'Ein Tool, das keine Gesichtserkennung nutzt.', 'Ein Tool, das Gesichtserkennung nutzt.', 'gesichtserkennung'],
+    ['keine … Partizip am Satzende', 'Es wird keine Sozialbewertung durchgeführt.', 'Es wird Sozialbewertung durchgeführt.', 'sozialbewertung'],
     ['nachgestellt: wird nicht eingesetzt', 'Gesichtserkennung wird nicht eingesetzt.', 'Gesichtserkennung wird eingesetzt.', 'gesichtserkennung'],
     ['nachgestellt: darf nicht eingesetzt werden', 'Gesichtserkennung darf nicht eingesetzt werden.', 'Gesichtserkennung darf eingesetzt werden.', 'gesichtserkennung'],
     ['nachgestellt: wird bei uns nicht genutzt', 'Gesichtserkennung wird bei uns nicht genutzt.', 'Gesichtserkennung wird bei uns genutzt.', 'gesichtserkennung'],
@@ -202,8 +214,8 @@ describe('negation — DE forms', () => {
     expectNegated('de', { text: negated, phrase }, { text: control, phrase });
   });
 
-  it('weder … noch negates both items', () => {
-    const p = phrases('Weder Emotionserkennung noch Sozialbewertung werden eingesetzt.', 'de');
+  it('weder … noch negates both items (closed: the list ends the clause)', () => {
+    const p = phrases('Wir nutzen weder Emotionserkennung noch Sozialbewertung.', 'de');
     expect(p).not.toContain('emotionserkennung');
     expect(p).not.toContain('sozialbewertung');
   });
@@ -242,6 +254,12 @@ describe('negation — DE must still fire (no over-correction)', () => {
     ['doppelte Verneinung über Relativsatz', 'Es gibt keinen Fall, in dem das System nicht Bewerber sortieren würde.', 'bewerber sortieren'],
     ['doppelte Verneinung: kein … nicht', 'Kein Kunde wird nicht Gesichtserkennung nutzen.', 'gesichtserkennung'],
     ['dass-Satz nach verneintem Hauptsatz', 'Wir garantieren nicht, dass Gesichtserkennung nicht eingesetzt wird.', 'gesichtserkennung'],
+    ['ohne + Phrase + Verb (offene Konstruktion)', 'Das System soll ohne Gesichtserkennung arbeiten.', 'gesichtserkennung'],
+    ['weder … noch als Subjekt mit Prädikat', 'Weder Emotionserkennung noch Sozialbewertung werden eingesetzt.', 'emotionserkennung'],
+    ['Subjekt + Prädikat', 'Keine Bonitätsprüfung wird ausgelassen.', 'bonitätsprüfung'],
+    ['Partizip, aber Satz geht weiter', 'Keine Sozialbewertung durchgeführt zu haben ist unmöglich.', 'sozialbewertung'],
+    ['allein nach der Phrase', 'Nicht die Bonitätsprüfung allein entscheidet über den Kredit.', 'bonitätsprüfung'],
+    ['Aufzählung + bejahter Satz', 'Wir bieten keine Gesichtserkennung, Sozialbewertung oder Bonitätsprüfung wird stattdessen genutzt.', 'sozialbewertung'],
   ])('%s', (_label, text, phrase) => {
     expect(phrases(text, 'de')).toContain(phrase);
   });

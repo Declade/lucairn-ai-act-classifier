@@ -6,8 +6,8 @@ exports[`formatJson() — output shape > snapshot — high-risk fixture (pretty=
   "detected_lang": "en",
   "lang_confident": true,
   "rules_version": "v0.3.1",
-  "rules_hash": "2977e21c",
-  "rules_hash_full": "2977e21c7e4fa982c89cfc964a1c6916d603599355c76c2b1567c98502b4132f",
+  "rules_hash": "2ea1b1ff",
+  "rules_hash_full": "2ea1b1ffde8e9be4ce9eccf56d4262e0f44c7498d0db22b05ef52ce3f29ef96d",
   "mode": "deterministic",
   "confidence": 0.56,
   "article_5": {

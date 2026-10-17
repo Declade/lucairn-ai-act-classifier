@@ -10,7 +10,7 @@
 import type { ClassifyResult } from '../classify.js';
 import { getCitation, type CitationArticleId } from '../util/citations.js';
 import { getLocale, type I18nLocale } from '../i18n/load.js';
-import { negatedHitLine, negatedHitsHeading } from '../util/negated-hits.js';
+import { negatedHitBlocks, negatedHitLine } from '../util/negated-hits.js';
 
 export interface MarkdownFormatOptions {
   locale: 'en' | 'de';
@@ -255,12 +255,11 @@ export function formatMarkdown(result: ClassifyResult, opts: MarkdownFormatOptio
   }
 
   // Safety net: phrases found but read as denied (only when any).
-  const negated = result.negated_hits ?? [];
-  if (negated.length > 0) {
+  for (const block of negatedHitBlocks(result.negated_hits, opts.locale)) {
     lines.push('');
-    lines.push(`### ⚠️ ${negatedHitsHeading(opts.locale)}`);
+    lines.push(`### ⚠️ ${block.heading}`);
     lines.push('');
-    for (const h of negated) lines.push(`- ${negatedHitLine(h, opts.locale)}`);
+    for (const h of block.hits) lines.push(`- ${negatedHitLine(h, opts.locale)}`);
   }
 
   // Confidence + mode + rules line.

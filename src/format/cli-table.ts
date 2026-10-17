@@ -23,7 +23,7 @@ import {
   type CitationEntry,
 } from '../util/citations.js';
 import { getLocale, type I18nLocale } from '../i18n/load.js';
-import { negatedHitLine, negatedHitsHeading } from '../util/negated-hits.js';
+import { negatedHitBlocks, negatedHitLine } from '../util/negated-hits.js';
 
 export interface CliTableOptions {
   /** Output locale for labels (en|de). Independent of result.detected_lang. */
@@ -379,11 +379,10 @@ export function formatCliTable(result: ClassifyResult, opts: CliTableOptions): s
   }
 
   // Safety net: phrases found but read as denied (only when any).
-  const negated = result.negated_hits ?? [];
-  if (negated.length > 0) {
+  for (const block of negatedHitBlocks(result.negated_hits, opts.locale)) {
     lines.push('');
-    lines.push(`  ${k.yellow(negatedHitsHeading(opts.locale))}`);
-    for (const h of negated) lines.push(`  - ${negatedHitLine(h, opts.locale)}`);
+    lines.push(`  ${k.yellow(block.heading)}`);
+    for (const h of block.hits) lines.push(`  - ${negatedHitLine(h, opts.locale)}`);
   }
 
   // Confidence + mode + rules line.

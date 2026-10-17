@@ -114,6 +114,13 @@ export interface ExtractedFeatures {
 export interface NegatedHit extends ExtractedHit {
   /** the negation words that governed the phrase, e.g. "not use", "keine", "is not used" */
   cue: string;
+  /**
+   * "denied" — read as denied, the phrase does NOT fire.
+   * "near"   — a cue governs the phrase but the construction continues
+   *            ("does not rank job applicants only by experience"), so the
+   *            phrase FIRES; listed for a human check only.
+   */
+  status: 'denied' | 'near';
 }
 
 export interface ExtractOptions {
@@ -275,11 +282,14 @@ export function extractFeatures(text: string, opts: ExtractOptions = {}): Extrac
   const negation = findNegated(text, negationLex, flat);
   const liveMatch = matches.map(() => false);
   const cueOf: Array<string | undefined> = matches.map(() => undefined);
+  const nearOf: Array<string | undefined> = matches.map(() => undefined);
   flat.forEach((_o, idx) => {
     const mi = owner[idx] as number;
     const cue = negation.suppressed.get(idx);
     if (cue === undefined) liveMatch[mi] = true;
     else if (cueOf[mi] === undefined) cueOf[mi] = cue;
+    const near = negation.near.get(idx);
+    if (near !== undefined && nearOf[mi] === undefined) nearOf[mi] = near;
   });
 
   // Pass 2 — emit live hits (and negated hits) in the deterministic lexicon order.
@@ -296,8 +306,13 @@ export function extractFeatures(text: string, opts: ExtractOptions = {}): Extrac
         phrase: m.entry.phrase,
         source,
         cue: cueOf[mi] as string,
+        status: 'denied',
       });
       return;
+    }
+    const near = nearOf[mi];
+    if (near !== undefined) {
+      negatedHits.push({ group: m.group, category: m.categoryKey, phrase: m.entry.phrase, source, cue: near, status: 'near' });
     }
     hits.push({ group: m.group, category: m.categoryKey, phrase: m.entry.phrase, source });
     const groupBucket = byCategory[m.group];
