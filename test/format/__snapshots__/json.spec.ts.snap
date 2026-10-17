@@ -5,9 +5,9 @@ exports[`formatJson() — output shape > snapshot — high-risk fixture (pretty=
   "input_text": "We use AI for CV screening and applicant tracking.",
   "detected_lang": "en",
   "lang_confident": true,
-  "rules_version": "v0.3.1",
-  "rules_hash": "87d2563c",
-  "rules_hash_full": "87d2563cf3f9c8a6b1188e5b679967877690092267c5e44cf3be92099bf8560c",
+  "rules_version": "v0.4.0",
+  "rules_hash": "1ac27a15",
+  "rules_hash_full": "1ac27a15bb3c80e251ba8b11dbafcecfe0764b04dabc817e7dcd4a32198aff9e",
   "mode": "deterministic",
   "confidence": 0.56,
   "article_5": {
