@@ -111,6 +111,11 @@ describe('extractFeatures() — options', () => {
     expect(employmentMatches).not.toContain('cv screening');
   });
 
+  it('labels invalid minN / maxN errors with extractFeatures()', () => {
+    expect(() => extractFeatures('cv screening tool', { minN: 0 })).toThrow(/^extractFeatures\(\): minN/);
+    expect(() => extractFeatures('cv screening tool', { minN: 3, maxN: 2 })).toThrow(/^extractFeatures\(\): maxN/);
+  });
+
   it('preserves the raw input in the result', () => {
     const input = '  Mixed-CASE   input with extra spaces  ';
     const result = extractFeatures(input);

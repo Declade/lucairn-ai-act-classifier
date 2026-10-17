@@ -1,7 +1,7 @@
 // Public API barrel. Stable across v0.1.x.
 
 export { classify } from './classify.js';
-export type { ClassifyOptions, ClassifyResult } from './classify.js';
+export type { ClassifyOptions, ClassifyResult, NegatedHitResult } from './classify.js';
 
 // Re-export rule result types so library consumers can type-check on them.
 export type {
@@ -30,7 +30,7 @@ export type {
   ThreeCategoryAggregate,
   ThreeCategoryItem,
 } from './rules/index.js';
-export type { ExtractedFeatures, ExtractedHit } from './extract/keyword.js';
+export type { ExtractedFeatures, ExtractedHit, NegatedHit } from './extract/keyword.js';
 
 // Format module — public surface for downstream consumers that want to render
 // classify() output without going through the CLI binary.

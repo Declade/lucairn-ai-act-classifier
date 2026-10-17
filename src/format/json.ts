@@ -48,6 +48,7 @@ const KEY_ORDER: ReadonlyArray<keyof ClassifyResult> = [
   'gpai',
   'three_category',
   'annex_iv_required',
+  'negated_hits',
   'features',
 ];
 

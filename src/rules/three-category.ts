@@ -33,7 +33,7 @@
 // Articles INTENTIONALLY OMITTED from the three-category pairing:
 //   - Article 13 (transparency to deployers) — separate obligation track.
 //     Surfaces independently in the classifier output.
-//   - Article 50 (GPAI / deployer transparency) — different cascade root
+//   - Article 50 (transparency for providers + deployers of certain AI systems) — different cascade root
 //     (not gated on Annex III high-risk). Surfaces independently.
 //
 // Suppression interaction:

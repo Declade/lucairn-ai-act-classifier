@@ -20,12 +20,19 @@
 //   - Filter for "scope_qualifier" negations (e.g. "research only"). The
 //     extractor surfaces the negation hit; the rules engine decides whether
 //     to suppress downstream classification.
+//
+// What it DOES do after v0.3.1: mark a phrase that stands near a negation
+// ("does NOT rank job applicants", "keine Emotionserkennung") in the additive
+// `negatedHits` list. ADVISORY ONLY: every hit fires exactly as in v0.3.1;
+// `hits` and `byCategory` never read the mark. The rules live in ./negation.ts.
 
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { normalize, tokenize, ngrams } from './normalize.js';
+import { normalize, tokenize } from './normalize.js';
 import { detectLang } from './lang.js';
+import { findNegated, isNegationLexicon } from './negation.js';
+import type { NegationLexicon } from './negation.js';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -95,6 +102,20 @@ export interface ExtractedFeatures {
   hits: ExtractedHit[];
   /** convenience grouping: hits by group → category → matched phrases */
   byCategory: Record<string, Record<string, string[]>>;
+  /**
+   * Advisory: lexicon phrases that fired but stand near a negation in every
+   * occurrence ("Found, but the text appears to deny it — please check").
+   * Every entry is ALSO in `hits`; the mark never changes a verdict. Set by
+   * the keyword extractor (after v0.3.1); absent on LLM-mode features and on
+   * features cached before it existed.
+   */
+  negatedHits?: NegatedHit[];
+}
+
+/** A fired lexicon phrase that stands near a negation (advisory). */
+export interface NegatedHit extends ExtractedHit {
+  /** the negation words near the phrase, e.g. "not use", "keine", "is not used" */
+  cue: string;
 }
 
 export interface ExtractOptions {
@@ -117,6 +138,12 @@ export interface ExtractOptions {
    * tokens typical, 800-token CLI cap).
    */
   maxN?: number;
+}
+
+/** Token range [start, end) of one n-gram occurrence in the input. */
+interface Occurrence {
+  start: number;
+  end: number;
 }
 
 // ---------------------------------------------------------------------------
@@ -165,7 +192,7 @@ export function _reloadLexicons(): void {
  *   1. normalize(text) → NFKC, lowercase, strip punctuation, collapse whitespace
  *   2. detectLang() → EN or DE (or use opts.lang override)
  *   3. tokenize → words preserving in-word hyphens
- *   4. ngrams(1..4) → candidate phrases
+ *   4. n-grams (minN..maxN, default 1..6) → candidate phrases
  *   5. for each n-gram, lookup against the active lexicon's flat-phrase index
  *   6. emit ExtractedFeatures with every match plus a by-group/by-category convenience
  *      structure for downstream rule modules
@@ -182,8 +209,21 @@ export function extractFeatures(text: string, opts: ExtractOptions = {}): Extrac
   const maxN = opts.maxN ?? 6;
 
   const tokens = tokenize(normalized);
-  const candidates = ngrams(tokens, minN, maxN);
-  const candidateSet = new Set(candidates);
+  if (minN < 1) throw new RangeError('extractFeatures(): minN must be >= 1.');
+  if (maxN < minN) throw new RangeError('extractFeatures(): maxN must be >= minN.');
+
+  // Every n-gram (and hyphen sub-token) occurrence, with its token range.
+  const occurrences = new Map<string, Occurrence[]>();
+  const addOccurrence = (phrase: string, start: number, end: number): void => {
+    const list = occurrences.get(phrase);
+    if (list === undefined) occurrences.set(phrase, [{ start, end }]);
+    else list.push({ start, end });
+  };
+  for (let n = minN; n <= maxN && n <= tokens.length; n++) {
+    for (let i = 0; i <= tokens.length - n; i++) {
+      addOccurrence(tokens.slice(i, i + n).join(' '), i, i + n);
+    }
+  }
 
   // Hyphen-split sub-tokens. German compound nouns ("deepfake-videos",
   // "live-gesichtserkennung") routinely combine a lexicon-targeted base
@@ -191,45 +231,78 @@ export function extractFeatures(text: string, opts: ExtractOptions = {}): Extrac
   // candidates lets the base term match without exploding the lexicon
   // with every possible compound. False-positive risk is low because the
   // sub-tokens still have to match a curated lexicon phrase verbatim.
-  for (const token of tokens) {
+  tokens.forEach((token, i) => {
     if (token.includes('-')) {
       for (const part of token.split('-')) {
-        if (part.length > 0) candidateSet.add(part);
+        if (part.length > 0) addOccurrence(part, i, i + 1);
       }
     }
-  }
+  });
 
-  const hits: ExtractedHit[] = [];
-  const byCategory: Record<string, Record<string, string[]>> = {};
+  // Pass 1 — every lexicon entry that occurs at all, in lexicon order.
   const groups = discoverGroups(lexicon);
-  for (const group of groups) byCategory[group] = {};
-
+  const matches: Array<{
+    group: string;
+    categoryKey: string;
+    category: LexiconCategory;
+    entry: LexiconEntry;
+    occs: Occurrence[];
+  }> = [];
   for (const group of groups) {
     const raw = lexicon[group];
     if (raw === undefined || raw === null || typeof raw !== 'object') continue;
     const categories = raw as Record<string, LexiconCategory>;
     for (const [categoryKey, category] of Object.entries(categories)) {
-      const matched: string[] = [];
       for (const entry of category.entries) {
-        const phraseNormalized = normalize(entry.phrase);
-        if (candidateSet.has(phraseNormalized)) {
-          matched.push(entry.phrase);
-          hits.push({
-            group,
-            category: categoryKey,
-            phrase: entry.phrase,
-            source: entry.source ?? category.source,
-          });
-        }
-      }
-      if (matched.length > 0) {
-        const groupBucket = byCategory[group];
-        if (groupBucket !== undefined) {
-          groupBucket[categoryKey] = matched;
-        }
+        const occs = occurrences.get(normalize(entry.phrase));
+        if (occs !== undefined) matches.push({ group, categoryKey, category, entry, occs });
       }
     }
   }
+
+  // Pass 2 — emit every hit in the deterministic lexicon order, exactly as
+  // v0.3.1 did. Negation is NOT consulted here.
+  const hits: ExtractedHit[] = [];
+  const byCategory: Record<string, Record<string, string[]>> = {};
+  for (const group of groups) byCategory[group] = {};
+  for (const m of matches) {
+    hits.push({ group: m.group, category: m.categoryKey, phrase: m.entry.phrase, source: m.entry.source ?? m.category.source });
+    const groupBucket = byCategory[m.group];
+    if (groupBucket !== undefined) {
+      const bucket = groupBucket[m.categoryKey];
+      if (bucket === undefined) groupBucket[m.categoryKey] = [m.entry.phrase];
+      else bucket.push(m.entry.phrase);
+    }
+  }
+
+  // Advisory negation note (after v0.3.1, see negation.ts). Computed AFTER the
+  // hits and only appended to `negatedHits`: a phrase is listed when every
+  // occurrence of it stands near a negation. It never removes a hit.
+  const rawNegation = lexicon._negation;
+  const negationLex: NegationLexicon | undefined = isNegationLexicon(rawNegation) ? rawNegation : undefined;
+  const flat: Occurrence[] = [];
+  const owner: number[] = [];
+  matches.forEach((m, mi) => {
+    for (const o of m.occs) {
+      flat.push(o);
+      owner.push(mi);
+    }
+  });
+  const negation = findNegated(text, negationLex, flat);
+  const plain = matches.map(() => false);
+  const cueOf: Array<string | undefined> = matches.map(() => undefined);
+  flat.forEach((_o, idx) => {
+    const mi = owner[idx] as number;
+    const cue = negation.negated.get(idx);
+    if (cue === undefined) plain[mi] = true;
+    else if (cueOf[mi] === undefined) cueOf[mi] = cue;
+  });
+  const negatedHits: NegatedHit[] = [];
+  matches.forEach((m, mi) => {
+    const cue = cueOf[mi];
+    if (plain[mi] || cue === undefined) return;
+    negatedHits.push({ group: m.group, category: m.categoryKey, phrase: m.entry.phrase, source: m.entry.source ?? m.category.source, cue });
+  });
 
   return {
     input: text,
@@ -238,5 +311,6 @@ export function extractFeatures(text: string, opts: ExtractOptions = {}): Extrac
     lexiconVersion: lexicon.version,
     hits,
     byCategory,
+    negatedHits,
   };
 }

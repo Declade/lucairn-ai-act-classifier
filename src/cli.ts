@@ -224,7 +224,7 @@ async function main(): Promise<void> {
     )
     .option('--json', 'Shortcut for --format json')
     .option('--lang <locale>', 'Override locale: en|de (default: auto-detect)')
-    .option('--cite', 'Emit citation block with EUR-Lex + Service Desk + lucairn.eu URLs')
+    .option('--cite', 'Emit citation block: EUR-Lex link to the full Regulation (EU) 2024/1689 text, a per-article link to the artificialintelligenceact.eu third-party text mirror (Future of Life Institute; not an official EU source), and a lucairn.eu commentary link')
     .option(
       '--no-three-category',
       'Suppress Lucairn obligation overlay',

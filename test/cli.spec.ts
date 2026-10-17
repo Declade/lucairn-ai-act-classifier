@@ -125,6 +125,53 @@ describe('CLI integration — happy paths', () => {
     expect(r.stdout).toContain('--annex');
   });
 
+  // Unreleased (after v0.3.1): --cite help must describe the links the block actually prints
+  // (EUR-Lex + third-party artificialintelligenceact.eu mirror + lucairn.eu),
+  // not "Service Desk" links it never emits.
+  itDist('--help → --cite text names the mirror, not the Service Desk', () => {
+    const r = runCli(['--help']);
+    const help = r.stdout.replace(/\s+/g, ' ');
+    expect(help).not.toContain('Service Desk');
+    expect(help).toContain('artificialintelligenceact.eu');
+    expect(help).toContain('not an official EU source');
+  });
+
+  // Unreleased (after v0.3.1): Article 50 is transparency for providers + deployers of certain
+  // AI systems; GPAI model obligations are Chapter V, Articles 51–56, with their own row.
+  itDist('Article 50 row is labelled "transparency", never "GPAI"', () => {
+    const en = runCli(['--lang', 'en', 'A customer-service chatbot.']);
+    expect(en.stdout).toContain('Article 50 (transparency)');
+    expect(en.stdout).not.toMatch(/Article 50 \([^)]*GPAI/);
+    const de = runCli(['--lang', 'de', 'Ein Chatbot für den Kundenservice.']);
+    expect(de.stdout).toContain('Artikel 50 (Transparenz)');
+    expect(de.stdout).not.toMatch(/Artikel 50 \([^)]*GPAI/);
+  });
+
+  // Negation is advisory only (PRD Amendment 1): the verdict and exit code stay
+  // as in v0.3.1; the output adds the note under the affected result line.
+  itDist('negated description: "does NOT rank job applicants" → still HIGH-RISK (as v0.3.1) + advisory note', () => {
+    const r = runCli(['--json', 'Our CV tool does NOT rank job applicants.']);
+    const parsed = JSON.parse(r.stdout) as {
+      annex_iii: { high_risk: boolean };
+      negated_hits: Array<{ phrase: string; ref: string }>;
+    };
+    expect(parsed.annex_iii.high_risk).toBe(true);
+    expect(parsed.negated_hits).toEqual([expect.objectContaining({ phrase: 'rank job applicants', ref: 'Annex III.4' })]);
+    const table = runCli(['--lang', 'en', 'Our CV tool does NOT rank job applicants.']);
+    expect(table.stdout).toContain('Found, but the text appears to deny it — please check: "rank job applicants"');
+  });
+
+  itDist('negated description: no emotion recognition / no social scoring → still PROHIBITED, exit 1 (as v0.3.1) + note', () => {
+    const r = runCli(['--json', 'A chatbot that does not use emotion recognition and does not do social scoring.']);
+    expect(r.status).toBe(1);
+    const parsed = JSON.parse(r.stdout) as { article_5: { prohibited: boolean }; negated_hits: Array<{ phrase: string }> };
+    expect(parsed.article_5.prohibited).toBe(true);
+    expect(parsed.negated_hits.map((h) => h.phrase)).toContain('social scoring');
+    const de = runCli(['--lang', 'de', 'Ein Chatbot, der keine Sozialbewertung betreibt.']);
+    expect(de.status).toBe(1);
+    expect(de.stdout).toContain('Gefunden, aber der Text scheint es zu verneinen — bitte prüfen');
+  });
+
   // Day-13 polish: --help text MUST include both an Examples section and an
   // Exit codes section so first-time users can copy-paste invocations and
   // understand the exit code semantics without reading the README.

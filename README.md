@@ -31,7 +31,7 @@ ANTHROPIC_API_KEY="<your-key>" npx @lucairn/ai-act-classifier --llm anthropic \
   - **Article 50** transparency obligations (4 paragraph paths)
   - **Annex IV** technical-documentation requirement
 - Emits Lucairn's three-category obligation overlay (Sanitizer / Evidence / Inventory)
-- Cites the EUR-Lex source URL on every fired article + the EU AI Office Service Desk reference + optional Lucairn commentary
+- Cites the EUR-Lex source (Regulation (EU) 2024/1689) on every fired article in `--explain`; `--cite` adds a per-article link to the artificialintelligenceact.eu third-party text mirror (Future of Life Institute, not an official EU source) and a Lucairn commentary link
 - Stamps the rules version + SHA on every output so the same input on the same rule-set is byte-reproducible
 - Available as a CLI binary (this package) and as a library (`formatExplain` + `classify` exported from `@lucairn/ai-act-classifier`)
 
@@ -106,7 +106,19 @@ To clear the cache manually: `rm -rf ~/.cache/lucairn-ai-act-classifier`.
 
 ## Architecture (one paragraph)
 
-Rules-first hybrid. A deterministic TypeScript rules engine evaluates Article 5, 6 + Annex III, 10, 12, 13, 14, 15, and 50 against features extracted from your input. Default extraction is a keyword + phrase pattern matcher in EN+DE — works offline, no API key. The optional `--llm` mode uses your own API key to do better feature extraction; the rules engine still picks the articles deterministically. Every output cites its rule version (SHA-pinned) so the same input always produces the same classification. Source layout: `src/extract/` (keyword + lang detection + LLM providers + cache), `src/rules/` (per-article modules with cite-and-match summaries), `src/format/` (CLI table + JSON + Markdown + `--explain` output), `src/data/` (the curated lexicons + Annex III metadata + citations), `src/i18n/` (EN+DE locale bundles), `src/content/blog-excerpts/` (curated regulator-explainer commentary).
+Rules-first hybrid. A deterministic TypeScript rules engine evaluates Article 5, 6 + Annex III, 10, 12, 13, 14, 15, and 50 against features extracted from your input. Default extraction is a keyword + phrase pattern matcher in EN+DE — works offline, no API key. A negation word never changes a result; it only adds a "please check" note (see [How negation works](#how-negation-works)). The optional `--llm` mode uses your own API key to do better feature extraction; the rules engine still picks the articles deterministically. Every output cites its rule version (SHA-pinned) so the same input always produces the same classification. Source layout: `src/extract/` (keyword + lang detection + LLM providers + cache), `src/rules/` (per-article modules with cite-and-match summaries), `src/format/` (CLI table + JSON + Markdown + `--explain` output), `src/data/` (the curated lexicons + Annex III metadata + citations), `src/i18n/` (EN+DE locale bundles), `src/content/blog-excerpts/` (curated regulator-explainer commentary).
+
+## How negation works
+
+A negation word never changes the result. "Our CV tool does NOT rank job applicants." still shows HIGH-RISK (Annex III.4), exactly as it did before negation handling existed; "A chatbot that does not use emotion recognition and does not do social scoring." still shows Article 5 PROHIBITED.
+
+When a matched phrase stands near a negation ("does not rank job applicants", "no social scoring", "facial recognition is not used", "keine Emotionserkennung"), the output adds a note directly under the affected result line (table, Markdown and `--explain`):
+
+> Found, but the text appears to deny it — please check
+
+German output reads "Gefunden, aber der Text scheint es zu verneinen — bitte prüfen". In JSON the same phrases are listed in the additive `negated_hits` field (phrase, AI Act reference, negation words). Every listed phrase also fired and counts in the result.
+
+Why only a note: a keyword engine cannot read negation reliably. "The system prevents no emotion recognition in the workplace", "Nobody gets a loan without credit scoring" and "Social scoring is not planned, it is already live" all contain a negation word, yet each describes the practice. Dropping the result on such sentences would hide a real prohibited or high-risk system, so the decision stays with the person reading the output. The note is a hint and can be wrong both ways: it can appear on a sentence that actually affirms the practice, and it does not see negation carried by a verb ("we refrain from"), negation in another sentence, or a noun between the negation and the phrase ("no use of facial recognition"). The rules are deterministic and documented in `src/extract/negation.ts`; the word lists live in the `_negation` block of each lexicon.
 
 ## Accuracy
 
@@ -159,6 +171,7 @@ The classifier intentionally does NOT:
 - Distinguish provider vs deployer status. Both surfaces hit the same rule engine.
 - Decide whether a system actually qualifies for a statutory carve-out (e.g. Art 50(1) law-enforcement carve-out). The carve-out language is enumerated VERBATIM in the chapeau output for the consultant to apply downstream.
 - Implement full sub-letter narrowing for every Annex III paragraph. Coverage is complete across paragraphs 1-8 with conservative defaults: when narrowing is ambiguous we return an empty sub-letters array rather than over-claim.
+- Read negation. A negation word never changes the result; it only adds a "please check" note next to the affected result line (see [How negation works](#how-negation-works)).
 - Normalise plurals and German morphology in the keyword extractor. Compound nouns like `Emotionserkennungssystems` are a known v0.2 gap (cite [accuracy/KNOWN-MISCLASSIFICATIONS.md](./accuracy/KNOWN-MISCLASSIFICATIONS.md) §G-5).
 
 Found a misclassification? Open a GitHub issue with: (a) the use-case description, (b) your expected classification, (c) your reasoning citing EUR-Lex Regulation (EU) 2024/1689 paragraph numbers, and (d) the current classifier output. We respond to issues during European business hours.

@@ -12,7 +12,7 @@ exports[`formatMarkdown() — output shape > DE snapshot — high-risk fixture, 
 | Artikel 13 (Betreiber-Transparenz) | ✅ anwendbar |  |
 | Artikel 14 (menschliche Aufsicht) | ✅ anwendbar |  |
 | Artikel 15 (Genauigkeit/Robustheit/Cybersicherheit) | ✅ anwendbar |  |
-| Artikel 50 (GPAI/Betreiber) | ⬜ nicht ausgelöst |  |
+| Artikel 50 (Transparenz) | ⬜ nicht ausgelöst |  |
 | Artikel 4  (KI-Kompetenz) | ⬜ nicht anwendbar |  |
 | Artikel 53+55 (GPAI) | ⬜ nicht anwendbar |  |
 | Anhang IV  (technische Dokumentation) | 📄 ERFORDERLICH |  |
@@ -25,7 +25,7 @@ exports[`formatMarkdown() — output shape > DE snapshot — high-risk fixture, 
 | Kat 2 Evidence   (Art. 12+14) | 12 + 14 | 🔴 ERFORDERLICH |
 | Kat 3 Inventory  (Art. 10+12+14+15) | 10 + 12 + 14 + 15 | 🔴 ERFORDERLICH |
 
-**Konfidenz:** 0.44 · **Modus:** deterministic · **Regeln:** v0.3.1 (sha256:92b108c4…)
+**Konfidenz:** 0.44 · **Modus:** deterministic · **Regeln:** v0.3.1 (sha256:87d2563c…)
 
 ---
 
@@ -44,7 +44,7 @@ exports[`formatMarkdown() — output shape > EN snapshot — high-risk fixture, 
 | Article 13 (deployer transparency) | ✅ applies |  |
 | Article 14 (human oversight) | ✅ applies |  |
 | Article 15 (accuracy/robustness/cybersecurity) | ✅ applies |  |
-| Article 50 (GPAI/deployer) | ⬜ not triggered |  |
+| Article 50 (transparency) | ⬜ not triggered |  |
 | Article 4  (AI literacy) | ⬜ not applicable |  |
 | Articles 53+55 (GPAI) | ⬜ not applicable |  |
 | Annex IV  (technical docs) | 📄 REQUIRED |  |
@@ -57,7 +57,7 @@ exports[`formatMarkdown() — output shape > EN snapshot — high-risk fixture, 
 | Cat 2 Evidence   (Art 12+14) | 12 + 14 | 🔴 REQUIRED |
 | Cat 3 Inventory  (Art 10+12+14+15) | 10 + 12 + 14 + 15 | 🔴 REQUIRED |
 
-**Confidence:** 0.56 · **Mode:** deterministic · **Rules:** v0.3.1 (sha256:92b108c4…)
+**Confidence:** 0.56 · **Mode:** deterministic · **Rules:** v0.3.1 (sha256:87d2563c…)
 
 ---
 

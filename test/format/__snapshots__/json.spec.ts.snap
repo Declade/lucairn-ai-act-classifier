@@ -6,8 +6,8 @@ exports[`formatJson() — output shape > snapshot — high-risk fixture (pretty=
   "detected_lang": "en",
   "lang_confident": true,
   "rules_version": "v0.3.1",
-  "rules_hash": "92b108c4",
-  "rules_hash_full": "92b108c493e95b896b4e0d5abe67b1f84fd61a5c3db55afd202f1014d0042973",
+  "rules_hash": "87d2563c",
+  "rules_hash_full": "87d2563cf3f9c8a6b1188e5b679967877690092267c5e44cf3be92099bf8560c",
   "mode": "deterministic",
   "confidence": 0.56,
   "article_5": {
@@ -317,6 +317,7 @@ exports[`formatJson() — output shape > snapshot — high-risk fixture (pretty=
       "version": "v0.1.0-gen"
     }
   },
-  "annex_iv_required": true
+  "annex_iv_required": true,
+  "negated_hits": []
 }"
 `;

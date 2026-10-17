@@ -23,6 +23,7 @@ import {
   type CitationEntry,
 } from '../util/citations.js';
 import { getLocale, type I18nLocale } from '../i18n/load.js';
+import { notesForRow, negatedHitLine, type NoteRow } from '../util/negated-hits.js';
 
 export interface CliTableOptions {
   /** Output locale for labels (en|de). Independent of result.detected_lang. */
@@ -325,12 +326,19 @@ export function formatCliTable(result: ClassifyResult, opts: CliTableOptions): s
   const labels = locale.labels;
   const k = color(opts.useColor);
   const lines: string[] = [];
+  // Advisory negation notes, directly under the result line they belong to.
+  const pushNotes = (row: NoteRow): void => {
+    for (const h of notesForRow(result.negated_hits, row)) {
+      lines.push(`    ${k.yellow(`⚠ ${negatedHitLine(h, opts.locale)}`)}`);
+    }
+  };
 
   // Section heading.
   lines.push(`  ${labels.section_title}`);
 
   // Article 5.
   lines.push(`  ${labels.article_5}: ${statusForArticle5(result.article_5, labels, k)}`);
+  pushNotes('article_5');
 
   // Article 6 + Annex III.
   lines.push(`  ${labels.article_6_annex_iii}:      ${statusForAnnexIII(result.annex_iii, labels, k)}`);
@@ -338,6 +346,7 @@ export function formatCliTable(result: ClassifyResult, opts: CliTableOptions): s
   for (const line of renderAnnexIIITree(result.annex_iii, opts.locale)) {
     lines.push(line);
   }
+  pushNotes('annex_iii');
 
   // Article 10 / 12 / 13 / 14 / 15.
   lines.push(`  ${labels.article_10}: ${statusForCascade(result.article_10.applicable, labels, k)}`);
@@ -351,19 +360,23 @@ export function formatCliTable(result: ClassifyResult, opts: CliTableOptions): s
     ? k.yellow(labels.status_applies)
     : k.dim(labels.status_not_triggered);
   lines.push(`  ${labels.article_50}:  ${art50Status}`);
+  pushNotes('article_50');
 
   // Article 4 (AI literacy) — horizontal obligation, independent root (not in
   // the high-risk cascade). Surfaces as "applies" / "not applicable" with the
   // same idiom as cascade rows.
   lines.push(`  ${labels.article_4}: ${statusForCascade(result.article_4.applicable, labels, k)}`);
+  pushNotes('article_4');
 
   // Articles 53 + 55 (GPAI). Compact row label: "Art 53" or "Art 53+55" when
   // applicable; "not applicable" otherwise. Art 55 is an "in addition to"
   // overlay (cf. `src/rules/article-53-gpai.ts`).
   lines.push(`  ${labels.gpai_articles_53_55}: ${statusForGPAI(result.gpai, opts.locale, labels, k)}`);
+  pushNotes('gpai');
 
   // Annex IV.
   lines.push(`  ${labels.annex_iv}:  ${statusForAnnexIV(result.annex_iv_required, labels, k)}`);
+  pushNotes('other');
 
   // Lucairn obligation overlay block.
   lines.push('');

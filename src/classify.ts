@@ -14,7 +14,7 @@
 //   6.  classifyArticle13(annex, art5)           — Day 4 deployer transparency
 //   7.  classifyArticle14(annex, art5)           — Day 4 human oversight
 //   8.  classifyArticle15(annex, art5)           — Day 4 accuracy/robustness/cybersecurity
-//   9.  classifyArticle50(features, art5, annex) — Day 5 GPAI/deployer transparency
+//   9.  classifyArticle50(features, art5, annex) — Day 5 transparency obligations (providers + deployers of certain AI systems)
 //   9b. classifyArticle4(features)               — Day 15 (v0.3.0) AI literacy (non-cascade root)
 //   9c. classifyGPAI(features)                   — Day 15 (v0.3.0) Articles 53 + 55 (non-cascade root)
 //  10.  classifyThreeCategory(annex, art5, art10, art12, art14, art15) — Day 5 overlay
@@ -54,6 +54,10 @@ import type {
   ThreeCategoryResult,
 } from './rules/index.js';
 import { RULES_VERSION, RULES_HASH, RULES_HASH_FULL_HEX } from './util/rules-hash.js';
+import { toNegatedHitResults } from './util/negated-hits.js';
+import type { NegatedHitResult } from './util/negated-hits.js';
+
+export type { NegatedHitResult } from './util/negated-hits.js';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -114,7 +118,7 @@ export interface ClassifyResult {
   article_14: Article14Result;
   /** Article 15 — accuracy/robustness/cybersecurity cascade. */
   article_15: Article15Result;
-  /** Article 50 — GPAI/deployer transparency (non-cascade root). */
+  /** Article 50 — transparency obligations for providers and deployers of certain AI systems (non-cascade root). Not GPAI: GPAI model obligations are Chapter V, Articles 51–56 (`gpai`). */
   article_50: Article50Result;
   /** Article 4 — AI literacy (non-cascade root). */
   article_4: Article4Result;
@@ -124,6 +128,14 @@ export interface ClassifyResult {
   three_category: ThreeCategoryResult | null;
   /** True iff annex_iii.high_risk && !annex_iii.suppressed_by_article_5. */
   annex_iv_required: boolean;
+  /**
+   * Advisory only: fired lexicon phrases that stand near a negation
+   * ("Found, but the text appears to deny it — please check"). Every entry
+   * also fired and counts in the verdict above exactly as without the note;
+   * negation never changes a verdict. Empty when there is nothing to check,
+   * and always empty in LLM mode. Added after v0.3.1 (additive).
+   */
+  negated_hits: NegatedHitResult[];
 }
 
 // ---------------------------------------------------------------------------
@@ -266,5 +278,6 @@ export async function classify(text: string, opts: ClassifyOptions = {}): Promis
     gpai,
     three_category,
     annex_iv_required,
+    negated_hits: toNegatedHitResults(features.negatedHits),
   };
 }

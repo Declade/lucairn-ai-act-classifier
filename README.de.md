@@ -31,7 +31,7 @@ ANTHROPIC_API_KEY="<ihr-key>" npx @lucairn/ai-act-classifier --llm anthropic \
   - **Artikel 50** Transparenzpflichten (vier Absatz-Pfade)
   - **Anhang IV** Pflicht zur technischen Dokumentation
 - Liefert Lucairns Drei-Kategorien-Pflichten-Overlay (Sanitizer / Nachweis / Inventar)
-- Verweist auf die EUR-Lex-Quelle pro ausgelöstem Artikel sowie auf den Service Desk des EU-AI-Office und (optional) den Lucairn-Kommentar
+- Verweist in `--explain` pro ausgelöstem Artikel auf die EUR-Lex-Quelle (Verordnung (EU) 2024/1689); `--cite` ergänzt pro Artikel einen Link auf den Drittanbieter-Textspiegel artificialintelligenceact.eu (Future of Life Institute, keine offizielle EU-Quelle) und einen Lucairn-Kommentar-Link
 - Stempelt Regelsatz-Version und SHA in jede Ausgabe — dieselbe Eingabe auf demselben Regelsatz erzeugt eine byte-stabile Ausgabe
 - Verfügbar als CLI-Binary (dieses Paket) und als Bibliothek (`formatExplain` und `classify` exportiert aus `@lucairn/ai-act-classifier`)
 
@@ -106,7 +106,19 @@ Cache manuell löschen: `rm -rf ~/.cache/lucairn-ai-act-classifier`.
 
 ## Architektur (in einem Absatz)
 
-Regelwerk-zuerst-Hybrid. Eine deterministische TypeScript-Regel-Engine wertet die Artikel 5, 6 + Anhang III, 10, 12, 13, 14, 15 und 50 gegen Merkmale aus, die aus Ihrer Eingabe extrahiert werden. Die Standard-Extraktion ist ein Stichwort- und Phrasen-Mustererkenner in EN+DE — funktioniert offline, ohne API-Key. Der optionale `--llm`-Modus nutzt Ihren eigenen API-Key für eine bessere Feature-Extraktion; die Regel-Engine wählt die Artikel weiterhin deterministisch aus. Jede Ausgabe verweist auf ihre Regelsatz-Version (SHA-fixiert) — dieselbe Eingabe erzeugt immer dieselbe Klassifikation. Quellbaum: `src/extract/` (Stichwort- und Spracherkennung + LLM-Anbieter + Cache), `src/rules/` (Pro-Artikel-Module mit Cite-and-Match-Zusammenfassungen), `src/format/` (CLI-Tabelle + JSON + Markdown + `--explain`-Ausgabe), `src/data/` (kuratierte Lexika + Anhang-III-Metadaten + Zitate), `src/i18n/` (EN+DE-Lokalisierungsbündel), `src/content/blog-excerpts/` (kuratierte Regulator-Kommentare).
+Regelwerk-zuerst-Hybrid. Eine deterministische TypeScript-Regel-Engine wertet die Artikel 5, 6 + Anhang III, 10, 12, 13, 14, 15 und 50 gegen Merkmale aus, die aus Ihrer Eingabe extrahiert werden. Die Standard-Extraktion ist ein Stichwort- und Phrasen-Mustererkenner in EN+DE — funktioniert offline, ohne API-Key. Ein Verneinungswort ändert nie ein Ergebnis; es ergänzt nur einen „bitte prüfen“-Hinweis (siehe [Wie Verneinung behandelt wird](#wie-verneinung-behandelt-wird)). Der optionale `--llm`-Modus nutzt Ihren eigenen API-Key für eine bessere Feature-Extraktion; die Regel-Engine wählt die Artikel weiterhin deterministisch aus. Jede Ausgabe verweist auf ihre Regelsatz-Version (SHA-fixiert) — dieselbe Eingabe erzeugt immer dieselbe Klassifikation. Quellbaum: `src/extract/` (Stichwort- und Spracherkennung + LLM-Anbieter + Cache), `src/rules/` (Pro-Artikel-Module mit Cite-and-Match-Zusammenfassungen), `src/format/` (CLI-Tabelle + JSON + Markdown + `--explain`-Ausgabe), `src/data/` (kuratierte Lexika + Anhang-III-Metadaten + Zitate), `src/i18n/` (EN+DE-Lokalisierungsbündel), `src/content/blog-excerpts/` (kuratierte Regulator-Kommentare).
+
+## Wie Verneinung behandelt wird
+
+Ein Verneinungswort ändert nie das Ergebnis. „Das Tool soll nicht Bewerber sortieren.“ zeigt weiterhin HOCHRISIKO (Anhang III Nr. 4), genau wie vor der Verneinungs-Erkennung; „Ein Chatbot, der keine Sozialbewertung betreibt.“ zeigt weiterhin Artikel 5 VERBOTEN.
+
+Steht eine gefundene Phrase in der Nähe einer Verneinung („keine Emotionserkennung“, „Gesichtserkennung wird nicht eingesetzt“, „does not rank job applicants“), ergänzt die Ausgabe direkt unter der betroffenen Ergebniszeile einen Hinweis (Tabelle, Markdown und `--explain`):
+
+> Gefunden, aber der Text scheint es zu verneinen — bitte prüfen
+
+Die englische Ausgabe lautet „Found, but the text appears to deny it — please check“. Im JSON stehen dieselben Phrasen im zusätzlichen Feld `negated_hits` (Phrase, KI-VO-Verweis, Verneinungswörter). Jede dort gelistete Phrase hat ebenfalls ausgelöst und zählt im Ergebnis.
+
+Warum nur ein Hinweis: Ein Stichwort-Erkenner kann Verneinung nicht verlässlich lesen. „Das System verhindert keine Emotionserkennung am Arbeitsplatz“, „Niemand bekommt einen Kredit ohne Bonitätsprüfung“ und „Wir stellen keine Emotionserkennung am Arbeitsplatz ein“ enthalten ein Verneinungswort und beschreiben trotzdem die Praxis. Das Ergebnis bei solchen Sätzen wegzulassen, würde ein echtes verbotenes oder Hochrisiko-System verschweigen; die Entscheidung bleibt deshalb bei der Person, die die Ausgabe liest. Der Hinweis ist eine Hilfe und kann in beide Richtungen danebenliegen: Er kann bei einem Satz erscheinen, der die Praxis tatsächlich bejaht, und er erkennt keine Verneinung über ein Verb („verzichten auf“), in einem anderen Satz oder mit einem Nomen zwischen Verneinung und Phrase („keinen Einsatz von Gesichtserkennung“). Die Regeln sind deterministisch und in `src/extract/negation.ts` dokumentiert; die Wortlisten stehen im `_negation`-Block jedes Lexikons.
 
 ## Genauigkeit (Accuracy)
 
@@ -159,6 +171,7 @@ Der Klassifizierer unterscheidet bewusst NICHT:
 - Anbieter- vs. Betreiber-Status. Beide Oberflächen treffen dieselbe Regel-Engine.
 - Ob ein System tatsächlich eine gesetzliche Ausnahme in Anspruch nehmen kann (z. B. die Strafverfolgungs-Ausnahme nach Art. 50 Abs. 1). Die Ausnahme-Sprache wird WÖRTLICH im Kopfsatz-Output ausgegeben, damit der Berater sie nachgelagert anwenden kann.
 - Vollständige Buchstaben-Eingrenzung für jeden Anhang-III-Absatz. Die Abdeckung ist vollständig über die Absätze 1–8 mit konservativen Standards: bei mehrdeutiger Eingrenzung geben wir ein leeres Buchstaben-Array zurück, statt zu viel zu behaupten.
+- Verneinung lesen. Ein Verneinungswort ändert nie das Ergebnis; es ergänzt nur einen „bitte prüfen“-Hinweis unter der betroffenen Ergebniszeile (siehe [Wie Verneinung behandelt wird](#wie-verneinung-behandelt-wird)).
 - Pluralformen und deutsche Morphologie im Stichwort-Extraktor. Komposita wie `Emotionserkennungssystems` sind eine bekannte v0.2-Lücke (siehe [accuracy/KNOWN-MISCLASSIFICATIONS.md](./accuracy/KNOWN-MISCLASSIFICATIONS.md) §G-5).
 
 Fehlklassifikation gefunden? Öffnen Sie ein GitHub-Issue mit: (a) der Anwendungsfall-Beschreibung, (b) Ihrer erwarteten Klassifikation, (c) Ihrer Begründung mit Verweis auf den entsprechenden EUR-Lex-Absatz der Verordnung (EU) 2024/1689 und (d) der aktuellen Klassifizierer-Ausgabe. Wir reagieren auf Issues während der mitteleuropäischen Geschäftszeiten.
