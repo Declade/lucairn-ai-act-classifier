@@ -21,16 +21,17 @@
 //     extractor surfaces the negation hit; the rules engine decides whether
 //     to suppress downstream classification.
 //
-// What it DOES do after v0.3.1: drop a phrase occurrence that sits inside a
-// grammatically negated clause ("does NOT rank job applicants", "keine
-// Emotionserkennung"). The scope model lives in ./negation.ts.
+// What it DOES do after v0.3.1: drop a phrase occurrence that a negation cue
+// DIRECTLY governs ("does NOT rank job applicants", "keine Emotionserkennung")
+// and report it in `negatedHits`. Everything else still fires. The rules live
+// in ./negation.ts.
 
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { normalize, tokenize } from './normalize.js';
 import { detectLang } from './lang.js';
-import { computeNegationScope, deniedAfter, isNegationLexicon } from './negation.js';
+import { findNegated, isNegationLexicon } from './negation.js';
 import type { NegationLexicon } from './negation.js';
 
 // ---------------------------------------------------------------------------
@@ -101,6 +102,18 @@ export interface ExtractedFeatures {
   hits: ExtractedHit[];
   /** convenience grouping: hits by group → category → matched phrases */
   byCategory: Record<string, Record<string, string[]>>;
+  /**
+   * Lexicon phrases that occurred in the input but were read as DENIED by the
+   * negation rules (negation.ts) and therefore do not fire. Surfaced so a
+   * human can check them. Set by the keyword extractor (after v0.3.1); absent
+   * on LLM-mode features and on features cached before it existed.
+   */
+  negatedHits?: NegatedHit[];
+}
+
+export interface NegatedHit extends ExtractedHit {
+  /** the negation words that governed the phrase, e.g. "not use", "keine", "is not used" */
+  cue: string;
 }
 
 export interface ExtractOptions {
@@ -177,7 +190,7 @@ export function _reloadLexicons(): void {
  *   1. normalize(text) → NFKC, lowercase, strip punctuation, collapse whitespace
  *   2. detectLang() → EN or DE (or use opts.lang override)
  *   3. tokenize → words preserving in-word hyphens
- *   4. ngrams(1..4) → candidate phrases
+ *   4. n-grams (minN..maxN, default 1..6) → candidate phrases
  *   5. for each n-gram, lookup against the active lexicon's flat-phrase index
  *   6. emit ExtractedFeatures with every match plus a by-group/by-category convenience
  *      structure for downstream rule modules
@@ -194,8 +207,8 @@ export function extractFeatures(text: string, opts: ExtractOptions = {}): Extrac
   const maxN = opts.maxN ?? 6;
 
   const tokens = tokenize(normalized);
-  if (minN < 1) throw new RangeError('ngrams(): minN must be >= 1.');
-  if (maxN < minN) throw new RangeError('ngrams(): maxN must be >= minN.');
+  if (minN < 1) throw new RangeError('extractFeatures(): minN must be >= 1.');
+  if (maxN < minN) throw new RangeError('extractFeatures(): maxN must be >= minN.');
 
   // Every n-gram (and hyphen sub-token) occurrence, with its token range.
   const occurrences = new Map<string, Occurrence[]>();
@@ -245,52 +258,55 @@ export function extractFeatures(text: string, opts: ExtractOptions = {}): Extrac
     }
   }
 
-  // Negation (after v0.3.1, see negation.ts). An occurrence counts only when it is
-  // not negated; a phrase fires when at least one occurrence counts.
-  // Forward scopes are checked at the occurrence's FIRST token, so a cue word
-  // inside the phrase itself ("without human oversight") never negates its
-  // own phrase. A stand-alone without/ohne negates only the first lexicon
-  // phrase starting in its window (plus phrases overlapping that one).
+  // Negation (after v0.3.1, see negation.ts). Governed-only: an occurrence is
+  // suppressed only when a negation cue directly governs it; a phrase fires
+  // when at least one occurrence is not suppressed. A phrase whose every
+  // occurrence is suppressed is reported in `negatedHits` for a human check.
   const rawNegation = lexicon._negation;
   const negationLex: NegationLexicon | undefined = isNegationLexicon(rawNegation) ? rawNegation : undefined;
-  const scope = computeNegationScope(text, negationLex);
-  const withoutNegated = new Set<number>();
-  for (const w of scope.withoutWindows) {
-    let first: Occurrence | undefined;
-    for (const m of matches) {
-      for (const o of m.occs) {
-        if (o.start < w.start || o.start >= w.end) continue;
-        if (first === undefined || o.start < first.start || (o.start === first.start && o.end > first.end)) {
-          first = o;
-        }
-      }
+  const flat: Occurrence[] = [];
+  const owner: number[] = [];
+  matches.forEach((m, mi) => {
+    for (const o of m.occs) {
+      flat.push(o);
+      owner.push(mi);
     }
-    if (first !== undefined) {
-      for (let k = first.start; k < first.end; k++) withoutNegated.add(k);
-    }
-  }
-  const isLive = (o: Occurrence): boolean =>
-    scope.negated[o.start] !== true && !withoutNegated.has(o.start) && !deniedAfter(scope, negationLex, o.end);
+  });
+  const negation = findNegated(text, negationLex, flat);
+  const liveMatch = matches.map(() => false);
+  const cueOf: Array<string | undefined> = matches.map(() => undefined);
+  flat.forEach((_o, idx) => {
+    const mi = owner[idx] as number;
+    const cue = negation.suppressed.get(idx);
+    if (cue === undefined) liveMatch[mi] = true;
+    else if (cueOf[mi] === undefined) cueOf[mi] = cue;
+  });
 
-  // Pass 2 — emit live hits in the deterministic lexicon order.
+  // Pass 2 — emit live hits (and negated hits) in the deterministic lexicon order.
   const hits: ExtractedHit[] = [];
+  const negatedHits: NegatedHit[] = [];
   const byCategory: Record<string, Record<string, string[]>> = {};
   for (const group of groups) byCategory[group] = {};
-  for (const m of matches) {
-    if (!m.occs.some(isLive)) continue;
-    hits.push({
-      group: m.group,
-      category: m.categoryKey,
-      phrase: m.entry.phrase,
-      source: m.entry.source ?? m.category.source,
-    });
+  matches.forEach((m, mi) => {
+    const source = m.entry.source ?? m.category.source;
+    if (!liveMatch[mi]) {
+      negatedHits.push({
+        group: m.group,
+        category: m.categoryKey,
+        phrase: m.entry.phrase,
+        source,
+        cue: cueOf[mi] as string,
+      });
+      return;
+    }
+    hits.push({ group: m.group, category: m.categoryKey, phrase: m.entry.phrase, source });
     const groupBucket = byCategory[m.group];
     if (groupBucket !== undefined) {
       const bucket = groupBucket[m.categoryKey];
       if (bucket === undefined) groupBucket[m.categoryKey] = [m.entry.phrase];
       else bucket.push(m.entry.phrase);
     }
-  }
+  });
 
   return {
     input: text,
@@ -299,5 +315,6 @@ export function extractFeatures(text: string, opts: ExtractOptions = {}): Extrac
     lexiconVersion: lexicon.version,
     hits,
     byCategory,
+    negatedHits,
   };
 }

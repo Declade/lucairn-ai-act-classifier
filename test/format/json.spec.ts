@@ -84,6 +84,8 @@ describe('formatJson() — output shape', () => {
     expect(keys.indexOf('article_5')).toBeLessThan(keys.indexOf('annex_iii'));
     expect(keys.indexOf('annex_iii')).toBeLessThan(keys.indexOf('article_10'));
     expect(keys.indexOf('article_10')).toBeLessThan(keys.indexOf('article_50'));
-    expect(keys[keys.length - 1]).toBe('annex_iv_required');
+    // `negated_hits` (after v0.3.1, additive) follows `annex_iv_required`.
+    expect(keys[keys.length - 2]).toBe('annex_iv_required');
+    expect(keys[keys.length - 1]).toBe('negated_hits');
   });
 });

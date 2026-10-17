@@ -1,4 +1,7 @@
-// Negation scoping (after v0.3.1) — src/extract/negation.ts via extractFeatures().
+// Negation handling (after v0.3.1) — src/extract/negation.ts via extractFeatures().
+// Governed-only: a hit is suppressed only when a negation cue directly governs
+// the phrase; everything else fires. The over-correction guard (bug-hunter
+// inputs + differential sweep) lives in negation-safety.spec.ts.
 //
 // Every negation case is paired with a positive control so a test cannot pass
 // just because the phrase is missing from the lexicon.
@@ -6,7 +9,11 @@
 import { describe, it, expect } from 'vitest';
 import { extractFeatures } from '../../src/extract/keyword.js';
 import { classify } from '../../src/classify.js';
-import { computeNegationScope, isNegationLexicon } from '../../src/extract/negation.js';
+import { findNegated, isNegationLexicon } from '../../src/extract/negation.js';
+import { formatMarkdown } from '../../src/format/markdown.js';
+import { formatExplain } from '../../src/format/explain.js';
+import { formatCliTable } from '../../src/format/cli-table.js';
+import { negatedHitRef } from '../../src/util/negated-hits.js';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -33,6 +40,9 @@ describe('negation — the two reported sentences (classify end-to-end)', () => 
     expect(r.annex_iii.high_risk).toBe(false);
     expect(r.annex_iii.domains).toEqual([]);
     expect(r.annex_iv_required).toBe(false);
+    expect(r.negated_hits).toContainEqual(
+      expect.objectContaining({ phrase: 'rank job applicants', group: 'annex_iii', ref: 'Annex III.4', cue: 'not' }),
+    );
     const control = await classify('Our CV tool ranks job applicants.');
     expect(control.annex_iii.high_risk).toBe(true);
     expect(control.annex_iii.domains.map((d) => d.annex_iii_number)).toContain(4);
@@ -46,6 +56,10 @@ describe('negation — the two reported sentences (classify end-to-end)', () => 
     expect(r.annex_iii.high_risk).toBe(false);
     expect(r.article_50.applicable).toBe(true);
     expect(r.article_50.triggered_by.paragraph_1_interaction).toBe(true);
+    expect(r.negated_hits).toContainEqual(
+      expect.objectContaining({ phrase: 'social scoring', ref: 'Art 5(1)(c)', cue: 'not do' }),
+    );
+    expect(r.negated_hits).toContainEqual(expect.objectContaining({ phrase: 'emotion recognition', cue: 'not use' }));
     const control = await classify('A chatbot that uses emotion recognition and does social scoring.');
     expect(control.article_5.prohibited).toBe(true);
   });
@@ -79,8 +93,11 @@ describe('negation — EN forms', () => {
     ['cannot', 'It cannot rank job applicants.', 'It can rank job applicants.', rank],
     ['never', 'We never rank job applicants.', 'We always rank job applicants.', rank],
     ['no', 'There is no facial recognition.', 'There is facial recognition.', 'facial recognition'],
-    ["isn't", "It isn't able to rank job applicants.", 'It is able to rank job applicants.', rank],
-    ['neither (single)', 'Neither model will rank job applicants.', 'Either model will rank job applicants.', rank],
+    ['no + determiner/modifier', 'There is no such automated facial recognition.', 'There is such automated facial recognition.', 'facial recognition'],
+    ['not + governed verb', 'We do not use facial recognition.', 'We use facial recognition.', 'facial recognition'],
+    ['never + governed verb (past)', 'We never used facial recognition.', 'We used facial recognition.', 'facial recognition'],
+    ['not to + governed verb', 'We decided not to use facial recognition.', 'We decided to use facial recognition.', 'facial recognition'],
+    ["isn't (is not + phrase)", "It isn't facial recognition.", 'It is facial recognition.', 'facial recognition'],
   ])('%s', (_label, negated, control, phrase) => {
     expectNegated('en', { text: negated, phrase }, { text: control, phrase });
   });
@@ -110,10 +127,10 @@ describe('negation — EN forms', () => {
 
   it.each([
     ['is not used', 'Facial recognition is not used.'],
-    ["isn't used", "Facial recognition isn't used in this product."],
+    ["isn't used", "Facial recognition isn't used."],
     ['will never be performed', 'Facial recognition will never be performed.'],
     ['cannot be used', 'Facial recognition cannot be used.'],
-    ['is not part of', 'Facial recognition is not part of the product.'],
+    ['has not been deployed', 'Facial recognition has not been deployed.'],
   ])('trailing denial: "%s"', (_label, text) => {
     expectNegated(
       'en',
@@ -137,6 +154,28 @@ describe('negation — EN must still fire (no over-correction)', () => {
     ['negated verb after the phrase is not a denial of the phrase', 'Our facial recognition does not store images.', 'facial recognition'],
     ['"is not only used"', 'Facial recognition is not only used for access control.', 'facial recognition'],
     ['without-phrase inside the lexicon phrase', 'Grading is done without human review of the results; we rank job applicants.', 'rank job applicants'],
+    // Governed-only: anything between cue and phrase that is not an allowlisted
+    // auxiliary / governed verb / determiner / modifier means NOT governed.
+    ['subject between cue and phrase', 'Neither model will rank job applicants.', 'rank job applicants'],
+    ['non-governed verb between cue and phrase', "It isn't able to rank job applicants.", 'rank job applicants'],
+    ['avoidance verb', 'Employees cannot opt out of emotion recognition in the workplace.', 'emotion recognition in the workplace'],
+    ['subordinator', 'Users are not told that we use facial recognition.', 'facial recognition'],
+    ['limiter: not exclusively', 'The system does not exclusively evaluate creditworthiness.', 'creditworthiness'],
+    ['limiter: not simply', 'It is not simply facial recognition.', 'facial recognition'],
+    ['fixed non-denial: not limited to', 'Features include but are not limited to facial recognition.', 'facial recognition'],
+    ['fixed non-denial: no limits on', 'We impose no limits on facial recognition.', 'facial recognition'],
+    ['dash between clauses', 'No more manual screening - the AI ranks job applicants.', 'ranks job applicants'],
+    ['bullet between clauses', 'No cloud • ranks job applicants', 'ranks job applicants'],
+    ['without + non-phrase + phrase', 'Without human review the tool ranks job applicants.', 'ranks job applicants'],
+    ['trailing: predicate does not end the clause', 'Facial recognition is not used for marketing purposes.', 'facial recognition'],
+    ['trailing: complement after the predicate (known limit)', "Facial recognition isn't used in this product.", 'facial recognition'],
+    ['trailing: not optional', 'Facial recognition is not optional.', 'facial recognition'],
+    ['trailing: cannot be disabled', 'Facial recognition cannot be disabled.', 'facial recognition'],
+    ['trailing: cancelled by "only"', 'Facial recognition is not used, only tested.', 'facial recognition'],
+    ['trailing: cancelled by "but"', 'Facial recognition is not used, but emotion recognition is.', 'facial recognition'],
+    ['double negation in one clause', 'There is no case in which the system does not rank job applicants.', 'rank job applicants'],
+    ['double negation across a relative clause', 'There is no case, in which the system does not rank job applicants.', 'rank job applicants'],
+    ['and-joined object under one cue (known limit)', 'We do not use emotion recognition and facial recognition.', 'facial recognition'],
   ])('%s', (_label, text, phrase) => {
     expect(phrases(text, 'en')).toContain(phrase);
   });
@@ -151,13 +190,14 @@ describe('negation — DE forms', () => {
     ['kein', 'Es findet kein Bewerber-Ranking statt.', 'Es findet ein Bewerber-Ranking statt.', 'bewerber-ranking'],
     ['keine (Art 5 Sozialbewertung)', 'Es findet keine Sozialbewertung statt.', 'Es findet Sozialbewertung statt.', 'sozialbewertung'],
     ['keine', 'Das System nutzt keine Emotionserkennung.', 'Das System nutzt Emotionserkennung.', 'emotionserkennung'],
-    ['keinen', 'Wir haben keinen Einsatz von Gesichtserkennung.', 'Wir haben einen Einsatz von Gesichtserkennung.', 'gesichtserkennung'],
-    ['keiner', 'Bei keiner Anwendung wird Gesichtserkennung genutzt.', 'Bei jeder Anwendung wird Gesichtserkennung genutzt.', 'gesichtserkennung'],
-    ['keinem', 'In keinem Fall Gesichtserkennung.', 'In jedem Fall Gesichtserkennung.', 'gesichtserkennung'],
-    ['keines', 'Keines der Module nutzt Gesichtserkennung.', 'Eines der Module nutzt Gesichtserkennung.', 'gesichtserkennung'],
+    ['keine + Adjektiv', 'Das System nutzt keine biometrische Kategorisierung.', 'Das System nutzt biometrische Kategorisierung.', 'biometrische kategorisierung'],
+    ['nicht + Artikel', 'Das System nutzt nicht die Gesichtserkennung.', 'Das System nutzt die Gesichtserkennung.', 'gesichtserkennung'],
     ['ohne', 'Das System soll ohne Gesichtserkennung arbeiten.', 'Das System soll mit Gesichtserkennung arbeiten.', 'gesichtserkennung'],
     ['nachgestellt: wird nicht eingesetzt', 'Gesichtserkennung wird nicht eingesetzt.', 'Gesichtserkennung wird eingesetzt.', 'gesichtserkennung'],
+    ['nachgestellt: darf nicht eingesetzt werden', 'Gesichtserkennung darf nicht eingesetzt werden.', 'Gesichtserkennung darf eingesetzt werden.', 'gesichtserkennung'],
+    ['nachgestellt: wird bei uns nicht genutzt', 'Gesichtserkennung wird bei uns nicht genutzt.', 'Gesichtserkennung wird bei uns genutzt.', 'gesichtserkennung'],
     ['nachgestellt: nutzen … nicht', 'Wir nutzen Emotionserkennung nicht.', 'Wir nutzen Emotionserkennung.', 'emotionserkennung'],
+    ['nachgestellt: setzen … nicht ein', 'Wir setzen Gesichtserkennung nicht ein.', 'Wir setzen Gesichtserkennung ein.', 'gesichtserkennung'],
   ])('%s', (_label, negated, control, phrase) => {
     expectNegated('de', { text: negated, phrase }, { text: control, phrase });
   });
@@ -189,6 +229,19 @@ describe('negation — DE must still fire (no over-correction)', () => {
     ['Verneinung im vorigen Satz', 'Wir speichern keine Lebensläufe. Das Tool soll Bewerber sortieren.', 'bewerber sortieren'],
     ['Verneinung vor "aber"', 'Wir speichern keine Lebensläufe, aber das Tool soll Bewerber sortieren.', 'bewerber sortieren'],
     ['nachgestellt: nicht nur', 'Wir nutzen Gesichtserkennung nicht nur am Eingang.', 'gesichtserkennung'],
+    ['Subjekt zwischen Verneinung und Phrase', 'Keines der Module nutzt Gesichtserkennung.', 'gesichtserkennung'],
+    ['Nomen zwischen Verneinung und Phrase (bekannte Grenze)', 'Wir haben keinen Einsatz von Gesichtserkennung.', 'gesichtserkennung'],
+    ['Präposition: verzichten nicht auf', 'Wir verzichten nicht auf Gesichtserkennung.', 'gesichtserkennung'],
+    ['keine Einschränkungen', 'Es gibt keine Einschränkungen für die Gesichtserkennung.', 'gesichtserkennung'],
+    ['nachgestellt: nicht für … eingesetzt, sondern', 'Gesichtserkennung wird nicht für Marketing eingesetzt, sondern für die Zutrittskontrolle.', 'gesichtserkennung'],
+    ['nachgestellt: eingesetzt, sondern …', 'Gesichtserkennung wird nicht eingesetzt, sondern getestet.', 'gesichtserkennung'],
+    ['nachgestellt: nicht optional', 'Gesichtserkennung ist nicht optional.', 'gesichtserkennung'],
+    ['nachgestellt: nicht abschaltbar', 'Gesichtserkennung ist nicht abschaltbar.', 'gesichtserkennung'],
+    ['nachgestellt: kann nicht deaktiviert werden', 'Gesichtserkennung kann nicht deaktiviert werden.', 'gesichtserkennung'],
+    ['mögen … nicht ist keine Leugnung des Einsatzes', 'Die Mitarbeiter mögen Gesichtserkennung nicht.', 'gesichtserkennung'],
+    ['doppelte Verneinung über Relativsatz', 'Es gibt keinen Fall, in dem das System nicht Bewerber sortieren würde.', 'bewerber sortieren'],
+    ['doppelte Verneinung: kein … nicht', 'Kein Kunde wird nicht Gesichtserkennung nutzen.', 'gesichtserkennung'],
+    ['dass-Satz nach verneintem Hauptsatz', 'Wir garantieren nicht, dass Gesichtserkennung nicht eingesetzt wird.', 'gesichtserkennung'],
   ])('%s', (_label, text, phrase) => {
     expect(phrases(text, 'de')).toContain(phrase);
   });
@@ -206,9 +259,52 @@ describe('negation — plumbing', () => {
   });
 
   it('no _negation block → nothing negated (v0.3.1 behaviour)', () => {
-    const s = computeNegationScope('We do not rank job applicants.', undefined);
+    const s = findNegated('We do not rank job applicants.', undefined, [{ start: 3, end: 6 }]);
     expect(s.active).toBe(false);
-    expect(s.negated.every((x) => !x)).toBe(true);
+    expect(s.suppressed.size).toBe(0);
+  });
+
+  it('a phrase with one denied and one stated occurrence fires and is not listed as negated', () => {
+    const r = extractFeatures('We do not use facial recognition. We use facial recognition.', { lang: 'en' });
+    expect(r.hits.map((h) => h.phrase)).toContain('facial recognition');
+    expect((r.negatedHits ?? []).map((h) => h.phrase)).not.toContain('facial recognition');
+  });
+
+  it('negated hits carry group, category, source and cue', () => {
+    const r = extractFeatures('There is no social scoring.', { lang: 'en' });
+    expect(r.negatedHits).toContainEqual(
+      expect.objectContaining({ group: 'article_5_prohibited', category: 'c_social_scoring', phrase: 'social scoring', cue: 'no' }),
+    );
+    expect(r.negatedHits?.every((h) => h.source.startsWith('http'))).toBe(true);
+  });
+
+  it('negatedHitRef maps lexicon categories to AI Act references (EN + DE)', () => {
+    expect(negatedHitRef('article_5_prohibited', 'f_emotion_in_workplace_education')).toBe('Art 5(1)(f)');
+    expect(negatedHitRef('article_5_prohibited', 'f_emotion_in_workplace_education', 'de')).toBe('Art. 5 Abs. 1 Buchst. f');
+    expect(negatedHitRef('annex_iii', '4_employment')).toBe('Annex III.4');
+    expect(negatedHitRef('annex_iii', '4_employment', 'de')).toBe('Anhang III Nr. 4');
+    expect(negatedHitRef('article_50_gpai', '5_public_interest_text')).toBe('Art 50(4)');
+    expect(negatedHitRef('gpai_models', 'systemic_risk_markers')).toBe('Art 55');
+  });
+
+  it('no negated hits → output formats unchanged (no safety-net block)', async () => {
+    const r = await classify('Our CV tool ranks job applicants.');
+    expect(r.negated_hits).toEqual([]);
+    expect(formatMarkdown(r, { locale: 'en', cite: false })).not.toContain('read as denied');
+  });
+
+  it('negated hits are shown in markdown, explain and table output (EN + DE)', async () => {
+    const en = await classify('Our CV tool does NOT rank job applicants.', { lang: 'en' });
+    expect(formatMarkdown(en, { locale: 'en', cite: false })).toContain('Found but read as denied — check');
+    expect(formatMarkdown(en, { locale: 'en', cite: false })).toContain('"rank job applicants" (Annex III.4) — negation: "not"');
+    expect(formatExplain(en, { locale: 'en', format: 'markdown', withExcerpt: false })).toContain('Found but read as denied — check');
+    expect(formatExplain(en, { locale: 'en', format: 'text', withExcerpt: false })).toContain('Found but read as denied — check');
+    expect(JSON.parse(formatExplain(en, { locale: 'en', format: 'json', withExcerpt: false })).negated_hits).toHaveLength(1);
+    expect(formatCliTable(en, { locale: 'en', cite: false, useColor: false })).toContain('Found but read as denied — check');
+    const de = await classify('Es findet keine Sozialbewertung statt.', { lang: 'de' });
+    expect(formatMarkdown(de, { locale: 'de', cite: false })).toContain('Gefunden, aber als verneint gelesen — bitte prüfen');
+    expect(formatMarkdown(de, { locale: 'de', cite: false })).toContain('(Art. 5 Abs. 1 Buchst. c)');
+    expect(formatExplain(de, { locale: 'de', format: 'markdown', withExcerpt: false })).toContain('Gefunden, aber als verneint gelesen — bitte prüfen');
   });
 
   it('a malformed block is rejected', () => {

@@ -74,6 +74,8 @@ import type { ClassifyResult } from '../classify.js';
 import type { AnnexIIIResult, AnnexIIIDomainHit, Article5Result, Article5Hit, Article50Result, Article4Result, GPAIResult } from '../rules/index.js';
 import { getCitation, type CitationArticleId } from '../util/citations.js';
 import { getLocale } from '../i18n/load.js';
+import { negatedHitLine, negatedHitsHeading } from '../util/negated-hits.js';
+import type { NegatedHitResult } from '../util/negated-hits.js';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -139,6 +141,8 @@ interface ExplainJsonShape {
   nearest_miss: ReadonlyArray<NearestMiss>;
   disambiguator: DisambiguatorState | null;
   excerpts?: ReadonlyArray<{ key: string; locale: 'en' | 'de'; body: string }>;
+  /** Safety net (after v0.3.1): phrases found but read as denied. Present only when non-empty. */
+  negated_hits?: ReadonlyArray<NegatedHitResult>;
   disclaimer: string;
 }
 
@@ -643,6 +647,8 @@ function toJsonShape(result: ClassifyResult, opts: ExplainFormatOptions): Explai
     disambiguator,
     disclaimer,
   };
+  const negated = result.negated_hits ?? [];
+  if (negated.length > 0) shape.negated_hits = negated;
   if (opts.withExcerpt) {
     const excerpts: Array<{ key: string; locale: 'en' | 'de'; body: string }> = [];
     const seen = new Set<string>();
@@ -739,6 +745,13 @@ function renderMarkdown(result: ClassifyResult, opts: ExplainFormatOptions, shap
     lines.push('');
     lines.push(`- ${shape.disambiguator.rationale}`);
   }
+  // Safety net: phrases found but read as denied
+  if (shape.negated_hits !== undefined && shape.negated_hits.length > 0) {
+    lines.push('');
+    lines.push(`### ⚠️ ${negatedHitsHeading(opts.locale)}`);
+    lines.push('');
+    for (const h of shape.negated_hits) lines.push(`- ${negatedHitLine(h, opts.locale)}`);
+  }
   // Excerpts
   if (shape.excerpts !== undefined && shape.excerpts.length > 0) {
     lines.push('');
@@ -828,6 +841,11 @@ function renderText(opts: ExplainFormatOptions, shape: ExplainJsonShape): string
         : 'Disambiguator state (Art 5(1)(d)):',
     );
     lines.push(`* ${shape.disambiguator.rationale}`);
+  }
+  if (shape.negated_hits !== undefined && shape.negated_hits.length > 0) {
+    lines.push('');
+    lines.push(`${negatedHitsHeading(opts.locale)}:`);
+    for (const h of shape.negated_hits) lines.push(`* ${negatedHitLine(h, opts.locale)}`);
   }
   if (shape.excerpts !== undefined && shape.excerpts.length > 0) {
     lines.push('');

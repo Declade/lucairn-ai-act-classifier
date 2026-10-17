@@ -54,6 +54,10 @@ import type {
   ThreeCategoryResult,
 } from './rules/index.js';
 import { RULES_VERSION, RULES_HASH, RULES_HASH_FULL_HEX } from './util/rules-hash.js';
+import { toNegatedHitResults } from './util/negated-hits.js';
+import type { NegatedHitResult } from './util/negated-hits.js';
+
+export type { NegatedHitResult } from './util/negated-hits.js';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -114,7 +118,7 @@ export interface ClassifyResult {
   article_14: Article14Result;
   /** Article 15 — accuracy/robustness/cybersecurity cascade. */
   article_15: Article15Result;
-  /** Article 50 — transparency obligations for providers and deployers of certain AI systems (non-cascade root). Not GPAI: GPAI is Articles 51–55 (`gpai`). */
+  /** Article 50 — transparency obligations for providers and deployers of certain AI systems (non-cascade root). Not GPAI: GPAI model obligations are Chapter V, Articles 51–56 (`gpai`). */
   article_50: Article50Result;
   /** Article 4 — AI literacy (non-cascade root). */
   article_4: Article4Result;
@@ -124,6 +128,13 @@ export interface ClassifyResult {
   three_category: ThreeCategoryResult | null;
   /** True iff annex_iii.high_risk && !annex_iii.suppressed_by_article_5. */
   annex_iv_required: boolean;
+  /**
+   * Lexicon phrases found in the input but read as DENIED by the negation
+   * rules, so they did not fire ("found but read as denied — check"). Empty
+   * when nothing was suppressed, and always empty in LLM mode. Added after
+   * v0.3.1 (additive).
+   */
+  negated_hits: NegatedHitResult[];
 }
 
 // ---------------------------------------------------------------------------
@@ -266,5 +277,6 @@ export async function classify(text: string, opts: ClassifyOptions = {}): Promis
     gpai,
     three_category,
     annex_iv_required,
+    negated_hits: toNegatedHitResults(features.negatedHits),
   };
 }

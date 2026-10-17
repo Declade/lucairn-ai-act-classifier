@@ -93,6 +93,36 @@ const lexiconHit = {
   required: ['group', 'category', 'phrase', 'source'],
 };
 
+// Negated hits (after v0.3.1, additive): lexicon phrases that occurred in the
+// input but were read as DENIED by the negation rules, so they did not fire.
+const negatedLexiconHit = {
+  type: 'object',
+  description:
+    'A lexicon phrase found in the input but suppressed because a negation cue directly governs it (e.g. "does not use emotion recognition"). Surfaced for a human check.',
+  additionalProperties: false,
+  properties: {
+    ...lexiconHit.properties,
+    cue: { type: 'string', description: 'The negation words that governed the phrase, e.g. "not use", "keine", "is not used".' },
+  },
+  required: [...lexiconHit.required, 'cue'],
+};
+
+const negatedHitResult = {
+  type: 'object',
+  description:
+    'Safety net: a lexicon phrase found in the input but read as denied, so it did not fire ("found but read as denied — check").',
+  additionalProperties: false,
+  properties: {
+    phrase: { type: 'string', description: 'Canonical lexicon phrase that occurred in the input.' },
+    ref: { type: 'string', description: 'Short AI Act reference for the phrase category, e.g. "Art 5(1)(c)", "Annex III.4", "Art 50(1)".' },
+    cue: { type: 'string', description: 'The negation words that governed the phrase, e.g. "not use", "keine", "is not used".' },
+    group: { type: 'string', description: 'Lexicon group, e.g. "article_5_prohibited".' },
+    category: { type: 'string', description: 'Lexicon sub-category key, e.g. "c_social_scoring".' },
+    source: { type: 'string', description: 'Regulator-source URL the category cites.' },
+  },
+  required: ['phrase', 'ref', 'cue', 'group', 'category', 'source'],
+};
+
 const extractedFeatures = {
   type: 'object',
   description: 'Output of the keyword extractor. Surfaced for debugging and explain-mode rendering.',
@@ -117,6 +147,11 @@ const extractedFeatures = {
         },
       },
       description: 'Map from lexicon group → sub-category → matched canonical phrases. 2-level nested object.',
+    },
+    negatedHits: {
+      type: 'array',
+      items: negatedLexiconHit,
+      description: 'Lexicon phrases read as denied by the negation rules (keyword extractor only; absent in LLM mode).',
     },
   },
   required: ['input', 'lang', 'langConfident', 'lexiconVersion', 'hits', 'byCategory'],
@@ -256,7 +291,7 @@ const articleCascadeResult = {
 const article50Result = {
   type: 'object',
   description:
-    'Article 50 transparency obligations for providers and deployers of certain AI systems (not GPAI — GPAI is Articles 51–55, see `gpai`). Independent root — Annex III high-risk does NOT imply Article 50 applies, and vice versa.',
+    'Article 50 transparency obligations for providers and deployers of certain AI systems (not GPAI — GPAI model obligations are Chapter V, Articles 51–56, see `gpai`). Independent root — Annex III high-risk does NOT imply Article 50 applies, and vice versa.',
   additionalProperties: false,
   properties: {
     applicable: { type: 'boolean', description: 'True iff any of the 5 paragraph triggers fired.' },
@@ -537,6 +572,12 @@ const schema = {
       type: 'boolean',
       description: 'True iff annex_iii.high_risk && !annex_iii.suppressed_by_article_5. Annex IV technical-documentation file required.',
     },
+    negated_hits: {
+      type: 'array',
+      items: negatedHitResult,
+      description:
+        'Safety net (additive, after v0.3.1): lexicon phrases found in the input but read as denied by the negation rules, so they did not fire. Empty when nothing was suppressed and always empty in LLM mode. Check each one by hand.',
+    },
   },
   required: [
     'input_text',
@@ -560,6 +601,7 @@ const schema = {
     'gpai',
     'three_category',
     'annex_iv_required',
+    'negated_hits',
   ],
 };
 
