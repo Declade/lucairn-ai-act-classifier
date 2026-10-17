@@ -125,6 +125,42 @@ describe('CLI integration — happy paths', () => {
     expect(r.stdout).toContain('--annex');
   });
 
+  // Unreleased (after v0.3.1): --cite help must describe the links the block actually prints
+  // (EUR-Lex + third-party artificialintelligenceact.eu mirror + lucairn.eu),
+  // not "Service Desk" links it never emits.
+  itDist('--help → --cite text names the mirror, not the Service Desk', () => {
+    const r = runCli(['--help']);
+    const help = r.stdout.replace(/\s+/g, ' ');
+    expect(help).not.toContain('Service Desk');
+    expect(help).toContain('artificialintelligenceact.eu');
+    expect(help).toContain('not an official EU source');
+  });
+
+  // Unreleased (after v0.3.1): Article 50 is transparency for providers + deployers of certain
+  // AI systems; GPAI is Articles 51–55 and has its own row.
+  itDist('Article 50 row is labelled "transparency", never "GPAI"', () => {
+    const en = runCli(['--lang', 'en', 'A customer-service chatbot.']);
+    expect(en.stdout).toContain('Article 50 (transparency)');
+    expect(en.stdout).not.toMatch(/Article 50 \([^)]*GPAI/);
+    const de = runCli(['--lang', 'de', 'Ein Chatbot für den Kundenservice.']);
+    expect(de.stdout).toContain('Artikel 50 (Transparenz)');
+    expect(de.stdout).not.toMatch(/Artikel 50 \([^)]*GPAI/);
+  });
+
+  itDist('negated description: "does NOT rank job applicants" → not high-risk, exit 0', () => {
+    const r = runCli(['--json', 'Our CV tool does NOT rank job applicants.']);
+    expect(r.status).toBe(0);
+    const parsed = JSON.parse(r.stdout) as { annex_iii: { high_risk: boolean } };
+    expect(parsed.annex_iii.high_risk).toBe(false);
+  });
+
+  itDist('negated description: no emotion recognition / no social scoring → not prohibited (exit 0)', () => {
+    const r = runCli(['--json', 'A chatbot that does not use emotion recognition and does not do social scoring.']);
+    expect(r.status).toBe(0);
+    const parsed = JSON.parse(r.stdout) as { article_5: { prohibited: boolean } };
+    expect(parsed.article_5.prohibited).toBe(false);
+  });
+
   // Day-13 polish: --help text MUST include both an Examples section and an
   // Exit codes section so first-time users can copy-paste invocations and
   // understand the exit code semantics without reading the README.

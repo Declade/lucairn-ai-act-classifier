@@ -363,8 +363,8 @@ function buildArticle50Fires(article50: Article50Result, locale: 'en' | 'de'): F
     if (!t[p.key]) continue;
     const rationale =
       locale === 'de'
-        ? `Lexikon-Treffer im article_50_gpai-Korpus → ${p.de} feuert.`
-        : `Lexicon hit in the article_50_gpai corpus → ${p.en} fires.`;
+        ? `Lexikon-Treffer im Artikel-50-Transparenz-Korpus → ${p.de} feuert.`
+        : `Lexicon hit in the Article 50 transparency corpus → ${p.en} fires.`;
     out.push({
       id: p.id,
       heading: locale === 'de' ? p.de : p.en,

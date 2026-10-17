@@ -14,7 +14,7 @@
 //   6.  classifyArticle13(annex, art5)           — Day 4 deployer transparency
 //   7.  classifyArticle14(annex, art5)           — Day 4 human oversight
 //   8.  classifyArticle15(annex, art5)           — Day 4 accuracy/robustness/cybersecurity
-//   9.  classifyArticle50(features, art5, annex) — Day 5 GPAI/deployer transparency
+//   9.  classifyArticle50(features, art5, annex) — Day 5 transparency obligations (providers + deployers of certain AI systems)
 //   9b. classifyArticle4(features)               — Day 15 (v0.3.0) AI literacy (non-cascade root)
 //   9c. classifyGPAI(features)                   — Day 15 (v0.3.0) Articles 53 + 55 (non-cascade root)
 //  10.  classifyThreeCategory(annex, art5, art10, art12, art14, art15) — Day 5 overlay
@@ -114,7 +114,7 @@ export interface ClassifyResult {
   article_14: Article14Result;
   /** Article 15 — accuracy/robustness/cybersecurity cascade. */
   article_15: Article15Result;
-  /** Article 50 — GPAI/deployer transparency (non-cascade root). */
+  /** Article 50 — transparency obligations for providers and deployers of certain AI systems (non-cascade root). Not GPAI: GPAI is Articles 51–55 (`gpai`). */
   article_50: Article50Result;
   /** Article 4 — AI literacy (non-cascade root). */
   article_4: Article4Result;

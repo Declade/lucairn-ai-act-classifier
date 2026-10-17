@@ -31,7 +31,7 @@ ANTHROPIC_API_KEY="<your-key>" npx @lucairn/ai-act-classifier --llm anthropic \
   - **Article 50** transparency obligations (4 paragraph paths)
   - **Annex IV** technical-documentation requirement
 - Emits Lucairn's three-category obligation overlay (Sanitizer / Evidence / Inventory)
-- Cites the EUR-Lex source URL on every fired article + the EU AI Office Service Desk reference + optional Lucairn commentary
+- Cites the EUR-Lex source (Regulation (EU) 2024/1689) on every fired article in `--explain`; `--cite` adds a per-article link to the artificialintelligenceact.eu third-party text mirror (Future of Life Institute, not an official EU source) and a Lucairn commentary link
 - Stamps the rules version + SHA on every output so the same input on the same rule-set is byte-reproducible
 - Available as a CLI binary (this package) and as a library (`formatExplain` + `classify` exported from `@lucairn/ai-act-classifier`)
 
@@ -106,7 +106,7 @@ To clear the cache manually: `rm -rf ~/.cache/lucairn-ai-act-classifier`.
 
 ## Architecture (one paragraph)
 
-Rules-first hybrid. A deterministic TypeScript rules engine evaluates Article 5, 6 + Annex III, 10, 12, 13, 14, 15, and 50 against features extracted from your input. Default extraction is a keyword + phrase pattern matcher in EN+DE — works offline, no API key. The optional `--llm` mode uses your own API key to do better feature extraction; the rules engine still picks the articles deterministically. Every output cites its rule version (SHA-pinned) so the same input always produces the same classification. Source layout: `src/extract/` (keyword + lang detection + LLM providers + cache), `src/rules/` (per-article modules with cite-and-match summaries), `src/format/` (CLI table + JSON + Markdown + `--explain` output), `src/data/` (the curated lexicons + Annex III metadata + citations), `src/i18n/` (EN+DE locale bundles), `src/content/blog-excerpts/` (curated regulator-explainer commentary).
+Rules-first hybrid. A deterministic TypeScript rules engine evaluates Article 5, 6 + Annex III, 10, 12, 13, 14, 15, and 50 against features extracted from your input. Default extraction is a keyword + phrase pattern matcher in EN+DE — works offline, no API key. The matcher skips a phrase that sits in a negated clause ("our CV tool does **not** rank job applicants", "keine Emotionserkennung"): a negation word (EN not / no / never / cannot / neither…nor / n't; DE nicht / kein… / nie / niemals / weder…noch) negates the rest of its clause, and "without" / "ohne" negates the next phrase. The scope stops at sentence punctuation, at and / but / und / aber / sondern, and at a comma unless a list continues; "not only" / "nicht nur" is not a negation, and "cannot … without" / "nicht ohne" is a double negation that keeps the phrase. The rules are deterministic and documented in `src/extract/negation.ts`; the word lists live in the `_negation` block of each lexicon. The optional `--llm` mode uses your own API key to do better feature extraction; the rules engine still picks the articles deterministically. Every output cites its rule version (SHA-pinned) so the same input always produces the same classification. Source layout: `src/extract/` (keyword + lang detection + LLM providers + cache), `src/rules/` (per-article modules with cite-and-match summaries), `src/format/` (CLI table + JSON + Markdown + `--explain` output), `src/data/` (the curated lexicons + Annex III metadata + citations), `src/i18n/` (EN+DE locale bundles), `src/content/blog-excerpts/` (curated regulator-explainer commentary).
 
 ## Accuracy
 
@@ -159,6 +159,7 @@ The classifier intentionally does NOT:
 - Distinguish provider vs deployer status. Both surfaces hit the same rule engine.
 - Decide whether a system actually qualifies for a statutory carve-out (e.g. Art 50(1) law-enforcement carve-out). The carve-out language is enumerated VERBATIM in the chapeau output for the consultant to apply downstream.
 - Implement full sub-letter narrowing for every Annex III paragraph. Coverage is complete across paragraphs 1-8 with conservative defaults: when narrowing is ambiguous we return an empty sub-letters array rather than over-claim.
+- Understand negation beyond the clause-scoped rules above. Negation carried by a verb ("we refrain from", "verzichten auf"), negation in a different sentence, and objects joined by "and" under one negation ("does not use emotion recognition and social scoring" — the second object still fires) are not detected; the extractor errs towards firing.
 - Normalise plurals and German morphology in the keyword extractor. Compound nouns like `Emotionserkennungssystems` are a known v0.2 gap (cite [accuracy/KNOWN-MISCLASSIFICATIONS.md](./accuracy/KNOWN-MISCLASSIFICATIONS.md) §G-5).
 
 Found a misclassification? Open a GitHub issue with: (a) the use-case description, (b) your expected classification, (c) your reasoning citing EUR-Lex Regulation (EU) 2024/1689 paragraph numbers, and (d) the current classifier output. We respond to issues during European business hours.

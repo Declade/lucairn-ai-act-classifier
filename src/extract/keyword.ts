@@ -20,12 +20,18 @@
 //   - Filter for "scope_qualifier" negations (e.g. "research only"). The
 //     extractor surfaces the negation hit; the rules engine decides whether
 //     to suppress downstream classification.
+//
+// What it DOES do after v0.3.1: drop a phrase occurrence that sits inside a
+// grammatically negated clause ("does NOT rank job applicants", "keine
+// Emotionserkennung"). The scope model lives in ./negation.ts.
 
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { normalize, tokenize, ngrams } from './normalize.js';
+import { normalize, tokenize } from './normalize.js';
 import { detectLang } from './lang.js';
+import { computeNegationScope, deniedAfter, isNegationLexicon } from './negation.js';
+import type { NegationLexicon } from './negation.js';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -119,6 +125,12 @@ export interface ExtractOptions {
   maxN?: number;
 }
 
+/** Token range [start, end) of one n-gram occurrence in the input. */
+interface Occurrence {
+  start: number;
+  end: number;
+}
+
 // ---------------------------------------------------------------------------
 // Lexicon loading (cached at module init)
 // ---------------------------------------------------------------------------
@@ -182,8 +194,21 @@ export function extractFeatures(text: string, opts: ExtractOptions = {}): Extrac
   const maxN = opts.maxN ?? 6;
 
   const tokens = tokenize(normalized);
-  const candidates = ngrams(tokens, minN, maxN);
-  const candidateSet = new Set(candidates);
+  if (minN < 1) throw new RangeError('ngrams(): minN must be >= 1.');
+  if (maxN < minN) throw new RangeError('ngrams(): maxN must be >= minN.');
+
+  // Every n-gram (and hyphen sub-token) occurrence, with its token range.
+  const occurrences = new Map<string, Occurrence[]>();
+  const addOccurrence = (phrase: string, start: number, end: number): void => {
+    const list = occurrences.get(phrase);
+    if (list === undefined) occurrences.set(phrase, [{ start, end }]);
+    else list.push({ start, end });
+  };
+  for (let n = minN; n <= maxN && n <= tokens.length; n++) {
+    for (let i = 0; i <= tokens.length - n; i++) {
+      addOccurrence(tokens.slice(i, i + n).join(' '), i, i + n);
+    }
+  }
 
   // Hyphen-split sub-tokens. German compound nouns ("deepfake-videos",
   // "live-gesichtserkennung") routinely combine a lexicon-targeted base
@@ -191,43 +216,79 @@ export function extractFeatures(text: string, opts: ExtractOptions = {}): Extrac
   // candidates lets the base term match without exploding the lexicon
   // with every possible compound. False-positive risk is low because the
   // sub-tokens still have to match a curated lexicon phrase verbatim.
-  for (const token of tokens) {
+  tokens.forEach((token, i) => {
     if (token.includes('-')) {
       for (const part of token.split('-')) {
-        if (part.length > 0) candidateSet.add(part);
+        if (part.length > 0) addOccurrence(part, i, i + 1);
       }
     }
-  }
+  });
 
-  const hits: ExtractedHit[] = [];
-  const byCategory: Record<string, Record<string, string[]>> = {};
+  // Pass 1 — every lexicon entry that occurs at all, in lexicon order.
   const groups = discoverGroups(lexicon);
-  for (const group of groups) byCategory[group] = {};
-
+  const matches: Array<{
+    group: string;
+    categoryKey: string;
+    category: LexiconCategory;
+    entry: LexiconEntry;
+    occs: Occurrence[];
+  }> = [];
   for (const group of groups) {
     const raw = lexicon[group];
     if (raw === undefined || raw === null || typeof raw !== 'object') continue;
     const categories = raw as Record<string, LexiconCategory>;
     for (const [categoryKey, category] of Object.entries(categories)) {
-      const matched: string[] = [];
       for (const entry of category.entries) {
-        const phraseNormalized = normalize(entry.phrase);
-        if (candidateSet.has(phraseNormalized)) {
-          matched.push(entry.phrase);
-          hits.push({
-            group,
-            category: categoryKey,
-            phrase: entry.phrase,
-            source: entry.source ?? category.source,
-          });
+        const occs = occurrences.get(normalize(entry.phrase));
+        if (occs !== undefined) matches.push({ group, categoryKey, category, entry, occs });
+      }
+    }
+  }
+
+  // Negation (after v0.3.1, see negation.ts). An occurrence counts only when it is
+  // not negated; a phrase fires when at least one occurrence counts.
+  // Forward scopes are checked at the occurrence's FIRST token, so a cue word
+  // inside the phrase itself ("without human oversight") never negates its
+  // own phrase. A stand-alone without/ohne negates only the first lexicon
+  // phrase starting in its window (plus phrases overlapping that one).
+  const rawNegation = lexicon._negation;
+  const negationLex: NegationLexicon | undefined = isNegationLexicon(rawNegation) ? rawNegation : undefined;
+  const scope = computeNegationScope(text, negationLex);
+  const withoutNegated = new Set<number>();
+  for (const w of scope.withoutWindows) {
+    let first: Occurrence | undefined;
+    for (const m of matches) {
+      for (const o of m.occs) {
+        if (o.start < w.start || o.start >= w.end) continue;
+        if (first === undefined || o.start < first.start || (o.start === first.start && o.end > first.end)) {
+          first = o;
         }
       }
-      if (matched.length > 0) {
-        const groupBucket = byCategory[group];
-        if (groupBucket !== undefined) {
-          groupBucket[categoryKey] = matched;
-        }
-      }
+    }
+    if (first !== undefined) {
+      for (let k = first.start; k < first.end; k++) withoutNegated.add(k);
+    }
+  }
+  const isLive = (o: Occurrence): boolean =>
+    scope.negated[o.start] !== true && !withoutNegated.has(o.start) && !deniedAfter(scope, negationLex, o.end);
+
+  // Pass 2 — emit live hits in the deterministic lexicon order.
+  const hits: ExtractedHit[] = [];
+  const byCategory: Record<string, Record<string, string[]>> = {};
+  for (const group of groups) byCategory[group] = {};
+  for (const m of matches) {
+    if (!m.occs.some(isLive)) continue;
+    hits.push({
+      group: m.group,
+      category: m.categoryKey,
+      phrase: m.entry.phrase,
+      source: m.entry.source ?? m.category.source,
+    });
+    const groupBucket = byCategory[m.group];
+    if (groupBucket !== undefined) {
+      const bucket = groupBucket[m.categoryKey];
+      if (bucket === undefined) groupBucket[m.categoryKey] = [m.entry.phrase];
+      else bucket.push(m.entry.phrase);
     }
   }
 

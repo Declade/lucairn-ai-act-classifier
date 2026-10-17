@@ -76,7 +76,7 @@
 //   The three-category scheme tracks the high-risk obligation overlay
 //   (Cat 1 = Art 10+15 sanitizer, Cat 2 = Art 12+14 evidence, Cat 3 =
 //   Art 10+12+14+15 inventory). Article 50 is transparency-to-end-users for
-//   specific GPAI/deployer shapes, on a different cascade root, and surfaces
+//   providers and deployers of certain AI systems, on a different cascade root, and surfaces
 //   independently in the classifier output.
 //
 // Carve-outs — programmatic detection is NOT attempted.

@@ -256,7 +256,7 @@ const articleCascadeResult = {
 const article50Result = {
   type: 'object',
   description:
-    'Article 50 transparency obligations (GPAI + deployer). Independent root — Annex III high-risk does NOT imply Article 50 applies, and vice versa.',
+    'Article 50 transparency obligations for providers and deployers of certain AI systems (not GPAI — GPAI is Articles 51–55, see `gpai`). Independent root — Annex III high-risk does NOT imply Article 50 applies, and vice versa.',
   additionalProperties: false,
   properties: {
     applicable: { type: 'boolean', description: 'True iff any of the 5 paragraph triggers fired.' },

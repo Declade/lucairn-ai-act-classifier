@@ -6,6 +6,22 @@
     "primary_source": "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32024R1689",
     "translation_policy": "Phrasen entstammen deutscher EUR-Lex / BSI / BfDI-Terminologie und sind NICHT maschinell aus dem Englischen übersetzt. Die Verifikation erfolgt gegen das deutsche Regelungstext-Body, nicht gegen das englische."
   },
+  "_negation": {
+    "notice": "Negations-Scoping für den deterministischen Keyword-Extraktor (nach v0.3.1). Ein Lexikon-Treffer in einem verneinten Teilsatz feuert nicht. Hier stehen nur Wortlisten; die Scope-Regeln (Teilsatz-Trennung, Vorwärts-Scope, Komma/Aufzählung, ohne-Fenster, doppelte Verneinung, nachgestellte Verneinung) liegen in src/extract/negation.ts und sind dort dokumentiert. Der führende Unterstrich hält den Block aus der Kategorie-Gruppen-Erkennung und aus dem LLM-Prompt heraus.",
+    "clause_words": ["und", "aber", "sondern", "jedoch", "allerdings", "während", "obwohl", "stattdessen"],
+    "cues": ["nicht", "kein", "keine", "keinen", "keiner", "keinem", "keines", "nie", "niemals", "weder"],
+    "contraction_stems": [],
+    "paired_cues": { "noch": "weder" },
+    "limiters": ["nur", "bloß", "bloss", "lediglich"],
+    "without": "ohne",
+    "without_window": 6,
+    "list_disjunctions": ["oder", "noch"],
+    "trailing_aux": ["wird", "werden", "wurde", "wurden", "ist", "sind", "war", "waren", "kann", "können", "darf", "dürfen", "soll", "sollen", "kommt", "kommen", "findet", "finden"],
+    "trailing_negators": ["nicht", "nie", "niemals"],
+    "trailing_be": [],
+    "trailing_predicates": [],
+    "trailing_bare_negation": true
+  },
   "annex_iii": {
     "1_biometrics": {
       "description": "Anhang III.1 — biometrische Fernidentifizierung, biometrische Kategorisierung nach geschützten Merkmalen, Emotionserkennung.",
