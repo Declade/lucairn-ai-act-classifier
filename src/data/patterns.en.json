@@ -6,7 +6,7 @@
     "primary_source": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689"
   },
   "_negation": {
-    "notice": "Negation word lists for the deterministic keyword extractor (after v0.3.1). Governed-only model: a lexicon hit is suppressed ONLY when a negation cue directly governs the matched phrase (at most max_gap allowlisted words in between). Everything else fires, because hiding a real Article 5 / Annex III trigger is worse than a false alarm. Every suppressed hit is reported in `negated_hits` for a human check. The scope rules live in src/extract/negation.ts. The leading underscore keeps this block out of category-group discovery and out of the LLM prompt.",
+    "notice": "Negation word lists for the deterministic keyword extractor (after v0.3.1). ADVISORY ONLY: every lexicon hit fires exactly as in v0.3.1; a negation never changes a verdict. A fired phrase that stands near a negation (a cue directly before it with at most max_gap allowlisted words in between, or a trailing denial) is additionally listed in `negated_hits` with the note \"Found, but the text appears to deny it — please check\". The rules live in src/extract/negation.ts. The leading underscore keeps this block out of category-group discovery and out of the LLM prompt.",
     "clause_words": ["and", "but", "however", "although", "though", "whereas", "while", "instead"],
     "cues": ["not", "no", "never", "cannot", "neither", "nor"],
     "nominal_cues": ["no", "neither", "nor"],

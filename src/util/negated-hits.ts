@@ -1,27 +1,28 @@
-// Negated-hit safety net (after v0.3.1).
+// Advisory negation note (after v0.3.1).
 //
-// The keyword extractor suppresses a lexicon phrase only when a negation cue
-// directly governs it (src/extract/negation.ts). Every suppressed phrase is
-// still reported here so a human can check it: "found but read as denied —
-// check". This module maps a lexicon (group, category) to a short AI Act
-// reference and renders the localized heading. Pure, deterministic.
+// The keyword extractor fires every lexicon phrase exactly as in v0.3.1; it
+// only MARKS a fired phrase that stands near a negation
+// (src/extract/negation.ts). Those phrases are surfaced on
+// ClassifyResult.negated_hits and shown directly under the result line they
+// belong to: "Found, but the text appears to deny it — please check". The
+// note never changes a verdict. This module maps a lexicon (group, category)
+// to a short AI Act reference, to the result line it belongs under, and
+// renders the localized note. Pure, deterministic.
 
 import type { NegatedHit } from '../extract/keyword.js';
 
-/** One suppressed lexicon phrase, as surfaced on ClassifyResult.negated_hits. */
+/**
+ * One fired lexicon phrase that stands near a negation, as surfaced on
+ * ClassifyResult.negated_hits. Every entry is advisory: the phrase FIRED and
+ * counts in the verdict exactly as without the note.
+ */
 export interface NegatedHitResult {
-  /** canonical lexicon phrase that occurred in the input */
+  /** canonical lexicon phrase that occurred in the input (and fired) */
   phrase: string;
   /** short AI Act reference for the phrase's lexicon category, e.g. "Art 5(1)(c)", "Annex III.4", "Art 50(1)" */
   ref: string;
-  /** the negation words that governed the phrase, e.g. "not use", "keine", "is not used" */
+  /** the negation words near the phrase, e.g. "not use", "keine", "is not used" */
   cue: string;
-  /**
-   * "denied" — read as denied, did NOT fire ("found but read as denied — check").
-   * "near"   — fired; a negation governs it but the sentence continues after
-   *            the phrase ("near a negation — check"). Advisory only.
-   */
-  status: 'denied' | 'near';
   /** lexicon group, e.g. "article_5_prohibited" */
   group: string;
   /** lexicon category key, e.g. "c_social_scoring" */
@@ -75,44 +76,55 @@ export function toNegatedHitResults(hits: ReadonlyArray<NegatedHit> | undefined)
     phrase: h.phrase,
     ref: negatedHitRef(h.group, h.category, 'en'),
     cue: h.cue,
-    status: h.status,
     group: h.group,
     category: h.category,
     source: h.source,
   }));
 }
 
-/** Localized heading for the safety-net block. */
-export function negatedHitsHeading(locale: 'en' | 'de'): string {
+/**
+ * The result line a note belongs under. Scope qualifiers ("research only")
+ * belong to the Annex III line (they feed its research carve-out); an unknown
+ * group falls back to the last line of the article list.
+ */
+export type NoteRow = 'article_5' | 'annex_iii' | 'article_50' | 'article_4' | 'gpai' | 'other';
+
+export function noteRow(group: string): NoteRow {
+  switch (group) {
+    case 'article_5_prohibited':
+      return 'article_5';
+    case 'annex_iii':
+    case 'scope_qualifiers':
+      return 'annex_iii';
+    case 'article_50_gpai':
+      return 'article_50';
+    case 'article_4_ai_literacy':
+      return 'article_4';
+    case 'gpai_models':
+      return 'gpai';
+    default:
+      return 'other';
+  }
+}
+
+/** The notes that belong under one result line, in output order. */
+export function notesForRow(hits: ReadonlyArray<NegatedHitResult> | undefined, row: NoteRow): NegatedHitResult[] {
+  return (hits ?? []).filter((h) => noteRow(h.group) === row);
+}
+
+/** The localized advisory note text (EN / DE). */
+export function negationNote(locale: 'en' | 'de'): string {
   return locale === 'de'
-    ? 'Gefunden, aber als verneint gelesen — bitte prüfen'
-    : 'Found but read as denied — check';
+    ? 'Gefunden, aber der Text scheint es zu verneinen — bitte prüfen'
+    : 'Found, but the text appears to deny it — please check';
 }
 
-/** Localized heading for the advisory "near a negation" block (these phrases fired). */
-export function nearNegationHeading(locale: 'en' | 'de'): string {
-  return locale === 'de'
-    ? 'Ausgelöst, steht aber nahe einer Verneinung — bitte prüfen'
-    : 'Fired, but near a negation — check';
-}
-
-/** Split hits into the two display blocks, each with its heading. */
-export function negatedHitBlocks(
-  hits: ReadonlyArray<NegatedHitResult> | undefined,
-  locale: 'en' | 'de',
-): Array<{ heading: string; hits: NegatedHitResult[] }> {
-  const all = hits ?? [];
-  const out: Array<{ heading: string; hits: NegatedHitResult[] }> = [];
-  const denied = all.filter((h) => h.status !== 'near');
-  const near = all.filter((h) => h.status === 'near');
-  if (denied.length > 0) out.push({ heading: negatedHitsHeading(locale), hits: denied });
-  if (near.length > 0) out.push({ heading: nearNegationHeading(locale), hits: near });
-  return out;
-}
-
-/** One localized line per negated hit: `"phrase" (ref) — cue: "…"`. */
+/**
+ * One localized note line per hit:
+ * `Found, but the text appears to deny it — please check: "phrase" (ref; negation: "cue")`.
+ */
 export function negatedHitLine(h: NegatedHitResult, locale: 'en' | 'de'): string {
   const ref = negatedHitRef(h.group, h.category, locale);
   const cueLabel = locale === 'de' ? 'Verneinung' : 'negation';
-  return `"${h.phrase}" (${ref}) — ${cueLabel}: "${h.cue}"`;
+  return `${negationNote(locale)}: "${h.phrase}" (${ref}; ${cueLabel}: "${h.cue}")`;
 }

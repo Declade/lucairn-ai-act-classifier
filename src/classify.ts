@@ -129,12 +129,11 @@ export interface ClassifyResult {
   /** True iff annex_iii.high_risk && !annex_iii.suppressed_by_article_5. */
   annex_iv_required: boolean;
   /**
-   * Lexicon phrases near a negation. status "denied": read as DENIED, did
-   * not fire ("found but read as denied — check"). status "near": a cue
-   * governs it but the sentence continues after the phrase, so it DID fire
-   * ("near a negation — check"; advisory, never changes the verdict). Empty
-   * when there is nothing to check, and always empty in LLM mode. Added
-   * after v0.3.1 (additive).
+   * Advisory only: fired lexicon phrases that stand near a negation
+   * ("Found, but the text appears to deny it — please check"). Every entry
+   * also fired and counts in the verdict above exactly as without the note;
+   * negation never changes a verdict. Empty when there is nothing to check,
+   * and always empty in LLM mode. Added after v0.3.1 (additive).
    */
   negated_hits: NegatedHitResult[];
 }

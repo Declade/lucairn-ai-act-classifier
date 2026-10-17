@@ -1,17 +1,22 @@
-// Deterministic negation handling for the keyword extractor (after v0.3.1).
+// Deterministic negation DETECTION for the keyword extractor (after v0.3.1).
+// ADVISORY ONLY — this module never changes a verdict.
 //
-// Problem this solves: the n-gram matcher used to fire on a lexicon phrase even
-// when the sentence DENIED the practice ("Our CV tool does NOT rank job
+// Problem: the n-gram matcher fires on a lexicon phrase even when the
+// sentence seems to DENY the practice ("Our CV tool does NOT rank job
 // applicants." → Annex III.4(a); "does not use emotion recognition and does
 // not do social scoring" → Article 5 PROHIBITED).
 //
-// Design rule — GOVERNED-ONLY suppression. For a compliance classifier a
-// false negative (hiding a real prohibited / high-risk system) is far worse
-// than a false positive. So a lexicon hit is suppressed ONLY when a negation
-// cue DIRECTLY governs the matched phrase. Everything else fires, exactly as
-// before negation handling (≤ v0.3.1). Every suppressed hit is reported back
-// (keyword.ts → `negatedHits` → ClassifyResult.negated_hits) so a human can
-// check it ("found but read as denied — check").
+// Decision (PRD prd-2026-10-17-ai-act-check-share-and-action.md, Amendment 1,
+// Marc 2026-10-17 "Advisory only"): a keyword engine cannot read negation
+// reliably. Three review rounds of an earlier version that DROPPED negated
+// hits each found new sentences where a real prohibited / high-risk practice
+// disappeared ("The system prevents no emotion recognition …", "Nobody gets a
+// loan without credit scoring.", "Social scoring is not planned, it is
+// already live."). So every lexicon hit fires exactly as it did before
+// negation handling (≤ v0.3.1). This module only marks phrases that stand
+// near a negation, so the output can say "Found, but the text appears to deny
+// it — please check" next to the result (keyword.ts → `negatedHits` →
+// ClassifyResult.negated_hits). The verdict logic never reads that mark.
 //
 // Design constraints (same as keyword.ts): zero network, zero LLM, zero deps,
 // deterministic byte-for-byte. A small rule set, not a parser. The WORD LISTS
@@ -19,95 +24,50 @@
 // they are covered by the rules hash); this module holds only the RULES.
 //
 // ---------------------------------------------------------------------------
-// The rules (also summarised in README "How it works" + CHANGELOG):
+// When a phrase occurrence is marked (any of):
 //
-// 0. Segments. Tokens are those of `tokenize(normalize(text))`. Governance
-//    never crosses a BREAK: sentence punctuation (. ! ? ; : line break), a
-//    comma, a bracket, or a token made of / containing a dash, slash or
-//    bullet (" - ", "—", "/", "•"). Clauses for the parity and "without"
-//    checks additionally end at `clause_words` (and / but / und / aber …).
+// 0. Segments. Tokens are those of `tokenize(normalize(text))`. A mark never
+//    crosses a BREAK: sentence punctuation (. ! ? ; : line break), a comma,
+//    a bracket, or a token made of / containing a dash, slash or bullet.
+//    Clauses for the parity and "without" checks additionally end at
+//    `clause_words` (and / but / und / aber …).
 //
-// 1. Forward governance. A cue governs a phrase when the phrase starts right
-//    after the cue, with at most `max_gap` tokens in between, all from an
-//    allowlist:
+// 1. Forward cue. The phrase starts right after a cue, with at most `max_gap`
+//    allowlisted tokens in between:
 //      verbal cue (not, never, cannot, n't · nicht, nie, niemals):
 //        [infinitive_marker] [governed_verb] (determiner | modifier)*
-//        "does not use emotion recognition", "we do not rank job applicants",
-//        "decided not to use facial recognition", "nicht die Emotionserkennung"
+//        "does not use emotion recognition", "we do not rank job applicants"
 //      nominal cue (no, neither, nor · kein…, weder, noch-after-weder):
-//        (determiner | modifier)*                 "no social scoring",
-//        "keine Emotionserkennung", "neither X nor Y"
-//    Anything else in between — a noun (subject change: "No human reviews
-//    how …"), a finite verb that is not a governed verb ("cannot opt out of"),
-//    a subordinator or avoidance verb (`breakers`), a limiter — means NOT
-//    governed, and the hit fires.
-//    A cue followed directly by a `void_after` word is no cue at all:
-//    limiters ("not only", "not exclusively", "nicht nur") and fixed
-//    non-denials ("not limited to", "no limits on", "no consent is required",
-//    "no way to avoid", "keine Einschränkungen").
+//        (determiner | modifier)*   "no social scoring", "keine Emotionserkennung"
+//    Anything else in between (a noun, another verb, a subordinator or
+//    avoidance verb from `breakers`) → no mark. A cue directly followed by a
+//    `void_after` word is no cue ("not only", "no limits on", "nicht nur").
 //
-// 2. Closed construction (strict). A governed phrase is suppressed ONLY when
-//    the construction is closed right after it:
-//      - sentence punctuation (. ! ? ; :) or end of text follows the phrase
-//        (DE: optionally after ONE `closers` word — a clause-final particle,
-//        verb-final verb or participle: "findet keine Sozialbewertung
-//        statt.", "…, der keine Gesichtserkennung nutzt.", "Es wird keine
-//        Sozialbewertung durchgeführt."), or
-//      - "," / and / or / nor · und / oder / noch introduces a FURTHER
-//        member of an object list (lexicon phrases only) — the whole list
-//        must then end the clause the same way — or a further NEGATED
-//        clause ("does not use X and does not do Y", "…, we never …").
-//    ANY other continuation fires: only / alone / solely / allein / nur …,
-//    but / rather / sondern / aber, a following verb or predicate ("No credit
-//    scoring request is left unprocessed", "Keine Bonitätsprüfung wird
-//    ausgelassen", "Not using social scoring is impossible"), a prepositional
-//    restriction ("… only by experience", "… during interviews"), a dash or
-//    bracket, an affirmative clause after a list ("… or credit scoring is
-//    used instead"). Such a phrase FIRES and is listed in negated_hits with
-//    status "near" ("near a negation — check"); that note never changes the
-//    verdict.
+// 2. List members. When the marked phrase heads an object list that ends the
+//    sentence ("does not use X, Y or Z.", "weder X noch Y."), the other
+//    lexicon-phrase members are marked too.
 //
-// 3. without / ohne negates only a phrase that starts immediately after it
-//    (determiners / modifiers allowed), and rule 2 applies to it too.
-//    "Without human review the tool ranks job applicants" → the ranking
-//    still fires.
+// 3. without / ohne marks only a phrase that starts right after it.
 //
-// 4. Trailing denial (cue AFTER the phrase), only when the predicate ends the
-//    clause:
-//      EN  <phrase> [aux] (not | never | cannot | n't) [be|been] <predicate>
-//          "Facial recognition is not used." / "… will never be performed."
-//      DE  <phrase> [aux | filler]{0,3} (nicht | nie | niemals) <participle>
-//          [werden | worden | wird | wurde]
-//          "Gesichtserkennung wird nicht eingesetzt." (participles: eingesetzt,
-//          genutzt, verwendet, durchgeführt, angeboten, betrieben)
-//      DE  <bare_verb> [det|mod]* <phrase> (nicht | nie | niemals) [particle]
-//          "Wir nutzen Emotionserkennung nicht." / "Wir setzen X nicht ein."
-//    A `cancel_after` word right after the clause end ("…, but", "only",
-//    "rather", "sondern", "nur") cancels the denial. "is not optional",
-//    "cannot be disabled", "nicht abschaltbar" are not predicates → fire.
+// 4. Trailing denial (cue AFTER the phrase), when the predicate ends the
+//    clause: "Facial recognition is not used.", "Gesichtserkennung wird nicht
+//    eingesetzt.", "Wir nutzen Emotionserkennung nicht.". A following
+//    but / only / sondern / nur cancels it.
 //
-// 5. Parity. Cues are counted in the cue's clause up to the governing cue
-//    (list cues nor / noch do not add). An EVEN count is a double negation
-//    → fires ("There is no case in which the system does not rank job
-//    applicants"). A without / ohne after the phrase in the same clause is a
-//    double negation too ("does not rank job applicants without a recruiter's
-//    sign-off" → fires); a cue before a without / ohne cancels it as well.
+// 5. Parity. An even number of cues in the clause (double negation, or a
+//    without / ohne later in the same clause) → no mark.
 //
-// 6. Overlap. A phrase occurrence that starts inside a suppressed occurrence
-//    (e.g. "emotion recognition" inside "emotion recognition in the
-//    workplace") is suppressed with it.
+// 6. Overlap. An occurrence that starts inside a marked occurrence (e.g.
+//    "emotion recognition" inside "emotion recognition in the workplace") is
+//    marked with it.
 //
-// Known limits (all in the conservative "still fires" direction): negation
-// carried by a main verb ("we refrain from", "verzichten auf"), negation in
-// another sentence, ANY words after a governed phrase ("we do not use facial
-// recognition in this product", "no facial recognition is used", "neither X
-// nor Y is part of it", "das System soll ohne Gesichtserkennung arbeiten"),
-// list members that are not lexicon phrases, a trailing denial with a
-// complement ("is not used in this product"), a noun between cue and phrase
-// ("no use of facial recognition", "keinen Einsatz von Gesichtserkennung"),
-// and a negated main clause before a comma ("Wir garantieren nicht, dass …").
-// Phrases that fire only because of the closed-construction rule are flagged
-// with status "near" in negated_hits.
+// keyword.ts lists a phrase only when EVERY occurrence of it is marked (a
+// phrase that is also stated plainly elsewhere gets no note). Known limits
+// of the mark (it is a hint, in both directions): negation carried by a verb
+// ("we refrain from"; "prevents no …" is marked although it affirms), in
+// another sentence, or with a noun between cue and phrase is not seen; a
+// marked sentence can still describe a real practice ("Social scoring is not
+// planned, it is already live."). The verdict is unaffected either way.
 // ---------------------------------------------------------------------------
 
 import { normalize, tokenize } from './normalize.js';
@@ -407,7 +367,7 @@ function cueEndingAt(t: Tokens, c: Compiled, i: number): Cue | null {
  * subordinate / relative clause opened after a comma (", in which …",
  * ", dass …"), counting continues into the clause before the comma, so
  * "Es gibt keinen Fall, in dem das System nicht …" is a double negation.
- * Reaching further only ever makes a hit FIRE, never suppresses one.
+ * Reaching further only ever removes a mark, never adds one.
  */
 function cuesBefore(t: Tokens, c: Compiled, before: number): number {
   let n = 0;
@@ -589,7 +549,7 @@ function trailingCue(t: Tokens, c: Compiled, s: number, e: number): string | nul
 }
 
 // ---------------------------------------------------------------------------
-// Closed construction (rule 2)
+// List members (rule 2)
 // ---------------------------------------------------------------------------
 
 /** Does a further negated clause start at token k ("and does not …", ", we never …", "und keine …")? */
@@ -628,7 +588,8 @@ function joinerAt(t: Tokens, c: Compiled, j: number): number {
  * noch, determiners allowed) and accept it only when it is CLOSED: the last
  * member is followed by sentence punctuation / end of text (DE: optionally
  * one `closers` word first), or a joiner hands over to a further negated
- * clause. Returns the members, or null (open construction → fires).
+ * clause. Returns the members, or null (open construction → only the head
+ * phrase is marked).
  */
 function closedList(
   t: Tokens,
@@ -669,23 +630,18 @@ function closedList(
 // ---------------------------------------------------------------------------
 
 export interface NegationResult {
-  /** False when negation is OFF (no / malformed `_negation` block, or token misalignment). */
+  /** False when detection is OFF (no / malformed `_negation` block, or token misalignment). */
   active: boolean;
-  /** occurrence index → cue text, for every suppressed occurrence. */
-  suppressed: Map<number, string>;
-  /**
-   * occurrence index → cue text, for occurrences a cue governs but whose
-   * construction is open (something follows the phrase): they FIRE; this is
-   * an advisory "near a negation — check" signal only.
-   */
-  near: Map<number, string>;
+  /** occurrence index → cue text, for every occurrence near a negation (advisory mark only). */
+  negated: Map<number, string>;
 }
 
 /**
- * Decide which phrase occurrences are negated.
+ * Mark which phrase occurrences stand near a negation. Advisory only: the
+ * caller must never drop or downgrade a hit because of this result.
  *
  * @param text raw user input (NOT normalized — punctuation marks the breaks)
- * @param lex  the active lexicon's `_negation` block, or undefined (negation off)
+ * @param lex  the active lexicon's `_negation` block, or undefined (detection off)
  * @param occs every lexicon phrase occurrence (token ranges of tokenize(normalize(text)))
  */
 export function findNegated(
@@ -693,13 +649,12 @@ export function findNegated(
   lex: NegationLexicon | undefined,
   occs: ReadonlyArray<PhraseOccurrence>,
 ): NegationResult {
-  const off: NegationResult = { active: false, suppressed: new Map(), near: new Map() };
+  const off: NegationResult = { active: false, negated: new Map() };
   if (lex === undefined) return off;
   const c = compile(lex);
   const t = tokenizeWithBreaks(text, c);
   if (t === null) return off;
 
-  const suppressed = new Map<number, string>();
   // Longest occurrence per start token (lists + overlap work on these).
   const longestAt = new Map<number, number>();
   for (const o of occs) {
@@ -707,43 +662,31 @@ export function findNegated(
     if (cur === undefined || o.end > cur) longestAt.set(o.start, o.end);
   }
 
-  // Suppressed spans: [start, end) → cue. Near spans: governed but not closed.
+  // Marked spans: [start, end) → cue.
   const spans: Array<{ start: number; end: number; cue: string }> = [];
-  const nearSpans: Array<{ start: number; end: number; cue: string }> = [];
-
   const starts = [...longestAt.keys()].sort((a, b) => a - b);
   for (const s of starts) {
     const e = longestAt.get(s) as number;
     const fwd = forwardCue(t, c, s);
     if (fwd !== null && !withoutLater(t, c, s, fwd.clauseOf)) {
-      // Rule 2: closed construction — the phrase (or the object list it
-      // heads) must end the clause, or hand over to another negated clause.
-      const members = closedList(t, c, longestAt, s, e);
-      if (members !== null) {
-        for (const m of members) spans.push({ start: m.start, end: m.end, cue: fwd.cue });
-        continue;
-      }
-      nearSpans.push({ start: s, end: e, cue: fwd.cue });
+      // Rule 2: a closed object list headed by this phrase marks its members.
+      const members = closedList(t, c, longestAt, s, e) ?? [{ start: s, end: e }];
+      for (const m of members) spans.push({ start: m.start, end: m.end, cue: fwd.cue });
+      continue;
     }
     const trail = trailingCue(t, c, s, e);
     if (trail !== null) spans.push({ start: s, end: e, cue: trail });
   }
 
-  // Rule 6: every occurrence starting inside a suppressed span is suppressed.
-  const near = new Map<number, string>();
+  // Rule 6: every occurrence starting inside a marked span is marked.
+  const negated = new Map<number, string>();
   occs.forEach((o, idx) => {
     for (const sp of spans) {
       if (o.start >= sp.start && o.start < sp.end) {
-        suppressed.set(idx, sp.cue);
-        return;
-      }
-    }
-    for (const sp of nearSpans) {
-      if (o.start >= sp.start && o.start < sp.end) {
-        near.set(idx, sp.cue);
+        negated.set(idx, sp.cue);
         return;
       }
     }
   });
-  return { active: true, suppressed, near };
+  return { active: true, negated };
 }

@@ -1,10 +1,12 @@
-// Negation handling (after v0.3.1) — src/extract/negation.ts via extractFeatures().
-// Governed-only: a hit is suppressed only when a negation cue directly governs
-// the phrase; everything else fires. The over-correction guard (bug-hunter
-// inputs + differential sweep) lives in negation-safety.spec.ts.
+// Negation detection (after v0.3.1) — src/extract/negation.ts via extractFeatures().
+// ADVISORY ONLY (PRD Amendment 1, Marc 2026-10-17): every phrase fires exactly
+// as in v0.3.1; a phrase that stands near a negation additionally carries the
+// note "Found, but the text appears to deny it — please check" in
+// `negatedHits` / `negated_hits`. The verdict guard (identical to the
+// pre-negation engine) lives in negation-safety.spec.ts.
 //
-// Every negation case is paired with a positive control so a test cannot pass
-// just because the phrase is missing from the lexicon.
+// Every noted case is paired with a positive control (fires, no note) so a
+// test cannot pass just because the phrase is missing from the lexicon.
 
 import { describe, it, expect } from 'vitest';
 import { extractFeatures } from '../../src/extract/keyword.js';
@@ -13,7 +15,7 @@ import { findNegated, isNegationLexicon } from '../../src/extract/negation.js';
 import { formatMarkdown } from '../../src/format/markdown.js';
 import { formatExplain } from '../../src/format/explain.js';
 import { formatCliTable } from '../../src/format/cli-table.js';
-import { negatedHitRef } from '../../src/util/negated-hits.js';
+import { negatedHitRef, noteRow } from '../../src/util/negated-hits.js';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -26,55 +28,111 @@ function phrases(text: string, lang: 'en' | 'de'): string[] {
   return extractFeatures(text, { lang }).hits.map((h) => h.phrase);
 }
 
-type Case = { text: string; phrase: string };
-
-/** [negated sentence, positive control] — the phrase must fire only in the control. */
-function expectNegated(lang: 'en' | 'de', negated: Case, control: Case): void {
-  expect(phrases(control.text, lang), `control should fire: ${control.text}`).toContain(control.phrase);
-  expect(phrases(negated.text, lang), `negated should not fire: ${negated.text}`).not.toContain(negated.phrase);
+function noted(text: string, lang: 'en' | 'de'): string[] {
+  return (extractFeatures(text, { lang }).negatedHits ?? []).map((h) => h.phrase);
 }
 
-describe('negation — the two reported sentences (classify end-to-end)', () => {
-  it('EN "Our CV tool does NOT rank job applicants." is NOT high-risk', async () => {
+type Case = { text: string; phrase: string };
+
+/** [negated sentence, positive control] — the phrase fires in both; only the negated one carries the note. */
+function expectNoted(lang: 'en' | 'de', negated: Case, control: Case): void {
+  expect(phrases(control.text, lang), `control should fire: ${control.text}`).toContain(control.phrase);
+  expect(noted(control.text, lang), `control should carry no note: ${control.text}`).not.toContain(control.phrase);
+  expect(phrases(negated.text, lang), `negated should STILL fire: ${negated.text}`).toContain(negated.phrase);
+  expect(noted(negated.text, lang), `negated should carry the note: ${negated.text}`).toContain(negated.phrase);
+}
+
+/** Cue governs the phrase but the sentence continues: fires (as always) AND carries the note. */
+const NOTED_OPEN = new Set([
+  'neither … nor as a subject with a predicate (open construction)',
+  'continuation after the phrase: only by …',
+  'continuation after the phrase: preposition',
+  'subject + predicate',
+  'subject + predicate: no X is used',
+  'gerund subject',
+  'and-list followed by a predicate',
+  'comma + affirmative clause',
+  'ohne + Phrase + Verb (offene Konstruktion)',
+  'weder … noch als Subjekt mit Prädikat',
+  'Subjekt + Prädikat',
+  'Partizip, aber Satz geht weiter',
+  'allein nach der Phrase',
+]);
+
+const NOTE_EN = 'Found, but the text appears to deny it — please check';
+const NOTE_DE = 'Gefunden, aber der Text scheint es zu verneinen — bitte prüfen';
+
+describe('negation — the two reported sentences (classify end-to-end): fire as on main, with the note', () => {
+  it('EN "Our CV tool does NOT rank job applicants." stays HIGH-RISK Annex III.4 and carries the note', async () => {
     const r = await classify('Our CV tool does NOT rank job applicants.');
-    expect(r.annex_iii.high_risk).toBe(false);
-    expect(r.annex_iii.domains).toEqual([]);
-    expect(r.annex_iv_required).toBe(false);
-    expect(r.negated_hits).toContainEqual(
+    expect(r.annex_iii.high_risk).toBe(true);
+    expect(r.annex_iii.domains.map((d) => d.annex_iii_number)).toEqual([4]);
+    expect(r.annex_iv_required).toBe(true);
+    expect(r.negated_hits).toEqual([
       expect.objectContaining({ phrase: 'rank job applicants', group: 'annex_iii', ref: 'Annex III.4', cue: 'not' }),
-    );
+    ]);
     const control = await classify('Our CV tool ranks job applicants.');
     expect(control.annex_iii.high_risk).toBe(true);
-    expect(control.annex_iii.domains.map((d) => d.annex_iii_number)).toContain(4);
+    expect(control.negated_hits).toEqual([]);
   });
 
-  it('EN "A chatbot that does not use emotion recognition and does not do social scoring." is NOT prohibited; Art 50 chatbot still applies', async () => {
+  it('EN "A chatbot that does not use emotion recognition and does not do social scoring." stays PROHIBITED and carries the note', async () => {
     const r = await classify(
       'A chatbot that does not use emotion recognition and does not do social scoring.',
     );
-    expect(r.article_5.prohibited).toBe(false);
-    expect(r.annex_iii.high_risk).toBe(false);
+    expect(r.article_5.prohibited).toBe(true);
+    expect(r.article_5.hits.map((h) => h.letter)).toEqual(['c']);
     expect(r.article_50.applicable).toBe(true);
     expect(r.article_50.triggered_by.paragraph_1_interaction).toBe(true);
     expect(r.negated_hits).toContainEqual(
       expect.objectContaining({ phrase: 'social scoring', ref: 'Art 5(1)(c)', cue: 'not do' }),
     );
     expect(r.negated_hits).toContainEqual(expect.objectContaining({ phrase: 'emotion recognition', cue: 'not use' }));
-    const control = await classify('A chatbot that uses emotion recognition and does social scoring.');
-    expect(control.article_5.prohibited).toBe(true);
   });
 
-  it('DE equivalents are not prohibited / not high-risk', async () => {
-    const a = await classify('Unser CV-Tool sortiert keine Bewerber. Wir wollen nicht Bewerber sortieren.', { lang: 'de' });
-    expect(a.annex_iii.high_risk).toBe(false);
+  it('the note is shown directly under the affected result line (table, markdown, --explain; EN + DE)', async () => {
+    const en = await classify('Our CV tool does NOT rank job applicants.', { lang: 'en' });
+    const table = formatCliTable(en, { locale: 'en', cite: false, useColor: false }).split('\n');
+    const note = `⚠ ${NOTE_EN}: "rank job applicants" (Annex III.4; negation: "not")`;
+    const noteAt = table.findIndex((l) => l.includes(note));
+    expect(noteAt).toBeGreaterThan(0);
+    // Directly under the Annex III line and its sub-letter tree.
+    expect(table[noteAt - 1]).toContain('Annex III.4(a)');
+    expect(table[noteAt - 2]).toContain('HIGH-RISK');
+
+    const md = formatMarkdown(en, { locale: 'en', cite: false }).split('\n');
+    const annexRow = md.find((l) => l.startsWith('| Article 6'));
+    expect(annexRow).toContain(`⚠️ ${NOTE_EN}: "rank job applicants" (Annex III.4; negation: "not")`);
+
+    const ex = formatExplain(en, { locale: 'en', format: 'markdown', withExcerpt: false }).split('\n');
+    const head = ex.findIndex((l) => l.startsWith('### Annex III ¶4'));
+    const exNote = ex.findIndex((l) => l.includes(NOTE_EN));
+    expect(head).toBeGreaterThan(0);
+    expect(exNote).toBeGreaterThan(head);
+    expect(ex.slice(head + 1, exNote).some((l) => l.startsWith('### '))).toBe(false);
+    const text = formatExplain(en, { locale: 'en', format: 'text', withExcerpt: false });
+    expect(text).toContain(`* ⚠ ${NOTE_EN}: "rank job applicants"`);
+    expect(JSON.parse(formatExplain(en, { locale: 'en', format: 'json', withExcerpt: false })).negated_hits).toHaveLength(1);
+
+    const de = await classify('Es findet keine Sozialbewertung statt.', { lang: 'de' });
+    const deTable = formatCliTable(de, { locale: 'de', cite: false, useColor: false }).split('\n');
+    const deAt = deTable.findIndex((l) => l.includes(NOTE_DE));
+    expect(deTable[deAt - 1]).toMatch(/^  Artikel 5/);
+    expect(deTable[deAt]).toContain('"sozialbewertung" (Art. 5 Abs. 1 Buchst. c; Verneinung: "keine")');
+    expect(formatMarkdown(de, { locale: 'de', cite: false }).split('\n').find((l) => l.startsWith('| Artikel 5'))).toContain(NOTE_DE);
+    expect(formatExplain(de, { locale: 'de', format: 'markdown', withExcerpt: false })).toContain(NOTE_DE);
+  });
+
+  it('DE equivalents fire as on main and carry the note', async () => {
+    const a = await classify('Das Tool soll nicht Bewerber sortieren.', { lang: 'de' });
+    expect(a.annex_iii.high_risk).toBe(true);
+    expect(a.negated_hits.map((h) => h.phrase)).toContain('bewerber sortieren');
     const b = await classify(
       'Ein Chatbot, der keine Emotionserkennung am Arbeitsplatz nutzt und keine Sozialbewertung betreibt.',
       { lang: 'de' },
     );
-    expect(b.article_5.prohibited).toBe(false);
-    expect(b.article_50.applicable).toBe(true);
-    const control = await classify('Ein Chatbot, der Sozialbewertung betreibt.', { lang: 'de' });
-    expect(control.article_5.prohibited).toBe(true);
+    expect(b.article_5.prohibited).toBe(true);
+    expect(b.negated_hits.map((h) => h.phrase)).toContain('emotionserkennung am arbeitsplatz');
   });
 });
 
@@ -101,30 +159,30 @@ describe('negation — EN forms', () => {
     ['and-list ending the clause', 'We do not use emotion recognition and facial recognition.', 'We use emotion recognition and facial recognition.', 'facial recognition'],
     ['handover to a further negated clause', 'We do not use facial recognition and we never do social scoring.', 'We use facial recognition and we do social scoring.', 'facial recognition'],
   ])('%s', (_label, negated, control, phrase) => {
-    expectNegated('en', { text: negated, phrase }, { text: control, phrase });
+    expectNoted('en', { text: negated, phrase }, { text: control, phrase });
   });
 
-  it('neither … nor negates both items (closed: the list ends the clause)', () => {
-    const p = phrases('We use neither social scoring nor emotion recognition.', 'en');
-    expect(p).not.toContain('social scoring');
-    expect(p).not.toContain('emotion recognition');
+  it('neither … nor notes both items (closed: the list ends the clause); both still fire', () => {
+    const t = 'We use neither social scoring nor emotion recognition.';
+    expect(phrases(t, 'en')).toEqual(expect.arrayContaining(['social scoring', 'emotion recognition']));
+    expect(noted(t, 'en')).toEqual(expect.arrayContaining(['social scoring', 'emotion recognition']));
     const c = phrases('Social scoring and emotion recognition are part of it.', 'en');
     expect(c).toContain('social scoring');
     expect(c).toContain('emotion recognition');
   });
 
-  it('without negates the next phrase only', () => {
-    const p = phrases('We rank job applicants without facial recognition.', 'en');
-    expect(p).toContain(rank);
-    expect(p).not.toContain('facial recognition');
+  it('without notes the next phrase only; both still fire', () => {
+    const t = 'We rank job applicants without facial recognition.';
+    expect(phrases(t, 'en')).toEqual(expect.arrayContaining([rank, 'facial recognition']));
+    expect(noted(t, 'en')).toEqual(['facial recognition']);
     expect(phrases('We rank job applicants with facial recognition.', 'en')).toContain('facial recognition');
   });
 
-  it('a comma-separated list closed by "or" stays negated', () => {
-    const p = phrases('We do not use emotion recognition, facial recognition or social scoring.', 'en');
-    expect(p).not.toContain('emotion recognition');
-    expect(p).not.toContain('facial recognition');
-    expect(p).not.toContain('social scoring');
+  it('a comma-separated list closed by "or" notes every member; all still fire', () => {
+    const t = 'We do not use emotion recognition, facial recognition or social scoring.';
+    const all = ['emotion recognition', 'facial recognition', 'social scoring'];
+    expect(phrases(t, 'en')).toEqual(expect.arrayContaining(all));
+    expect(noted(t, 'en')).toEqual(expect.arrayContaining(all));
   });
 
   it.each([
@@ -134,7 +192,7 @@ describe('negation — EN forms', () => {
     ['cannot be used', 'Facial recognition cannot be used.'],
     ['has not been deployed', 'Facial recognition has not been deployed.'],
   ])('trailing denial: "%s"', (_label, text) => {
-    expectNegated(
+    expectNoted(
       'en',
       { text, phrase: 'facial recognition' },
       { text: 'Facial recognition is used.', phrase: 'facial recognition' },
@@ -142,7 +200,7 @@ describe('negation — EN forms', () => {
   });
 });
 
-describe('negation — EN must still fire (no over-correction)', () => {
+describe('negation — EN: always fires; note only where a cue governs the phrase', () => {
   it.each([
     ['not only … but also', 'Our tool not only ranks job applicants but also schedules interviews.', 'ranks job applicants'],
     ['cannot be used without human review (trigger before)', 'The system ranks job applicants and cannot be used without human review.', 'ranks job applicants'],
@@ -186,8 +244,9 @@ describe('negation — EN must still fire (no over-correction)', () => {
     ['list followed by an affirmative clause', 'We do not offer facial recognition, social scoring or credit scoring is used instead.', 'social scoring'],
     ['and-list followed by a predicate', 'We do not use emotion recognition and facial recognition is used instead.', 'emotion recognition'],
     ['comma + affirmative clause', 'We do not use facial recognition, we use social scoring.', 'facial recognition'],
-  ])('%s', (_label, text, phrase) => {
+  ])('%s', (label, text, phrase) => {
     expect(phrases(text, 'en')).toContain(phrase);
+    expect(noted(text, 'en').includes(phrase), `note expected: ${NOTED_OPEN.has(label)}`).toBe(NOTED_OPEN.has(label));
   });
 });
 
@@ -211,28 +270,29 @@ describe('negation — DE forms', () => {
     ['nachgestellt: nutzen … nicht', 'Wir nutzen Emotionserkennung nicht.', 'Wir nutzen Emotionserkennung.', 'emotionserkennung'],
     ['nachgestellt: setzen … nicht ein', 'Wir setzen Gesichtserkennung nicht ein.', 'Wir setzen Gesichtserkennung ein.', 'gesichtserkennung'],
   ])('%s', (_label, negated, control, phrase) => {
-    expectNegated('de', { text: negated, phrase }, { text: control, phrase });
+    expectNoted('de', { text: negated, phrase }, { text: control, phrase });
   });
 
-  it('weder … noch negates both items (closed: the list ends the clause)', () => {
-    const p = phrases('Wir nutzen weder Emotionserkennung noch Sozialbewertung.', 'de');
-    expect(p).not.toContain('emotionserkennung');
-    expect(p).not.toContain('sozialbewertung');
+  it('weder … noch notes both items; both still fire', () => {
+    const t = 'Wir nutzen weder Emotionserkennung noch Sozialbewertung.';
+    expect(phrases(t, 'de')).toEqual(expect.arrayContaining(['emotionserkennung', 'sozialbewertung']));
+    expect(noted(t, 'de')).toEqual(expect.arrayContaining(['emotionserkennung', 'sozialbewertung']));
   });
 
   it('noch alone is not a negation', () => {
     expect(phrases('Gesichtserkennung wird noch eingesetzt.', 'de')).toContain('gesichtserkennung');
+    expect(noted('Gesichtserkennung wird noch eingesetzt.', 'de')).toEqual([]);
   });
 
-  it('a comma list closed by "oder" stays negated', () => {
-    const p = phrases('Wir nutzen keine Emotionserkennung, Gesichtserkennung oder Sozialbewertung.', 'de');
-    expect(p).not.toContain('emotionserkennung');
-    expect(p).not.toContain('gesichtserkennung');
-    expect(p).not.toContain('sozialbewertung');
+  it('a comma list closed by "oder" notes every member; all still fire', () => {
+    const t = 'Wir nutzen keine Emotionserkennung, Gesichtserkennung oder Sozialbewertung.';
+    const all = ['emotionserkennung', 'gesichtserkennung', 'sozialbewertung'];
+    expect(phrases(t, 'de')).toEqual(expect.arrayContaining(all));
+    expect(noted(t, 'de')).toEqual(expect.arrayContaining(all));
   });
 });
 
-describe('negation — DE must still fire (no over-correction)', () => {
+describe('negation — DE: always fires; note only where a cue governs the phrase', () => {
   it.each([
     ['nicht nur … sondern auch', 'Das Tool soll nicht nur Bewerber sortieren, sondern auch Termine planen.', 'bewerber sortieren'],
     ['darf nicht ohne menschliche Prüfung', 'Das Tool soll Bewerber sortieren und darf nicht ohne menschliche Prüfung eingesetzt werden.', 'bewerber sortieren'],
@@ -260,8 +320,9 @@ describe('negation — DE must still fire (no over-correction)', () => {
     ['Partizip, aber Satz geht weiter', 'Keine Sozialbewertung durchgeführt zu haben ist unmöglich.', 'sozialbewertung'],
     ['allein nach der Phrase', 'Nicht die Bonitätsprüfung allein entscheidet über den Kredit.', 'bonitätsprüfung'],
     ['Aufzählung + bejahter Satz', 'Wir bieten keine Gesichtserkennung, Sozialbewertung oder Bonitätsprüfung wird stattdessen genutzt.', 'sozialbewertung'],
-  ])('%s', (_label, text, phrase) => {
+  ])('%s', (label, text, phrase) => {
     expect(phrases(text, 'de')).toContain(phrase);
+    expect(noted(text, 'de').includes(phrase), `note expected: ${NOTED_OPEN.has(label)}`).toBe(NOTED_OPEN.has(label));
   });
 });
 
@@ -276,24 +337,31 @@ describe('negation — plumbing', () => {
     expect(Object.keys(r.byCategory)).not.toContain('_negation');
   });
 
-  it('no _negation block → nothing negated (v0.3.1 behaviour)', () => {
+  it('no _negation block → nothing marked (v0.3.1 behaviour)', () => {
     const s = findNegated('We do not rank job applicants.', undefined, [{ start: 3, end: 6 }]);
     expect(s.active).toBe(false);
-    expect(s.suppressed.size).toBe(0);
+    expect(s.negated.size).toBe(0);
   });
 
-  it('a phrase with one denied and one stated occurrence fires and is not listed as negated', () => {
+  it('a phrase with one denied and one stated occurrence fires and carries no note', () => {
     const r = extractFeatures('We do not use facial recognition. We use facial recognition.', { lang: 'en' });
     expect(r.hits.map((h) => h.phrase)).toContain('facial recognition');
     expect((r.negatedHits ?? []).map((h) => h.phrase)).not.toContain('facial recognition');
   });
 
-  it('negated hits carry group, category, source and cue', () => {
+  it('hits and byCategory are identical with and without the note (the note is additive)', () => {
+    const t = 'A chatbot that does not use emotion recognition and does not do social scoring.';
+    const r = extractFeatures(t, { lang: 'en' });
+    for (const h of r.negatedHits ?? []) {
+      expect(r.hits).toContainEqual({ group: h.group, category: h.category, phrase: h.phrase, source: h.source });
+    }
+  });
+
+  it('noted hits carry group, category, source and cue — and no status (every entry is advisory)', () => {
     const r = extractFeatures('There is no social scoring.', { lang: 'en' });
-    expect(r.negatedHits).toContainEqual(
-      expect.objectContaining({ group: 'article_5_prohibited', category: 'c_social_scoring', phrase: 'social scoring', cue: 'no' }),
-    );
-    expect(r.negatedHits?.every((h) => h.source.startsWith('http'))).toBe(true);
+    expect(r.negatedHits).toEqual([
+      { group: 'article_5_prohibited', category: 'c_social_scoring', phrase: 'social scoring', source: expect.stringMatching(/^http/), cue: 'no' },
+    ]);
   });
 
   it('negatedHitRef maps lexicon categories to AI Act references (EN + DE)', () => {
@@ -305,24 +373,30 @@ describe('negation — plumbing', () => {
     expect(negatedHitRef('gpai_models', 'systemic_risk_markers')).toBe('Art 55');
   });
 
-  it('no negated hits → output formats unchanged (no safety-net block)', async () => {
-    const r = await classify('Our CV tool ranks job applicants.');
-    expect(r.negated_hits).toEqual([]);
-    expect(formatMarkdown(r, { locale: 'en', cite: false })).not.toContain('read as denied');
+  it('noteRow places every lexicon group under a result line', () => {
+    expect(noteRow('article_5_prohibited')).toBe('article_5');
+    expect(noteRow('annex_iii')).toBe('annex_iii');
+    expect(noteRow('scope_qualifiers')).toBe('annex_iii');
+    expect(noteRow('article_50_gpai')).toBe('article_50');
+    expect(noteRow('article_4_ai_literacy')).toBe('article_4');
+    expect(noteRow('gpai_models')).toBe('gpai');
+    expect(noteRow('something_new')).toBe('other');
   });
 
-  it('negated hits are shown in markdown, explain and table output (EN + DE)', async () => {
-    const en = await classify('Our CV tool does NOT rank job applicants.', { lang: 'en' });
-    expect(formatMarkdown(en, { locale: 'en', cite: false })).toContain('Found but read as denied — check');
-    expect(formatMarkdown(en, { locale: 'en', cite: false })).toContain('"rank job applicants" (Annex III.4) — negation: "not"');
-    expect(formatExplain(en, { locale: 'en', format: 'markdown', withExcerpt: false })).toContain('Found but read as denied — check');
-    expect(formatExplain(en, { locale: 'en', format: 'text', withExcerpt: false })).toContain('Found but read as denied — check');
-    expect(JSON.parse(formatExplain(en, { locale: 'en', format: 'json', withExcerpt: false })).negated_hits).toHaveLength(1);
-    expect(formatCliTable(en, { locale: 'en', cite: false, useColor: false })).toContain('Found but read as denied — check');
-    const de = await classify('Es findet keine Sozialbewertung statt.', { lang: 'de' });
-    expect(formatMarkdown(de, { locale: 'de', cite: false })).toContain('Gefunden, aber als verneint gelesen — bitte prüfen');
-    expect(formatMarkdown(de, { locale: 'de', cite: false })).toContain('(Art. 5 Abs. 1 Buchst. c)');
-    expect(formatExplain(de, { locale: 'de', format: 'markdown', withExcerpt: false })).toContain('Gefunden, aber als verneint gelesen — bitte prüfen');
+  it('no noted hits → output formats carry no note', async () => {
+    const r = await classify('Our CV tool ranks job applicants.');
+    expect(r.negated_hits).toEqual([]);
+    expect(formatMarkdown(r, { locale: 'en', cite: false })).not.toContain('please check');
+    expect(formatCliTable(r, { locale: 'en', cite: false, useColor: false })).not.toContain('please check');
+    expect(formatExplain(r, { locale: 'en', format: 'markdown', withExcerpt: false })).not.toContain('please check');
+  });
+
+  it('a note whose result line did not fire is still shown (--explain "other matched phrases")', async () => {
+    // Annex III is suppressed by Article 5 here, so "emotion recognition" (Annex III.1) has no fired article.
+    const r = await classify('A chatbot that does not use emotion recognition and does not do social scoring.', { lang: 'en' });
+    const ex = formatExplain(r, { locale: 'en', format: 'markdown', withExcerpt: false });
+    expect(ex).toContain('### ⚠️ Notes on other matched phrases');
+    expect(ex).toContain(`${NOTE_EN}: "emotion recognition" (Annex III.1; negation: "not use")`);
   });
 
   it('a malformed block is rejected', () => {

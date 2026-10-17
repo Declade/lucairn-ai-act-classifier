@@ -1,22 +1,24 @@
-// Shared inputs for the negation safety checks (after v0.3.1).
+// Shared inputs for the negation checks (after v0.3.1; advisory-only since
+// PRD Amendment 1, Marc 2026-10-17).
 //
-// Used by scripts/negation-sweep.ts (the differential report against a
-// checkout of the pre-negation engine) and by test/extract/negation-safety.spec.ts.
+// Negation never changes a verdict. Used by scripts/negation-sweep.ts (the
+// differential report against a checkout of the pre-negation engine) and by
+// test/extract/negation-safety.spec.ts.
 //
-//   - MUST_STILL_FIRE: every input from the 2026-10-17 bug-hunter report on
-//     PR #24 (B1 avoidance / non-denial, B2 without, B3 trailing non-denials,
-//     I1 double negation, I2 limiters), plus DE counterparts. The pre-negation
-//     engine fires on all of them; the verdict must not drop.
-//   - GOVERNED_NEGATION_SET: sentences where the cue really governs the
-//     phrase. 0 prohibited / high-risk triggers allowed (PRD Locked
-//     criterion 1), and every one must report the phrase in negated_hits.
+//   - MUST_STILL_FIRE: every input from the 2026-10-17 review rounds on PR #24
+//     (round 1 bug-hunter B1–B3, I1, I2 + DE counterparts; round 2 review
+//     seat R3; round 3 bug-hunter R4 B1–B5, I1, I2). The pre-negation engine
+//     fires on all of them; the verdict must be IDENTICAL.
+//   - GOVERNED_NEGATION_SET: sentences where a cue really governs the phrase.
+//     The verdict must be IDENTICAL to the pre-negation engine (they still
+//     fire) AND every one must carry the advisory note for the phrase
+//     (PRD Locked criterion 1, Amendment 1).
 //   - Sweep: five shape families (buildSweep). (1) "<unrelated negated
 //     clause><joiner><plainly stated trigger>"; (2) a governed phrase followed
 //     by an open continuation (only / alone / by X / during X / but /
 //     sondern …); (3) a phrase in subject position with a following predicate;
-//     (4) a negated list followed by an affirmative clause; (5) the review-seat
-//     inputs. None of them denies the practice, so the verdict must equal the
-//     pre-negation engine's.
+//     (4) a negated list followed by an affirmative clause; (5) the reviewer
+//     inputs (R3 + R4). The verdict must equal the pre-negation engine's.
 
 export type Lang = 'en' | 'de';
 
@@ -100,9 +102,31 @@ export const MUST_STILL_FIRE: ReadonlyArray<Case> = [
   { id: 'R3-en-05', lang: 'en', text: 'No credit scoring is skipped.' },
   { id: 'R3-de-06', lang: 'de', text: 'Keine Sozialbewertung zu nutzen ist unmöglich.' },
   { id: 'R3-de-07', lang: 'de', text: 'Wir bieten keine Gesichtserkennung, Sozialbewertung oder Bonitätsprüfung wird stattdessen genutzt.' },
+  // R4 — round-3 bug-hunter (opus) on 1a85ac4a: the suppression design lowered
+  // all of these to "none"; with advisory-only negation they fire as on main.
+  // B1 verb left of no / kein.
+  { id: 'R4-B1-de-01', lang: 'de', text: 'Das System verhindert keine Emotionserkennung am Arbeitsplatz.' },
+  { id: 'R4-B1-en-01', lang: 'en', text: 'The system prevents no emotion recognition in the workplace.' },
+  { id: 'R4-B1-en-02', lang: 'en', text: 'We skip no credit scoring.' },
+  { id: 'R4-B1-de-02', lang: 'de', text: 'Bei uns entfällt keine Bonitätsprüfung.' },
+  // B2 DE particle verbs that flip the meaning (einstellen = discontinue, einschränken = restrict).
+  { id: 'R4-B2-de-01', lang: 'de', text: 'Wir stellen keine Emotionserkennung am Arbeitsplatz ein.' },
+  { id: 'R4-B2-de-02', lang: 'de', text: 'Wir schränken keine Emotionserkennung am Arbeitsplatz ein.' },
+  // B3 without / ohne after a non-cue negative.
+  { id: 'R4-B3-en-01', lang: 'en', text: 'Nobody gets a loan without credit scoring.' },
+  { id: 'R4-B3-de-01', lang: 'de', text: 'Niemand bekommt einen Kredit ohne Bonitätsprüfung.' },
+  // B4 trailing denial closed by a comma.
+  { id: 'R4-B4-en-01', lang: 'en', text: 'Social scoring is not planned, it is already live.' },
+  { id: 'R4-B4-de-01', lang: 'de', text: 'Sozialbewertung wird nicht angeboten, wir betreiben sie intern.' },
+  // B5 relative clause read as a further negated clause.
+  { id: 'R4-B5-de-01', lang: 'de', text: 'Wir setzen keine Emotionserkennung am Arbeitsplatz ein, die nicht vom Betriebsrat genehmigt ist.' },
+  { id: 'R4-B5-en-01', lang: 'en', text: 'We use no facial recognition, it is not optional for us, it is mandatory.' },
+  // I1 question; I2 negated frame.
+  { id: 'R4-I1-en-01', lang: 'en', text: 'Why would we use no credit scoring?' },
+  { id: 'R4-I2-en-01', lang: 'en', text: 'It is false that we use no social scoring.' },
 ];
 
-/** Cue governs the phrase → no prohibited / high-risk trigger, phrase in negated_hits. */
+/** Cue governs the phrase → verdict identical to the pre-negation engine AND the phrase carries the advisory note. */
 export const GOVERNED_NEGATION_SET: ReadonlyArray<Case & { phrase: string }> = [
   { id: 'N-en-01', lang: 'en', text: 'Our CV tool does NOT rank job applicants.', phrase: 'rank job applicants' },
   { id: 'N-en-02', lang: 'en', text: 'A chatbot that does not use emotion recognition and does not do social scoring.', phrase: 'social scoring' },
@@ -397,11 +421,11 @@ export function buildSweep(lang: Lang): SweepCase[] {
       for (const t of DE_LIST_TEMPLATES) push('list-plus-affirmative', t(a, b, c));
     });
   }
-  for (const c of MUST_STILL_FIRE) if (c.lang === lang && c.id.startsWith('R3-')) push('reviewer-inputs', c.text);
+  for (const c of MUST_STILL_FIRE) if (c.lang === lang && (c.id.startsWith('R3-') || c.id.startsWith('R4-'))) push('reviewer-inputs', c.text);
   return out;
 }
 
-/** Verdict level used for "lower than": 3 prohibited · 2 high-risk · 1 Art 50 · 0 none. */
+/** Verdict level: 3 prohibited · 2 high-risk · 1 Art 50 · 0 none. */
 export interface VerdictLike {
   article_5: { prohibited: boolean; hits: ReadonlyArray<{ letter: string }> };
   annex_iii: { high_risk: boolean; domains: ReadonlyArray<{ annex_iii_number: number }> };
@@ -431,4 +455,39 @@ export function droppedTriggers(reference: VerdictLike, candidate: VerdictLike):
   const candDomains = new Set(candidate.annex_iii.domains.map((d) => d.annex_iii_number));
   for (const d of reference.annex_iii.domains) if (!candDomains.has(d.annex_iii_number)) out.push(`III.${d.annex_iii_number}`);
   return out;
+}
+
+/** Result fields that make up the verdict (everything the rules engine decides). */
+const VERDICT_FIELDS = [
+  'article_5',
+  'annex_iii',
+  'article_10',
+  'article_12',
+  'article_13',
+  'article_14',
+  'article_15',
+  'article_50',
+  'article_4',
+  'gpai',
+  'three_category',
+  'annex_iv_required',
+  'confidence',
+] as const;
+
+/**
+ * Canonical fingerprint of a full verdict: every rule-module result, the
+ * confidence and the fired lexicon hits. Excludes only what may differ
+ * without changing the verdict: rules_hash / rules_version (the `_negation`
+ * word lists are part of the hashed lexicon), negated_hits and
+ * features.negatedHits (the advisory note itself). Two results with equal
+ * fingerprints have identical verdicts.
+ */
+export function verdictFingerprint(r: unknown): string {
+  const rec = r as Record<string, unknown>;
+  const out: Record<string, unknown> = {};
+  for (const k of VERDICT_FIELDS) out[k] = rec[k];
+  const features = rec.features as { hits?: unknown; byCategory?: unknown } | undefined;
+  out.hits = features?.hits;
+  out.byCategory = features?.byCategory;
+  return JSON.stringify(out);
 }

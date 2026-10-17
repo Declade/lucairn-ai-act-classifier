@@ -1,25 +1,36 @@
-// Negation safety net (after v0.3.1) — the over-correction guard.
+// Negation is ADVISORY ONLY (PRD Amendment 1, Marc 2026-10-17) — it never
+// changes a verdict.
 //
-// The 2026-10-17 bug-hunter review of PR #24 found that the first negation
-// design LOWERED the verdict (prohibited / high-risk → nothing) on 854 / 1,020
-// EN and 428 / 560 DE sentences of the form "<unrelated negated clause>
-// <joiner> <plainly stated trigger>". For a compliance classifier a false
-// negative is the worst failure, so these tests pin:
-//   1. MUST_STILL_FIRE — every bug-hunter input (+ DE counterparts) keeps the
-//      verdict of the pre-negation engine (origin/main cee0381b). The expected
-//      labels below were produced by running that engine on each input
-//      (scripts/negation-sweep.ts --reference <checkout> reproduces them).
-//   2. The differential sweep, self-referenced: an unrelated negation never
-//      lowers the trigger's verdict, and every open-construction shape
-//      (continuation after the phrase, subject + predicate, list + affirmative
-//      clause, review-seat inputs) fires.
-//   3. GOVERNED_NEGATION_SET — 0 prohibited / high-risk triggers, and each
-//      suppressed phrase is reported in negated_hits with status "denied"
-//      (PRD Locked criterion 1).
-//   4. Open constructions next to a governing cue fire AND carry an advisory
-//      negated_hits entry with status "near".
+// History: three review rounds on PR #24 found that every design which DROPPED
+// a negated hit also dropped real prohibited / high-risk practices (854 /
+// 1,020 EN and 428 / 560 DE sentences in round 1; open constructions in round
+// 2; verb-left, particle-verb, "Nobody … without", comma-closed denials in
+// round 3). These tests pin:
+//   1. MUST_STILL_FIRE — every reviewer input keeps the verdict of the
+//      pre-negation engine (origin/main cee0381b). The expected labels below
+//      were produced by running that engine on each input
+//      (`pnpm negation:sweep --reference cee0381b --json --verbose` prints them).
+//   2. Structural: with negation detection switched OFF (mocked), every sweep
+//      sentence, reviewer input and governed-negation sentence produces the
+//      byte-identical verdict fingerprint — the verdict logic does not read
+//      negation at all. (The differential run against a real cee0381b
+//      checkout is scripts/negation-sweep.ts, also in CI.)
+//   3. GOVERNED_NEGATION_SET — the verdict equals the pre-negation engine's
+//      (the phrase still fires) AND the phrase carries the advisory note
+//      (PRD Locked criterion 1, Amendment 1).
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
+
+const detection = vi.hoisted(() => ({ off: false }));
+vi.mock('../../src/extract/negation.js', async (importOriginal) => {
+  const orig = await importOriginal<typeof import('../../src/extract/negation.js')>();
+  return {
+    ...orig,
+    findNegated: (...args: Parameters<typeof orig.findNegated>) =>
+      detection.off ? { active: false, negated: new Map<number, string>() } : orig.findNegated(...args),
+  };
+});
+
 import { classify } from '../../src/classify.js';
 import {
   MUST_STILL_FIRE,
@@ -27,7 +38,7 @@ import {
   buildSweep,
   verdictLabel,
   verdictLevel,
-  droppedTriggers,
+  verdictFingerprint,
 } from '../../scripts/negation-cases.js';
 
 /** Verdict of the pre-negation engine (origin/main cee0381b) per input. */
@@ -96,7 +107,52 @@ const REFERENCE: Record<string, string> = {
   'R3-en-05': 'high-risk III[5]',
   'R3-de-06': 'prohibited 5(1)(c)',
   'R3-de-07': 'prohibited 5(1)(c) III[1,5]',
+  // Round-3 bug-hunter inputs (the suppression design lowered all of them to "none").
+  'R4-B1-de-01': 'prohibited 5(1)(f) III[1]',
+  'R4-B1-en-01': 'prohibited 5(1)(f) III[1]',
+  'R4-B1-en-02': 'high-risk III[5]',
+  'R4-B1-de-02': 'high-risk III[5]',
+  'R4-B2-de-01': 'prohibited 5(1)(f) III[1]',
+  'R4-B2-de-02': 'prohibited 5(1)(f) III[1]',
+  'R4-B3-en-01': 'high-risk III[5]',
+  'R4-B3-de-01': 'high-risk III[5]',
+  'R4-B4-en-01': 'prohibited 5(1)(c)',
+  'R4-B4-de-01': 'prohibited 5(1)(c)',
+  'R4-B5-de-01': 'prohibited 5(1)(f) III[1]',
+  'R4-B5-en-01': 'high-risk III[1]',
+  'R4-I1-en-01': 'high-risk III[5]',
+  'R4-I2-en-01': 'prohibited 5(1)(c)',
 };
+
+/** Verdict of the pre-negation engine (origin/main cee0381b) per governed-negation sentence. */
+const GOVERNED_REFERENCE: Record<string, string> = {
+  'N-en-01': 'high-risk III[4]',
+  'N-en-02': 'prohibited 5(1)(c) III[1]',
+  'N-en-03': 'prohibited 5(1)(f) III[1]',
+  'N-en-04': 'prohibited 5(1)(c)',
+  'N-en-05': 'prohibited 5(1)(c)',
+  'N-en-06': 'high-risk III[5]',
+  'N-en-07': 'high-risk III[1]',
+  'N-en-08': 'prohibited 5(1)(f) III[1]',
+  'N-en-09': 'prohibited 5(1)(c) III[1]',
+  'N-en-10': 'prohibited 5(1)(c) III[1]',
+  'N-de-01': 'prohibited 5(1)(f) III[1]',
+  'N-de-02': 'prohibited 5(1)(c)',
+  'N-de-03': 'high-risk III[4]',
+  'N-de-04': 'high-risk III[1]',
+  'N-de-05': 'high-risk III[1]',
+  'N-de-06': 'high-risk III[1]',
+  'N-de-07': 'high-risk III[4]',
+  'N-de-08': 'prohibited 5(1)(c) III[1]',
+};
+
+async function classifyBoth(text: string, lang: 'en' | 'de') {
+  detection.off = true;
+  const off = await classify(text, { lang });
+  detection.off = false;
+  const on = await classify(text, { lang });
+  return { on, off };
+}
 
 describe('negation safety — MUST_STILL_FIRE (verdict equals the pre-negation engine)', () => {
   it('every case has a reference verdict', () => {
@@ -108,54 +164,57 @@ describe('negation safety — MUST_STILL_FIRE (verdict equals the pre-negation e
   });
 });
 
-describe('negation safety — differential sweep (self-referenced; the reference run is scripts/negation-sweep.ts)', () => {
+describe('negation safety — the verdict never reads negation (detection on vs off)', () => {
+  it('the mock really switches detection off (guards this test itself)', async () => {
+    const { on, off } = await classifyBoth('Our CV tool does NOT rank job applicants.', 'en');
+    expect(on.negated_hits.length).toBeGreaterThan(0);
+    expect(off.negated_hits).toEqual([]);
+  });
+
   for (const lang of ['en', 'de'] as const) {
-    it(`${lang.toUpperCase()}: unrelated negation never lowers the trigger's verdict; open constructions always fire`, async () => {
-      const alone = new Map<string, Awaited<ReturnType<typeof classify>>>();
-      const bad: string[] = [];
+    it(`${lang.toUpperCase()}: every sweep sentence has the identical verdict with detection on and off`, async () => {
+      const changed: string[] = [];
       for (const c of buildSweep(lang)) {
-        const r = await classify(c.text, { lang });
-        if (c.family === 'unrelated-negation' && c.trigger !== undefined) {
-          let ref = alone.get(c.trigger);
-          if (ref === undefined) {
-            ref = await classify(`${c.trigger.charAt(0).toUpperCase()}${c.trigger.slice(1)}.`, { lang });
-            expect(verdictLevel(ref), `trigger alone must be high-risk or prohibited: ${c.trigger}`).toBeGreaterThanOrEqual(2);
-            alone.set(c.trigger, ref);
-          }
-          if (verdictLevel(r) < verdictLevel(ref) || droppedTriggers(ref, r).length > 0) {
-            bad.push(`${c.text} → ${verdictLabel(r)} (alone: ${verdictLabel(ref)})`);
-          }
-        } else if (verdictLevel(r) < 2) {
-          // Every open-construction shape is high-risk / prohibited on the
-          // pre-negation engine (checked by the sweep script); it must fire.
-          bad.push(`[${c.family}] ${c.text} → ${verdictLabel(r)}`);
-        }
+        const { on, off } = await classifyBoth(c.text, lang);
+        if (verdictFingerprint(on) !== verdictFingerprint(off)) changed.push(`${c.text} → on ${verdictLabel(on)} / off ${verdictLabel(off)}`);
+        if (c.family !== 'unrelated-negation' && verdictLevel(on) < 2) changed.push(`[${c.family}] does not fire: ${c.text}`);
       }
-      expect(bad).toEqual([]);
-    }, 180_000);
+      expect(changed).toEqual([]);
+    }, 240_000);
   }
+
+  it('reviewer inputs and the governed-negation set: identical verdict with detection on and off', async () => {
+    const changed: string[] = [];
+    for (const c of [...MUST_STILL_FIRE, ...GOVERNED_NEGATION_SET]) {
+      const { on, off } = await classifyBoth(c.text, c.lang);
+      if (verdictFingerprint(on) !== verdictFingerprint(off)) changed.push(c.text);
+    }
+    expect(changed).toEqual([]);
+  }, 120_000);
 });
 
-describe('negation safety — governed negation set (0 false triggers, each in negated_hits)', () => {
-  it('has at least 12 sentences across EN and DE', () => {
+describe('negation safety — governed negation set (fires as on main, carries the advisory note)', () => {
+  it('has at least 12 sentences across EN and DE, each with a reference verdict', () => {
     expect(GOVERNED_NEGATION_SET.length).toBeGreaterThanOrEqual(12);
     expect(new Set(GOVERNED_NEGATION_SET.map((c) => c.lang))).toEqual(new Set(['en', 'de']));
+    expect(GOVERNED_NEGATION_SET.map((c) => c.id).sort()).toEqual(Object.keys(GOVERNED_REFERENCE).sort());
   });
   it.each(GOVERNED_NEGATION_SET.map((c) => [c.id, c.text, c.lang, c.phrase] as const))(
     '%s: %s',
-    async (_id, text, lang, phrase) => {
+    async (id, text, lang, phrase) => {
       const r = await classify(text, { lang });
-      expect(r.article_5.prohibited).toBe(false);
-      expect(r.annex_iii.high_risk).toBe(false);
-      const hit = r.negated_hits.find((h) => h.phrase === phrase && h.status === 'denied');
-      expect(hit, `negated_hits should report "${phrase}"`).toBeDefined();
+      expect(verdictLabel(r)).toBe(GOVERNED_REFERENCE[id]);
+      const hit = r.negated_hits.find((h) => h.phrase === phrase);
+      expect(hit, `negated_hits should carry the note for "${phrase}"`).toBeDefined();
       expect(hit?.cue.length).toBeGreaterThan(0);
       expect(hit?.ref.length).toBeGreaterThan(0);
+      // Advisory: the noted phrase also fired.
+      expect(r.features.hits.map((h) => h.phrase)).toContain(phrase);
     },
   );
 });
 
-describe('negation safety — open constructions fire with a "near" note', () => {
+describe('negation safety — open constructions fire and carry the advisory note too', () => {
   it.each([
     ['en', 'We do not rank job applicants only by experience; age is also scored.', 'rank job applicants'],
     ['en', 'No credit scoring request is left unprocessed.', 'credit scoring'],
@@ -166,7 +225,6 @@ describe('negation safety — open constructions fire with a "near" note', () =>
   ] as const)('%s: %s', async (lang, text, phrase) => {
     const r = await classify(text, { lang });
     expect(verdictLevel(r)).toBeGreaterThanOrEqual(2);
-    expect(r.negated_hits).toContainEqual(expect.objectContaining({ phrase, status: 'near' }));
-    expect(r.negated_hits.some((h) => h.status === 'denied')).toBe(false);
+    expect(r.negated_hits).toContainEqual(expect.objectContaining({ phrase }));
   });
 });

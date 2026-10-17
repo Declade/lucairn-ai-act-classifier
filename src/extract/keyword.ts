@@ -21,10 +21,10 @@
 //     extractor surfaces the negation hit; the rules engine decides whether
 //     to suppress downstream classification.
 //
-// What it DOES do after v0.3.1: drop a phrase occurrence that a negation cue
-// DIRECTLY governs ("does NOT rank job applicants", "keine Emotionserkennung")
-// and report it in `negatedHits`. Everything else still fires. The rules live
-// in ./negation.ts.
+// What it DOES do after v0.3.1: mark a phrase that stands near a negation
+// ("does NOT rank job applicants", "keine Emotionserkennung") in the additive
+// `negatedHits` list. ADVISORY ONLY: every hit fires exactly as in v0.3.1;
+// `hits` and `byCategory` never read the mark. The rules live in ./negation.ts.
 
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -103,24 +103,19 @@ export interface ExtractedFeatures {
   /** convenience grouping: hits by group → category → matched phrases */
   byCategory: Record<string, Record<string, string[]>>;
   /**
-   * Lexicon phrases that occurred in the input but were read as DENIED by the
-   * negation rules (negation.ts) and therefore do not fire. Surfaced so a
-   * human can check them. Set by the keyword extractor (after v0.3.1); absent
-   * on LLM-mode features and on features cached before it existed.
+   * Advisory: lexicon phrases that fired but stand near a negation in every
+   * occurrence ("Found, but the text appears to deny it — please check").
+   * Every entry is ALSO in `hits`; the mark never changes a verdict. Set by
+   * the keyword extractor (after v0.3.1); absent on LLM-mode features and on
+   * features cached before it existed.
    */
   negatedHits?: NegatedHit[];
 }
 
+/** A fired lexicon phrase that stands near a negation (advisory). */
 export interface NegatedHit extends ExtractedHit {
-  /** the negation words that governed the phrase, e.g. "not use", "keine", "is not used" */
+  /** the negation words near the phrase, e.g. "not use", "keine", "is not used" */
   cue: string;
-  /**
-   * "denied" — read as denied, the phrase does NOT fire.
-   * "near"   — a cue governs the phrase but the construction continues
-   *            ("does not rank job applicants only by experience"), so the
-   *            phrase FIRES; listed for a human check only.
-   */
-  status: 'denied' | 'near';
 }
 
 export interface ExtractOptions {
@@ -265,10 +260,24 @@ export function extractFeatures(text: string, opts: ExtractOptions = {}): Extrac
     }
   }
 
-  // Negation (after v0.3.1, see negation.ts). Governed-only: an occurrence is
-  // suppressed only when a negation cue directly governs it; a phrase fires
-  // when at least one occurrence is not suppressed. A phrase whose every
-  // occurrence is suppressed is reported in `negatedHits` for a human check.
+  // Pass 2 — emit every hit in the deterministic lexicon order, exactly as
+  // v0.3.1 did. Negation is NOT consulted here.
+  const hits: ExtractedHit[] = [];
+  const byCategory: Record<string, Record<string, string[]>> = {};
+  for (const group of groups) byCategory[group] = {};
+  for (const m of matches) {
+    hits.push({ group: m.group, category: m.categoryKey, phrase: m.entry.phrase, source: m.entry.source ?? m.category.source });
+    const groupBucket = byCategory[m.group];
+    if (groupBucket !== undefined) {
+      const bucket = groupBucket[m.categoryKey];
+      if (bucket === undefined) groupBucket[m.categoryKey] = [m.entry.phrase];
+      else bucket.push(m.entry.phrase);
+    }
+  }
+
+  // Advisory negation note (after v0.3.1, see negation.ts). Computed AFTER the
+  // hits and only appended to `negatedHits`: a phrase is listed when every
+  // occurrence of it stands near a negation. It never removes a hit.
   const rawNegation = lexicon._negation;
   const negationLex: NegationLexicon | undefined = isNegationLexicon(rawNegation) ? rawNegation : undefined;
   const flat: Occurrence[] = [];
@@ -280,47 +289,19 @@ export function extractFeatures(text: string, opts: ExtractOptions = {}): Extrac
     }
   });
   const negation = findNegated(text, negationLex, flat);
-  const liveMatch = matches.map(() => false);
+  const plain = matches.map(() => false);
   const cueOf: Array<string | undefined> = matches.map(() => undefined);
-  const nearOf: Array<string | undefined> = matches.map(() => undefined);
   flat.forEach((_o, idx) => {
     const mi = owner[idx] as number;
-    const cue = negation.suppressed.get(idx);
-    if (cue === undefined) liveMatch[mi] = true;
+    const cue = negation.negated.get(idx);
+    if (cue === undefined) plain[mi] = true;
     else if (cueOf[mi] === undefined) cueOf[mi] = cue;
-    const near = negation.near.get(idx);
-    if (near !== undefined && nearOf[mi] === undefined) nearOf[mi] = near;
   });
-
-  // Pass 2 — emit live hits (and negated hits) in the deterministic lexicon order.
-  const hits: ExtractedHit[] = [];
   const negatedHits: NegatedHit[] = [];
-  const byCategory: Record<string, Record<string, string[]>> = {};
-  for (const group of groups) byCategory[group] = {};
   matches.forEach((m, mi) => {
-    const source = m.entry.source ?? m.category.source;
-    if (!liveMatch[mi]) {
-      negatedHits.push({
-        group: m.group,
-        category: m.categoryKey,
-        phrase: m.entry.phrase,
-        source,
-        cue: cueOf[mi] as string,
-        status: 'denied',
-      });
-      return;
-    }
-    const near = nearOf[mi];
-    if (near !== undefined) {
-      negatedHits.push({ group: m.group, category: m.categoryKey, phrase: m.entry.phrase, source, cue: near, status: 'near' });
-    }
-    hits.push({ group: m.group, category: m.categoryKey, phrase: m.entry.phrase, source });
-    const groupBucket = byCategory[m.group];
-    if (groupBucket !== undefined) {
-      const bucket = groupBucket[m.categoryKey];
-      if (bucket === undefined) groupBucket[m.categoryKey] = [m.entry.phrase];
-      else bucket.push(m.entry.phrase);
-    }
+    const cue = cueOf[mi];
+    if (plain[mi] || cue === undefined) return;
+    negatedHits.push({ group: m.group, category: m.categoryKey, phrase: m.entry.phrase, source: m.entry.source ?? m.category.source, cue });
   });
 
   return {

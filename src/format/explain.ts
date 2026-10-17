@@ -74,7 +74,7 @@ import type { ClassifyResult } from '../classify.js';
 import type { AnnexIIIResult, AnnexIIIDomainHit, Article5Result, Article5Hit, Article50Result, Article4Result, GPAIResult } from '../rules/index.js';
 import { getCitation, type CitationArticleId } from '../util/citations.js';
 import { getLocale } from '../i18n/load.js';
-import { negatedHitBlocks, negatedHitLine } from '../util/negated-hits.js';
+import { negatedHitLine } from '../util/negated-hits.js';
 import type { NegatedHitResult } from '../util/negated-hits.js';
 
 // ---------------------------------------------------------------------------
@@ -141,7 +141,7 @@ interface ExplainJsonShape {
   nearest_miss: ReadonlyArray<NearestMiss>;
   disambiguator: DisambiguatorState | null;
   excerpts?: ReadonlyArray<{ key: string; locale: 'en' | 'de'; body: string }>;
-  /** Safety net (after v0.3.1): phrases found but read as denied. Present only when non-empty. */
+  /** Advisory (after v0.3.1): fired phrases that stand near a negation. Never changes a verdict. Present only when non-empty. */
   negated_hits?: ReadonlyArray<NegatedHitResult>;
   disclaimer: string;
 }
@@ -624,6 +624,50 @@ function buildNearestMisses(result: ClassifyResult, locale: 'en' | 'de'): Neares
 }
 
 // ---------------------------------------------------------------------------
+// Advisory negation notes — placed under the fired article they belong to
+// ---------------------------------------------------------------------------
+
+/** Article 50 fired-article id → lexicon category lead (category 5 = Art 50(4) sub-paragraph 2). */
+const ART50_FIRED_LEAD: Record<string, string> = {
+  article_50_1: '1',
+  article_50_2: '2',
+  article_50_3: '3',
+  article_50_4a: '4',
+  article_50_4b: '5',
+};
+
+/** Does negated hit `h` belong under the fired article with id `firedId`? */
+function noteBelongsTo(h: NegatedHitResult, firedId: string): boolean {
+  const lead = h.category.split('_')[0] ?? '';
+  if (firedId.startsWith('article_5_')) return h.group === 'article_5_prohibited' && `article_5_${lead}` === firedId;
+  if (firedId.startsWith('annex_iii_')) return h.group === 'annex_iii' && `annex_iii_${lead}` === firedId;
+  const art50 = ART50_FIRED_LEAD[firedId];
+  if (art50 !== undefined) return h.group === 'article_50_gpai' && lead === art50;
+  if (firedId === 'article_4') return h.group === 'article_4_ai_literacy';
+  if (firedId === 'article_53' || firedId === 'articles_53_55') return h.group === 'gpai_models';
+  return false;
+}
+
+/** Notes per fired article (by index) plus the notes that belong to no fired article. */
+function placeNotes(
+  fired: ReadonlyArray<FiredArticle>,
+  hits: ReadonlyArray<NegatedHitResult> | undefined,
+): { perFired: NegatedHitResult[][]; rest: NegatedHitResult[] } {
+  const all = hits ?? [];
+  const placed = new Set<NegatedHitResult>();
+  const perFired = fired.map((f) => {
+    const mine = all.filter((h) => !placed.has(h) && noteBelongsTo(h, f.id));
+    for (const h of mine) placed.add(h);
+    return mine;
+  });
+  return { perFired, rest: all.filter((h) => !placed.has(h)) };
+}
+
+function otherNotesTitle(locale: 'en' | 'de'): string {
+  return locale === 'de' ? 'Hinweise zu weiteren gefundenen Phrasen' : 'Notes on other matched phrases';
+}
+
+// ---------------------------------------------------------------------------
 // JSON output
 // ---------------------------------------------------------------------------
 
@@ -682,6 +726,7 @@ function renderMarkdown(result: ClassifyResult, opts: ExplainFormatOptions, shap
       : 'EU AI Act classification — reasoning trace';
   lines.push(`## ${sectionTitle}`);
   lines.push('');
+  const notes = placeNotes(shape.fired, shape.negated_hits);
   // Header table
   const inputLabel = opts.locale === 'de' ? 'Eingabe' : 'Input';
   const langLabel = opts.locale === 'de' ? 'Sprache' : 'Language';
@@ -705,7 +750,7 @@ function renderMarkdown(result: ClassifyResult, opts: ExplainFormatOptions, shap
     lines.push('');
     lines.push(`> ${negLine}`);
   } else {
-    for (const f of shape.fired) {
+    shape.fired.forEach((f, i) => {
       lines.push('');
       lines.push(`### ${f.heading}`);
       lines.push('');
@@ -714,12 +759,19 @@ function renderMarkdown(result: ClassifyResult, opts: ExplainFormatOptions, shap
         lines.push('');
       }
       lines.push(`- ${f.rationale}`);
+      for (const h of notes.perFired[i] ?? []) lines.push(`- ⚠️ **${negatedHitLine(h, opts.locale)}**`);
       if (f.sub_letter_rationale !== null) {
         lines.push(`- ${f.sub_letter_rationale}`);
       }
       const citeLabel = opts.locale === 'de' ? 'Zitat' : 'Citation';
       lines.push(`- **${citeLabel}:** ${f.citation_url}`);
-    }
+    });
+  }
+  if (notes.rest.length > 0) {
+    lines.push('');
+    lines.push(`### ⚠️ ${otherNotesTitle(opts.locale)}`);
+    lines.push('');
+    for (const h of notes.rest) lines.push(`- ${negatedHitLine(h, opts.locale)}`);
   }
   // Nearest misses
   if (shape.nearest_miss.length > 0) {
@@ -744,13 +796,6 @@ function renderMarkdown(result: ClassifyResult, opts: ExplainFormatOptions, shap
     lines.push(`### ${dTitle}`);
     lines.push('');
     lines.push(`- ${shape.disambiguator.rationale}`);
-  }
-  // Safety net: phrases found but read as denied
-  for (const block of negatedHitBlocks(shape.negated_hits, opts.locale)) {
-    lines.push('');
-    lines.push(`### ⚠️ ${block.heading}`);
-    lines.push('');
-    for (const h of block.hits) lines.push(`- ${negatedHitLine(h, opts.locale)}`);
   }
   // Excerpts
   if (shape.excerpts !== undefined && shape.excerpts.length > 0) {
@@ -789,6 +834,7 @@ function renderText(opts: ExplainFormatOptions, shape: ExplainJsonShape): string
   lines.push(sectionTitle);
   lines.push('='.repeat(sectionTitle.length));
   lines.push('');
+  const notes = placeNotes(shape.fired, shape.negated_hits);
   const inputLabel = opts.locale === 'de' ? 'Eingabe' : 'Input';
   lines.push(`${inputLabel}: ${shape.header.input_text}`);
   const langLabel = opts.locale === 'de' ? 'Sprache' : 'Language';
@@ -808,19 +854,25 @@ function renderText(opts: ExplainFormatOptions, shape: ExplainJsonShape): string
         : 'No prohibition, high-risk, or transparency obligation triggered.',
     );
   } else {
-    for (const f of shape.fired) {
+    shape.fired.forEach((f, i) => {
       lines.push('');
       lines.push(`-- ${f.heading} --`);
       if (f.chapeau.length > 0) {
         lines.push(f.chapeau);
       }
       lines.push(`* ${f.rationale}`);
+      for (const h of notes.perFired[i] ?? []) lines.push(`* ⚠ ${negatedHitLine(h, opts.locale)}`);
       if (f.sub_letter_rationale !== null) {
         lines.push(`* ${f.sub_letter_rationale}`);
       }
       const citeLabel = opts.locale === 'de' ? 'Zitat' : 'Citation';
       lines.push(`* ${citeLabel}: ${f.citation_url}`);
-    }
+    });
+  }
+  if (notes.rest.length > 0) {
+    lines.push('');
+    lines.push(`${otherNotesTitle(opts.locale)}:`);
+    for (const h of notes.rest) lines.push(`* ⚠ ${negatedHitLine(h, opts.locale)}`);
   }
   if (shape.nearest_miss.length > 0) {
     lines.push('');
@@ -841,11 +893,6 @@ function renderText(opts: ExplainFormatOptions, shape: ExplainJsonShape): string
         : 'Disambiguator state (Art 5(1)(d)):',
     );
     lines.push(`* ${shape.disambiguator.rationale}`);
-  }
-  for (const block of negatedHitBlocks(shape.negated_hits, opts.locale)) {
-    lines.push('');
-    lines.push(`${block.heading}:`);
-    for (const h of block.hits) lines.push(`* ${negatedHitLine(h, opts.locale)}`);
   }
   if (shape.excerpts !== undefined && shape.excerpts.length > 0) {
     lines.push('');

@@ -1,29 +1,34 @@
-// scripts/negation-sweep.ts — differential safety report for negation handling.
+// scripts/negation-sweep.ts — differential report: negation must never change a verdict.
 //
 // CLI:
 //   node --import tsx scripts/negation-sweep.ts --reference <dir | git rev> [--json] [--verbose]
 //
-//   --reference (REQUIRED)  the PRE-negation engine to compare against:
+//   --reference (REQUIRED)  the PRE-negation engine to compare against (PRD
+//                           Locked criterion 1: main `cee0381b`):
 //                           - a git revision of this repo (e.g. `cee0381b`): its
 //                             `src/` + `package.json` are extracted with
 //                             `git archive` into a temp dir (removed at exit), or
 //                           - a directory holding a checkout (its src/classify.ts).
-//                           The reference revision is printed. A reference whose
-//                           src/ tree is identical to this working tree's is
-//                           refused (that would compare the engine with itself).
+//                           The reference revision is printed. Refused (exit 2):
+//                           a src/ tree identical to this working tree's; a
+//                           reference that reports `negated_hits` (it already
+//                           has negation handling, so it is not the
+//                           pre-negation engine); a reference that does not
+//                           fire high-risk / prohibited on EVERY sentence of
+//                           the governed-negation set (a suppressing near-copy).
 //
 // Reports (EN + DE), per shape family (scripts/negation-cases.ts buildSweep):
 //   unrelated-negation · post-phrase-continuation · subject-position ·
 //   list-plus-affirmative · reviewer-inputs
-//   → sentences whose verdict is LOWER than the reference's (3 prohibited ·
-//     2 high-risk · 1 Art 50 · 0 none), and sentences that lost an Art 5 letter
-//     / Annex III domain. Target 0.
+//   → sentences whose verdict differs from the reference IN EITHER DIRECTION
+//     (full fingerprint: every rule result, confidence, fired hits). Target 0.
+//     Plus how many sentences carry the advisory note.
 //   Generator honesty: every unrelated-negation trigger ALONE, and every
 //   sentence of the other families, must be high-risk or prohibited on the
 //   reference — otherwise the shape tests nothing and the run FAILS.
-// Plus MUST_STILL_FIRE (verdict ≥ reference, no lost trigger) and the
-// GOVERNED_NEGATION_SET (0 prohibited / high-risk, each phrase in
-// negated_hits with status "denied"; PRD Locked criterion 1).
+// Plus MUST_STILL_FIRE (verdict identical, reference high-risk / prohibited)
+// and the GOVERNED_NEGATION_SET (verdict identical AND the phrase carries the
+// advisory note; PRD Locked criterion 1, Amendment 1).
 //
 // Exit code: 0 all targets met · 1 any target missed · 2 usage / setup error.
 
@@ -42,7 +47,7 @@ import {
   buildSweep,
   verdictLevel,
   verdictLabel,
-  droppedTriggers,
+  verdictFingerprint,
 } from './negation-cases.js';
 import type { Lang, SweepFamily, VerdictLike } from './negation-cases.js';
 
@@ -136,16 +141,29 @@ async function loadReference(spec: string): Promise<Reference> {
     throw new Error(`--reference ${spec}: its src/ is identical to this working tree — refusing to compare the engine with itself`);
   }
   const mod = (await import(pathToFileURL(join(root, 'src', 'classify.ts')).href)) as { classify: Classifier };
+  // The reference must be the PRE-negation engine (closes the near-copy loophole).
+  const problems: string[] = [];
+  for (const c of GOVERNED_NEGATION_SET) {
+    const r = (await mod.classify(c.text, { lang: c.lang })) as VerdictLike & Record<string, unknown>;
+    if ('negated_hits' in r) {
+      problems.push('it reports negated_hits, so it already has negation handling');
+      break;
+    }
+    if (verdictLevel(r) < 2) problems.push(`it does not fire high-risk / prohibited on governed-negation sentence ${c.id} ("${c.text}")`);
+  }
+  if (problems.length > 0) {
+    cleanup();
+    throw new Error(`--reference ${spec}: not the pre-negation engine — ${problems.join('; ')}`);
+  }
   return { classify: mod.classify, revision, cleanup };
 }
 
 interface FamilyReport {
   total: number;
-  lowered: number;
-  dropped_trigger: number;
+  changed: number;
+  noted: number;
   reference_not_triggering: number;
-  lowered_cases: Array<{ text: string; reference: string; candidate: string }>;
-  dropped_cases: Array<{ text: string; lost: string[] }>;
+  changed_cases: Array<{ text: string; reference: string; candidate: string }>;
   reference_not_triggering_cases: string[];
 }
 
@@ -172,24 +190,18 @@ async function main(): Promise<number> {
 }
 
 async function run(args: { json: boolean; verbose: boolean }, reference: Reference): Promise<number> {
-  const candidate: Classifier = (text, opts) => classify(text, opts);
+  const candidate = (text: string, opts: { lang: Lang }): Promise<ClassifyResult> => classify(text, opts);
   const report: Record<string, unknown> = { reference: reference.revision };
   let failed = false;
+  let notedTotal = 0;
+  let sentencesTotal = 0;
 
   // 1. Sweep, per language × family.
   const sweep: Record<string, Record<string, FamilyReport>> = {};
   for (const lang of ['en', 'de'] as const) {
     const perFamily: Record<string, FamilyReport> = {};
     for (const f of SWEEP_FAMILIES) {
-      perFamily[f] = {
-        total: 0,
-        lowered: 0,
-        dropped_trigger: 0,
-        reference_not_triggering: 0,
-        lowered_cases: [],
-        dropped_cases: [],
-        reference_not_triggering_cases: [],
-      };
+      perFamily[f] = { total: 0, changed: 0, noted: 0, reference_not_triggering: 0, changed_cases: [], reference_not_triggering_cases: [] };
     }
     const triggerChecked = new Set<string>();
     for (const c of buildSweep(lang)) {
@@ -212,54 +224,64 @@ async function run(args: { json: boolean; verbose: boolean }, reference: Referen
         fr.reference_not_triggering_cases.push(c.text);
       }
       const cand = await candidate(c.text, { lang });
-      if (verdictLevel(cand) < verdictLevel(ref)) {
-        fr.lowered++;
-        fr.lowered_cases.push({ text: c.text, reference: verdictLabel(ref), candidate: verdictLabel(cand) });
+      if (verdictFingerprint(cand) !== verdictFingerprint(ref)) {
+        fr.changed++;
+        fr.changed_cases.push({ text: c.text, reference: verdictLabel(ref), candidate: verdictLabel(cand) });
       }
-      const lost = droppedTriggers(ref, cand);
-      if (lost.length > 0) {
-        fr.dropped_trigger++;
-        fr.dropped_cases.push({ text: c.text, lost });
-      }
+      if (cand.negated_hits.length > 0) fr.noted++;
     }
     for (const fr of Object.values(perFamily)) {
-      if (fr.lowered > 0 || fr.dropped_trigger > 0 || fr.reference_not_triggering > 0) failed = true;
+      if (fr.changed > 0 || fr.reference_not_triggering > 0) failed = true;
+      notedTotal += fr.noted;
+      sentencesTotal += fr.total;
     }
     sweep[lang] = perFamily;
   }
   report.sweep = sweep;
 
-  // 2. MUST_STILL_FIRE.
-  const mustFire: Array<{ id: string; text: string; reference: string; candidate: string; ok: boolean }> = [];
+  // 2. MUST_STILL_FIRE — identical verdict, and the reference fires.
+  const mustFire: Array<{ id: string; text: string; reference: string; candidate: string; noted: boolean; ok: boolean }> = [];
   for (const c of MUST_STILL_FIRE) {
     const cand = await candidate(c.text, { lang: c.lang });
     const ref = await reference.classify(c.text, { lang: c.lang });
-    const ok = verdictLevel(cand) >= verdictLevel(ref) && droppedTriggers(ref, cand).length === 0 && verdictLevel(ref) >= 2;
+    const ok = verdictFingerprint(cand) === verdictFingerprint(ref) && verdictLevel(ref) >= 2;
     if (!ok) failed = true;
-    mustFire.push({ id: c.id, text: c.text, reference: verdictLabel(ref), candidate: verdictLabel(cand), ok });
+    const noted = cand.negated_hits.length > 0;
+    if (noted) notedTotal++;
+    sentencesTotal++;
+    mustFire.push({ id: c.id, text: c.text, reference: verdictLabel(ref), candidate: verdictLabel(cand), noted, ok });
   }
   report.must_still_fire = {
     total: mustFire.length,
     failures: mustFire.filter((m) => !m.ok).length,
+    noted: mustFire.filter((m) => m.noted).length,
     cases: args.verbose ? mustFire : mustFire.filter((m) => !m.ok),
   };
 
-  // 3. GOVERNED_NEGATION_SET.
-  const negSet: Array<{ id: string; text: string; candidate: string; false_trigger: boolean; negated_hit: boolean; ok: boolean }> = [];
+  // 3. GOVERNED_NEGATION_SET — identical verdict AND the advisory note for the phrase.
+  const negSet: Array<{ id: string; text: string; reference: string; candidate: string; changed: boolean; note: boolean; ok: boolean }> = [];
   for (const c of GOVERNED_NEGATION_SET) {
-    const r = (await candidate(c.text, { lang: c.lang })) as ClassifyResult;
-    const falseTrigger = r.article_5.prohibited || r.annex_iii.high_risk;
-    const negatedHit = r.negated_hits.some((h) => h.phrase === c.phrase && h.status === 'denied');
-    const ok = !falseTrigger && negatedHit;
+    const cand = await candidate(c.text, { lang: c.lang });
+    const ref = await reference.classify(c.text, { lang: c.lang });
+    const changed = verdictFingerprint(cand) !== verdictFingerprint(ref);
+    const note = cand.negated_hits.some((h) => h.phrase === c.phrase);
+    const ok = !changed && note;
     if (!ok) failed = true;
-    negSet.push({ id: c.id, text: c.text, candidate: verdictLabel(r), false_trigger: falseTrigger, negated_hit: negatedHit, ok });
+    if (cand.negated_hits.length > 0) notedTotal++;
+    sentencesTotal++;
+    negSet.push({ id: c.id, text: c.text, reference: verdictLabel(ref), candidate: verdictLabel(cand), changed, note, ok });
   }
   report.governed_negation_set = {
     total: negSet.length,
-    false_triggers: negSet.filter((n) => n.false_trigger).length,
-    missing_negated_hits: negSet.filter((n) => !n.negated_hit).length,
+    changed: negSet.filter((n) => n.changed).length,
+    with_note: negSet.filter((n) => n.note).length,
     cases: args.verbose ? negSet : negSet.filter((n) => !n.ok),
   };
+
+  let changedTotal = 0;
+  for (const perFamily of Object.values(sweep)) for (const fr of Object.values(perFamily)) changedTotal += fr.changed;
+  changedTotal += mustFire.filter((m) => !m.ok).length + negSet.filter((n) => n.changed).length;
+  report.summary = { sentences: sentencesTotal, changed: changedTotal, with_advisory_note: notedTotal };
 
   if (args.json) {
     process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
@@ -268,27 +290,30 @@ async function run(args: { json: boolean; verbose: boolean }, reference: Referen
     lines.push(`negation-sweep — reference revision: ${reference.revision}`);
     for (const lang of ['en', 'de'] as const) {
       const perFamily = sweep[lang] as Record<SweepFamily, FamilyReport>;
-      let lt = 0;
+      let ct = 0;
       let tt = 0;
+      let nt = 0;
       for (const f of SWEEP_FAMILIES) {
         const fr = perFamily[f];
-        lt += fr.lowered;
+        ct += fr.changed;
         tt += fr.total;
+        nt += fr.noted;
         lines.push(
-          `  ${lang.toUpperCase()} ${f.padEnd(25)} ${String(fr.lowered).padStart(3)} / ${String(fr.total).padStart(4)} lowered · ${fr.dropped_trigger} lost a trigger · ${fr.reference_not_triggering} not triggering on reference`,
+          `  ${lang.toUpperCase()} ${f.padEnd(25)} ${String(fr.changed).padStart(3)} / ${String(fr.total).padStart(4)} changed · ${String(fr.noted).padStart(4)} with note · ${fr.reference_not_triggering} not triggering on reference`,
         );
-        for (const c of [...fr.lowered_cases, ...fr.dropped_cases, ...fr.reference_not_triggering_cases]) {
+        for (const c of [...fr.changed_cases, ...fr.reference_not_triggering_cases]) {
           lines.push(`      ${JSON.stringify(c)}`);
         }
       }
-      lines.push(`  ${lang.toUpperCase()} ${'ALL'.padEnd(25)} ${String(lt).padStart(3)} / ${String(tt).padStart(4)} lowered`);
+      lines.push(`  ${lang.toUpperCase()} ${'ALL'.padEnd(25)} ${String(ct).padStart(3)} / ${String(tt).padStart(4)} changed · ${String(nt).padStart(4)} with note`);
     }
-    const mf = report.must_still_fire as { total: number; failures: number; cases: unknown[] };
-    lines.push(`  must-still-fire: ${mf.total - mf.failures} / ${mf.total} equal or higher than reference`);
+    const mf = report.must_still_fire as { total: number; failures: number; noted: number; cases: unknown[] };
+    lines.push(`  must-still-fire: ${mf.total - mf.failures} / ${mf.total} identical to reference · ${mf.noted} with note`);
     for (const c of mf.cases) lines.push(`    ${JSON.stringify(c)}`);
-    const ns = report.governed_negation_set as { total: number; false_triggers: number; missing_negated_hits: number; cases: unknown[] };
-    lines.push(`  governed negation set: ${ns.false_triggers} false triggers / ${ns.total} · ${ns.missing_negated_hits} missing negated_hits (status "denied")`);
+    const ns = report.governed_negation_set as { total: number; changed: number; with_note: number; cases: unknown[] };
+    lines.push(`  governed negation set: ${ns.changed} / ${ns.total} changed · note on ${ns.with_note} / ${ns.total}`);
     for (const c of ns.cases) lines.push(`    ${JSON.stringify(c)}`);
+    lines.push(`  TOTAL: ${changedTotal} / ${sentencesTotal} verdicts changed (either direction) · ${notedTotal} sentences with the advisory note`);
     lines.push(failed ? 'RESULT: FAIL' : 'RESULT: PASS');
     process.stdout.write(`${lines.join('\n')}\n`);
   }

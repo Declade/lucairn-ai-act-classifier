@@ -10,7 +10,7 @@
 import type { ClassifyResult } from '../classify.js';
 import { getCitation, type CitationArticleId } from '../util/citations.js';
 import { getLocale, type I18nLocale } from '../i18n/load.js';
-import { negatedHitBlocks, negatedHitLine } from '../util/negated-hits.js';
+import { notesForRow, negatedHitLine, type NoteRow } from '../util/negated-hits.js';
 
 export interface MarkdownFormatOptions {
   locale: 'en' | 'de';
@@ -164,8 +164,13 @@ export function formatMarkdown(result: ClassifyResult, opts: MarkdownFormatOptio
 
   const localeBundle = getLocale(opts.locale);
   const labels = localeBundle.labels;
-  const annexIIINotesText = annexIIINotes(result.annex_iii, opts.locale);
   const lines: string[] = [];
+  // Advisory negation notes go into the Notes cell of the row they belong to.
+  const noteCell = (row: NoteRow, base = ''): string => {
+    const notes = notesForRow(result.negated_hits, row).map((h) => `⚠️ ${negatedHitLine(h, opts.locale).replace(/\|/g, '\\|')}`);
+    return [base, ...notes].filter((x) => x.length > 0).join('<br>');
+  };
+  const annexIIINotesText = noteCell('annex_iii', annexIIINotes(result.annex_iii, opts.locale));
 
   lines.push(`## ${labels.section_title}`);
   lines.push('');
@@ -175,7 +180,7 @@ export function formatMarkdown(result: ClassifyResult, opts: MarkdownFormatOptio
   lines.push(`| ${articleHeader} | ${statusHeader} | ${notesHeader} |`);
   lines.push('| --- | --- | --- |');
   lines.push(
-    `| ${labels.article_5} | ${statusEmojiAndLabel('art5', result.article_5.prohibited, false, labels)} |  |`,
+    `| ${labels.article_5} | ${statusEmojiAndLabel('art5', result.article_5.prohibited, false, labels)} | ${noteCell('article_5')} |`,
   );
   lines.push(
     `| ${labels.article_6_annex_iii} | ${statusEmojiAndLabel(
@@ -201,19 +206,19 @@ export function formatMarkdown(result: ClassifyResult, opts: MarkdownFormatOptio
     `| ${labels.article_15} | ${statusEmojiAndLabel('cascade', result.article_15.applicable, false, labels)} |  |`,
   );
   lines.push(
-    `| ${labels.article_50} | ${statusEmojiAndLabel('art50', result.article_50.applicable, false, labels)} |  |`,
+    `| ${labels.article_50} | ${statusEmojiAndLabel('art50', result.article_50.applicable, false, labels)} | ${noteCell('article_50')} |`,
   );
   // Article 4 (AI literacy) — horizontal obligation, independent root.
   lines.push(
-    `| ${labels.article_4} | ${statusEmojiAndLabel('art4', result.article_4.applicable, false, labels)} |  |`,
+    `| ${labels.article_4} | ${statusEmojiAndLabel('art4', result.article_4.applicable, false, labels)} | ${noteCell('article_4')} |`,
   );
   // Articles 53 + 55 (GPAI) — compact "Art 53" / "Art 53+55" / "not applicable"
   // status cell mirrors the CLI-table idiom; Art 55 always implies Art 53.
   lines.push(
-    `| ${labels.gpai_articles_53_55} | ${gpaiStatusCell(result.gpai, opts.locale, labels)} |  |`,
+    `| ${labels.gpai_articles_53_55} | ${gpaiStatusCell(result.gpai, opts.locale, labels)} | ${noteCell('gpai')} |`,
   );
   lines.push(
-    `| ${labels.annex_iv} | ${statusEmojiAndLabel('annex_iv', result.annex_iv_required, false, labels)} |  |`,
+    `| ${labels.annex_iv} | ${statusEmojiAndLabel('annex_iv', result.annex_iv_required, false, labels)} | ${noteCell('other')} |`,
   );
 
   // Three-category overlay table (or suppressed note).
@@ -252,14 +257,6 @@ export function formatMarkdown(result: ClassifyResult, opts: MarkdownFormatOptio
         labels,
       )} |`,
     );
-  }
-
-  // Safety net: phrases found but read as denied (only when any).
-  for (const block of negatedHitBlocks(result.negated_hits, opts.locale)) {
-    lines.push('');
-    lines.push(`### ⚠️ ${block.heading}`);
-    lines.push('');
-    for (const h of block.hits) lines.push(`- ${negatedHitLine(h, opts.locale)}`);
   }
 
   // Confidence + mode + rules line.

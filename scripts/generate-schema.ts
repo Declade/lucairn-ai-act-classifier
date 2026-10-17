@@ -93,45 +93,34 @@ const lexiconHit = {
   required: ['group', 'category', 'phrase', 'source'],
 };
 
-// Negated hits (after v0.3.1, additive): lexicon phrases that occurred in the
-// input but were read as DENIED by the negation rules, so they did not fire.
+// Negated hits (after v0.3.1, additive, advisory only): fired lexicon phrases
+// that stand near a negation. They never change a verdict.
 const negatedLexiconHit = {
   type: 'object',
   description:
-    'A lexicon phrase found in the input but suppressed because a negation cue directly governs it (e.g. "does not use emotion recognition"). Surfaced for a human check.',
+    'Advisory: a lexicon phrase that FIRED (it is also in `hits`) but stands near a negation in every occurrence (e.g. "does not use emotion recognition"). Never changes a verdict; surfaced for a human check.',
   additionalProperties: false,
   properties: {
     ...lexiconHit.properties,
-    cue: { type: 'string', description: 'The negation words that governed the phrase, e.g. "not use", "keine", "is not used".' },
-    status: {
-      type: 'string',
-      enum: ['denied', 'near'],
-      description: '"denied": read as denied, did not fire. "near": fired; a negation governs it but the sentence continues after the phrase (advisory).',
-    },
+    cue: { type: 'string', description: 'The negation words near the phrase, e.g. "not use", "keine", "is not used".' },
   },
-  required: [...lexiconHit.required, 'cue', 'status'],
+  required: [...lexiconHit.required, 'cue'],
 };
 
 const negatedHitResult = {
   type: 'object',
   description:
-    'Safety net: a lexicon phrase found in the input but read as denied, so it did not fire ("found but read as denied — check").',
+    'Advisory note: a lexicon phrase that fired and counts in the verdict, but the text appears to deny it ("Found, but the text appears to deny it — please check"). Never changes a verdict.',
   additionalProperties: false,
   properties: {
-    phrase: { type: 'string', description: 'Canonical lexicon phrase that occurred in the input.' },
+    phrase: { type: 'string', description: 'Canonical lexicon phrase that occurred in the input (and fired).' },
     ref: { type: 'string', description: 'Short AI Act reference for the phrase category, e.g. "Art 5(1)(c)", "Annex III.4", "Art 50(1)".' },
-    cue: { type: 'string', description: 'The negation words that governed the phrase, e.g. "not use", "keine", "is not used".' },
-    status: {
-      type: 'string',
-      enum: ['denied', 'near'],
-      description:
-        '"denied": read as denied, did NOT fire ("found but read as denied — check"). "near": DID fire; a negation governs it but the sentence continues after the phrase ("near a negation — check"). Advisory only — never changes the verdict.',
-    },
+    cue: { type: 'string', description: 'The negation words near the phrase, e.g. "not use", "keine", "is not used".' },
     group: { type: 'string', description: 'Lexicon group, e.g. "article_5_prohibited".' },
     category: { type: 'string', description: 'Lexicon sub-category key, e.g. "c_social_scoring".' },
     source: { type: 'string', description: 'Regulator-source URL the category cites.' },
   },
-  required: ['phrase', 'ref', 'cue', 'status', 'group', 'category', 'source'],
+  required: ['phrase', 'ref', 'cue', 'group', 'category', 'source'],
 };
 
 const extractedFeatures = {
@@ -162,7 +151,7 @@ const extractedFeatures = {
     negatedHits: {
       type: 'array',
       items: negatedLexiconHit,
-      description: 'Lexicon phrases read as denied by the negation rules (keyword extractor only; absent in LLM mode).',
+      description: 'Advisory: fired lexicon phrases that stand near a negation (keyword extractor only; absent in LLM mode). Never changes a verdict.',
     },
   },
   required: ['input', 'lang', 'langConfident', 'lexiconVersion', 'hits', 'byCategory'],
@@ -587,7 +576,7 @@ const schema = {
       type: 'array',
       items: negatedHitResult,
       description:
-        'Safety net (additive, after v0.3.1): lexicon phrases near a negation. status "denied" = read as denied, did not fire; status "near" = fired, but a negation governs it and the sentence continues. Empty when there is nothing to check and always empty in LLM mode. Check each one by hand.',
+        'Advisory only (additive, after v0.3.1): fired lexicon phrases that stand near a negation ("Found, but the text appears to deny it — please check"). Every entry also fired and counts in the verdict; negation never changes a verdict. Empty when there is nothing to check and always empty in LLM mode. Check each one by hand.',
     },
   },
   required: [
